@@ -48,8 +48,10 @@ rem rem start "" %SecureCRT% /SCRIPT "Z:\_Share\TFTP\01\_tmp.py" /ARG %script_di
 
 echo.
 echo Killing processes after flashed firmware images...
-taskkill /f /im SecureCRT.exe
-taskkill /f /im tftpd64.exe
+tasklist /fi "imagename eq SecureCRT.exe" |find ":" > nul
+if errorlevel 1 taskkill /f /im "SecureCRT.exe"
+tasklist /fi "imagename eq tftpd64.exe" |find ":" > nul
+if errorlevel 1 taskkill /f /im "tftpd64.exe"
 
 echo.
 echo Ready to run Automation test after %READY_SEC% seconds...
