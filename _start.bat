@@ -28,7 +28,7 @@ bitsadmin /transfer "Downloading firmware images" %URL_images% "%script_dir%\%zi
 echo.
 echo Extracting downloaded firmware images....
 %Seven_Zip% x "%script_dir%\%zip_images%" -o%script_dir% -aoa
-del "%script_dir%\%zip_images%" /s /f /q
+rem del "%script_dir%\%zip_images%" /s /f /q
 
 echo.
 echo Need to kill some processes before flashing firmware images...
@@ -55,7 +55,7 @@ if errorlevel 1 taskkill /f /im "tftpd64.exe"
 
 echo.
 echo Ready to run Automation test after %READY_SEC% seconds...
-sleep %READY_SEC%
+rem sleep %READY_SEC%
 
 echo.
 echo Done.

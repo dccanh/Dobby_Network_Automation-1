@@ -32,6 +32,7 @@ rg_apps_file 	= script_dir + rg_apps
 CM_Prompt	= "CM> "
 BL_Enter	= "Enter \'a\' (primary), \'b\' (secondary), \'o\' (old-school boot), or \'p\' (prompt)"
 BL_Prompt	= "Main Menu:"
+Part_Prompt = "Flash Partition information:"
 Prompt 		= "z) Reset"
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -46,12 +47,6 @@ def main():
 
 	crt.Screen.IgnoreEscape = True
 	crt.Screen.Synchronous = True
-
-	crt.Screen.Send('\r')
-	if (crt.Screen.WaitForString(CM_Prompt) == True):
-		crt.Screen.Send('reset\r')
-	if (crt.Screen.WaitForString(BL_Enter) == True):
-		crt.Screen.Send('p')
 
 	if 'rg_kernel' in globals():
 		rg_kernel_found = os.path.isfile(rg_kernel_file)
@@ -73,8 +68,17 @@ def main():
 		not cm_img_found):
 		return
 
-	wait_enter_bootloader()
-	setup_network_parameters()
+	crt.Screen.Send('\r')
+	if (crt.Screen.WaitForString(CM_Prompt, 1) == True):
+		crt.Screen.Send('reset\r')
+		if (crt.Screen.WaitForString(BL_Enter) == True):
+			crt.Screen.Send('p')
+		wait_enter_bootloader()
+		setup_network_parameters()
+	else:
+		crt.Screen.Send('p')
+		if (crt.Screen.WaitForString(Part_Prompt) == True):
+			setup_network_parameters()
 
 	# flash rg_kernel
 	if rg_kernel_found: upgrade_one_image(rg_kernel, "3")
