@@ -8,7 +8,7 @@ SET SecureCRT="C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe"
 SET TFTPd64="C:\Program Files\Tftpd64\tftpd64.exe"
 SET Seven_Zip="C:\Program Files\7-Zip\7z.exe"
 
-SET URL_images="ftp://ftp.adobe.com/license.txt"
+SET URL_images="https://nopaystation.com/pkgj/config.txt"
 SET zip_images="fw_images.zip"
 
 SET READY_SEC=120
@@ -24,6 +24,13 @@ echo script_dir: %script_dir%
 echo.
 echo Getting firmware images from server....
 bitsadmin /transfer "Downloading firmware images" %URL_images% "%script_dir%\%zip_images%"
+
+echo.
+echo Checking downloaded firmware images....
+if not exist "%script_dir%\%zip_images%" (
+    echo The firmwares not exist. Exit!!!
+    exit /B -1
+)
 
 echo.
 echo Extracting downloaded firmware images....
