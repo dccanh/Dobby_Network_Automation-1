@@ -23,6 +23,9 @@ SET PC_IP=192.168.0.29
 echo script_dir: %script_dir%
 echo.
 echo Getting firmware images from server....
+bitsadmin /reset
+bitsadmin /create "Downloading firmware images"
+rem bitsadmin /setcredentials "Downloading firmware images" SERVER BASIC username "password"
 bitsadmin /transfer "Downloading firmware images" %URL_images% "%script_dir%\%zip_images%"
 
 echo.
