@@ -8,8 +8,9 @@ SET SecureCRT="C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe"
 SET TFTPd64="C:\Program Files\Tftpd64\tftpd64.exe"
 SET Seven_Zip="C:\Program Files\7-Zip\7z.exe"
 
-SET URL_images="https://nopaystation.com/pkgj/config.txt"
+SET URL_images="http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
 SET zip_images="fw_images.zip"
+SET user="ntdung:Ntd12345678"
 
 SET READY_SEC=120
 
@@ -22,11 +23,13 @@ SET PC_IP=192.168.0.29
 
 echo script_dir: %script_dir%
 echo.
-echo Getting firmware images from server....
-bitsadmin /reset
-bitsadmin /create "Downloading firmware images"
-rem bitsadmin /setcredentials "Downloading firmware images" SERVER BASIC username "password"
-bitsadmin /transfer "Downloading firmware images" %URL_images% "%script_dir%\%zip_images%"
+echo Getting firmware images from server: %URL_images%
+curl -u %user% %URL_images% -o "%script_dir%\%zip_images%"
+
+if errorlevel 1 (
+    echo Download FAIL. Exit!!!
+    exit /B -1
+)
 
 echo.
 echo Checking downloaded firmware images....
@@ -53,7 +56,6 @@ start "TFTPd64" %TFTPd64%
 
 echo.
 echo Flashing firmware images...
-rem rem start "" %SecureCRT% /SCRIPT "Z:\_Share\TFTP\01\_tmp.py" /ARG %script_dir%
 %SecureCRT% /ARG %script_dir% /ARG %RG_IP% /ARG %PC_IP% /SCRIPT "%script_dir%\flash_fw_silent.py" /SERIAL %COM_PORT% /BAUD %BAUD_RATE%
 
 echo.
