@@ -27,7 +27,7 @@ echo Getting firmware images from server: %URL_images%
 curl -u %user% %URL_images% -o "%script_dir%\%zip_images%"
 
 if errorlevel 1 (
-    echo Download FAIL. Exit!!!
+    echo Download firmware images FAIL. Exit!!!
     exit /B -1
 )
 
