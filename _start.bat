@@ -25,23 +25,25 @@ echo script_dir: %script_dir%
 echo.
 echo Getting firmware images from server: %URL_images%
 curl -u %user% %URL_images% -o "%script_dir%\%zip_images%"
-
 if errorlevel 1 (
     echo Download firmware images FAIL. Exit!!!
     exit /B -1
 )
 
 echo.
-echo Checking downloaded firmware images....
+echo Checking the downloaded firmware images: %script_dir%\%zip_images%
 if not exist "%script_dir%\%zip_images%" (
     echo The firmwares not exist. Exit!!!
     exit /B -1
 )
 
 echo.
-echo Extracting downloaded firmware images....
+echo Extracting the downloaded firmware images....
 %Seven_Zip% x "%script_dir%\%zip_images%" -o%script_dir% -aoa
-rem del "%script_dir%\%zip_images%" /s /f /q
+if errorlevel 1 (
+    echo Something wrong when extract the downloaded firmware images. Exit!!!
+    exit /B -1
+)
 
 echo.
 echo Need to kill some processes before flashing firmware images...
@@ -53,6 +55,10 @@ if errorlevel 1 taskkill /f /im "tftpd64.exe"
 echo.
 echo Starting TFTP server...
 start "TFTPd64" %TFTPd64%
+if errorlevel 1 (
+    echo Could not start: %TFTPd64%. Exit!!!
+    exit /B -1
+)
 
 echo.
 echo Flashing firmware images...
