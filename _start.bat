@@ -8,7 +8,7 @@ SET SecureCRT="C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe"
 SET TFTPd64="C:\Program Files\Tftpd64\tftpd64.exe"
 SET Seven_Zip="C:\Program Files\7-Zip\7z.exe"
 
-SET URL_images="http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
+SET URL_images=%1
 SET zip_images="fw_images.zip"
 SET user="ntdung:Ntd12345678"
 
@@ -21,7 +21,15 @@ SET RG_IP=192.168.0.11
 SET PC_IP=192.168.0.29
 
 
+IF [%URL_images%] EQU [] (
+    echo.
+    echo URL_images not be input. Using the default URL.
+    SET URL_images="http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
+)
+
+echo.
 echo script_dir: %script_dir%
+
 echo.
 echo Getting firmware images from server: %URL_images%
 curl -u %user% %URL_images% -o "%script_dir%\%zip_images%"
