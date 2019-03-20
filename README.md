@@ -6,6 +6,12 @@
 
 2. **Need to configure:**
     - **_start.bat:**
+        + **Input URL_images as command parameter**
+
+            Ex:
+
+                _start.bat "http://test.com/file.zip"
+
         + **Setup IP address:** RG_IP, PC_IP, COM_PORT, BAUD_RATE
 
             Ex:
