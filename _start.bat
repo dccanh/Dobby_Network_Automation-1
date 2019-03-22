@@ -30,6 +30,11 @@ IF [%URL_images%] EQU [] (
 echo.
 echo script_dir: %script_dir%
 
+if exist "%script_dir%\%zip_images%" (
+    echo Removing the existed firmwares before downloading.
+    del /s /f /q "%script_dir%\%zip_images%"
+)
+
 echo.
 echo Getting firmware images from server: %URL_images%
 curl -u %user% %URL_images% -o "%script_dir%\%zip_images%"
