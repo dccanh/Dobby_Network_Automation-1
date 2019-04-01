@@ -10,16 +10,31 @@ SET Seven_Zip="C:\Program Files\7-Zip\7z.exe"
 
 SET URL_images=%1
 SET zip_images="fw_images.zip"
-SET user="ntdung:Ntd12345678"
+SET user="admin:password"
 
 SET READY_SEC=120
 
 SET BAUD_RATE=115200
-SET COM_PORT=COM6
+SET RG_COM_PORT=COM5
+SET CM_COM_PORT=COM6
 
 SET RG_IP=192.168.0.11
 SET PC_IP=192.168.0.29
 
+if not exist %SecureCRT% (
+    echo %SecureCRT% not exist. Exit!!!
+    exit /B -1
+)
+
+if not exist %TFTPd64% (
+    echo %TFTPd64% not exist. Exit!!!
+    exit /B -1
+)
+
+if not exist %Seven_Zip% (
+    echo %Seven_Zip% not exist. Exit!!!
+    exit /B -1
+)
 
 IF [%URL_images%] EQU [] (
     echo.
@@ -66,6 +81,10 @@ tasklist /fi "imagename eq tftpd64.exe" |find ":" > nul
 if errorlevel 1 taskkill /f /im "tftpd64.exe"
 
 echo.
+echo Enabling CM console if disabled...
+%SecureCRT% /SCRIPT "%script_dir%\enable_cm_console.py" /SERIAL %RG_COM_PORT% /BAUD %BAUD_RATE%
+
+echo.
 echo Starting TFTP server...
 start "TFTPd64" %TFTPd64%
 if errorlevel 1 (
@@ -75,7 +94,7 @@ if errorlevel 1 (
 
 echo.
 echo Flashing firmware images...
-%SecureCRT% /ARG %script_dir% /ARG %RG_IP% /ARG %PC_IP% /SCRIPT "%script_dir%\flash_fw_silent.py" /SERIAL %COM_PORT% /BAUD %BAUD_RATE%
+%SecureCRT% /ARG %script_dir% /ARG %RG_IP% /ARG %PC_IP% /SCRIPT "%script_dir%\flash_fw_silent.py" /SERIAL %CM_COM_PORT% /BAUD %BAUD_RATE%
 
 echo.
 echo Killing processes after flashed firmware images...
