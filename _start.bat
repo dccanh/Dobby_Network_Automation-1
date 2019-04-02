@@ -84,7 +84,7 @@ echo.
 echo Enabling CM console if disabled...
 %SecureCRT% /SCRIPT "%script_dir%\enable_cm_console.py" /SERIAL %RG_COM_PORT% /BAUD %BAUD_RATE%
 
-echo.
+call echo.
 echo Starting TFTP server...
 start "TFTPd64" %TFTPd64%
 if errorlevel 1 (
