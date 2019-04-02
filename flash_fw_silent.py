@@ -73,7 +73,6 @@ def main():
 		crt.Screen.Send('reset\r')
 		if (crt.Screen.WaitForString(BL_Enter) == True):
 			crt.Screen.Send('p')
-		wait_enter_bootloader()
 		setup_network_parameters()
 	else:
 		crt.Screen.Send('p')
@@ -97,23 +96,7 @@ def main():
 def end_download():
 	# Send key to reset
 	crt.Screen.Send('z')
-	# crt.Quit()
 	os.system("taskkill /f /im SecureCRT.exe")
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def wait_enter_bootloader():
-	crt.Screen.WaitForString(BL_Prompt)
-	while True:
-		result = crt.Screen.WaitForStrings([Prompt, 'Board IP Address'], 1)
-		if (result == 1): break;
-		elif (result == 2):
-			send_cmd_wait_resp(RGIP, "]: ")
-			send_cmd_wait_resp(Netmask, "]: ")
-			send_cmd_wait_resp(RGIP, "]: ")
-			send_cmd_wait_resp("", "(e/i/a)[a]")
-			send_cmd_wait_resp("", Prompt)
-			break;
-		else: crt.Screen.Send('p')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def setup_network_parameters():
