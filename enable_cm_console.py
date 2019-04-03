@@ -21,6 +21,7 @@ def login_rg_console():
     crt.Screen.Send('\r')
     if (crt.Screen.WaitForString(LG_Prompt, 1) == True):
         crt.Screen.Send(US + '\r')
+    if (crt.Screen.WaitForString(PW_Prompt, 1) == True):
         crt.Screen.Send(PW + '\r')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
