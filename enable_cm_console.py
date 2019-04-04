@@ -1,5 +1,6 @@
 #$language = "python"
 #$interface = "1.0"
+
 import os
 import sys
 
@@ -8,8 +9,10 @@ LG_Prompt   = "login:"
 PW_Prompt   = "Password:"
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def main():
-    login_rg_console()
+def enable_cm_console_main():
+    if not in_RG_console():
+        if not login_rg_console():
+            return False
     enable_cm_console()
     end()
 
@@ -19,10 +22,15 @@ def login_rg_console():
     PW      = "humax@!0416"
 
     crt.Screen.Send('\r')
-    if (crt.Screen.WaitForString(LG_Prompt, 1) == True):
+    if (crt.Screen.WaitForString(LG_Prompt) == True):
         crt.Screen.Send(US + '\r')
-    if (crt.Screen.WaitForString(PW_Prompt, 1) == True):
+    if (crt.Screen.WaitForString(PW_Prompt) == True):
         crt.Screen.Send(PW + '\r')
+
+    if not in_RG_console():
+        return False
+    else:
+        return True
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def enable_cm_console():
@@ -33,9 +41,15 @@ def enable_cm_console():
         crt.Screen.Send(CM_CMD + '\r')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def in_RG_console():
+    crt.Screen.Send('\r')
+    if (crt.Screen.WaitForString(RG_Prompt, 1) == True):
+        return True
+    else:
+        return False
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def end():
     os.system("taskkill /f /im SecureCRT.exe")
 
-main()
-
-
+enable_cm_console_main()

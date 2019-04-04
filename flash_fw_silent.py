@@ -1,33 +1,26 @@
 ﻿#$language = "python"
 #$interface = "1.0"
+
 import os
 import sys
-
 
 script_dir = crt.Arguments.GetArg(0)
 
 #=============================================================================
-#  IP Address
-# =============================================================================
 # RGIP    = "192.168.0.11"
 RGIP    = crt.Arguments.GetArg(1)
 Netmask = "255.255.255.0"
 PCIP    = crt.Arguments.GetArg(2)
 # PCIP    = "192.168.0.29"
 
-#=============================================================================
-#  Optional items : Can comment out if you want to skip downloading
 # =============================================================================
-# images are stored in primary bank and system boots from there
-rg_kernel 		= "rg_kernel.bin"
-rg_kernel_file 	= script_dir + rg_kernel
 cm_img 			= "cm_image.bin"
 cm_img_file 	= script_dir + cm_img
 rg_apps 		= "rg_app.bin"
 rg_apps_file 	= script_dir + rg_apps
+rg_kernel 		= "rg_kernel.bin"
+rg_kernel_file 	= script_dir + rg_kernel
 
-#=============================================================================
-#  Mandatory items : Can edit the values but do not comment out
 # =============================================================================
 CM_Prompt	= "CM> "
 BL_Enter	= "Enter \'a\' (primary), \'b\' (secondary), \'o\' (old-school boot), or \'p\' (prompt)"
@@ -36,36 +29,24 @@ Part_Prompt = "Flash Partition information:"
 Prompt 		= "z) Reset"
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def main():
-	global rg_kernel
-	global cm_img
-	global rg_apps
-
-	rg_kernel_found = False
+def flash_fw_silent_main():
 	cm_img_found = False
 	rg_apps_found = False
+	rg_kernel_found = False
 
 	crt.Screen.IgnoreEscape = True
 	crt.Screen.Synchronous = True
 
-	if 'rg_kernel' in globals():
-		rg_kernel_found = os.path.isfile(rg_kernel_file)
-		if not rg_kernel_found:
-			return
+	cm_img_found = os.path.exists(cm_img_file)
+	if not cm_img_found:
+		return
 
-	if 'rg_apps' in globals():
-		rg_apps_found = os.path.isfile(rg_apps_file)
-		if not rg_apps_found:
-			return
+	rg_apps_found = os.path.exists(rg_apps_file)
+	if not rg_apps_found:
+		return
 
-	if 'cm_img' in globals():
-		cm_img_found = os.path.isfile(cm_img_file)
-		if not cm_img_found:
-			return
-
-	if (not rg_kernel_found and
-		not rg_apps_found and
-		not cm_img_found):
+	rg_kernel_found = os.path.exists(rg_kernel_file)
+	if not rg_kernel_found:
 		return
 
 	crt.Screen.Send('\r')
@@ -136,6 +117,4 @@ def send_cmd_wait_resp(cmd, resp):
 	crt.Screen.WaitForString(cmd + '\r')
 	crt.Screen.WaitForString(resp)
 
-main()
-
-
+flash_fw_silent_main()

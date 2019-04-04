@@ -3,6 +3,8 @@
 1. **Pre-condition:**
     - Tftpd64: https://bitbucket.org/phjounin/tftpd64/downloads/tftpd64.464.zip
     - SecureCRT 7.3
+    - 7-zip
+    - Python2.7.5 with installed libraries: psutil, shutil, argparse, imp
 
 2. **Need to configure:**
     - **_start.bat:**
@@ -23,6 +25,10 @@
                 COM_PORT    = COM6             // COM port connect to serial on board
 
                 BAUD_RATE   = 115200           // Baud rate | Default: 115200
+
+    - **_start.py:**
+        + **Input cm_port, pc_ip, rg_port, image_url, login as command parameters**
+            - *_start.py -h* to show help for more details
 
     - **TFTPd64:**
         + **tftpd32.ini:**
@@ -47,7 +53,12 @@
             - Open Command Prompt (cmd)
             - Run command:
                     <Path_to_file>\_start.bat
+                    <Path_to_file>\_start.py
 
             Ex:
 
                 Z:\_Share\TFTP\_start.bat
+                Z:\_Share\source_code\automation\client\_start.py -ip 192.168.0.29
+                Z:\_Share\source_code\automation\client\_start.py -ip 192.168.0.29 -cm COM6 -rg COM5
+                Z:\_Share\source_code\automation\client\_start.py -ip 192.168.0.29 -cm COM6 -rg COM5 --image_url http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
+                Z:\_Share\source_code\automation\client\_start.py -ip 192.168.0.29 -cm COM6 -rg COM5 --image_url http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip" -user "user:password"
