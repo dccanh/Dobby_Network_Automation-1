@@ -29,13 +29,16 @@ READY_SEC = 120
 RG_COM_PORT = str(args.rg_port).upper()
 if RG_COM_PORT:
     RG_COM_PORT = "COM5"
+    print("RG_COM_PORT not be input. Using the default RG_COM_PORT: " + RG_COM_PORT)
 
 CM_COM_PORT = str(args.cm_port).upper()
 if CM_COM_PORT:
     CM_COM_PORT = "COM6"
+    print("CM_COM_PORT not be input. Using the default CM_COM_PORT: " + CM_COM_PORT)
 
 # PC_IP = "192.168.0.29"
 PC_IP = str(args.pc_ip)
+print("PC_IP: " + PC_IP)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def start_main():
@@ -106,7 +109,7 @@ def get_firmware():
         print("Removed the existed firmwares before downloading.")
 
     print("Getting firmware images from server: " + URL_images)
-    cmd = "curl -u " + user + " " + URL_images + " -o " + firmware_file
+    cmd = "curl --retry 3 -u " + user + " " + URL_images + " -o " + firmware_file
     if (os.system(cmd) != 0):
         print("Download firmware images FAIL. Exit!!!")
         return False
