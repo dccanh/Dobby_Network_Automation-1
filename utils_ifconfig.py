@@ -5,6 +5,8 @@ import os
 import sys
 
 RG_Prompt           = "RG]#"
+LG_Prompt           = "login:"
+PW_Prompt           = "Password:"
 IPv4_Prompt         = "inet addr:"
 IPv6_Prompt         = "inet6 addr:"
 
@@ -16,13 +18,30 @@ MAX_ROW             = crt.Screen.Rows
 cmd_ifconfig = "ifconfig br0"
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def main():
-    if (is_RG_console() == True):
-        data = "IPv4_addr: " + get_IPv4_addr() \
-                + " | IPv6_Link_addr: " + get_IPv6_Link_addr() \
-                + " | IPv6_Global_addr: " + get_IPv6_Global_addr()
+def utils_ifconfig_main():
+    if not in_RG_console():
+        login_rg_console()
+    ip_addr = "IPv4_addr: " + get_IPv4_addr() \
+            + " | IPv6_Link_addr: " + get_IPv6_Link_addr() \
+            + " | IPv6_Global_addr: " + get_IPv6_Global_addr()
 
-        crt.Screen.Send(str(data))
+    crt.Screen.Send(str(ip_addr))
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def login_rg_console():
+    US      = "root"
+    PW      = "humax@!0416"
+
+    crt.Screen.Send('\r')
+    if (crt.Screen.WaitForString(LG_Prompt) == True):
+        crt.Screen.Send(US + '\r')
+    if (crt.Screen.WaitForString(PW_Prompt) == True):
+        crt.Screen.Send(PW + '\r')
+
+    if not in_RG_console():
+        return False
+    else:
+        return True
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def get_IPv4_addr():
@@ -35,14 +54,14 @@ def get_IPv4_addr():
         cur_col = crt.Screen.CurrentColumn
 
     crt.Sleep(500)
-    data = crt.Screen.Get(cur_row, MIN_ROW, cur_row, MAX_COLUMNS)
-    id = data.find("Bcast:")
-    data = data[:id]
-    id = data.find("inet addr:")
-    data = data[id + 10:]
-    data = data.strip()
+    IPv4_addr = crt.Screen.Get(cur_row, MIN_ROW, cur_row, MAX_COLUMNS)
+    id = IPv4_addr.find("Bcast:")
+    IPv4_addr = IPv4_addr[:id]
+    id = IPv4_addr.find("inet addr:")
+    IPv4_addr = IPv4_addr[id + 10:]
+    IPv4_addr = IPv4_addr.strip()
 
-    return data
+    return IPv4_addr
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def get_IPv6_Link_addr():
@@ -55,21 +74,21 @@ def get_IPv6_Link_addr():
         cur_col = crt.Screen.CurrentColumn
 
     crt.Sleep(500)
-    data = crt.Screen.Get(cur_row, MIN_ROW, cur_row + 1, MAX_COLUMNS)
-    id = data.find("Scope:Global")
+    IPv6_Link_addr = crt.Screen.Get(cur_row, MIN_ROW, cur_row + 1, MAX_COLUMNS)
+    id = IPv6_Link_addr.find("Scope:Global")
 
     if (id == -1):
-        id = data.find("Scope:Link")
+        id = IPv6_Link_addr.find("Scope:Link")
     else:
-        data = data[id + 12:]
-        id = data.find("Scope:Link")
+        IPv6_Link_addr = IPv6_Link_addr[id + 12:]
+        id = IPv6_Link_addr.find("Scope:Link")
 
-    data = data[:id - 4]
-    id = data.find("inet6 addr:")
-    data = data[id + 11:]
-    data = data.strip()
+    IPv6_Link_addr = IPv6_Link_addr[:id - 4]
+    id = IPv6_Link_addr.find("inet6 addr:")
+    IPv6_Link_addr = IPv6_Link_addr[id + 11:]
+    IPv6_Link_addr = IPv6_Link_addr.strip()
 
-    return data
+    return IPv6_Link_addr
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def get_IPv6_Global_addr():
@@ -82,25 +101,25 @@ def get_IPv6_Global_addr():
         cur_col = crt.Screen.CurrentColumn
 
     crt.Sleep(500)
-    data = crt.Screen.Get(cur_row, MIN_ROW, cur_row + 1, MAX_COLUMNS)
-    id = data.find("Scope:Global")
+    IPv6_Global_addr = crt.Screen.Get(cur_row, MIN_ROW, cur_row + 1, MAX_COLUMNS)
+    id = IPv6_Global_addr.find("Scope:Global")
 
     if (id != -1):
-        data = data[:id - 4]
-        id = data.find("inet6 addr:")
-        data = data[id + 11:]
-        data = data.strip()
+        IPv6_Global_addr = IPv6_Global_addr[:id - 4]
+        id = IPv6_Global_addr.find("inet6 addr:")
+        IPv6_Global_addr = IPv6_Global_addr[id + 11:]
+        IPv6_Global_addr = IPv6_Global_addr.strip()
     else:
-        data = str()
+        IPv6_Global_addr = str()
 
-    return data
+    return IPv6_Global_addr
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def is_RG_console():
+def in_RG_console():
     crt.Screen.Send('\r')
     if (crt.Screen.WaitForString(RG_Prompt, 1) == True):
         return True
     else:
         return False
 
-main()
+utils_ifconfig_main()
