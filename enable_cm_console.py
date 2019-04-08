@@ -37,8 +37,7 @@ def enable_cm_console():
     CM_CMD      = "snmpset -v2c -c private 172.31.255.45 .1.3.6.1.4.1.4413.2.2.2.1.9.1.2.1.0 int 2"
 
     crt.Screen.Send('\r')
-    if (crt.Screen.WaitForString(RG_Prompt, 1) == True):
-        crt.Screen.Send(CM_CMD + '\r')
+    crt.Screen.Send(CM_CMD + '\r')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def in_RG_console():
