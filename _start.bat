@@ -1,4 +1,4 @@
-@echo off
+rem @echo off
 @color 0A
 @cls
 
@@ -52,7 +52,7 @@ if exist "%script_dir%\%zip_images%" (
 
 echo.
 echo Getting firmware images from server: %URL_images%
-curl -u %user% %URL_images% -o "%script_dir%\%zip_images%"
+curl --retry 3 -u %user% %URL_images% -o "%script_dir%\%zip_images%"
 if errorlevel 1 (
     echo Download firmware images FAIL. Exit!!!
     exit /B -1
