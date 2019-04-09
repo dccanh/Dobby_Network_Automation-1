@@ -9,10 +9,7 @@ LG_Prompt   = "login:"
 PW_Prompt   = "Password:"
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def enable_cm_console_main():
-    if not in_RG_console():
-        if not login_rg_console():
-            return False
+def cm_console_main():
     enable_cm_console()
     end()
 
@@ -36,6 +33,10 @@ def login_rg_console():
 def enable_cm_console():
     CM_CMD      = "snmpset -v2c -c private 172.31.255.45 .1.3.6.1.4.1.4413.2.2.2.1.9.1.2.1.0 int 2"
 
+    if not in_RG_console():
+        if not login_rg_console():
+            return False
+
     crt.Screen.Send('\r')
     crt.Screen.Send(CM_CMD + '\r')
 
@@ -51,4 +52,4 @@ def in_RG_console():
 def end():
     os.system("taskkill /f /im SecureCRT.exe")
 
-enable_cm_console_main()
+cm_console_main()

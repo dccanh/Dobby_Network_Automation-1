@@ -19,9 +19,9 @@ firmware_file = script_dir + "\\fw_images.zip"
 binaries_dir = script_dir + "\\binaries"
 utils_dir = script_dir + "\\utils"
 
-SecureCRT = "C:\\Program Files\\VanDyke Software\\SecureCRT\\SecureCRT.exe"
-TFTPd64 = "C:\\Program Files\\Tftpd64\\tftpd64.exe"
-Seven_Zip = "C:\\Program Files\\7-Zip\\7z.exe"
+SecureCRT_file = "C:\\Program Files\\VanDyke Software\\SecureCRT\\SecureCRT.exe"
+TFTPd64_file = "C:\\Program Files\\Tftpd64\\tftpd64.exe"
+Seven_Zip_file = "C:\\Program Files\\7-Zip\\7z.exe"
 
 RG_IP = "192.168.0.102"
 BAUD_RATE = 115200
@@ -77,16 +77,16 @@ def start_main():
 def check_precondition():
     print("\n*****************************************************************")
     print("Checking some applications need to install...")
-    if not os.path.exists(SecureCRT):
-        print(SecureCRT + " not exist. Exit!!!")
+    if not os.path.exists(SecureCRT_file):
+        print(SecureCRT_file + " not exist. Exit!!!")
         return False
 
-    if not os.path.exists(TFTPd64):
-        print(TFTPd64 + " not exist. Exit!!!")
+    if not os.path.exists(TFTPd64_file):
+        print(TFTPd64_file + " not exist. Exit!!!")
         return False
 
-    if not os.path.exists(Seven_Zip):
-        print(Seven_Zip + " not exist. Exit!!!")
+    if not os.path.exists(Seven_Zip_file):
+        print(Seven_Zip_file + " not exist. Exit!!!")
         return False
 
     return True
@@ -132,7 +132,7 @@ def extract_firmware():
     os.mkdir(binaries_dir)
 
     print("Extracting the downloaded firmware images to: "+ binaries_dir)
-    cmd = str("\""+ Seven_Zip + "\"" + " x " + firmware_file + " -o" + binaries_dir + " -aoa")
+    cmd = str("\""+ Seven_Zip_file + "\"" + " x " + firmware_file + " -o" + binaries_dir + " -aoa")
     if (os.system(cmd) != 0):
         print("Something wrong when extract the downloaded firmware images. Exit!!!")
         return False
@@ -144,7 +144,7 @@ def flash_firmware():
     print("\n*****************************************************************")
     print("Flashing firmware images...")
     flash_fw_script = utils_dir + "\\flash_fw_silent.py"
-    cmd = str("\""+ SecureCRT + "\"" + " /ARG " + binaries_dir + "\\ /ARG " + RG_IP + " /ARG " + PC_IP
+    cmd = str("\""+ SecureCRT_file + "\"" + " /ARG " + binaries_dir + "\\ /ARG " + RG_IP + " /ARG " + PC_IP
             + " /SCRIPT " + flash_fw_script + " /SERIAL " + CM_COM_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
 
@@ -164,54 +164,29 @@ def kill_processes():
 def enable_cm_console():
     print("\n*****************************************************************")
     print("Enabling CM console if disabled...")
-    enable_cm_script = utils_dir + "\\enable_cm_console.py"
-    cmd = str("\""+ SecureCRT + "\"" + " /SCRIPT " + enable_cm_script + " /SERIAL " + RG_COM_PORT + " /BAUD " + str(BAUD_RATE))
+    enable_cm_script = utils_dir + "\\cm_console.py"
+    cmd = str("\""+ SecureCRT_file + "\"" + " /SCRIPT " + enable_cm_script + " /SERIAL " + RG_COM_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def start_TFTP():
     print("\n*****************************************************************")
     print("Starting TFTP server...")
-    cmd = str("start \"TFTP\" \"" + TFTPd64 + "\"")
+    cmd = str("start \"TFTP\" \"" + TFTPd64_file + "\"")
     if (os.system(cmd) != 0):
-        print("Could not start: " + TFTPd64 + ". Exit!!!")
+        print("Could not start: " + TFTPd64_file + ". Exit!!!")
         return False
     return True
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def configure_TFTP_server():
-    TFTP_installed_dir  = os.path.dirname(TFTPd64)
-    TFTP_config_file    = TFTP_installed_dir + "\\tftpd32.ini"
+    tftp_util_script = utils_dir + "\\tftp_server.py"
+    cmd = str(tftp_util_script + " --bin_dir " + binaries_dir + " --pc_ip " + PC_IP\
+             + " --tftpd64_file \"" + TFTPd64_file + "\"")
 
-    base_dir_key        = "BaseDirectory="
-    base_dir_config     = str(base_dir_key + binaries_dir + "\n")
-
-    local_IP_key        = "LocalIP="
-    local_IP_config     = str(local_IP_key + PC_IP + "\n")
-
-    if os.path.exists(TFTP_config_file):
-        with open(TFTP_config_file, 'r') as file:
-            config_data = file.readlines()
-            for line in xrange(0,len(config_data)):
-                if "[TFTPD32]" in config_data[line]:
-                    for i in xrange(line,len(config_data)):
-                        if base_dir_key in config_data[i]:
-                            base_dir_id = i
-                        if local_IP_key in config_data[i]:
-                            local_IP_id = i
-                            break
-
-            config_data[base_dir_id] = base_dir_config
-            config_data[local_IP_id] = local_IP_config
-            file.close()
-
-        with open(TFTP_config_file, 'w') as file:
-            file.writelines(config_data)
-            file.close()
-
-        return True
-    else:
-        print(TFTP_config_file + " not exist. Exit!!!")
+    if (os.system(cmd) != 0):
+        print("Could not configure TFTP server. Exit!!!")
         return False
+    return True
 
 start_main()

@@ -86,7 +86,7 @@ if errorlevel 1 taskkill /f /im "tftpd64.exe"
 
 echo.
 echo Enabling CM console if disabled...
-%SecureCRT% /SCRIPT "%utils_dir%\enable_cm_console.py" /SERIAL %RG_COM_PORT% /BAUD %BAUD_RATE%
+%SecureCRT% /SCRIPT "%utils_dir%\cm_console.py" /SERIAL %RG_COM_PORT% /BAUD %BAUD_RATE%
 
 call echo.
 echo Starting TFTP server...
