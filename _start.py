@@ -16,7 +16,7 @@ args = parser.parse_args()
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 firmware_file = script_dir + "\\fw_images.zip"
-firmware_dir = script_dir + "\\binaries"
+binaries_dir = script_dir + "\\binaries"
 utils_dir = script_dir + "\\utils"
 
 SecureCRT = "C:\\Program Files\\VanDyke Software\\SecureCRT\\SecureCRT.exe"
@@ -46,6 +46,8 @@ def start_main():
     print("\n*****************************************************************")
 
     print("script_dir: " + script_dir)
+    print("binaries_dir: " + binaries_dir)
+    print("utils_dir: " + utils_dir)
 
     if check_precondition():
         if get_firmware():
@@ -125,12 +127,12 @@ def extract_firmware():
         print("The firmwares not exist. Exit!!!")
         return False
 
-    if os.path.exists(firmware_dir):
-        shutil.rmtree(firmware_dir)
-    os.mkdir(firmware_dir)
+    if os.path.exists(binaries_dir):
+        shutil.rmtree(binaries_dir)
+    os.mkdir(binaries_dir)
 
-    print("Extracting the downloaded firmware images to: "+ firmware_dir)
-    cmd = str("\""+ Seven_Zip + "\"" + " x " + firmware_file + " -o" + firmware_dir + " -aoa")
+    print("Extracting the downloaded firmware images to: "+ binaries_dir)
+    cmd = str("\""+ Seven_Zip + "\"" + " x " + firmware_file + " -o" + binaries_dir + " -aoa")
     if (os.system(cmd) != 0):
         print("Something wrong when extract the downloaded firmware images. Exit!!!")
         return False
@@ -142,7 +144,7 @@ def flash_firmware():
     print("\n*****************************************************************")
     print("Flashing firmware images...")
     flash_fw_script = utils_dir + "\\flash_fw_silent.py"
-    cmd = str("\""+ SecureCRT + "\"" + " /ARG " + firmware_dir + "\\ /ARG " + RG_IP + " /ARG " + PC_IP
+    cmd = str("\""+ SecureCRT + "\"" + " /ARG " + binaries_dir + "\\ /ARG " + RG_IP + " /ARG " + PC_IP
             + " /SCRIPT " + flash_fw_script + " /SERIAL " + CM_COM_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
 
@@ -182,7 +184,7 @@ def configure_TFTP_server():
     TFTP_config_file    = TFTP_installed_dir + "\\tftpd32.ini"
 
     base_dir_key        = "BaseDirectory="
-    base_dir_config     = str(base_dir_key + firmware_dir + "\n")
+    base_dir_config     = str(base_dir_key + binaries_dir + "\n")
 
     local_IP_key        = "LocalIP="
     local_IP_config     = str(local_IP_key + PC_IP + "\n")

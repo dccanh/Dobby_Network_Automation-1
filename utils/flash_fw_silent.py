@@ -4,7 +4,7 @@
 import os
 import sys
 
-script_dir = crt.Arguments.GetArg(0)
+binaries_dir = crt.Arguments.GetArg(0)
 
 #=============================================================================
 # RGIP    = "192.168.0.11"
@@ -15,11 +15,11 @@ PCIP    = crt.Arguments.GetArg(2)
 
 # =============================================================================
 cm_img 			= "cm_image.bin"
-cm_img_file 	= script_dir + cm_img
+cm_img_file 	= binaries_dir + cm_img
 rg_apps 		= "rg_app.bin"
-rg_apps_file 	= script_dir + rg_apps
+rg_apps_file 	= binaries_dir + rg_apps
 rg_kernel 		= "rg_kernel.bin"
-rg_kernel_file 	= script_dir + rg_kernel
+rg_kernel_file 	= binaries_dir + rg_kernel
 
 # =============================================================================
 CM_Prompt	= "CM> "

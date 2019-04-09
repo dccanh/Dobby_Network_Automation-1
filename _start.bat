@@ -3,6 +3,8 @@ rem @echo off
 @cls
 
 SET script_dir=%~dp0
+SET binaries_dir=%script_dir%\binaries\
+SET utils_dir=%script_dir%\utils\
 
 SET SecureCRT="C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe"
 SET TFTPd64="C:\Program Files\Tftpd64\tftpd64.exe"
@@ -44,6 +46,8 @@ IF [%URL_images%] EQU [] (
 
 echo.
 echo script_dir: %script_dir%
+echo binaries_dir: %binaries_dir%
+echo utils_dir: %utils_dir%
 
 if exist "%script_dir%\%zip_images%" (
     echo Removing the existed firmwares before downloading.
@@ -67,7 +71,7 @@ if not exist "%script_dir%\%zip_images%" (
 
 echo.
 echo Extracting the downloaded firmware images....
-%Seven_Zip% x "%script_dir%\%zip_images%" -o%script_dir% -aoa
+%Seven_Zip% x "%script_dir%\%zip_images%" -o%binaries_dir% -aoa
 if errorlevel 1 (
     echo Something wrong when extract the downloaded firmware images. Exit!!!
     exit /B -1
@@ -82,7 +86,7 @@ if errorlevel 1 taskkill /f /im "tftpd64.exe"
 
 echo.
 echo Enabling CM console if disabled...
-%SecureCRT% /SCRIPT "%script_dir%\enable_cm_console.py" /SERIAL %RG_COM_PORT% /BAUD %BAUD_RATE%
+%SecureCRT% /SCRIPT "%utils_dir%\enable_cm_console.py" /SERIAL %RG_COM_PORT% /BAUD %BAUD_RATE%
 
 call echo.
 echo Starting TFTP server...
@@ -94,7 +98,7 @@ if errorlevel 1 (
 
 echo.
 echo Flashing firmware images...
-%SecureCRT% /ARG %script_dir% /ARG %RG_IP% /ARG %PC_IP% /SCRIPT "%script_dir%\flash_fw_silent.py" /SERIAL %CM_COM_PORT% /BAUD %BAUD_RATE%
+%SecureCRT% /ARG %binaries_dir% /ARG %RG_IP% /ARG %PC_IP% /SCRIPT "%utils_dir%\flash_fw_silent.py" /SERIAL %CM_COM_PORT% /BAUD %BAUD_RATE%
 
 echo.
 echo Killing processes after flashed firmware images...
