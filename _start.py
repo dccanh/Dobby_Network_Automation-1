@@ -7,16 +7,17 @@ import sys
 
 # Parse the input arguments
 parser = argparse.ArgumentParser(description='str(sys.argv[0]')
-parser.add_argument('-cm','--cm_port', help='The URL of firmware image', required=False)
+parser.add_argument('-cm','--cm_port', help='The COM port of CM console', required=False)
 parser.add_argument('-ip','--pc_ip', help='The IP address of the PC', required=True)
-parser.add_argument('-rg','--rg_port', help='The URL of firmware image', required=False)
+parser.add_argument('-rg','--rg_port', help='The COM port of RG console', required=False)
 parser.add_argument('-url','--image_url', help='The URL of firmware image', required=False)
 parser.add_argument('-user','--login', help='(Optional) The login information to download the firmware image with format: \"user:password\"', required=False)
 args = parser.parse_args()
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 firmware_file = script_dir + "\\fw_images.zip"
-firmware_dir = script_dir + "\\fw_binaries"
+firmware_dir = script_dir + "\\binaries"
+utils_dir = script_dir + "\\utils"
 
 SecureCRT = "C:\\Program Files\\VanDyke Software\\SecureCRT\\SecureCRT.exe"
 TFTPd64 = "C:\\Program Files\\Tftpd64\\tftpd64.exe"
@@ -140,7 +141,7 @@ def extract_firmware():
 def flash_firmware():
     print("\n*****************************************************************")
     print("Flashing firmware images...")
-    flash_fw_script = script_dir + "\\flash_fw_silent.py"
+    flash_fw_script = utils_dir + "\\flash_fw_silent.py"
     cmd = str("\""+ SecureCRT + "\"" + " /ARG " + firmware_dir + "\\ /ARG " + RG_IP + " /ARG " + PC_IP
             + " /SCRIPT " + flash_fw_script + " /SERIAL " + CM_COM_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
@@ -161,7 +162,7 @@ def kill_processes():
 def enable_cm_console():
     print("\n*****************************************************************")
     print("Enabling CM console if disabled...")
-    enable_cm_script = script_dir + "\\enable_cm_console.py"
+    enable_cm_script = utils_dir + "\\enable_cm_console.py"
     cmd = str("\""+ SecureCRT + "\"" + " /SCRIPT " + enable_cm_script + " /SERIAL " + RG_COM_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
 
