@@ -18,21 +18,24 @@ def _tmp_main():
 
     print("Wifi profile: \"" + WIFI_PROFILE + "\"")
 
+    disconnect_wifi()
     if find_wifi_profile_in_list(WIFI_PROFILE, get_wifi_profiles()):
+        print("The wifi profile: \"" + WIFI_PROFILE + "\" existed in the list. Let's remove it.")
         remove_wifi_profile(WIFI_PROFILE)
 
-    if add_wifi_profile(WIFI_PROFILE):
-        disconnect_wifi()
-        connect_wifi_profile(WIFI_PROFILE)
+    add_wifi_profile(WIFI_PROFILE)
+    connect_wifi_profile(WIFI_PROFILE)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def connect_wifi_profile(wifi_profile):
+    print("Connecting...")
+
     cmd = "netsh wlan connect name=\"" + wifi_profile + "\""
     log = subprocess.check_output(cmd)
     # print(log)
 
     if (log.find("Connection request was completed successfully") != -1):
-        print("Connected the wifi: " + wifi_profile)
+        print("Connected the wifi: \"" + wifi_profile + "\"")
 
         return True
     else:
@@ -40,10 +43,10 @@ def connect_wifi_profile(wifi_profile):
 
         return False
 
-    return True
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def remove_wifi_profile(wifi_profile):
+    print("Removing the profile...")
+
     existed_profiles = get_wifi_profiles()
     # print(existed_profiles)
 
@@ -61,14 +64,20 @@ def remove_wifi_profile(wifi_profile):
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def add_wifi_profile(wifi_profile):
+    print("Adding the profile...")
+
     wifi_profile_file = args.path
 
     if wifi_profile_file == None:
+        print("Finding the wifi profile file in current directory: \"" + script_dir + "\"")
         wifi_profile_file = script_dir + "\\" +  wifi_profile + ".xml"
 
         if not os.path.exists(wifi_profile_file):
             print(wifi_profile_file + " not exist. Please check again!!!")
+
             return False
+        else:
+            print("Found the wifi profile file here.")
 
     print("Wifi profile: \"" + wifi_profile_file + "\"")
 
@@ -86,12 +95,14 @@ def add_wifi_profile(wifi_profile):
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def disconnect_wifi():
+    print("Disconnecting...")
+
     cmd = "netsh wlan disconnect"
     log = subprocess.check_output(cmd)
     # print(log)
 
     if (log.find("Disconnection request was completed successfully for interface") != -1):
-        print("Disconnect wifi successfully!")
+        print("Disconnected wifi successfully!")
 
         return True
     else:
