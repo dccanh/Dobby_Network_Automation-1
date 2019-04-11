@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
+	<name>HVN_NW_Test_2G</name>
+	<SSIDConfig>
+		<SSID>
+			<hex>48564E5F4E575F546573745F3247</hex>
+			<name>HVN_NW_Test_2G</name>
+		</SSID>
+	</SSIDConfig>
+	<connectionType>ESS</connectionType>
+	<connectionMode>auto</connectionMode>
+	<MSM>
+		<security>
+			<authEncryption>
+				<authentication>WPA2PSK</authentication>
+				<encryption>AES</encryption>
+				<useOneX>false</useOneX>
+			</authEncryption>
+			<sharedKey>
+				<keyType>passPhrase</keyType>
+				<protected>true</protected>
+				<keyMaterial>01000000D08C9DDF0115D1118C7A00C04FC297EB01000000A8E1B5D160F4AE409EBAE8A69E8116980000000002000000000010660000000100002000000049559E165BF4AD4658B4372D59C0BA9622CD10A22A912C8DD8CE797D960B60C7000000000E8000000002000020000000376EC133A5B85503F7A25F88F9805FE0DF961C6746BFC20A23FEFC117F2EF34010000000AA4C1A9ED22674A0F7D9E771EBF39C5240000000B15125CEB71BD9D7183CF8D4964FB0ACB85AFC9918DB369D5FF247324A7CAE991AA7767C535355A256BEB8A955DE25AD4BDFE06C783E99D66AD5552929A731A1</keyMaterial>
+			</sharedKey>
+		</security>
+	</MSM>
+	<MacRandomization xmlns="http://www.microsoft.com/networking/WLAN/profile/v3">
+		<enableRandomization>false</enableRandomization>
+		<randomizationSeed>3176036836</randomizationSeed>
+	</MacRandomization>
+</WLANProfile>
