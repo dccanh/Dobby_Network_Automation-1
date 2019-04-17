@@ -28,14 +28,16 @@ BAUD_RATE = 115200
 READY_SEC = 120
 
 RG_COM_PORT = str(args.rg_port).upper()
-if (RG_COM_PORT == "NONE"):
+if (RG_COM_PORT == "None"):
     RG_COM_PORT = "COM5"
     print("RG_COM_PORT not be input. Using the default RG_COM_PORT.")
+RG_COM_PORT.upper()
 
 CM_COM_PORT = str(args.cm_port).upper()
-if (CM_COM_PORT == "NONE"):
+if (CM_COM_PORT == "None"):
     CM_COM_PORT = "COM6"
     print("CM_COM_PORT not be input. Using the default CM_COM_PORT.")
+CM_COM_PORT.upper()
 
 # PC_IP = "192.168.0.29"
 PC_IP = str(args.pc_ip)
@@ -99,12 +101,12 @@ def get_firmware():
     user = str(args.login)
     URL_images = str(args.image_url)
 
-    if (URL_images == "NONE"):
+    if (URL_images == "None"):
         print("URL_images not be input. Using the default URL.")
         URL_images = "http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
     print("URL_images: " + URL_images)
 
-    if (user == "NONE"):
+    if (user == "None"):
         print("Login information not be input. Using the default login information.")
         user = "admin:password"
 
