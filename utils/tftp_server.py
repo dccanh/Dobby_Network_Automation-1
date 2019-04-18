@@ -36,9 +36,9 @@ def configure_TFTP_server():
     if os.path.exists(TFTP_config_file):
         with open(TFTP_config_file, 'r') as file:
             config_data = file.readlines()
-            for line in xrange(0,len(config_data)):
+            for line in range(0,len(config_data)):
                 if "[TFTPD32]" in config_data[line]:
-                    for i in xrange(line,len(config_data)):
+                    for i in range(line,len(config_data)):
                         if base_dir_key in config_data[i]:
                             base_dir_id = i
                         if local_IP_key in config_data[i]:
