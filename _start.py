@@ -1,14 +1,17 @@
 import argparse
-import imp
 import os
-import psutil
 import shutil
+import subprocess
 import sys
+
+from utils.common.common import *
+from utils.common.ip_addr import *
+from utils.common.tftp_server import *
 
 # Parse the input arguments
 parser = argparse.ArgumentParser(description='str(sys.argv[0]')
 parser.add_argument('-cm','--cm_port', help='The COM port of CM console', required=False)
-parser.add_argument('-ip','--pc_ip', help='The IP address of the PC', required=True)
+parser.add_argument('-ip','--gw_ip', help='The IP address of the DUT gateway', required=True)
 parser.add_argument('-rg','--rg_port', help='The COM port of RG console', required=False)
 parser.add_argument('-url','--image_url', help='The URL of firmware image', required=False)
 parser.add_argument('-user','--login', help='(Optional) The login information to download the firmware image with format: \"user:password\"', required=False)
@@ -23,9 +26,9 @@ SecureCRT_file = "C:\\Program Files\\VanDyke Software\\SecureCRT\\SecureCRT.exe"
 TFTPd64_file = "C:\\Program Files\\Tftpd64\\tftpd64.exe"
 Seven_Zip_file = "C:\\Program Files\\7-Zip\\7z.exe"
 
-RG_IP = "192.168.0.102"
 BAUD_RATE = 115200
 READY_SEC = 120
+PC_IP = ""
 
 RG_COM_PORT = str(args.rg_port)
 if (RG_COM_PORT == "None"):
@@ -39,43 +42,44 @@ if (CM_COM_PORT == "None"):
     print("CM_COM_PORT not be input. Using the default CM_COM_PORT.")
 CM_COM_PORT.upper()
 
-# PC_IP = "192.168.0.29"
-PC_IP = str(args.pc_ip)
-print("PC_IP: " + PC_IP)
-print("RG_COM_PORT: " + RG_COM_PORT)
-print("CM_COM_PORT: " + CM_COM_PORT)
+# GW_IP = "192.168.0.1"
+GW_IP = str(args.gw_ip)
+
+user = str(args.login)
+URL_images = str(args.image_url)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def start_main():
-    print("\n*****************************************************************")
+    global PC_IP
 
+    write_confg()
+    print("\n*****************************************************************")
     print("script_dir: " + script_dir)
     print("binaries_dir: " + binaries_dir)
     print("utils_dir: " + utils_dir)
 
+    rg_inf = get_RG_interface(GW_IP)
+    PC_IP = set_static_IP(rg_inf, GW_IP)
+    save_config("COMMON", 'PC_IP', PC_IP)
+
+    print("GW_IP: " + GW_IP)
+    print("PC_IP: " + PC_IP)
+    print("RG_COM_PORT: " + RG_COM_PORT)
+    print("CM_COM_PORT: " + CM_COM_PORT)
+
     if check_precondition():
-        if get_firmware():
+        if get_firmware(user, URL_images):
             if extract_firmware():
                 kill_processes()
                 enable_cm_console()
-                if configure_TFTP_server():
-                    if start_TFTP():
+                if configure_TFTP_server(PC_IP, binaries_dir, TFTPd64_file):
+                    if start_TFTP(TFTPd64_file):
                         flash_firmware()
                         kill_processes()
                         print("Ready to run Automation test after " + str(READY_SEC) + " seconds...")
                         print("Done.")
 
-                        return True
-                    else:
-                        return False
-                else:
-                    return False
-            else:
-                return False
-        else:
-            return False
-    else:
-        return False
+    set_DHCP_IP(rg_inf)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def check_precondition():
@@ -91,34 +95,6 @@ def check_precondition():
 
     if not os.path.exists(Seven_Zip_file):
         print(Seven_Zip_file + " not exist. Exit!!!")
-        return False
-
-    return True
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def get_firmware():
-    print("\n*****************************************************************")
-    user = str(args.login)
-    URL_images = str(args.image_url)
-
-    if (URL_images == "None"):
-        print("URL_images not be input. Using the default URL.")
-        URL_images = "http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
-    print("URL_images: " + URL_images)
-
-    if (user == "None"):
-        print("Login information not be input. Using the default login information.")
-        user = "admin:password"
-
-    if os.path.exists(firmware_file):
-        print("Found an existed firmwares: " + firmware_file)
-        os.remove(firmware_file)
-        print("Removed the existed firmwares before downloading.")
-
-    print("Getting firmware images from server: " + URL_images)
-    cmd = "curl --retry 3 -u " + user + " " + URL_images + " -o " + firmware_file
-    if (os.system(cmd) != 0):
-        print("Download firmware images FAIL. Exit!!!")
         return False
 
     return True
@@ -147,50 +123,31 @@ def extract_firmware():
 def flash_firmware():
     print("\n*****************************************************************")
     print("Flashing firmware images...")
-    flash_fw_script = utils_dir + "\\flash_fw_silent.py"
-    cmd = str("\""+ SecureCRT_file + "\"" + " /ARG " + binaries_dir + "\\ /ARG " + RG_IP + " /ARG " + PC_IP
+    flash_fw_script = utils_dir + "/secure_crt/cm/flash_fw_silent.py"
+    cmd = str("\""+ SecureCRT_file + "\"" + " /ARG " + binaries_dir + "/ /ARG " + GW_IP + " /ARG " + PC_IP
             + " /SCRIPT " + flash_fw_script + " /SERIAL " + CM_COM_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def kill_processes():
-    print("\n*****************************************************************")
-    ps = psutil.pids()
-
-    print("Need to kill some processes...")
-    for x in ps:
-        if psutil.Process(x).name() == "SecureCRT.exe":
-            psutil.Process(x).terminate()
-        if psutil.Process(x).name() == "tftpd64.exe":
-            psutil.Process(x).terminate()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def enable_cm_console():
     print("\n*****************************************************************")
     print("Enabling CM console if disabled...")
-    enable_cm_script = utils_dir + "\\cm_console.py"
+    enable_cm_script = utils_dir + "/secure_crt/rg/common.py"
     cmd = str("\""+ SecureCRT_file + "\"" + " /SCRIPT " + enable_cm_script + " /SERIAL " + RG_COM_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def start_TFTP():
-    print("\n*****************************************************************")
-    print("Starting TFTP server...")
-    cmd = str("start \"TFTP\" \"" + TFTPd64_file + "\"")
-    if (os.system(cmd) != 0):
-        print("Could not start: " + TFTPd64_file + ". Exit!!!")
-        return False
-    return True
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def configure_TFTP_server():
-    tftp_util_script = utils_dir + "\\tftp_server.py"
-    cmd = str(tftp_util_script + " --bin_dir " + binaries_dir + " --pc_ip " + PC_IP\
-             + " --tftpd64_file \"" + TFTPd64_file + "\"")
-
-    if (os.system(cmd) != 0):
-        print("Could not configure TFTP server. Exit!!!")
-        return False
-    return True
+def write_confg():
+    save_config("COMMON", 'script_dir', script_dir)
+    save_config("COMMON", 'firmware_file', firmware_file)
+    save_config("COMMON", 'binaries_dir', binaries_dir)
+    save_config("COMMON", 'utils_dir', utils_dir)
+    save_config("COMMON", "CM_COM_PORT", CM_COM_PORT)
+    save_config("COMMON", "RG_COM_PORT", RG_COM_PORT)
+    save_config("COMMON", "GW_IP", GW_IP)
+    save_config("COMMON", "user", user)
+    save_config("COMMON", "URL_images", URL_images)
+    save_config("COMMON", "BAUD_RATE", BAUD_RATE)
+    save_config("COMMON", "READY_SEC", READY_SEC)
 
 start_main()

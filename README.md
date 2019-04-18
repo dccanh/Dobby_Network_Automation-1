@@ -58,7 +58,7 @@
             Ex:
 
                 Z:\_Share\TFTP\_start.bat
-                Z:\_Share\source_code\automation\client\_start.py -ip 192.168.0.29
-                Z:\_Share\source_code\automation\client\_start.py -ip 192.168.0.29 -cm COM6 -rg COM5
-                Z:\_Share\source_code\automation\client\_start.py -ip 192.168.0.29 -cm COM6 -rg COM5 --image_url http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
-                Z:\_Share\source_code\automation\client\_start.py -ip 192.168.0.29 -cm COM6 -rg COM5 --image_url http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip" -user "user:password"
+                Z:\_Share\source_code\automation\client\_start.py -ip 192.168.0.1
+                Z:\_Share\source_code\automation\client\_start.py -ip 192.168.0.1 -cm COM6 -rg COM5
+                Z:\_Share\source_code\automation\client\_start.py -ip 192.168.0.1 -cm COM6 -rg COM5 --image_url http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
+                Z:\_Share\source_code\automation\client\_start.py -ip 192.168.0.1 -cm COM6 -rg COM5 --image_url http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip" -user "user:password"
