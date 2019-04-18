@@ -27,13 +27,13 @@ RG_IP = "192.168.0.102"
 BAUD_RATE = 115200
 READY_SEC = 120
 
-RG_COM_PORT = str(args.rg_port).upper()
+RG_COM_PORT = str(args.rg_port)
 if (RG_COM_PORT == "None"):
     RG_COM_PORT = "COM5"
     print("RG_COM_PORT not be input. Using the default RG_COM_PORT.")
 RG_COM_PORT.upper()
 
-CM_COM_PORT = str(args.cm_port).upper()
+CM_COM_PORT = str(args.cm_port)
 if (CM_COM_PORT == "None"):
     CM_COM_PORT = "COM6"
     print("CM_COM_PORT not be input. Using the default CM_COM_PORT.")
