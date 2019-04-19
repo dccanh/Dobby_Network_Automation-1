@@ -34,13 +34,13 @@ RG_COM_PORT = str(args.rg_port)
 if (RG_COM_PORT == "None"):
     RG_COM_PORT = "COM5"
     print("RG_COM_PORT not be input. Using the default RG_COM_PORT.")
-RG_COM_PORT.upper()
+RG_COM_PORT = RG_COM_PORT.upper()
 
 CM_COM_PORT = str(args.cm_port)
 if (CM_COM_PORT == "None"):
     CM_COM_PORT = "COM6"
     print("CM_COM_PORT not be input. Using the default CM_COM_PORT.")
-CM_COM_PORT.upper()
+CM_COM_PORT = CM_COM_PORT.upper()
 
 # GW_IP = "192.168.0.1"
 GW_IP = str(args.gw_ip)
@@ -79,6 +79,7 @@ def start_main():
                         print("Ready to run Automation test after " + str(READY_SEC) + " seconds...")
                         print("Done.")
 
+    restore_TFTP_server_config(TFTPd64_file)
     set_DHCP_IP(rg_inf)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
