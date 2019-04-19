@@ -59,28 +59,27 @@ def start_main():
     print("utils_dir: " + utils_dir)
 
     rg_inf = get_RG_interface(GW_IP)
+    PC_IP = set_static_IP(rg_inf, GW_IP)
+    save_config("COMMON", 'PC_IP', PC_IP)
 
     print("GW_IP: " + GW_IP)
+    print("PC_IP: " + PC_IP)
     print("RG_COM_PORT: " + RG_COM_PORT)
     print("CM_COM_PORT: " + CM_COM_PORT)
 
     if check_precondition():
-        if get_firmware(user, URL_images):
-            if extract_firmware():
-                kill_processes()
-                enable_cm_console()
-                PC_IP = set_static_IP(rg_inf, GW_IP)
-                print("PC_IP: " + PC_IP)
-                save_config("COMMON", 'PC_IP', PC_IP)
-                if configure_TFTP_server(PC_IP, binaries_dir, TFTPd64_file):
+        if configure_TFTP_server(PC_IP, binaries_dir, TFTPd64_file):
+            if get_firmware(user, URL_images):
+                if extract_firmware():
+                    kill_processes()
+                    enable_cm_console()
                     if start_TFTP(TFTPd64_file):
                         flash_firmware()
                         kill_processes()
+                        restore_TFTP_server_config(TFTPd64_file)
                         print("Ready to run Automation test after " + str(READY_SEC) + " seconds...")
                         print("Done.")
-                    restore_TFTP_server_config(TFTPd64_file)
-                set_DHCP_IP(rg_inf)
-
+    set_DHCP_IP(rg_inf)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def check_precondition():
