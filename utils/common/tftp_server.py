@@ -2,24 +2,18 @@ import argparse
 import os
 import sys
 
-# Parse the input arguments
-parser = argparse.ArgumentParser(description='str(sys.argv[0]')
-parser.add_argument('-b','--bin_dir', help='The directory contains firmware binaries', required=True)
-parser.add_argument('-ip','--pc_ip', help='The IP address of the PC', required=True)
-parser.add_argument('-u','--tftpd64_file', help='The installed directory of TFTP server', required=True)
-args = parser.parse_args()
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def start_TFTP(TFTPd64_file):
+    print("\n*****************************************************************")
+    print("Starting TFTP server...")
+    cmd = str("start \"TFTP\" \"" + TFTPd64_file + "\"")
+    if (os.system(cmd) != 0):
+        print("Could not start: " + TFTPd64_file + ". Exit!!!")
+        return False
+    return True
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def tftp_server_main():
-    configure_TFTP_server()
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def configure_TFTP_server():
-    TFTPD64_file = str(args.tftpd64_file)
-    binaries_dir = str(args.bin_dir)
-    PC_IP = str(args.pc_ip)
-
+def configure_TFTP_server(PC_IP, binaries_dir, TFTPD64_file):
     print("TFTPD64_file: " + TFTPD64_file)
     print("binaries_dir: " + binaries_dir)
     print("PC_IP: " + TFTPD64_file)
@@ -57,5 +51,3 @@ def configure_TFTP_server():
     else:
         print(TFTP_config_file + " not exist. Exit!!!")
         return False
-
-tftp_server_main()
