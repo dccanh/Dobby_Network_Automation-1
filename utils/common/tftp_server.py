@@ -21,7 +21,7 @@ def configure_TFTP_server(PC_IP, binaries_dir, TFTPD64_file):
     print("TFTPD64_file: " + TFTPD64_file)
     print("TFTP_config_file: " + TFTP_config_file)
     print("binaries_dir: " + binaries_dir)
-    print("PC_IP: " + TFTPD64_file)
+    print("PC_IP: " + PC_IP)
 
     base_dir_key        = "BaseDirectory="
     base_dir_config     = str(base_dir_key + binaries_dir + "\n")
