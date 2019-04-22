@@ -10,10 +10,10 @@ from utils.common.tftp_server import *
 
 # Parse the input arguments
 parser = argparse.ArgumentParser(description='str(sys.argv[0]')
-parser.add_argument('-cm','--cm_port', help='The COM port of CM console', required=False)
-parser.add_argument('-ip','--gw_ip', help='The IP address of the DUT gateway', required=True)
-parser.add_argument('-rg','--rg_port', help='The COM port of RG console', required=False)
-parser.add_argument('-url','--image_url', help='The URL of firmware image', required=False)
+parser.add_argument('-cm','--cm_port', help='The COM port of CM console. Ex: COM5', required=False)
+parser.add_argument('-ip','--gw_ip', help='The IP address of the DUT gateway. Ex: 192.168.0.1', required=False)
+parser.add_argument('-rg','--rg_port', help='The COM port of RG console. Ex: COM6', required=False)
+parser.add_argument('-url','--image_url', help='The direct URL link of firmware image. Ex: http://abc.xyz/fw_images.zip', required=False)
 parser.add_argument('-user','--login', help='(Optional) The login information to download the firmware image with format: \"user:password\"', required=False)
 args = parser.parse_args()
 
@@ -30,23 +30,42 @@ BAUD_RATE = 115200
 READY_SEC = 120
 PC_IP = ""
 
-RG_PORT = str(args.rg_port)
-if (RG_PORT == "None"):
-    RG_PORT = "COM5"
-    print("RG_PORT not be input. Using the default RG_PORT.")
-RG_PORT = RG_PORT.upper()
+RG_PORT = str(args.rg_port).upper()
+if (RG_PORT == "NONE"):
+    print("RG_PORT not be input. Using the default RG_PORT from the config file.")
+    RG_PORT = str(get_config("SERIAL", "RG_PORT"))
+    if (RG_PORT == "") or (RG_PORT == "None"):
+        print("RG_PORT not be configured in the config file. Please check again. Exit!!!\n")
+        parser.print_help()
+        sys.exit()
 
-CM_PORT = str(args.cm_port)
-if (CM_PORT == "None"):
-    CM_PORT = "COM6"
-    print("CM_PORT not be input. Using the default CM_PORT.")
-CM_PORT = CM_PORT.upper()
+CM_PORT = str(args.cm_port).upper()
+if (CM_PORT == "NONE"):
+    print("CM_PORT not be input. Using the default CM_PORT from the config file.")
+    CM_PORT = str(get_config("SERIAL", "CM_PORT"))
+    if (CM_PORT == "") or (CM_PORT == "None"):
+        print("CM_PORT not be configured in the config file. Please check again. Exit!!!\n")
+        parser.print_help()
+        sys.exit()
 
 # GW_IP = "192.168.0.1"
 GW_IP = str(args.gw_ip)
+if (GW_IP == "None"):
+    print("GW_IP not be input. Using the default GW_IP from the config file.")
+    GW_IP = str(get_config("IP", "GW_IP"))
+    if (GW_IP == "") or (GW_IP == "None"):
+        print("GW_IP not be configured in the config file. Please check again. Exit!!!\n")
+        parser.print_help()
+        sys.exit()
 
 user = str(args.login)
+if (user == "None"):
+    user = "admin:password"
+
 URL_images = str(args.image_url)
+if (URL_images == "None"):
+    print("URL_images not be input. Using the default URL.")
+    URL_images = "http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def start_main():
@@ -152,8 +171,8 @@ def write_confg():
     save_config("SERIAL", "RG_PORT", RG_PORT)
     save_config("SERIAL", "BAUD_RATE", BAUD_RATE)
     save_config("IP", "GW_IP", GW_IP)
+    save_config("AUTHENTICATION", "url_images", URL_images)
     save_config("AUTHENTICATION", "user", user)
-    save_config("COMMON", "URL_images", URL_images)
     save_config("COMMON", "READY_SEC", READY_SEC)
 
 start_main()
