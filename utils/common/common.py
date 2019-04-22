@@ -7,6 +7,10 @@ def save_config(section, option, value):
     script_dir = os.path.dirname(os.path.realpath(__file__))
     config_path = script_dir + "/../../config.ini"
 
+    if not os.path.exists(config_path):
+        print("The config file not exist. Exit!!!")
+        return
+
     config = configparser.RawConfigParser()
     config.read(config_path)
 
@@ -22,6 +26,10 @@ def save_config(section, option, value):
 def get_config(section, option):
     script_dir = os.path.dirname(os.path.realpath(__file__))
     config_path = script_dir + "/../../config.ini"
+
+    if not os.path.exists(config_path):
+        print("The config file not exist. Exit!!!")
+        return
 
     config = configparser.RawConfigParser()
     config.read(config_path)
