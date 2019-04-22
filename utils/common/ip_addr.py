@@ -1,6 +1,9 @@
-import argparse
+import ast
+import configparser
 import os
 import subprocess
+
+from utils.common.common import *
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def set_static_IP(interface, GW_IP):
@@ -18,7 +21,7 @@ def set_static_IP(interface, GW_IP):
     return str(PC_IP)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def get_INF_config(interface):
+def get_IP_config(interface):
     inf_config = {}
     dhcp_str = "DHCP enabled:"
     ip_str = "IP Address:"
@@ -48,6 +51,7 @@ def get_INF_config(interface):
             tmp = inf_data[line]
             id = tmp.find(mask_str)
             tmp = tmp[id + len(mask_str):]
+            tmp = tmp.strip()
             tmp = tmp.strip(')')
             inf_config.update({"mask":str(tmp)})
 
@@ -88,12 +92,33 @@ def get_RG_interface(GW_IP):
                 return rg_inf
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def restore_IP_config(interface):
+    print("Restoring the original IP configurations...")
+    origin_IP_config = get_config("ip", "origin_ip_config")
+
+    # Convert <str> type to <dict> type
+    origin_IP_config = ast.literal_eval(origin_IP_config)
+
+    if (origin_IP_config["dhcp"] == "Yes"):
+        set_DHCP_IP(interface)
+    else:
+        ip = origin_IP_config["ip"]
+        mask = origin_IP_config["mask"]
+        gateway = origin_IP_config["gateway"]
+
+        cmd = "netsh interface ipv4 set address name="\
+                + interface + " static " + ip + " mask="\
+                + mask + " gateway=" + gateway
+        os.system(cmd)
+        print("Set the static IP: " + ip)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def set_DHCP_IP(interface):
     cmd_ip = "netsh interface ipv4 set address name=" + interface + " dhcp"
     cmd_dns = "netsh interface ipv4 set dns name=" + interface + " dhcp"
     os.system(cmd_ip)
     os.system(cmd_dns)
-    if (str(get_INF_config(interface)["dhcp"]) == "Yes"):
+    if (str(get_IP_config(interface)["dhcp"]) == "Yes"):
         print("Configure the DHCP IP successfully.")
 
         return True

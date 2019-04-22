@@ -30,17 +30,17 @@ BAUD_RATE = 115200
 READY_SEC = 120
 PC_IP = ""
 
-RG_COM_PORT = str(args.rg_port)
-if (RG_COM_PORT == "None"):
-    RG_COM_PORT = "COM5"
-    print("RG_COM_PORT not be input. Using the default RG_COM_PORT.")
-RG_COM_PORT = RG_COM_PORT.upper()
+RG_PORT = str(args.rg_port)
+if (RG_PORT == "None"):
+    RG_PORT = "COM5"
+    print("RG_PORT not be input. Using the default RG_PORT.")
+RG_PORT = RG_PORT.upper()
 
-CM_COM_PORT = str(args.cm_port)
-if (CM_COM_PORT == "None"):
-    CM_COM_PORT = "COM6"
-    print("CM_COM_PORT not be input. Using the default CM_COM_PORT.")
-CM_COM_PORT = CM_COM_PORT.upper()
+CM_PORT = str(args.cm_port)
+if (CM_PORT == "None"):
+    CM_PORT = "COM6"
+    print("CM_PORT not be input. Using the default CM_PORT.")
+CM_PORT = CM_PORT.upper()
 
 # GW_IP = "192.168.0.1"
 GW_IP = str(args.gw_ip)
@@ -59,13 +59,19 @@ def start_main():
     print("utils_dir: " + utils_dir)
 
     rg_inf = get_RG_interface(GW_IP)
+    save_config("IP", 'rg_inf', rg_inf)
+
+    origin_IP_config = get_IP_config(rg_inf)
+    save_config("IP", 'origin_IP_config', origin_IP_config)
+    print("origin_IP_config: " + str(origin_IP_config))
+
     PC_IP = set_static_IP(rg_inf, GW_IP)
-    save_config("COMMON", 'PC_IP', PC_IP)
+    save_config("IP", 'PC_IP', PC_IP)
 
     print("GW_IP: " + GW_IP)
     print("PC_IP: " + PC_IP)
-    print("RG_COM_PORT: " + RG_COM_PORT)
-    print("CM_COM_PORT: " + CM_COM_PORT)
+    print("RG_PORT: " + RG_PORT)
+    print("CM_PORT: " + CM_PORT)
 
     if check_precondition():
         if configure_TFTP_server(PC_IP, binaries_dir, TFTPd64_file):
@@ -78,8 +84,8 @@ def start_main():
                         kill_processes()
                         restore_TFTP_server_config(TFTPd64_file)
                         print("Ready to run Automation test after " + str(READY_SEC) + " seconds...")
-                        print("Done.")
-    set_DHCP_IP(rg_inf)
+    restore_IP_config(rg_inf)
+    print("... DONE ...")
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def check_precondition():
@@ -125,7 +131,7 @@ def flash_firmware():
     print("Flashing firmware images...")
     flash_fw_script = utils_dir + "/secure_crt/cm/flash_fw_silent.py"
     cmd = str("\""+ SecureCRT_file + "\"" + " /ARG " + binaries_dir + "/ /ARG " + GW_IP + " /ARG " + PC_IP
-            + " /SCRIPT " + flash_fw_script + " /SERIAL " + CM_COM_PORT + " /BAUD " + str(BAUD_RATE))
+            + " /SCRIPT " + flash_fw_script + " /SERIAL " + CM_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -133,7 +139,7 @@ def enable_cm_console():
     print("\n*****************************************************************")
     print("Enabling CM console if disabled...")
     enable_cm_script = utils_dir + "/secure_crt/rg/common.py"
-    cmd = str("\""+ SecureCRT_file + "\"" + " /SCRIPT " + enable_cm_script + " /SERIAL " + RG_COM_PORT + " /BAUD " + str(BAUD_RATE))
+    cmd = str("\""+ SecureCRT_file + "\"" + " /SCRIPT " + enable_cm_script + " /SERIAL " + RG_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -142,12 +148,12 @@ def write_confg():
     save_config("COMMON", 'firmware_file', firmware_file)
     save_config("COMMON", 'binaries_dir', binaries_dir)
     save_config("COMMON", 'utils_dir', utils_dir)
-    save_config("COMMON", "CM_COM_PORT", CM_COM_PORT)
-    save_config("COMMON", "RG_COM_PORT", RG_COM_PORT)
-    save_config("COMMON", "GW_IP", GW_IP)
-    save_config("COMMON", "user", user)
+    save_config("SERIAL", "CM_PORT", CM_PORT)
+    save_config("SERIAL", "RG_PORT", RG_PORT)
+    save_config("SERIAL", "BAUD_RATE", BAUD_RATE)
+    save_config("IP", "GW_IP", GW_IP)
+    save_config("AUTHENTICATION", "user", user)
     save_config("COMMON", "URL_images", URL_images)
-    save_config("COMMON", "BAUD_RATE", BAUD_RATE)
     save_config("COMMON", "READY_SEC", READY_SEC)
 
 start_main()
