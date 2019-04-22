@@ -10,10 +10,10 @@ def save_config(section, option, value):
     config = configparser.RawConfigParser()
     config.read(config_path)
 
-    if not config.has_section(section.upper()):
-        config.add_section(section.upper())
+    if not config.has_section(str(section).upper()):
+        config.add_section(str(section).upper())
 
-    config.set(str(section), str(option), str(value))
+    config.set(str(section).upper(), str(option), str(value))
 
     with open(config_path, 'w') as config_file:
         config.write(config_file)
@@ -26,20 +26,21 @@ def get_config(section, option):
     config = configparser.RawConfigParser()
     config.read(config_path)
 
-    return config.get(str(section).upper(), option)
+    if config.has_option(str(section).upper(), option):
+        return config.get(str(section).upper(), option)
+    else:
+        return
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def get_firmware(user, URL_images):
-    if (URL_images == "None"):
-        print("URL_images not be input. Using the default URL.")
-        URL_images = "http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
-    print("URL_images: " + URL_images)
-
     if (user == "None"):
-        print("Login information not be input. Using the default login information.")
-        user = "admin:password"
+        user = str(get_config("AUTHENTICATION", "user"))
 
-    firmware_file = get_config("common", "firmware_file")
+    if (URL_images == "None"):
+        URL_images = str(get_config("AUTHENTICATION", "url_images"))
+
+    print("URL_images: " + URL_images)
+    firmware_file = str(get_config("common", "firmware_file"))
     if os.path.exists(firmware_file):
         print("Found an existed firmwares: " + firmware_file)
         os.remove(firmware_file)

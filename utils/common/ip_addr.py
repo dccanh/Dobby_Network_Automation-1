@@ -94,17 +94,17 @@ def get_RG_interface(GW_IP):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def restore_IP_config(interface):
     print("Restoring the original IP configurations...")
-    origin_IP_config = get_config("ip", "origin_ip_config")
+    origin_IP_config = str(get_config("ip", "origin_ip_config"))
 
     # Convert <str> type to <dict> type
     origin_IP_config = ast.literal_eval(origin_IP_config)
 
-    if (origin_IP_config["dhcp"] == "Yes"):
+    if (str(origin_IP_config["dhcp"]) == "Yes"):
         set_DHCP_IP(interface)
     else:
-        ip = origin_IP_config["ip"]
-        mask = origin_IP_config["mask"]
-        gateway = origin_IP_config["gateway"]
+        ip = str(origin_IP_config["ip"])
+        mask = str(origin_IP_config["mask"])
+        gateway = str(origin_IP_config["gateway"])
 
         cmd = "netsh interface ipv4 set address name="\
                 + interface + " static " + ip + " mask="\
