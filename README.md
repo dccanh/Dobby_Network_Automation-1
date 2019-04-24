@@ -50,7 +50,7 @@
         + **Method 1:**
             - Run directly by double-click _start.bat from its directory.
         + **Method 2:**
-            - Open Command Prompt (cmd)
+            - Open Command Prompt (cmd) as Administrator
             - Run command:
                     <Path_to_file>\_start.bat
                     <Path_to_file>\_start.py
