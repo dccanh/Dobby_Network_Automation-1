@@ -32,7 +32,7 @@ def get_IP_config(interface):
     inf_data = str(subprocess.check_output(cmd))
     inf_data = inf_data.split("\\r\\n")
 
-    for line in range(1, len(inf_data)):
+    for line in range(0, len(inf_data)):
         if dhcp_str in inf_data[line]:
             tmp = inf_data[line]
             id = tmp.find(dhcp_str)
@@ -71,21 +71,21 @@ def get_RG_interface(GW_IP):
     ipconfig_data = str(subprocess.check_output(cmd))
     ipconfig_data = ipconfig_data.split("\\r\\n")
 
-    for line in range(1, len(ipconfig_data)):
+    for line in range(0, len(ipconfig_data)):
         inf_str = "Configuration for interface"
         if inf_str in ipconfig_data[line]:
             inf_data = ipconfig_data[line]
             id = inf_data.find("\"")
             interfaces.append(inf_data[id:])
 
-    for i in range(1, len(interfaces)):
+    for i in range(0, len(interfaces)):
         gw = GW_IP.split(".")
         gw_str = gw[0] + "." + gw[1] + "." + gw[2] + "."
         cmd = "netsh interface ipv4 show config " + interfaces[i]
         inf_data = str(subprocess.check_output(cmd))
         inf_data = inf_data.split("\\r\\n")
 
-        for line in range(1, len(inf_data)):
+        for line in range(0, len(inf_data)):
             if gw_str in inf_data[line]:
                 rg_inf = str(interfaces[i])
 
