@@ -84,6 +84,10 @@ def start_main():
     save_config("IP", 'origin_IP_config', origin_IP_config)
     print("origin_IP_config: " + str(origin_IP_config))
 
+    origin_TFTP_config = get_origin_TFTP_server_config(TFTPd64_file)
+    save_config("COMMON", 'origin_TFTP_config', origin_TFTP_config)
+    print("origin_TFTP_config: " + str(origin_TFTP_config))
+
     PC_IP = set_static_IP(rg_inf, GW_IP)
     save_config("IP", 'PC_IP', PC_IP)
 
