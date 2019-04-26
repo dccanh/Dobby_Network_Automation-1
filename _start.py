@@ -118,7 +118,7 @@ def start_main():
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def check_precondition():
-    global SecureCRT_file, TFTPd64_file, Seven_Zip_file, binaries_dir
+    global SecureCRT_file, TFTPd64_file, Seven_Zip_file, binaries_dir, firmware_file, utils_dir
 
     print("\n*****************************************************************")
     print("Checking some applications need to install...")
@@ -157,39 +157,34 @@ def check_precondition():
     if os.path.exists(binaries_dir):
         shutil.rmtree(binaries_dir)
     os.mkdir(binaries_dir)
+    print("binaries_dir: " + binaries_dir)
     save_config("COMMON", 'binaries_dir', binaries_dir)
+
+    firmware_file = script_dir + "\\fw_images.zip"
+    save_config("COMMON", 'firmware_file', firmware_file)
+
+    utils_dir = str(get_config("COMMON", "utils_dir"))
+    if not os.path.exists(utils_dir):
+        utils_dir = script_dir + "\\utils"
+    print("utils_dir: " + utils_dir)
+    save_config("COMMON", 'utils_dir', utils_dir)
 
     return True
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def extract_firmware():
-    global firmware_file, utils_dir
-
     print("\n*****************************************************************")
     print("Checking the downloaded firmware images...")
 
-    firmware_file = str(get_config("COMMON", "firmware_file"))
     if not os.path.exists(firmware_file):
-        firmware_file = script_dir + "\\fw_images.zip"
-        if not os.path.exists(firmware_file):
-            print("The firmwares not exist. Exit!!!")
-            return False
-        else:
-            save_config("COMMON", 'firmware_file', firmware_file)
+        print("The firmwares not exist. Exit!!!")
+        return False
 
     print("Extracting the downloaded firmware images to: "+ binaries_dir)
     cmd = str("\""+ Seven_Zip_file + "\"" + " x " + firmware_file + " -o" + binaries_dir + " -aoa")
     if (os.system(cmd) != 0):
         print("Something wrong when extract the downloaded firmware images. Exit!!!")
         return False
-
-    utils_dir = str(get_config("COMMON", "utils_dir"))
-    if not os.path.exists(utils_dir):
-        utils_dir = script_dir + "\\utils"
-        save_config("COMMON", 'utils_dir', utils_dir)
-
-    print("binaries_dir: " + binaries_dir)
-    print("utils_dir: " + utils_dir)
 
     return True
 
