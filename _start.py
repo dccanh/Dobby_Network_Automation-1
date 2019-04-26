@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser(description='str(sys.argv[0]')
 parser.add_argument('-cm','--cm_port', help='The COM port of CM console. Ex: COM5', required=False)
 parser.add_argument('-ip','--gw_ip', help='The IP address of the DUT gateway. Ex: 192.168.0.1', required=False)
 parser.add_argument('-rg','--rg_port', help='The COM port of RG console. Ex: COM6', required=False)
+parser.add_argument('-m','--mode', help='The operation mode: auto or manual', required=False)
 parser.add_argument('-url','--image_url', help='The direct URL link of firmware image. Ex: http://abc.xyz/fw_images.zip', required=False)
 parser.add_argument('-user','--login', help='(Optional) The login information to download the firmware image with format: \"user:password\"', required=False)
 args = parser.parse_args()
@@ -80,6 +81,12 @@ if (URL_images == "None"):
     print("URL_images not be input. Using the default URL.")
     URL_images = "http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
 save_config("AUTHENTICATION", "url_images", URL_images)
+
+mode = str(args.mode)
+if (mode.lower() == "manual"):
+    save_config("COMMON", "manual_mode", "True")
+else:
+    save_config("COMMON", "manual_mode", "False")
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def start_main():
