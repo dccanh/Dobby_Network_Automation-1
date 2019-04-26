@@ -1,4 +1,5 @@
 import argparse
+import configparser
 import os
 import shutil
 import subprocess
@@ -18,17 +19,22 @@ parser.add_argument('-user','--login', help='(Optional) The login information to
 args = parser.parse_args()
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-firmware_file = script_dir + "\\fw_images.zip"
-binaries_dir = script_dir + "\\binaries"
-utils_dir = script_dir + "\\utils"
+save_config("COMMON", 'script_dir', script_dir)
 
-SecureCRT_file = "C:\\Program Files\\VanDyke Software\\SecureCRT\\SecureCRT.exe"
-TFTPd64_file = "C:\\Program Files\\Tftpd64\\tftpd64.exe"
-Seven_Zip_file = "C:\\Program Files\\7-Zip\\7z.exe"
+firmware_file = None
+binaries_dir = None
+utils_dir = None
+
+SecureCRT_file = None
+TFTPd64_file = None
+Seven_Zip_file = None
 
 BAUD_RATE = 115200
 READY_SEC = 120
-PC_IP = ""
+save_config("SERIAL", "BAUD_RATE", BAUD_RATE)
+save_config("COMMON", "READY_SEC", READY_SEC)
+
+PC_IP = None
 
 RG_PORT = str(args.rg_port).upper()
 if (RG_PORT == "NONE"):
@@ -38,6 +44,8 @@ if (RG_PORT == "NONE"):
         print("RG_PORT not be configured in the config file. Please check again. Exit!!!\n")
         parser.print_help()
         sys.exit()
+print("RG_PORT: " + RG_PORT)
+save_config("SERIAL", "RG_PORT", RG_PORT)
 
 CM_PORT = str(args.cm_port).upper()
 if (CM_PORT == "NONE"):
@@ -47,6 +55,8 @@ if (CM_PORT == "NONE"):
         print("CM_PORT not be configured in the config file. Please check again. Exit!!!\n")
         parser.print_help()
         sys.exit()
+print("CM_PORT: " + CM_PORT)
+save_config("SERIAL", "CM_PORT", CM_PORT)
 
 # GW_IP = "192.168.0.1"
 GW_IP = str(args.gw_ip)
@@ -57,25 +67,26 @@ if (GW_IP == "None"):
         print("GW_IP not be configured in the config file. Please check again. Exit!!!\n")
         parser.print_help()
         sys.exit()
+print("GW_IP: " + GW_IP)
+save_config("IP", "GW_IP", GW_IP)
 
 user = str(args.login)
 if (user == "None"):
     user = "admin:password"
+save_config("AUTHENTICATION", "user", user)
 
 URL_images = str(args.image_url)
 if (URL_images == "None"):
     print("URL_images not be input. Using the default URL.")
     URL_images = "http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
+save_config("AUTHENTICATION", "url_images", URL_images)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def start_main():
     global PC_IP
 
-    write_confg()
     print("\n*****************************************************************")
     print("script_dir: " + script_dir)
-    print("binaries_dir: " + binaries_dir)
-    print("utils_dir: " + utils_dir)
 
     rg_inf = get_RG_interface(GW_IP)
     save_config("IP", 'rg_inf', rg_inf)
@@ -84,19 +95,14 @@ def start_main():
     save_config("IP", 'origin_IP_config', origin_IP_config)
     print("origin_IP_config: " + str(origin_IP_config))
 
-    origin_TFTP_config = get_origin_TFTP_server_config(TFTPd64_file)
-    save_config("COMMON", 'origin_TFTP_config', origin_TFTP_config)
-    print("origin_TFTP_config: " + str(origin_TFTP_config))
-
     PC_IP = set_static_IP(rg_inf, GW_IP)
+    print("PC_IP: " + PC_IP)
     save_config("IP", 'PC_IP', PC_IP)
 
-    print("GW_IP: " + GW_IP)
-    print("PC_IP: " + PC_IP)
-    print("RG_PORT: " + RG_PORT)
-    print("CM_PORT: " + CM_PORT)
-
     if check_precondition():
+        origin_TFTP_config = get_origin_TFTP_server_config(TFTPd64_file)
+        save_config("TFTP", 'origin_TFTP_config', origin_TFTP_config)
+        print("origin_TFTP_config: " + str(origin_TFTP_config))
         if configure_TFTP_server(PC_IP, binaries_dir, TFTPd64_file):
             if get_firmware(user, URL_images):
                 if extract_firmware():
@@ -112,39 +118,78 @@ def start_main():
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def check_precondition():
+    global SecureCRT_file, TFTPd64_file, Seven_Zip_file, binaries_dir
+
     print("\n*****************************************************************")
     print("Checking some applications need to install...")
+
+    SecureCRT_file = str(get_config("COMMON", "SecureCRT_file"))
     if not os.path.exists(SecureCRT_file):
-        print(SecureCRT_file + " not exist. Exit!!!")
-        return False
+        SecureCRT_file = "C:\\Program Files\\VanDyke Software\\SecureCRT\\SecureCRT.exe"
+        if not os.path.exists(SecureCRT_file):
+            print("SecureCRT_file not exist at the path:\"" + SecureCRT_file + "\"\nExit!!!")
+            return False
+        else:
+            save_config("COMMON", 'SecureCRT_file', SecureCRT_file)
 
+    TFTPd64_file = str(get_config("TFTP", "TFTPd64_file"))
     if not os.path.exists(TFTPd64_file):
-        print(TFTPd64_file + " not exist. Exit!!!")
-        return False
+        TFTPd64_file = "C:\\Program Files\\Tftpd64\\tftpd64.exe"
+        if not os.path.exists(TFTPd64_file):
+            print("TFTPd64_file not exist at the path: \"" + TFTPd64_file + "\"\nExit!!!")
+            return False
+        else:
+            save_config("TFTP", 'TFTPd64_file', TFTPd64_file)
 
+    Seven_Zip_file = str(get_config("COMMON", "Seven_Zip_file"))
     if not os.path.exists(Seven_Zip_file):
-        print(Seven_Zip_file + " not exist. Exit!!!")
-        return False
+        Seven_Zip_file = "C:\\Program Files\\7-Zip\\7z.exe"
+        if not os.path.exists(Seven_Zip_file):
+            print("Seven_Zip_file not exist at the path: \"" + Seven_Zip_file + "\"\nExit!!!")
+            return False
+        else:
+            save_config("COMMON", 'Seven_Zip_file', Seven_Zip_file)
+
+    binaries_dir = str(get_config("COMMON", "binaries_dir"))
+    if not os.path.exists(os.path.dirname(str(binaries_dir))):
+        binaries_dir = script_dir + "\\binaries"
+
+    if os.path.exists(binaries_dir):
+        shutil.rmtree(binaries_dir)
+    os.mkdir(binaries_dir)
+    save_config("COMMON", 'binaries_dir', binaries_dir)
 
     return True
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def extract_firmware():
-    print("\n*****************************************************************")
-    print("Checking the downloaded firmware images: " + firmware_file)
-    if not os.path.exists(firmware_file):
-        print("The firmwares not exist. Exit!!!")
-        return False
+    global firmware_file, utils_dir
 
-    if os.path.exists(binaries_dir):
-        shutil.rmtree(binaries_dir)
-    os.mkdir(binaries_dir)
+    print("\n*****************************************************************")
+    print("Checking the downloaded firmware images...")
+
+    firmware_file = str(get_config("COMMON", "firmware_file"))
+    if not os.path.exists(firmware_file):
+        firmware_file = script_dir + "\\fw_images.zip"
+        if not os.path.exists(firmware_file):
+            print("The firmwares not exist. Exit!!!")
+            return False
+        else:
+            save_config("COMMON", 'firmware_file', firmware_file)
 
     print("Extracting the downloaded firmware images to: "+ binaries_dir)
     cmd = str("\""+ Seven_Zip_file + "\"" + " x " + firmware_file + " -o" + binaries_dir + " -aoa")
     if (os.system(cmd) != 0):
         print("Something wrong when extract the downloaded firmware images. Exit!!!")
         return False
+
+    utils_dir = str(get_config("COMMON", "utils_dir"))
+    if not os.path.exists(utils_dir):
+        utils_dir = script_dir + "\\utils"
+        save_config("COMMON", 'utils_dir', utils_dir)
+
+    print("binaries_dir: " + binaries_dir)
+    print("utils_dir: " + utils_dir)
 
     return True
 
@@ -164,19 +209,5 @@ def enable_cm_console():
     enable_cm_script = utils_dir + "/secure_crt/rg/common.py"
     cmd = str("\""+ SecureCRT_file + "\"" + " /SCRIPT " + enable_cm_script + " /SERIAL " + RG_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def write_confg():
-    save_config("COMMON", 'script_dir', script_dir)
-    save_config("COMMON", 'firmware_file', firmware_file)
-    save_config("COMMON", 'binaries_dir', binaries_dir)
-    save_config("COMMON", 'utils_dir', utils_dir)
-    save_config("SERIAL", "CM_PORT", CM_PORT)
-    save_config("SERIAL", "RG_PORT", RG_PORT)
-    save_config("SERIAL", "BAUD_RATE", BAUD_RATE)
-    save_config("IP", "GW_IP", GW_IP)
-    save_config("AUTHENTICATION", "url_images", URL_images)
-    save_config("AUTHENTICATION", "user", user)
-    save_config("COMMON", "READY_SEC", READY_SEC)
 
 start_main()
