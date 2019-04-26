@@ -94,7 +94,7 @@ def configure_TFTP_server(PC_IP, binaries_dir, TFTPd64_file):
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def restore_TFTP_server_config(TFTPd64_file):
-    origin_TFTP_config = str(get_config("common", "origin_tftp_config"))
+    origin_TFTP_config = str(get_config("TFTP", "origin_tftp_config"))
 
     # Convert <str> type to <dict> type
     origin_TFTP_config = ast.literal_eval(origin_TFTP_config)
