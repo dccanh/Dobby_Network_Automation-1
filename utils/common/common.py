@@ -41,26 +41,31 @@ def get_config(section, option):
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def get_firmware(user, URL_images):
-    if (user == "None"):
-        user = str(get_config("AUTHENTICATION", "user"))
+    manual_mode = str(get_config("COMMON", "manual_mode"))
 
-    if (URL_images == "None"):
-        URL_images = str(get_config("AUTHENTICATION", "url_images"))
+    if (manual_mode.upper() == "TRUE"):
+        print("Switch to manual mode and ignore getting the firmware images from server.")
+        return True
+    else:
+        if (user == "None"):
+            user = str(get_config("AUTHENTICATION", "user"))
 
-    print("URL_images: " + URL_images)
-    firmware_file = str(get_config("common", "firmware_file"))
-    if os.path.exists(firmware_file):
-        print("Found an existed firmwares: " + firmware_file)
-        os.remove(firmware_file)
-        print("Removed the existed firmwares before downloading.")
+        if (URL_images == "None"):
+            URL_images = str(get_config("AUTHENTICATION", "url_images"))
+        print("URL_images: " + URL_images)
+        firmware_file = str(get_config("common", "firmware_file"))
+        if os.path.exists(firmware_file):
+            print("Found an existed firmwares: " + firmware_file)
+            os.remove(firmware_file)
+            print("Removed the existed firmwares before downloading.")
 
-    print("Getting firmware images from server: " + URL_images)
-    cmd = "curl --retry 3 -u " + user + " " + URL_images + " -o " + firmware_file
-    if (os.system(cmd) != 0):
-        print("Download firmware images FAIL. Exit!!!")
-        return False
+        print("Getting firmware images from server: " + URL_images)
+        cmd = "curl --retry 3 -u " + user + " " + URL_images + " -o " + firmware_file
+        if (os.system(cmd) != 0):
+            print("Download firmware images FAIL. Exit!!!")
+            return False
 
-    return True
+        return True
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def kill_processes():
