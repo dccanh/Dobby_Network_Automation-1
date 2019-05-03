@@ -38,13 +38,16 @@ def remove_wifi_profile(wifi_profile):
         return False
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def add_wifi_profile(wifi_profile_path):
+def add_wifi_profile(wifi_profile):
     script_dir = os.path.dirname(os.path.realpath(__file__))
     print("Adding the profile...")
 
-    wifi_profile_file = wifi_profile_path
+    wifi_profile_file = wifi_profile
+    wifi_profile = str(os.path.splitext(os.path.basename(wifi_profile))[0])
 
-    if wifi_profile_file == None:
+    if os.path.exists(wifi_profile_file):
+        print("Found the wifi profile file here.")
+    else:
         print("Finding the wifi profile file in current directory: \"" + script_dir + "\"")
         wifi_profile_file = script_dir + "\\" +  wifi_profile + ".xml"
 
@@ -52,15 +55,13 @@ def add_wifi_profile(wifi_profile_path):
             print(wifi_profile_file + " not exist. Please check again!!!")
 
             return False
-        else:
-            print("Found the wifi profile file here.")
 
-    print("Wifi profile: \"" + wifi_profile_file + "\"")
+    print("Found a wifi profile: \"" + wifi_profile_file + "\"")
 
     cmd = "netsh wlan add profile filename=\"" + wifi_profile_file + "\""
     os.system(cmd)
 
-    if find_wifi_profile_in_list(wifi_profile, get_wifi_profiles()):
+    if find_wifi_profile_in_list(str(wifi_profile), str(get_wifi_profiles())):
         print("The profile added successfully!")
 
         return True
@@ -100,3 +101,11 @@ def get_wifi_profiles():
     profiles = subprocess.check_output(cmd)
 
     return profiles
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def connect_HVNWifi():
+    profile = "HVNWifi"
+    disconnect_wifi()
+    remove_wifi_profile(profile)
+    add_wifi_profile(profile)
+    connect_wifi_profile(profile)
