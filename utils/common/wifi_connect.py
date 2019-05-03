@@ -10,7 +10,7 @@ def connect_wifi_profile(wifi_profile):
     cmd = "netsh wlan connect name=\"" + wifi_profile + "\""
     log = subprocess.check_output(cmd)
 
-    if (log.find("Connection request was completed successfully") != -1):
+    if (str(log).find("Connection request was completed successfully") != -1):
         print("Connected the wifi: \"" + wifi_profile + "\"")
 
         return True
@@ -77,7 +77,7 @@ def disconnect_wifi():
     cmd = "netsh wlan disconnect"
     log = subprocess.check_output(cmd)
 
-    if (log.find("Disconnection request was completed successfully for interface") != -1):
+    if (str(log).find("Disconnection request was completed successfully for interface") != -1):
         print("Disconnected wifi successfully!")
 
         return True
@@ -88,7 +88,7 @@ def disconnect_wifi():
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def find_wifi_profile_in_list(wifi_profile, list):
-    if list.find(wifi_profile) > 0:
+    if str(list).find(wifi_profile) > 0:
 
         return True
     else:
