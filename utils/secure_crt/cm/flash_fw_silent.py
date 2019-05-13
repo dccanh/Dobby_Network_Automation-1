@@ -105,16 +105,16 @@ def upgrade_one_image(filepath, part_num):
 		send_cmd_wait_resp("n", Prompt)
 		return True
 	elif (result == 2) or (result == 4):
-		TFTPd64_file = "C:\\Program Files\\Tftpd64\\tftpd64.exe"
-		if os.path.exists(TFTPd64_file):
-			cmd = "taskkill /f /im tftpd64.exe"
-			os.system(cmd)
-			crt.Sleep(1000)
-			cmd = str("start \"TFTP\" \"" + TFTPd64_file + "\"")
-			os.system(cmd)
-			crt.Sleep(3000)
-
 		for retry in range(0, 3):
+			TFTPd64_file = "C:\\Program Files\\Tftpd64\\tftpd64.exe"
+			if os.path.exists(TFTPd64_file):
+				cmd = "taskkill /f /im tftpd64.exe"
+				os.system(cmd)
+				crt.Sleep(3000)
+				cmd = str("start \"TFTP\" \"" + TFTPd64_file + "\"")
+				os.system(cmd)
+				crt.Sleep(3000)
+
 			crt.Screen.Send('\r')
 			send_receive_string("d", "]: ")
 			send_cmd_wait_resp(PCIP, "]: ")
