@@ -35,4 +35,3 @@ if (mode.lower() == "manual"):
 else:
     save_config("COMMON", "manual_mode", "False")
     print("Flash mode: Auto")
-

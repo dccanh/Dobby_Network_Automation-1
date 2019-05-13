@@ -110,7 +110,7 @@ def start_main():
         origin_TFTP_config = get_origin_TFTP_server_config(TFTPd64_file)
         save_config("TFTP", 'origin_TFTP_config', origin_TFTP_config)
         print("origin_TFTP_config: " + str(origin_TFTP_config))
-        if configure_TFTP_server(PC_IP, binaries_dir, TFTPd64_file):
+        if configure_TFTP_server('', binaries_dir, TFTPd64_file):
             if get_firmware(user, URL_images):
                 if extract_firmware():
                     kill_processes()
