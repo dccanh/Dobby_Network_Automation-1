@@ -104,29 +104,18 @@ def upgrade_one_image(filepath, part_num):
 		send_cmd_wait_resp(part_num, "Store parameters to flash? [n]")
 		send_cmd_wait_resp("n", Prompt)
 		return True
-	elif (result == 2) or (result == 4):
-		for retry in range(0, 3):
-			TFTPd64_file = "C:\\Program Files\\Tftpd64\\tftpd64.exe"
-			if os.path.exists(TFTPd64_file):
-				cmd = "taskkill /f /im tftpd64.exe"
-				os.system(cmd)
-				crt.Sleep(3000)
-				cmd = str("start \"TFTP\" \"" + TFTPd64_file + "\"")
-				os.system(cmd)
-				crt.Sleep(3000)
+	else:
+		TFTPd64_file = "C:\\Program Files\\Tftpd64\\tftpd64.exe"
+		if os.path.exists(TFTPd64_file):
+			cmd = "taskkill /f /im tftpd64.exe"
+			os.system(cmd)
+			crt.Sleep(3000)
+			cmd = str("start \"TFTP\" \"" + TFTPd64_file + "\"")
+			os.system(cmd)
 
-			crt.Screen.Send('\r')
-			send_receive_string("d", "]: ")
-			send_cmd_wait_resp(PCIP, "]: ")
-			crt.Screen.Send(filepath + '\r')
-			res = crt.Screen.WaitForStrings([ok, err1, err2])
-			if (res == 1):
-				send_cmd_wait_resp(part_num, "Store parameters to flash? [n]")
-				send_cmd_wait_resp("n", Prompt)
-				return True
-		crt.Quit()
-	elif (result == 3):
-		crt.Quit()
+		crt.Sleep(3000)
+		crt.Screen.Send('\r')
+		upgrade_one_image(filepath, part_num)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def send_receive_string(cmd, resp):

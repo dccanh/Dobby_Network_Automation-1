@@ -103,6 +103,10 @@ def restore_IP_config(interface):
         set_DHCP_IP(interface)
     else:
         ip = str(origin_IP_config["ip"])
+        if (ip == ''):
+            print("Can not restore IP configurations.")
+            return False
+
         mask = str(origin_IP_config["mask"])
         gateway = str(origin_IP_config["gateway"])
 
@@ -111,6 +115,7 @@ def restore_IP_config(interface):
                 + mask + " gateway=" + gateway
         os.system(cmd)
         print("Set the static IP: " + ip)
+        return True
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def set_DHCP_IP(interface):
