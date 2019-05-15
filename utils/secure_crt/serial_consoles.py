@@ -18,8 +18,8 @@ def serial_consoles_main():
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def get_config(section, option):
-    script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-    config_path = os.path.join(script_dir, "config.ini")
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    config_path = str(os.path.join(script_dir, "..", "..", "config", "config.ini"))
 
     if not os.path.exists(config_path):
         return

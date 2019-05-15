@@ -71,10 +71,10 @@ if (GW_IP == "None"):
 print("GW_IP: " + GW_IP)
 save_config("IP", "GW_IP", GW_IP)
 
-user = str(args.login)
-if (user == "None"):
-    user = "admin:password"
-save_config("AUTHENTICATION", "user", user)
+dl_user = str(args.login)
+if (dl_user == "None"):
+    dl_user = "admin:password"
+save_config("AUTHENTICATION", "dl_user", dl_user)
 
 URL_images = str(args.image_url)
 if (URL_images == "None"):
@@ -111,7 +111,7 @@ def start_main():
         save_config("TFTP", 'origin_TFTP_config', origin_TFTP_config)
         print("origin_TFTP_config: " + str(origin_TFTP_config))
         if configure_TFTP_server('', binaries_dir, TFTPd64_file):
-            if get_firmware(user, URL_images):
+            if get_firmware(dl_user, URL_images):
                 if extract_firmware():
                     kill_processes()
                     enable_cm_console()
