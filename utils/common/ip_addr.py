@@ -7,6 +7,9 @@ from utils.common.common import *
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def set_static_IP(interface, GW_IP):
+    if (str(interface) == "None"):
+        return "Unknown"
+
     gw = GW_IP.split(".")
     gw_str = gw[0] + "." + gw[1] + "." + gw[2] + "."
 
@@ -22,6 +25,9 @@ def set_static_IP(interface, GW_IP):
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def get_IP_config(interface):
+    if (str(interface) == "None"):
+        return "Unknown"
+
     inf_config = {}
     dhcp_str = "DHCP enabled:"
     ip_str = "IP Address:"
@@ -93,6 +99,9 @@ def get_RG_interface(GW_IP):
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def restore_IP_config(interface):
+    if (str(interface) == "None"):
+        return "Unknown"
+
     print("Restoring the original IP configurations...")
     origin_IP_config = str(get_config("ip", "origin_ip_config"))
 
