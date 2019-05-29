@@ -15,6 +15,7 @@ parser.add_argument('-cm','--cm_port', help='The COM port of CM console. Ex: COM
 parser.add_argument('-ip','--gw_ip', help='The IP address of the DUT gateway. Ex: 192.168.0.1', required=False)
 parser.add_argument('-rg','--rg_port', help='The COM port of RG console. Ex: COM6', required=False)
 parser.add_argument('-m','--mode', help='The operation mode: auto or manual', required=False)
+parser.add_argument('-p','--product', help='The model of product. Ex: hga20r, hgj310-br', required=True)
 parser.add_argument('-url','--image_url', help='The direct URL link of firmware image. Ex: http://abc.xyz/fw_images.zip', required=False)
 parser.add_argument('-user','--login', help='(Optional) The login information to download the firmware image with format: \"user:password\"', required=False)
 args = parser.parse_args()
@@ -36,6 +37,10 @@ save_config("SERIAL", "BAUD_RATE", BAUD_RATE)
 save_config("COMMON", "READY_SEC", READY_SEC)
 
 PC_IP = None
+
+model = str(args.product).lower()
+print("model: " + model)
+save_config("COMMON", "model", model)
 
 RG_PORT = str(args.rg_port).upper()
 if (RG_PORT == "NONE"):
@@ -79,7 +84,10 @@ save_config("AUTHENTICATION", "dl_user", dl_user)
 URL_images = str(args.image_url)
 if (URL_images == "None"):
     print("URL_images not be input. Using the default URL.")
-    URL_images = "http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
+    if (model == "hga20r"):
+        URL_images = "http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
+    elif (model == "hgj310-br"):
+        URL_images = "http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hgj310-br_fw_images.zip"
 save_config("AUTHENTICATION", "url_images", URL_images)
 
 mode = str(args.mode)
@@ -114,7 +122,8 @@ def start_main():
             if get_firmware(dl_user, URL_images):
                 if extract_firmware():
                     kill_processes()
-                    enable_cm_console()
+                    if (model == "hga20r"):
+                        enable_cm_console()
                     if start_TFTP(TFTPd64_file):
                         flash_firmware()
                         kill_processes()
@@ -161,9 +170,8 @@ def check_precondition():
     if not os.path.exists(os.path.dirname(str(binaries_dir))):
         binaries_dir = script_dir + "\\binaries"
 
-    if os.path.exists(binaries_dir):
-        shutil.rmtree(binaries_dir)
-    os.mkdir(binaries_dir)
+    if not os.path.exists(binaries_dir):
+        os.mkdir(binaries_dir)
     print("binaries_dir: " + binaries_dir)
     save_config("COMMON", 'binaries_dir', binaries_dir)
 
@@ -199,9 +207,12 @@ def extract_firmware():
 def flash_firmware():
     print("\n*****************************************************************")
     print("Flashing firmware images...")
-    flash_fw_script = utils_dir + "/secure_crt/cm/flash_fw_silent.py"
+    if (model == "hga20r"):
+        flash_fw_script = utils_dir + "/secure_crt/cm/flash_fw_silent.py"
+    elif (model == "hgj310-br"):
+        flash_fw_script = utils_dir + "/secure_crt/rg/flash_fw_silent_hgj310-br.py"
     cmd = str("\""+ SecureCRT_file + "\"" + " /ARG " + binaries_dir + "/ /ARG " + GW_IP + " /ARG " + PC_IP
-            + " /SCRIPT " + flash_fw_script + " /SERIAL " + CM_PORT + " /BAUD " + str(BAUD_RATE))
+            + " /SCRIPT " + flash_fw_script + " /SERIAL " + RG_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -211,5 +222,13 @@ def enable_cm_console():
     enable_cm_script = utils_dir + "/secure_crt/rg/common.py"
     cmd = str("\""+ SecureCRT_file + "\"" + " /SCRIPT " + enable_cm_script + " /SERIAL " + RG_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def in_RG_console():
+    crt.Screen.Send('\r')
+    if (crt.Screen.WaitForString(RG_Prompt, 1) == True):
+        return True
+    else:
+        return False
 
 start_main()
