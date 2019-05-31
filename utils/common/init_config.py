@@ -11,6 +11,7 @@ from common import *
 parser = argparse.ArgumentParser(description='str(sys.argv[0]')
 parser.add_argument('-cm','--cm_port', help='The COM port of CM console. Ex: COM5', required=True)
 parser.add_argument('-ip','--gw_ip', help='The IP address of the DUT gateway. Ex: 192.168.0.1', required=True)
+parser.add_argument('-p','--product', help='The model of product. Ex: hga20r, hgj310-br', required=True)
 parser.add_argument('-rg','--rg_port', help='The COM port of RG console. Ex: COM6', required=True)
 parser.add_argument('-m','--mode', help='The operation mode: auto or manual', required=False)
 args = parser.parse_args()
@@ -27,6 +28,10 @@ save_config("SERIAL", "CM_PORT", CM_PORT)
 GW_IP = str(args.gw_ip)
 print("GW_IP: " + GW_IP)
 save_config("IP", "GW_IP", GW_IP)
+
+model = str(args.product).lower()
+print("model: " + model)
+save_config("COMMON", "model", model)
 
 mode = str(args.mode)
 if (mode.lower() == "manual"):

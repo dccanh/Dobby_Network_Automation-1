@@ -15,7 +15,7 @@ parser.add_argument('-cm','--cm_port', help='The COM port of CM console. Ex: COM
 parser.add_argument('-ip','--gw_ip', help='The IP address of the DUT gateway. Ex: 192.168.0.1', required=False)
 parser.add_argument('-rg','--rg_port', help='The COM port of RG console. Ex: COM6', required=False)
 parser.add_argument('-m','--mode', help='The operation mode: auto or manual', required=False)
-parser.add_argument('-p','--product', help='The model of product. Ex: hga20r, hgj310-br', required=True)
+parser.add_argument('-p','--product', help='The model of product. Ex: hga20r, hgj310-br', required=False)
 parser.add_argument('-url','--image_url', help='The direct URL link of firmware image. Ex: http://abc.xyz/fw_images.zip', required=False)
 parser.add_argument('-user','--login', help='(Optional) The login information to download the firmware image with format: \"user:password\"', required=False)
 args = parser.parse_args()
@@ -39,8 +39,16 @@ save_config("COMMON", "READY_SEC", READY_SEC)
 PC_IP = None
 
 model = str(args.product).lower()
+if (model == "none"):
+    print("model not be input. Using the default model from the config file.")
+    model = str(get_config("COMMON", "model"))
+    if (model == "") or (model == "None"):
+        print("model not be configured in the config file. Please check again. Exit!!!\n")
+        parser.print_help()
+        sys.exit()
+else:
+    save_config("COMMON", "model", model)
 print("model: " + model)
-save_config("COMMON", "model", model)
 
 RG_PORT = str(args.rg_port).upper()
 if (RG_PORT == "NONE"):
@@ -50,8 +58,9 @@ if (RG_PORT == "NONE"):
         print("RG_PORT not be configured in the config file. Please check again. Exit!!!\n")
         parser.print_help()
         sys.exit()
+else:
+    save_config("SERIAL", "RG_PORT", RG_PORT)
 print("RG_PORT: " + RG_PORT)
-save_config("SERIAL", "RG_PORT", RG_PORT)
 
 CM_PORT = str(args.cm_port).upper()
 if (CM_PORT == "NONE"):
@@ -61,8 +70,9 @@ if (CM_PORT == "NONE"):
         print("CM_PORT not be configured in the config file. Please check again. Exit!!!\n")
         parser.print_help()
         sys.exit()
+else:
+    save_config("SERIAL", "CM_PORT", CM_PORT)
 print("CM_PORT: " + CM_PORT)
-save_config("SERIAL", "CM_PORT", CM_PORT)
 
 # GW_IP = "192.168.0.1"
 GW_IP = str(args.gw_ip)
@@ -73,8 +83,9 @@ if (GW_IP == "None"):
         print("GW_IP not be configured in the config file. Please check again. Exit!!!\n")
         parser.print_help()
         sys.exit()
+else:
+    save_config("IP", "GW_IP", GW_IP)
 print("GW_IP: " + GW_IP)
-save_config("IP", "GW_IP", GW_IP)
 
 dl_user = str(args.login)
 if (dl_user == "None"):
