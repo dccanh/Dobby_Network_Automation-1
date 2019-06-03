@@ -186,7 +186,7 @@ def check_precondition():
     print("binaries_dir: " + binaries_dir)
     save_config("COMMON", 'binaries_dir', binaries_dir)
 
-    firmware_file = binaries_dir + "\\fw_images.zip"
+    firmware_file = binaries_dir + "\\" + model + "_fw_images.zip"
     save_config("COMMON", 'firmware_file', firmware_file)
 
     utils_dir = str(get_config("COMMON", "utils_dir"))
