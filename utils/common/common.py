@@ -2,11 +2,11 @@ import configparser
 import os
 import psutil
 
+script_dir = os.path.dirname(os.path.realpath(__file__))
+config_path = str(os.path.join(script_dir, "..", "..", "config", "config.ini"))
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def save_config(section, option, value):
-    script_dir = os.path.dirname(os.path.realpath(__file__))
-    config_path = str(os.path.join(script_dir, "..", "..", "config", "config.ini"))
-
     if not os.path.exists(config_path):
         print("The config file not exist. Exit!!!")
         return
@@ -17,16 +17,13 @@ def save_config(section, option, value):
     if not config.has_section(str(section).upper()):
         config.add_section(str(section).upper())
 
-    config.set(str(section).upper(), str(option), str(value))
-
-    with open(config_path, 'w') as config_file:
-        config.write(config_file)
+    if (str(get_config(section, option)) != str(value)):
+        config.set(str(section).upper(), str(option), str(value))
+        with open(config_path, 'w') as config_file:
+            config.write(config_file)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def get_config(section, option):
-    script_dir = os.path.dirname(os.path.realpath(__file__))
-    config_path = str(os.path.join(script_dir, "..", "..", "config", "config.ini"))
-
     if not os.path.exists(config_path):
         print("The config file not exist. Exit!!!")
         return
