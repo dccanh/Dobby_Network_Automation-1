@@ -42,6 +42,7 @@ rg_img_file	= binaries_dir + rg_img
 # device_tree_tgz = "rg.3390b0.dtb.tgz"
 
 Bolt_Prompt = "BOLT>"
+RG_Prompt = "RG]# "
 Initrd_Prompt = "# "
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,21 +62,28 @@ def main():
 	if not os.path.exists(rg_img_file):
 		return
 
-	if not login_rg_console():
-		return
+	wait_enter_console()
 
 	crt.Screen.Send('\r')
-	crt.Screen.Send('reboot\r')
-	crt.Screen.WaitForString('AVS init OK')
-	count = 1
-	while True and (count < 30):
-		crt.Screen.Send(chr(0x03))
-		count+=count
-	crt.Screen.Send('\r')
+	if not in_RG_console():
+		login_rg_console()
 
-	wait_enter_bolt()
-	bolt_send_cmd_wait_resp('wd -disable')
-	bolt_send_cmd_wait_resp('ifconfig eth0 -addr=' + RGIP)
+	crt.Screen.Send('\r')
+	if (crt.Screen.WaitForString(RG_Prompt, 1) == True):
+		crt.Screen.Send('reboot\r')
+		crt.Screen.WaitForString('AVS init OK')
+		count = 1
+		while True and (count < 30):
+			crt.Screen.Send(chr(0x03))
+			count+=count
+		crt.Screen.Send('\r')
+		wait_enter_bolt()
+
+	crt.Screen.Send('\r')
+	if (crt.Screen.WaitForString(Bolt_Prompt) == True):
+		# crt.Dialog.MessageBox(Bolt_Prompt + " is TRUE")
+		bolt_send_cmd_wait_resp('wd -disable')
+		bolt_send_cmd_wait_resp('ifconfig eth0 -addr=' + RGIP)
 
 	# flash bolt
 	if 'bolt' in globals():
@@ -99,7 +107,7 @@ def main():
 	bolt_send_cmd_wait_resp('load -nz -raw -addr=$DT_ADDRESS -max=0x10000 flash0.devtree0')
 
 	#boot with initrd image
-	send_cmd_wait_resp('boot ' + PCIP + ':' + initrd, "==============================")
+	send_boot_cmd_wait_resp('boot ' + PCIP + ':' + initrd)
 
 	#wait to enter initrd shell
 	result = crt.Screen.WaitForStrings(['(none) login:', "# "])
@@ -262,8 +270,8 @@ def smart_wait_string(string):
 	# 중간 lines 처리
 	while (len(string) > 80):
 		str1 = string[:79]
-		crt.Dialog.MessageBox(str(c))
-		crt.Dialog.MessageBox(str1)
+		# crt.Dialog.MessageBox(str(c))
+		# crt.Dialog.MessageBox(str1)
 		crt.Screen.WaitForString(str1 + '\r')
 		string = string[80:]
 	# 마지막 line 처리
@@ -288,27 +296,63 @@ def send_cmd_wait_resp(cmd, resp):
 	crt.Screen.WaitForString(resp)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def send_boot_cmd_wait_resp(cmd):
+	while True:
+		crt.Screen.Send(cmd + '\r')
+		#crt.Screen.WaitForString(cmd + '\r')
+		smart_wait_string(cmd + '\r')
+		# crt.Screen.WaitForString('*** command status = ')
+		# result = crt.Screen.ReadString(Bolt_Prompt)
+		res1 = '*** command status = '
+		res2 = 'Starting program '
+		res = crt.Screen.WaitForStrings([res1, res2])
+		if ( res == 1):
+			start_TFTP_server()
+			continue
+		else:
+			break
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def bolt_send_cmd_wait_resp(cmd):
-	crt.Screen.Send(cmd + '\r')
-	crt.Screen.WaitForString(cmd + '\r')
-	crt.Screen.WaitForString('*** command status = ')
-	result = crt.Screen.ReadString(Bolt_Prompt)
-	if int(result) < 0:
-		crt.Dialog.MessageBox('Command failed: result=' + str(result), 'Error')
-		# sys.exit(-1)
+	while True:
+		crt.Screen.Send(cmd + '\r')
+		crt.Screen.WaitForString(cmd + '\r')
+		crt.Screen.WaitForString('*** command status = ')
+		result = crt.Screen.ReadString(Bolt_Prompt)
+		if int(result) < 0:
+			# crt.Dialog.MessageBox('Command failed: result=' + str(result), 'Error')
+			# sys.exit(-1)
+			continue
+		else:
+			break
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def tftp_send_cmd_wait_resp(cmd, promptString):
-	crt.Screen.Send(cmd + '\r')
-	#crt.Screen.WaitForString(cmd + '\r')
-	smart_wait_string(cmd + '\r')
-	result = crt.Screen.ReadString(promptString)
-	if 'tftp: server error' in result:
-		crt.Dialog.MessageBox('Command failed:' + result, 'Error')
-		# sys.exit(-1)
-	if 'tftp: timeout' in result:
-		crt.Dialog.MessageBox('Command failed:' + result, 'Error')
-		# sys.exit(-1)
+	while True:
+		crt.Screen.Send(cmd + '\r')
+		#crt.Screen.WaitForString(cmd + '\r')
+		smart_wait_string(cmd + '\r')
+		result = crt.Screen.ReadString(promptString)
+		if ('tftp: server error' in result) or ('tftp: timeout' in result):
+			# crt.Dialog.MessageBox('Command failed:' + result, 'Error')
+			# sys.exit(-1)
+			start_TFTP_server()
+		else:
+			break
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def wait_enter_console():
+	con_01 = "OpenWrt login:"
+	con_02 = "RG]#"
+	con_03 = "BOLT>"
+
+	while True:
+		crt.Screen.Send('\r')
+		res = crt.Screen.WaitForStrings([con_01, con_02, con_03], 1)
+		if (res == 1) or (res == 2) or (res == 3):
+			break
+		else:
+			continue
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def login_rg_console():
@@ -321,11 +365,6 @@ def login_rg_console():
     if (crt.Screen.WaitForString("Password:", 1) == True):
         crt.Screen.Send(PW + '\r')
 
-    if not in_RG_console():
-        return False
-    else:
-        return True
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def in_RG_console():
     crt.Screen.Send('\r')
@@ -333,5 +372,16 @@ def in_RG_console():
         return True
     else:
         return False
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def start_TFTP_server():
+	TFTPd64_file = "C:\\Program Files\\Tftpd64\\tftpd64.exe"
+	if os.path.exists(TFTPd64_file):
+		cmd = "taskkill /f /im tftpd64.exe"
+		os.system(cmd)
+		crt.Sleep(1000)
+		cmd = str("start \"TFTP\" \"" + TFTPd64_file + "\"")
+		os.system(cmd)
+		crt.Sleep(1000)
 
 main()

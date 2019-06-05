@@ -1,5 +1,6 @@
 import argparse
 import configparser
+import ctypes
 import os
 import shutil
 import subprocess
@@ -219,9 +220,9 @@ def flash_firmware():
     print("\n*****************************************************************")
     print("Flashing firmware images...")
     if (model == "hga20r"):
-        flash_fw_script = utils_dir + "/secure_crt/cm/flash_fw_silent.py"
+        flash_fw_script = utils_dir + "/secure_crt/cm/flash_fw_hga20r.py"
     elif (model == "hgj310-br"):
-        flash_fw_script = utils_dir + "/secure_crt/rg/flash_fw_silent_hgj310-br.py"
+        flash_fw_script = utils_dir + "/secure_crt/rg/flash_fw_hgj310-br.py"
     cmd = str("\""+ SecureCRT_file + "\"" + " /ARG " + binaries_dir + "/ /ARG " + GW_IP + " /ARG " + PC_IP
             + " /SCRIPT " + flash_fw_script + " /SERIAL " + RG_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
@@ -242,4 +243,22 @@ def in_RG_console():
     else:
         return False
 
-start_main()
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
+
+if is_admin():
+    print("Running as administrator...")
+    start_main()
+else:
+    # Re-run the program with admin rights
+    # print('Number of arguments:', len(sys.argv), 'arguments.')
+    # print('Argument List:', str(sys.argv))
+    parameters = ""
+    for i in range(1, len(sys.argv)):
+        parameters = parameters + " " + str(sys.argv[i])
+    # print(parameters)
+    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__ + parameters, None, 1)

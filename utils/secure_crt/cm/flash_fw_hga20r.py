@@ -49,6 +49,13 @@ def flash_fw_silent_main():
 	if not rg_kernel_found:
 		return
 
+	while True:
+		crt.Screen.Send('\r')
+		if (crt.Screen.WaitForStrings(CM_Prompt, 1) == True):
+			break
+		else:
+			continue
+
 	crt.Screen.Send('\r')
 	if (crt.Screen.WaitForString(CM_Prompt, 1) == True):
 		crt.Screen.Send('reset\r')
@@ -105,15 +112,7 @@ def upgrade_one_image(filepath, part_num):
 		send_cmd_wait_resp("n", Prompt)
 		return True
 	else:
-		TFTPd64_file = "C:\\Program Files\\Tftpd64\\tftpd64.exe"
-		if os.path.exists(TFTPd64_file):
-			cmd = "taskkill /f /im tftpd64.exe"
-			os.system(cmd)
-			crt.Sleep(3000)
-			cmd = str("start \"TFTP\" \"" + TFTPd64_file + "\"")
-			os.system(cmd)
-
-		crt.Sleep(3000)
+		start_TFTP_server()
 		crt.Screen.Send('\r')
 		upgrade_one_image(filepath, part_num)
 
@@ -127,5 +126,16 @@ def send_cmd_wait_resp(cmd, resp):
 	crt.Screen.Send(cmd + '\r')
 	crt.Screen.WaitForString(cmd + '\r')
 	crt.Screen.WaitForString(resp)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def start_TFTP_server():
+	TFTPd64_file = "C:\\Program Files\\Tftpd64\\tftpd64.exe"
+	if os.path.exists(TFTPd64_file):
+		cmd = "taskkill /f /im tftpd64.exe"
+		os.system(cmd)
+		crt.Sleep(1000)
+		cmd = str("start \"TFTP\" \"" + TFTPd64_file + "\"")
+		os.system(cmd)
+		crt.Sleep(1000)
 
 flash_fw_silent_main()
