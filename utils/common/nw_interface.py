@@ -30,5 +30,5 @@ else:
     # Re-run the program with admin rights
     parameters = ""
     for i in range(1, len(sys.argv)):
-        parameters = parameters + " " + str(sys.argv[i])
+        parameters = parameters + " \"" + str(sys.argv[i]) + "\""
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__ + parameters, None, 1)
