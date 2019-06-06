@@ -12,8 +12,7 @@ args = parser.parse_args()
 interface = str(args.interface)
 action = str(args.action).lower()
 
-print("interface: " + interface)
-print("action: " + action)
+print("interface: " + interface + " | action: " + action)
 
 cmd = "netsh interface set interface name=\"" + interface + "\" admin=" + action
 

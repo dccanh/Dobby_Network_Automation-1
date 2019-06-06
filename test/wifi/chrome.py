@@ -1,19 +1,14 @@
-import sys, os
-
-sys.path.append('../')
-import unittest
-import configparser
-import time
-import datetime
-import socket
-import subprocess
-import random
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
+import os, sys
+import configparser
+import datetime
+import time
+import unittest
+
+sys.path.append('../')
 import helper.runner
 import helper.common
-import re
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 config_file = str(os.path.join(script_dir, "..", "..", "config", "config.ini"))
