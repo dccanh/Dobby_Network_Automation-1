@@ -221,10 +221,12 @@ def flash_firmware():
     print("Flashing firmware images...")
     if (model == "hga20r"):
         flash_fw_script = utils_dir + "/secure_crt/cm/flash_fw_hga20r.py"
+        COM_PORT = CM_PORT
     elif (model == "hgj310-br"):
         flash_fw_script = utils_dir + "/secure_crt/rg/flash_fw_hgj310-br.py"
+        COM_PORT = RG_PORT
     cmd = str("\""+ SecureCRT_file + "\"" + " /ARG " + binaries_dir + "/ /ARG " + GW_IP + " /ARG " + PC_IP
-            + " /SCRIPT " + flash_fw_script + " /SERIAL " + RG_PORT + " /BAUD " + str(BAUD_RATE))
+            + " /SCRIPT " + flash_fw_script + " /SERIAL " + COM_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
