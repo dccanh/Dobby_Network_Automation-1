@@ -53,8 +53,10 @@ def flash_fw_silent_main():
 		crt.Screen.Send('\r')
 		if (crt.Screen.WaitForStrings(CM_Prompt, 1) == True):
 			break
-		else:
-			continue
+		crt.Screen.Send('\r')
+		if (crt.Screen.WaitForStrings(BL_Prompt, 1) == True):
+			break
+		continue
 
 	crt.Screen.Send('\r')
 	if (crt.Screen.WaitForString(CM_Prompt, 1) == True):
