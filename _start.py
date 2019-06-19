@@ -16,6 +16,7 @@ parser.add_argument('-cm','--cm_port', help='The COM port of CM console. Ex: COM
 parser.add_argument('-ip','--gw_ip', help='The IP address of the DUT gateway. Ex: 192.168.0.1', required=False)
 parser.add_argument('-rg','--rg_port', help='The COM port of RG console. Ex: COM6', required=False)
 parser.add_argument('-m','--mode', help='The operation mode: auto or manual', required=False)
+parser.add_argument('-n','--firmware_path', help='The path of firmware file', required=False)
 parser.add_argument('-p','--product', help='The model of product. Ex: hga20r, hgj310-br', required=False)
 parser.add_argument('-url','--image_url', help='The direct URL link of firmware image. Ex: http://abc.xyz/fw_images.zip', required=False)
 parser.add_argument('-user','--login', help='(Optional) The login information to download the firmware image with format: \"user:password\"', required=False)
@@ -187,7 +188,11 @@ def check_precondition():
     print("binaries_dir: " + binaries_dir)
     save_config("COMMON", 'binaries_dir', binaries_dir)
 
-    firmware_file = binaries_dir + "\\" + model + "_fw_images.zip"
+    if (get_config("COMMON", "manual_mode") == "True") and (str(args.firmware_path) != "None"):
+        firmware_file = str(args.firmware_path)
+    else:
+        firmware_file = binaries_dir + "\\" + model + "_fw_images.zip"
+    print("firmware_file: " + firmware_file)
     save_config("COMMON", 'firmware_file', firmware_file)
 
     utils_dir = str(get_config("COMMON", "utils_dir"))
