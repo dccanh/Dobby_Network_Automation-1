@@ -70,7 +70,7 @@ def kill_processes():
 
     print("Need to kill some processes...")
     for x in ps:
-        if psutil.Process(x).name() == "SecureCRT.exe":
+        if (psutil.Process(x).name() == "SecureCRT.exe"):
             psutil.Process(x).terminate()
-        if psutil.Process(x).name() == "tftpd64.exe":
+        if (psutil.Process(x).name() == "tftpd64.exe"):
             psutil.Process(x).terminate()

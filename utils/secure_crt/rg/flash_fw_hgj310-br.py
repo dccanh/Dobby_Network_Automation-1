@@ -51,16 +51,16 @@ def main():
 	crt.Screen.Synchronous = True
 
 	if not os.path.exists(initrd_file):
-		return
+		exit_with_code(-1)
 
 	if not os.path.exists(kernel_file):
-		return
+		exit_with_code(-1)
 
 	if not os.path.exists(cm_img_file):
-		return
+		exit_with_code(-1)
 
 	if not os.path.exists(rg_img_file):
-		return
+		exit_with_code(-1)
 
 	wait_enter_console()
 
@@ -99,7 +99,6 @@ def main():
 		not 'device_tree_tgz' in globals() and
 		not factorydefault ):
 		end_download()
-		return
 
 	#load device tree onto ram
 	#bolt_send_cmd_wait_resp('load -nz -raw -addr=$DT_ADDRESS -max=0x10000 '
@@ -255,7 +254,7 @@ def end_download():
 	crt.Screen.Send('\r')
 	crt.Screen.Send('reboot\r')
 	# crt.Dialog.MessageBox('Download Completed!')
-	os.system("taskkill /f /im SecureCRT.exe")
+	exit_with_code(0)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # initrd console echo back by spliting a long line into multiple 80-col lines
@@ -383,5 +382,14 @@ def start_TFTP_server():
 		cmd = str("start \"TFTP\" \"" + TFTPd64_file + "\"")
 		os.system(cmd)
 		crt.Sleep(1000)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def exit_with_code(code):
+	secure_crt_exit_code_file = os.path.join(os.path.dirname(os.path.normpath(binaries_dir)), "config", "secure_crt_exit_code")
+	file = open(secure_crt_exit_code_file, "w")
+	file.write(str(code))
+	file.close()
+	os.system("taskkill /f /im SecureCRT.exe")
+	# crt.Dialog.MessageBox("exit_code = " + str(code))
 
 main()

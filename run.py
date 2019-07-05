@@ -34,9 +34,7 @@ TFTPd64_file = None
 Seven_Zip_file = None
 
 BAUD_RATE = 115200
-READY_SEC = 120
 save_config("SERIAL", "BAUD_RATE", BAUD_RATE)
-save_config("COMMON", "READY_SEC", READY_SEC)
 
 PC_IP = None
 
@@ -138,10 +136,12 @@ def start_main():
                     if (model == "hga20r"):
                         enable_cm_console()
                     if start_TFTP(TFTPd64_file):
-                        flash_firmware()
+                        if flash_firmware():
+                            print("\n\nFLASHING FIRMWARE SUCCESSFULLY!\n\n")
+                        else:
+                            print("\n\nSOMETHING'S WRONG WHEN FLASHING FIRMWARE!!!\n\n")
                         kill_processes()
                         restore_TFTP_server_config(TFTPd64_file)
-                        print("Ready to run Automation test after " + str(READY_SEC) + " seconds...")
     restore_IP_config(rg_inf)
     print("... DONE ...")
 
@@ -209,14 +209,13 @@ def extract_firmware():
     print("Checking the downloaded firmware images...")
 
     if not os.path.exists(firmware_file):
-        print("The firmwares not exist. Exit!!!")
-        return False
-
-    print("Extracting the downloaded firmware images to: "+ binaries_dir)
-    cmd = str("\""+ Seven_Zip_file + "\"" + " x " + firmware_file + " -o" + binaries_dir + " -aoa")
-    if (os.system(cmd) != 0):
-        print("Something wrong when extract the downloaded firmware images. Exit!!!")
-        return False
+        print("THE FIRMWARE FILE NOT EXIST!!!\nUsing the existed firmware files of the " + model + " model in the directory: " + binaries_dir)
+    else:
+        print("Extracting the firmware file to: "+ binaries_dir)
+        cmd = str("\""+ Seven_Zip_file + "\"" + " x " + firmware_file + " -o" + binaries_dir + " -aoa")
+        if (os.system(cmd) != 0):
+            print("Something wrong when extract the firmware file. Exit!!!")
+            return False
 
     return True
 
@@ -233,6 +232,17 @@ def flash_firmware():
     cmd = str("\""+ SecureCRT_file + "\"" + " /ARG " + binaries_dir + "/ /ARG " + GW_IP + " /ARG " + PC_IP
             + " /SCRIPT " + flash_fw_script + " /SERIAL " + COM_PORT + " /BAUD " + str(BAUD_RATE))
     os.system(cmd)
+
+    secure_crt_exit_code_file = os.path.join(script_dir, "config", "secure_crt_exit_code")
+    file = open(secure_crt_exit_code_file,'r')
+    exit_code = str(file.read())
+    file.close()
+    os.remove(secure_crt_exit_code_file)
+
+    if exit_code == "0":
+        return True
+    else:
+        return False
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def enable_cm_console():
