@@ -15,11 +15,11 @@ PCIP    = crt.Arguments.GetArg(2)
 
 # =============================================================================
 cm_img 			= "cm_image.bin"
-cm_img_file 	= binaries_dir + cm_img
+cm_img_file 	= os.path.join(binaries_dir, cm_img)
 rg_apps 		= "rg_app.bin"
-rg_apps_file 	= binaries_dir + rg_apps
+rg_apps_file 	= os.path.join(binaries_dir, rg_apps)
 rg_kernel 		= "rg_kernel.bin"
-rg_kernel_file 	= binaries_dir + rg_kernel
+rg_kernel_file 	= os.path.join(binaries_dir, rg_kernel)
 
 # =============================================================================
 CM_Prompt	= "CM> "
@@ -39,15 +39,15 @@ def flash_fw_silent_main():
 
 	cm_img_found = os.path.exists(cm_img_file)
 	if not cm_img_found:
-		exit_with_code(-1)
+		exit_with_code(str("NOT FOUND: " + cm_img_file))
 
 	rg_apps_found = os.path.exists(rg_apps_file)
 	if not rg_apps_found:
-		exit_with_code(-1)
+		exit_with_code(str("NOT FOUND: " + rg_apps_file))
 
 	rg_kernel_found = os.path.exists(rg_kernel_file)
 	if not rg_kernel_found:
-		exit_with_code(-1)
+		exit_with_code(str("NOT FOUND: " + rg_kernel_file))
 
 	while True:
 		crt.Screen.Send('\r')

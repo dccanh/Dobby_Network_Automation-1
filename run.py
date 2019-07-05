@@ -125,6 +125,8 @@ def start_main():
     print("PC_IP: " + PC_IP)
     save_config("IP", 'PC_IP', PC_IP)
 
+    save_config("COMMON", 'secure_crt_exit_code', 'UNKNOWN')
+
     if check_precondition():
         origin_TFTP_config = get_origin_TFTP_server_config(TFTPd64_file)
         save_config("TFTP", 'origin_TFTP_config', origin_TFTP_config)
@@ -238,6 +240,7 @@ def flash_firmware():
     exit_code = str(file.read())
     file.close()
     os.remove(secure_crt_exit_code_file)
+    save_config("COMMON", 'secure_crt_exit_code', exit_code)
 
     if exit_code == "0":
         return True
