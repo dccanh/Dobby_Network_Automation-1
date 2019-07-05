@@ -21,7 +21,7 @@ password = "Broadcom"
 
 # device_tree = "rg.3390b0-smwvg.dtb"
 initrd = "vmlinuz-initrd-3390b0-lattice-4.9"
-initrd_file	= binaries_dir + initrd
+initrd_file	= os.path.join(binaries_dir, initrd)
 
 factorydefault = True # True for doing factory default, False for skipping it
 
@@ -31,13 +31,13 @@ factorydefault = True # True for doing factory default, False for skipping it
 # bolt = "bolt-v4.00_B1-3390b0-xx-bfw-x.x.x.bin"
 
 kernel = "vmlinuz-3390b0"
-kernel_file	= binaries_dir + kernel
+kernel_file	= os.path.join(binaries_dir, kernel)
 
 cm_img = "ubifs-128k-2048-3390b0-CM.img"
-cm_img_file	= binaries_dir + cm_img
+cm_img_file	= os.path.join(binaries_dir, cm_img)
 
 rg_img = "ubifs-128k-2048-3390b0-RG.img"
-rg_img_file	= binaries_dir + rg_img
+rg_img_file	= os.path.join(binaries_dir, rg_img)
 
 # device_tree_tgz = "rg.3390b0.dtb.tgz"
 
@@ -51,16 +51,16 @@ def main():
 	crt.Screen.Synchronous = True
 
 	if not os.path.exists(initrd_file):
-		exit_with_code(-1)
+		exit_with_code(str("NOT FOUND: " + initrd_file))
 
 	if not os.path.exists(kernel_file):
-		exit_with_code(-1)
+		exit_with_code(str("NOT FOUND: " + kernel_file))
 
 	if not os.path.exists(cm_img_file):
-		exit_with_code(-1)
+		exit_with_code(str("NOT FOUND: " + cm_img_file))
 
 	if not os.path.exists(rg_img_file):
-		exit_with_code(-1)
+		exit_with_code(str("NOT FOUND: " + rg_img_file))
 
 	wait_enter_console()
 
