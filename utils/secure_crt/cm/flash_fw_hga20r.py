@@ -39,15 +39,15 @@ def flash_fw_silent_main():
 
 	cm_img_found = os.path.exists(cm_img_file)
 	if not cm_img_found:
-		return
+		exit_with_code(-1)
 
 	rg_apps_found = os.path.exists(rg_apps_file)
 	if not rg_apps_found:
-		return
+		exit_with_code(-1)
 
 	rg_kernel_found = os.path.exists(rg_kernel_file)
 	if not rg_kernel_found:
-		return
+		exit_with_code(-1)
 
 	while True:
 		crt.Screen.Send('\r')
@@ -86,7 +86,7 @@ def flash_fw_silent_main():
 def end_download():
 	# Send key to reset
 	crt.Screen.Send('z')
-	os.system("taskkill /f /im SecureCRT.exe")
+	exit_with_code(0)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def setup_network_parameters():
@@ -139,5 +139,14 @@ def start_TFTP_server():
 		cmd = str("start \"TFTP\" \"" + TFTPd64_file + "\"")
 		os.system(cmd)
 		crt.Sleep(1000)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def exit_with_code(code):
+	secure_crt_exit_code_file = os.path.join(os.path.dirname(os.path.normpath(binaries_dir)), "config", "secure_crt_exit_code")
+	file = open(secure_crt_exit_code_file, "w")
+	file.write(str(code))
+	file.close()
+	os.system("taskkill /f /im SecureCRT.exe")
+	# crt.Dialog.MessageBox("exit_code = " + str(code))
 
 flash_fw_silent_main()
