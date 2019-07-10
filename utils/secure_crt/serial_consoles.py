@@ -12,19 +12,20 @@ def serial_consoles_main():
     BAUD_RATE = get_config("SERIAL", "BAUD_RATE")
     RG_PORT = get_config("SERIAL", "RG_PORT").upper()
     CM_PORT = get_config("SERIAL", "CM_PORT").upper()
+
+    COM_PORT = [RG_PORT, CM_PORT]
     # crt.Dialog.MessageBox(CM_PORT + " | " + RG_PORT)
 
     if (RG_PORT == "") or (CM_PORT == ""):
         crt.Dialog.MessageBox("Not found RG/CM port in the config file.\n\nPLEASE CHECK AGAIN!!!")
         return
     else:
-        RG_SESSION = "/SERIAL " + RG_PORT +  " /BAUD " + BAUD_RATE
-        CM_SESSION = "/SERIAL " + CM_PORT +  " /BAUD " + BAUD_RATE
+        for i in range(0,len(COM_PORT)):
+            # crt.Dialog.MessageBox(str(COM_PORT[port]))
+            crt.Session.ConnectInTab("/SERIAL " + str(COM_PORT[i]) +  " /BAUD " + BAUD_RATE)
         # crt.Session.Connect("/s " + COM_PORT)
         # crt.Session.Connect("/s " + CM_PORT + " /s " + RG_PORT)
         # crt.Session.Disconnect()
-        crt.Session.ConnectInTab(RG_SESSION)
-        crt.Session.ConnectInTab(CM_SESSION)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def get_config(section, option):
