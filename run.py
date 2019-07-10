@@ -23,7 +23,7 @@ parser.add_argument('-user','--login', help='(Optional) The login information to
 args = parser.parse_args()
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-save_config("COMMON", 'script_dir', script_dir)
+save_config("COMMON", "root_dir", script_dir)
 
 firmware_file = None
 binaries_dir = None
@@ -146,6 +146,7 @@ def start_main():
                         restore_TFTP_server_config(TFTPd64_file)
     restore_IP_config(rg_inf)
     print("... DONE ...")
+    print("The device is rebooting...")
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def check_precondition():
