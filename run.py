@@ -54,7 +54,7 @@ RG_PORT = str(args.rg_port).upper()
 if (RG_PORT == "NONE"):
     print("RG_PORT not be input. Using the default RG_PORT from the config file.")
     RG_PORT = str(get_config("SERIAL", "RG_PORT"))
-    if (RG_PORT == "") or (RG_PORT == "None"):
+    if (RG_PORT == "") or (RG_PORT.upper() == "NONE"):
         print("RG_PORT not be configured in the config file. Please check again. Exit!!!\n")
         parser.print_help()
         sys.exit()
@@ -66,7 +66,7 @@ CM_PORT = str(args.cm_port).upper()
 if (CM_PORT == "NONE"):
     print("CM_PORT not be input. Using the default CM_PORT from the config file.")
     CM_PORT = str(get_config("SERIAL", "CM_PORT"))
-    if (CM_PORT == "") or (CM_PORT == "None"):
+    if (CM_PORT == "") or (CM_PORT.upper() == "NONE"):
         print("CM_PORT not be configured in the config file. Please check again. Exit!!!\n")
         parser.print_help()
         sys.exit()
@@ -95,9 +95,9 @@ save_config("AUTHENTICATION", "dl_user", dl_user)
 URL_images = str(args.image_url)
 if (URL_images == "None"):
     print("URL_images not be input. Using the default URL.")
-    if (model == "hga20r"):
+    if (model.lower() == "hga20r"):
         URL_images = "http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hga20r_fw_images.zip"
-    elif (model == "hgj310-br"):
+    elif (model.lower() == "hgj310-br"):
         URL_images = "http://arti.humaxdigital.com:8081/artifactory/Vina_automation/Network/hgj310-br_fw_images.zip"
 save_config("AUTHENTICATION", "url_images", URL_images)
 
@@ -135,7 +135,7 @@ def start_main():
             if get_firmware(dl_user, URL_images):
                 if extract_firmware():
                     kill_processes()
-                    if (model == "hga20r"):
+                    if (model.lower() == "hga20r"):
                         enable_cm_console()
                     if start_TFTP(TFTPd64_file):
                         if flash_firmware():
@@ -191,10 +191,10 @@ def check_precondition():
     print("binaries_dir: " + binaries_dir)
     save_config("COMMON", 'binaries_dir', binaries_dir)
 
-    if (get_config("COMMON", "manual_mode") == "True") and (str(args.firmware_path) != "None"):
+    if (get_config("COMMON", "manual_mode").upper() == "TRUE") and (str(args.firmware_path) != "None"):
         firmware_file = str(args.firmware_path)
     else:
-        firmware_file = binaries_dir + "\\" + model + "_fw_images.zip"
+        firmware_file = binaries_dir + "\\" + model.lower() + "_fw_images.zip"
     print("firmware_file: " + firmware_file)
     save_config("COMMON", 'firmware_file', firmware_file)
 
@@ -226,10 +226,10 @@ def extract_firmware():
 def flash_firmware():
     print("\n*****************************************************************")
     print("Flashing firmware images...")
-    if (model == "hga20r"):
+    if (model.lower() == "hga20r"):
         flash_fw_script = utils_dir + "/secure_crt/cm/flash_fw_hga20r.py"
         COM_PORT = CM_PORT
-    elif (model == "hgj310-br"):
+    elif (model.lower() == "hgj310-br"):
         flash_fw_script = utils_dir + "/secure_crt/rg/flash_fw_hgj310-br.py"
         COM_PORT = RG_PORT
     cmd = str("\""+ SecureCRT_file + "\"" + " /ARG " + binaries_dir + "/ /ARG " + GW_IP + " /ARG " + PC_IP
