@@ -1,6 +1,7 @@
 import argparse
 import configparser
 import ctypes
+import datetime
 import os
 import shutil
 import subprocess
@@ -9,6 +10,28 @@ import sys
 from utils.common.common import *
 from utils.common.ip_addr import *
 from utils.common.tftp_server import *
+
+class LOGGING(object):
+    def __init__(self, *files):
+        self.files = files
+
+    def write(self, obj):
+        for f in self.files:
+            f.write(obj)
+
+script_dir = os.path.dirname(os.path.realpath(__file__))
+save_config("COMMON", "root_dir", script_dir)
+
+log_path = str(os.path.join(script_dir, "config", "client.log"))
+log_file = open(log_path, 'a')
+backup = sys.stdout
+sys.stdout = LOGGING(sys.stdout, log_file)
+save_config("COMMON", "log_file", log_path)
+
+time_stamp =  str(datetime.datetime.now())
+print('\n\n                     ---------------------------------------')
+print('==================== | RUNTIME: ' + time_stamp + ' | ====================')
+print('                     ---------------------------------------\n')
 
 # Parse the input arguments
 parser = argparse.ArgumentParser(description='str(sys.argv[0]')
@@ -21,9 +44,6 @@ parser.add_argument('-p','--product', help='The model of product. Ex: hga20r, hg
 parser.add_argument('-url','--image_url', help='The direct URL link of firmware image. Ex: http://abc.xyz/fw_images.zip', required=False)
 parser.add_argument('-user','--login', help='(Optional) The login information to download the firmware image with format: \"user:password\"', required=False)
 args = parser.parse_args()
-
-script_dir = os.path.dirname(os.path.realpath(__file__))
-save_config("COMMON", "root_dir", script_dir)
 
 firmware_file = None
 binaries_dir = None
@@ -272,7 +292,7 @@ def is_admin():
         return False
 
 if is_admin():
-    print("Running as administrator...")
+    print("RUNNING AS ADMINISTRATOR...")
     start_main()
 else:
     # Re-run the program with admin rights
@@ -282,4 +302,5 @@ else:
     for i in range(1, len(sys.argv)):
         parameters = parameters + " " + str(sys.argv[i])
     # print(parameters)
+    print("RE-RUNNING WITH ADMIN RIGHT...")
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__ + parameters, None, 1)
