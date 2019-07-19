@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 fw_images.zip
 binaries/
+config/*.log
 __pycache__/
 *.py[cod]
 *$py.class
