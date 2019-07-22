@@ -19,6 +19,9 @@ class LOGGING(object):
         for f in self.files:
             f.write(obj)
 
+    def flush(self):
+        pass
+
 script_dir = os.path.dirname(os.path.realpath(__file__))
 save_config("COMMON", "root_dir", script_dir)
 
