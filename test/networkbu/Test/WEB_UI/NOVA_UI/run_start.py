@@ -83,7 +83,7 @@ def run_start(model, rg, cm, mode):
 
         if (str(mode) == "login_info"):
             os.system(
-                    '"C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT ./get_info_hga20r.py /SERIAL ' + str(rg.upper()) + ' /BAUD 115200')
+                    '"C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe"' + ' /ARG ' + str(mode) + ' /SCRIPT ./get_info_hga20r.py /SERIAL ' + str(rg.upper()) + ' /BAUD 115200')
             time.sleep(1)
             os.system('python write_text.py')
             f = open('account.txt', 'r')
