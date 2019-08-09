@@ -1,0 +1,5 @@
+[COMMAND]
+cmd0 = wl1 country
+
+[COMMON]
+cpe_ip = 10.10.10.241

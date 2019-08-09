@@ -1,0 +1,354 @@
+{
+  "gateway/about": {
+    "modelName": "canh",
+    "serialNo": "16100123400048",
+    "operationTime": "0 days 03h:44m:40s",
+    "software": {
+      "version": "BRCFAA 1.0.21",
+      "buildTime": "",
+      "isUpgradable": false,
+      "isMandatory": true
+    },
+    "hardware": {
+      "version": "REV 0.3"
+    }
+  },
+  "gateway/connectivity": {
+    "wan": {
+      "mode": "single",
+      "primary": "connected"
+    },
+    "lan": {
+      "devices": 1
+    },
+    "wifi": [
+      {
+        "interface": "2.4g",
+        "devices": 0,
+        "connectivity": 1
+      },
+      {
+        "interface": "5g",
+        "devices": 0,
+        "connectivity": 1
+      }
+    ],
+    "usb": {
+      "support": false,
+      "devices": 0
+    }
+  },
+  "gateway/devices": {
+    "id": "00:0E:C6:C5:6C:37",
+    "connected": true,
+    "type": "PC",
+    "interface": "lan",
+    "path": "1",
+    "macAddress": "00:0E:C6:C5:6C:37",
+    "ipAddress": "192.168.0.10",
+    "name": "DESKTOP-RTR77RI",
+    "leaseTime": 86400,
+    "expireTime": "--- --- -- --:--:-- ----",
+    "ipv6Address": "",
+    "ipv6LinkLocalAddress": "",
+    "lastConnected": "",
+    "rssi": 0,
+    "operatingStandard": "",
+    "age": 0
+  },
+  "invalid_token": {
+    "error": {
+      "code": 2003,
+      "type": "invalid_token",
+      "message": "Invalid token"
+    }
+  },
+  "expired_token": {
+    "error": {
+      "code": 2004,
+      "type": "expired_token",
+      "message": "The token is expired"
+    }
+  },
+  "invalid_user_password": {
+    "error": {
+      "code": 2002,
+      "type": "invalid_username_password",
+      "message": "Invalid username"
+    }
+  },
+  "invalid_password": {
+    "error": {
+      "code": 2005,
+      "type": "login_fail",
+      "message": "Invalid password"
+    }
+  },
+  "backup": {
+    "path": "/backupsettings.conf"
+  },
+  "factoryReset": {
+    "maxRetry": 10,
+    "retryAfter": [
+      70,
+      20,
+      5
+    ],
+    "location": "/"
+  },
+  "user/login": {
+    "role": "technician",
+    "expireIn": 3600,
+    "system": {
+      "timer": {
+        "response": 6000,
+        "cpu": 2000,
+        "memory": 2000,
+        "session": 10,
+        "traceroute": 60,
+        "ping": 10000
+      }
+    },
+    "permissions": {
+      "rip": {
+        "type": "hidden"
+      }
+    },
+    "accessToken": "18c603287684a39638ac596f3b18f9f314e5b53f16665f7ccd7468614b5ed22"
+  },
+  "restore": {
+    "location": "/api/v1/gateway/devices",
+    "retryAfter": 60,
+    "maxRetry": 3
+  },
+  "network/docsis": {
+    "status": "connected",
+    "operation": "online",
+    "version": "DOCSIS 3.0",
+    "BPIState": 2,
+    "docsisCert": true,
+    "maxCpe": 13,
+    "networkAccess": true,
+    "upstreamServiceFlowParams": "",
+    "downstreamServiceFlowParams": "",
+    "downstreamDataRate": "",
+    "upstreamDataRate": "",
+    "signalStrength": 0,
+    "cm": {
+      "macAddress": "94:2C:B3:3F:80:40",
+      "ipv4": {
+        "mode": "dynamic",
+        "bootFileName": "mmc_cm_true_Leo.cfg"
+      },
+      "ipv6": {
+        "address": "",
+        "bootFileName": ""
+      }
+    },
+    "mddIpModeOverride": false,
+    "learnedIpMode": false,
+    "downstreamChannel": 16,
+    "upstreamChannel": 4,
+    "connectionState": 10
+  },
+  "network/docsis/channel": {
+    "numOfDownstream": 24,
+    "downstream": [
+      {
+        "channel": 9,
+        "modulation": "256 QAM",
+        "lockStatus": "Locked",
+        "frequency": "435.000",
+        "bandwidth": "",
+        "powerLevel": "12.4",
+        "snrLevel": "49.1",
+        "octets": 1
+      },
+      {
+        "channel": 24,
+        "modulation": "Unknown",
+        "lockStatus": "",
+        "frequency": "0",
+        "bandwidth": "",
+        "powerLevel": "0.0",
+        "snrLevel": "0.0",
+        "octets": 1
+      }
+    ],
+    "errorCodewords": [
+      {
+        "unerrored": 163609458,
+        "correctable": 13,
+        "uncorrectable": 0
+      },
+      {
+        "unerrored": 0,
+        "correctable": 0,
+        "uncorrectable": 0
+      }
+    ],
+    "numOfUpstream": 8,
+    "upstream": [
+      {
+        "channel": 1,
+        "modulation": "QPSK",
+        "lockStatus": "Locked",
+        "frequency": "30.000",
+        "bandwidth": "3.200",
+        "powerLevel": "29.5",
+        "symbolRate": 2560,
+        "channelType": "ATDMA"
+      },
+      {
+        "channel": 8,
+        "modulation": "Unknown",
+        "lockStatus": "Not Locked",
+        "frequency": "0",
+        "bandwidth": "0.0",
+        "powerLevel": "0.0",
+        "symbolRate": 0,
+        "channelType": "Unknown"
+      }
+    ]
+  },
+  "network/docsis/initialFrequency": {
+    "initialFrequency": 435000000
+  },
+  "network/docsis/mta/line": [
+    {
+      "lineno": 1,
+      "tel": "000",
+      "active": false,
+      "hookState": false,
+      "expireTime": 0,
+      "reRegTime": 0
+    },
+    {
+      "lineno": 2,
+      "tel": "000",
+      "active": false,
+      "hookState": false,
+      "expireTime": 0,
+      "reRegTime": 0
+    }
+  ],
+  "network/docsis/mta/procedure": {
+    "dhcp": "[Error:  FAIL]",
+    "security": "Disabled",
+    "tftp": "[Error:  FAIL]",
+    "callServer": "L1: [Error:  FAIL] / L2: [Error:  FAIL]",
+    "registration": "[Error:  FAIL]"
+  },
+  "network/docsis/procedure": {
+    "initializedHardware": "Completed",
+    "ds": "Completed",
+    "us": "Completed",
+    "dhcp": "Completed",
+    "tod": "Completed",
+    "configuration": "Completed",
+    "registration": "Completed",
+    "status": "Operational",
+    "sequence": 1
+  },
+  "network/lan": {
+    "macAddress": "94:2C:B3:3F:80:43",
+    "ipv4": {
+      "ipAddress": "192.168.0.1",
+      "subnet": "255.255.255.0",
+      "dhcp": {
+        "active": true,
+        "startIP": "192.168.0.10",
+        "endIP": "192.168.0.254",
+        "leaseTime": 86400
+      }
+    },
+    "ipv6": {
+      "ipAddress": "3002:3:4:252:962c:b3ff:fe3f:8043",
+      "mode": "stateful",
+      "dhcpv6": {
+        "startIP": "0:0:0:1000",
+        "leaseTime": 3600,
+        "numberOfAddresses": 255,
+        "rapidCommit": true,
+        "unicast": false
+      },
+      "prefix": "3002:3:4:252::",
+      "prefixLength": 64
+    }
+  },
+  "network/wan": {
+    "operationMode": "DOCSIS Gateway",
+    "interfaces": [
+      {
+        "id": 0,
+        "name": "default",
+        "active": true,
+        "linkType": "docsis",
+        "connectivity": "Connected",
+        "switchMode": "router",
+        "connectionType": "dynamic",
+        "macAddress": "94:2C:B3:3F:80:42",
+        "ipv4": {
+          "active": true,
+          "mode": "dynamic",
+          "address": "10.0.0.115",
+          "subnet": "255.255.255.0",
+          "gateway": "10.0.0.1",
+          "dnsAuto": true,
+          "dnsServer1": "172.16.0.12",
+          "dnsServer2": "8.8.8.8",
+          "leaseTime": 10800,
+          "expireTime": "--- --- -- --:--:-- ----"
+        },
+        "ipv6": {
+          "active": true,
+          "mode": "dhcpv6",
+          "prefixLength": 64,
+          "address": "3001::268",
+          "linkLocalAddress": "",
+          "gateway": "",
+          "dnsAuto": false,
+          "dnsServer1": "3001::12",
+          "dnsServer2": " ",
+          "leaseTime": 5400,
+          "expireTime": "2019-07-11T09:37:01-00:00"
+        }
+      }
+    ]
+  },
+  "network/wan/0": {
+    "id": 0,
+    "name": "not null",
+    "active": true,
+    "linkType": "docsis",
+    "connectivity": "Connected",
+    "switchMode": "router",
+    "connectionType": "static",
+    "macAddress": "94:2C:B3:3F:80:42",
+    "ipv4": {
+      "active": true,
+      "mode": "static",
+      "address": "10.0.0.102",
+      "subnet": "255.255.255.0",
+      "gateway": "10.0.0.1",
+      "dnsAuto": false,
+      "dnsServer1": "172.16.0.12",
+      "dnsServer2": "8.8.4.4",
+      "leaseTime": 0,
+      "expireTime": "--- --- -- --:--:-- ----"
+    },
+    "ipv6": {
+      "active": false,
+      "mode": "dhcpv6",
+      "prefixLength": 64,
+      "address": "3001::2f3",
+      "linkLocalAddress": "",
+      "gateway": "",
+      "dnsAuto": false,
+      "dnsServer1": "3001::12",
+      "dnsServer2": " ",
+      "leaseTime": 3600,
+      "expireTime": ""
+    }
+  }
+}
