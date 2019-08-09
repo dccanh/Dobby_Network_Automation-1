@@ -1,0 +1,3 @@
+[COMMAND]
+cm_wl1_country = BR (BR/24) BRAZIL
+

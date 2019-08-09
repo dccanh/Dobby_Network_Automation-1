@@ -1,0 +1,1 @@
+"C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT C:\Users\Test\Desktop\Coding_Test\networkbu\Test/get_info.py /SERIAL COM5 /BAUD 115200
