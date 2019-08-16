@@ -178,6 +178,7 @@ def main():
 								+ PCIP
 								+ ' -r '
 								+ kernel
+								+ ' -b 8192 '
 								+ ' -l /tmp/vmlinuz',
 								Initrd_Prompt)
 		send_cmd_wait_resp('flash_erase /dev/mtd0 0 0', Initrd_Prompt)
@@ -196,6 +197,7 @@ def main():
 								+ PCIP
 								+ ' -r '
 								+ cm_img
+								+ ' -b 8192 '
 								+ ' -l /tmp/cm',
 								Initrd_Prompt)
 		send_cmd_wait_resp('ubiformat /dev/mtd2 --yes --flash-image=/tmp/cm',
@@ -209,6 +211,7 @@ def main():
 								+ PCIP
 								+ ' -r '
 								+ rg_img
+								+ ' -b 8192 '
 								+ ' -l /tmp/rg',
 								Initrd_Prompt)
 		send_cmd_wait_resp('ubiformat /dev/mtd4 --yes --flash-image=/tmp/rg',
@@ -227,6 +230,7 @@ def main():
 								+ PCIP
 								+ ' -r '
 								+ device_tree_tgz
+								+ ' -b 8192 '
 								+ ' -l /tmp/dt',
 								Initrd_Prompt)
 		send_cmd_wait_resp('flash_erase /dev/mtd11 0 0', Initrd_Prompt)
