@@ -71,12 +71,15 @@ def flash_fw_silent_main():
 
 	# flash rg_kernel
 	if rg_kernel_found: upgrade_one_image(rg_kernel, "3")
+	if rg_kernel_found: upgrade_one_image(rg_kernel, "9")
 
 	# flash rg_apps image
 	if rg_apps_found: upgrade_one_image(rg_apps, "4")
+	if rg_apps_found: upgrade_one_image(rg_apps, "12")
 
 	# flash cm image
 	if cm_img_found: upgrade_one_image(cm_img, "1")
+	if cm_img_found: upgrade_one_image(cm_img, "2")
 
 	# Back to Default
 	send_receive_string("c", Prompt)
