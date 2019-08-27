@@ -33,7 +33,7 @@ pass_word = config.get('USER_INFO', 'pw')
 rg_port = config.get('PORT', 'rg_port')
 cm_port = config.get('PORT', 'cm_port')
 com =rg_port
-final_report = '../../../Report/demo/wifi/final_ui_wifi_report_' + str(datetime.datetime.now()).replace(' ', '_').replace(':', '-') + '.xlsx'
+final_report = '../../../Report/old/final_ui_report_' + str(datetime.datetime.now()).replace(' ', '_').replace(':', '-') + '.xlsx'
 Helper.Helper_common.reset_report_result(final_report)
 
 
