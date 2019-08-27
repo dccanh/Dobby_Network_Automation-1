@@ -33,7 +33,7 @@ pass_word = config.get('USER_INFO', 'pw')
 rg_port = config.get('PORT', 'rg_port')
 cm_port = config.get('PORT', 'cm_port')
 com =rg_port
-final_report = '../Report/final_report_' + str(datetime.datetime.now()).replace(' ', '_').replace(':', '-') + '.xlsx'
+final_report = '../../../Report/demo/wifi/final_ui_wifi_report_' + str(datetime.datetime.now()).replace(' ', '_').replace(':', '-') + '.xlsx'
 Helper.Helper_common.reset_report_result(final_report)
 
 
@@ -2376,7 +2376,7 @@ class PageNetworkDHCP(unittest.TestCase):
 
         self.assertEqual(list_steps_fail, [], '[UI_ND_01] Assertion Enable/Disable DHCP fail')
 
-        # Restore default    
+        # Restore default
         sim_btn = driver.find_element_by_css_selector('.inline div:nth-child(2)')
         sim_btn.click()
         btn_apply = driver.find_element_by_css_selector('.button')
@@ -12332,7 +12332,7 @@ class PageWifiRadio(unittest.TestCase):
                 '3. API return on Wifi Radio page: \nActual: %s' % (str(value_wrong)))
 
         self.assertListEqual(list_steps_fail, [], '[UI_WR_15] Assertion wrong')
- 
+
 
 class PageWifiConnectedEquip(unittest.TestCase):
     def setUp(self):
