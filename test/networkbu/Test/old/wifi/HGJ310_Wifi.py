@@ -1393,7 +1393,6 @@ class WF_2G_WR(unittest.TestCase):
         actual = []
         for i in range(len(list_cmd)):
             actual.append(config.get('COMMAND', options[i]))
-        actual[0] = ' '.join(actual[0].split('.')[1].split())
         expected = ['current mac channel 6 target channel 6',
                     '6 (0x1006)',
                     '6',
@@ -1518,7 +1517,7 @@ class WF_2G_WR(unittest.TestCase):
         actual = []
         for i in range(len(list_cmd)):
             actual.append(config.get('COMMAND', options[i]))
-        actual[0] = ' '.join(actual[0].split('.')[1].split())
+
         expected = ['current mac channel 6 target channel 6',
                     '6u (0x1904)',
                     '6',
@@ -2927,6 +2926,671 @@ class WF_2G_WR(unittest.TestCase):
 
         self.assertListEqual(list_steps_fail, [], '[WF_2G_WR_09] Assertion 2.4 GHz Restore wireless default fail')
 
+    def test_WF_2G_WR_10(self):
+        driver = self.driver
+        self.def_name = Helper.Helper_common.get_func_name()
+        list_steps_fail = []
+        expected_quick_setup = ipv4 + '/#page-quick-setup'
+        try:
+            self.assertEqual(driver.current_url, expected_quick_setup)
+            self.list_steps.append('\n[Pass] 1. Login Quick setup: ' + driver.current_url)
+        except AssertionError:
+            self.list_steps.append('\n[Fail] 1. Login Quick setup: ' + driver.current_url)
+            list_steps_fail.append(
+                '1. URL QS wrong: Actual: ' + driver.current_url + ' Expected: ' + expected_quick_setup)
+        name_2g = driver.find_element_by_css_selector('[id="2g-network-name"]').text.strip()
+        # Configuration Advance
+        driver.find_element_by_css_selector('.next.config').click()
+        expected_url_target = ipv4 + '/#page-status-software'
+        try:
+            self.assertEqual(driver.current_url, expected_url_target)
+            self.list_steps.append('\n[Pass] 2.1 Check URL of Configuration Advance: ' + driver.current_url)
+        except AssertionError:
+            self.list_steps.append('\n[Fail] 2.1 Check URL of Configuration Advance: ' + driver.current_url)
+            list_steps_fail.append(
+                '2. URL Configuration Advance wrong: Actual: ' + driver.current_url + ' Expected: ' + expected_url_target)
+        time.sleep(0.5)
+        # Click Menu
+        driver.find_element_by_css_selector('span.icon').click()
+        time.sleep(0.5)
+        # Click Wifi
+        driver.find_element_by_css_selector('[for=menu-wi-fi]').click()
+        time.sleep(0.5)
+        # Click Radio
+        driver.find_element_by_css_selector('a[href="#page-wifi-radio"]').click()
+        expected_url_target = ipv4 + '/#page-wifi-radio'
+        try:
+            self.assertEqual(driver.current_url, expected_url_target)
+            self.list_steps.append('\n[Pass] 2.2 Check URL of Page Radio: ' + driver.current_url)
+        except AssertionError:
+            self.list_steps.append('\n[Fail] 2.2 Check URL of Page Radio: ' + driver.current_url)
+            list_steps_fail.append(
+                '2. URL Page Radio wrong: Actual: ' + driver.current_url + ' Expected: ' + expected_url_target)
+        time.sleep(0.5)
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 3. Click "2.4 GHZ" to select 2.4 Ghz interface and click the "Varredura de pontos de acesso Wi-Fi" button
+        driver.find_element_by_css_selector('[for=radio2g]').click()
+        driver.find_element_by_css_selector('button[value="Varredura de pontos de acesso Wi-Fi"]').click()
+        Helper.Helper_common.wait_time(self, driver)
+        window_scan_ap_result = self.driver.window_handles[1]
+        driver.switch_to.window(window_scan_ap_result)
+        time.sleep(5)
+
+        dict_key_translate = {
+            'ssid': 'Nome da rede',
+            'security': 'Modo de segurança',
+            'mode': 'Modo',
+            'phyMode': 'Modo PHY',
+            'rssi': 'RSSI',
+            'channel': 'Canal',
+            'bandwidth': 'Largura de banda',
+            'macAddress': 'BSSID'
+        }
+        block_lists = driver.find_elements_by_css_selector('.list li')
+        count_existed = 0
+        for i in range(1, len(block_lists)+1):
+            web_text = driver.find_element_by_css_selector('.list li:nth-child('+str(i)+')').text
+            f = open('../Config/01.txt', 'w')
+            f.write('[DATA]\n')
+            f.write(web_text)
+            f.close()
+            conf = configparser.ConfigParser()
+            conf.read_file(open('../Config/01.txt'))
+            actual = [conf.get('DATA', dict_key_translate['macAddress']),
+                      conf.get('DATA', dict_key_translate['ssid']),
+                      conf.get('DATA', dict_key_translate['phyMode']),
+                      conf.get('DATA', dict_key_translate['security'])]
+            api_scanResult = Helper.Helper_common.api_wifi_scanResult(0)
+
+            for result in api_scanResult:
+                if conf.get('DATA', dict_key_translate['macAddress']) == result['macAddress']:
+                    expected = [result['macAddress'], result['ssid'], result['phyMode'], result['security']]
+                    try:
+                        self.assertListEqual(actual, expected)
+                        self.list_steps.append(
+                            '\n[Pass] 3. Check Values between API and WebUI' + str(actual))
+                    except AssertionError:
+                        self.list_steps.append(
+                            '\n[Fail] 3. Checks Value between API and WebUI' + str(actual))
+                        list_steps_fail.append(
+                            '3. Values between API and WebUI wrong: Actual: ' + str((actual))
+                            + ' Expected: ' + str(expected))
+                        pass
+
+                    count_existed += 1
+                    break
+                else:
+                    continue
+        # Not match = Total (len(block_lists))   -  Match case    <   20% Total
+        try:
+            self.assertLessEqual(len(block_lists) - count_existed, len(block_lists)*0.2)
+            self.list_steps.append(
+                '\n[Pass] 3+. Check number of not match wifi > = 20% of Total:' + str(len(block_lists) - count_existed))
+        except AssertionError:
+            self.list_steps.append(
+                '\n[Pass] 3+. Check number of not match wifi > = 20% of Total:' + str(len(block_lists) - count_existed))
+            list_steps_fail.append(
+                '3+. Number of not match wifi < = 20% of Total: Actual: ' + str((len(block_lists) - count_existed))
+                + ' Expected: ' + str(len(block_lists)*0.2))
+
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 4. Using the RG console to check the current configuration in wl driver by one of below commands:
+        list_cmd = ['iwinfo wl1 scan > /tmp/web_ui/out/www/01.txt',
+                    'wl -i wl1 escanresults > /tmp/web_ui/out/www/02.txt']
+        Helper.Helper_common.write_command(list_cmd)
+        os.system(
+            '''"C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT ./wl_mul_line.py /SERIAL '''
+            + rg_port + ''' /BAUD 115200''')
+
+        driver2 = webdriver.Chrome('../Driver/chromedriver.exe')
+        driver2.get('http://192.168.0.1/01.txt')
+        a = driver2.find_element_by_css_selector('body>pre').text + '\n\n'
+        cell_blocks = re.findall(r"(?s)Address: .*?\n\n", a)
+        count_existed = 0
+        for cell in cell_blocks:
+            b = ''
+            for j in cell.splitlines():
+                b += j.strip() + '\n'
+
+            f = open('../Config/01.txt', 'w')
+            f.write('[DATA]\n')
+            f.write(b)
+            f.close()
+            conf = configparser.ConfigParser()
+            conf.read_file(open('../Config/01.txt'))
+            actual_crt = [conf.get('DATA', 'Address'),
+                          conf.get('DATA', 'ESSID'),
+                          conf.get('DATA', 'HWMode'),
+                          conf.get('DATA', 'Encryption')]
+            api_scanResult = Helper.Helper_common.api_wifi_scanResult(0)
+
+            for result in api_scanResult:
+                if conf.get('DATA', 'Address') == result['macAddress']:
+                    expected_crt = [result['macAddress'],
+                                    result['ssid'],
+                                    result['phyMode'].replace('+', ''),
+                                    result['security']]
+                    try:
+                        self.assertListEqual(actual_crt, expected_crt)
+                        self.list_steps.append(
+                            '\n[Pass] 4.1 Check Values between API and CRT' + str(actual_crt))
+                    except AssertionError:
+                        self.list_steps.append(
+                            '\n[Fail] 4.1 Checks Value between API and CRT' + str(actual_crt))
+                        list_steps_fail.append(
+                            '4.1 Values between API and CRT wrong: Actual: ' + str((actual_crt))
+                            + ' Expected: ' + str(expected_crt))
+                        pass
+                    count_existed += 1
+                    break
+                else:
+                    continue
+
+        # Second command check
+        driver2.get('http://192.168.0.1/02.txt')
+        a = driver2.find_element_by_css_selector('body>pre').text + '\n\n'
+        cell_blocks = re.findall(r"(?s)Address: .*?\n\n", a)
+        for cell in cell_blocks:
+            f = open('../Config/02.txt', 'w')
+            f.write('[DATA]\n')
+            f.write(cell)
+            f.close()
+            conf = configparser.ConfigParser()
+            conf.read_file(open('../Config/02.txt'))
+            actual_crt = [conf.get('DATA', 'BSSID').split('Capability')[0].strip(),
+                          conf.get('DATA', 'SSID')]
+            api_scanResult = Helper.Helper_common.api_wifi_scanResult(0)
+
+            for result in api_scanResult:
+                if actual_crt[0] == result['macAddress']:
+                    expected_crt = [result['macAddress'],
+                                    result['ssid']]
+                    try:
+                        self.assertListEqual(actual_crt, expected_crt)
+                        self.list_steps.append(
+                            '\n[Pass] 4.2 Check Values between API and CRT' + str(actual_crt))
+                    except AssertionError:
+                        self.list_steps.append(
+                            '\n[Fail] 4.2 Checks Value between API and CRT' + str(actual_crt))
+                        list_steps_fail.append(
+                            '4.2 Values between API and CRT wrong: Actual: ' + str((actual_crt))
+                            + ' Expected: ' + str(expected_crt))
+                        pass
+                    count_existed += 1
+                    break
+                else:
+                    continue
+
+        # Not match = Total (len(block_lists))   -  Match case    <   20% Total
+        try:
+            self.assertLessEqual(len(cell_blocks) - count_existed, len(cell_blocks) * 0.2)
+            self.list_steps.append(
+                '\n[Pass] 4.3 Check number of not match wifi > = 20% of Total:' + str(
+                    len(cell_blocks) - count_existed))
+        except AssertionError:
+            self.list_steps.append(
+                '\n[Pass] 4.3 Check number of not match wifi > = 20% of Total:' + str(
+                    len(cell_blocks) - count_existed))
+            list_steps_fail.append(
+                '4.3 Number of not match wifi < = 20% of Total: Actual: ' + str(
+                    (len(cell_blocks) - count_existed))
+                + ' Expected: ' + str(len(cell_blocks) * 0.2))
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 5. Click the "Atualizar" button to re-scan
+        driver.switch_to.window(window_scan_ap_result)
+        driver.find_element_by_css_selector('button[value=refresh]').click()
+        time.sleep(7)
+        block_lists = driver.find_elements_by_css_selector('.list li')
+        count_existed = 0
+        for i in range(1, len(block_lists) + 1):
+            web_text = driver.find_element_by_css_selector('.list li:nth-child(' + str(i) + ')').text
+            f = open('../Config/01.txt', 'w')
+            f.write('[DATA]\n')
+            f.write(web_text)
+            f.close()
+            conf = configparser.ConfigParser()
+            conf.read_file(open('../Config/01.txt'))
+            actual = [conf.get('DATA', dict_key_translate['macAddress']),
+                      conf.get('DATA', dict_key_translate['ssid']),
+                      conf.get('DATA', dict_key_translate['phyMode']),
+                      conf.get('DATA', dict_key_translate['security'])]
+            api_scanResult = Helper.Helper_common.api_wifi_scanResult(0)
+
+            for result in api_scanResult:
+                if conf.get('DATA', dict_key_translate['macAddress']) == result['macAddress']:
+                    expected = [result['macAddress'], result['ssid'], result['phyMode'], result['security']]
+                    try:
+                        self.assertListEqual(actual, expected)
+                        self.list_steps.append(
+                            '\n[Pass] 5.1 Check Values between API and WebUI' + str(actual))
+                    except AssertionError:
+                        self.list_steps.append(
+                            '\n[Fail] 5.1 Checks Value between API and WebUI' + str(actual))
+                        list_steps_fail.append(
+                            '5.1 Values between API and WebUI wrong: Actual: ' + str((actual))
+                            + ' Expected: ' + str(expected))
+                        pass
+
+                    count_existed += 1
+                    break
+                else:
+                    continue
+
+        # Not match = Total (len(block_lists))   -  Match case    <   20% Total
+        try:
+            self.assertLessEqual(len(block_lists) - count_existed, len(block_lists) * 0.2)
+            self.list_steps.append(
+                '\n[Pass] 5.2 Check number of not match wifi > = 20% of Total:' + str(len(block_lists) - count_existed))
+        except AssertionError:
+            self.list_steps.append(
+                '\n[Pass] 5.2 Check number of not match wifi > = 20% of Total:' + str(len(block_lists) - count_existed))
+            list_steps_fail.append(
+                '5.2 Number of not match wifi < = 20% of Total: Actual: ' + str((len(block_lists) - count_existed))
+                + ' Expected: ' + str(len(block_lists) * 0.2))
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 6. Using the RG console to check the current configuration in wl driver by one of below commands:
+        Helper.Helper_common.write_command(list_cmd)
+        os.system(
+            '''"C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT ./wl_mul_line.py /SERIAL '''
+            + rg_port + ''' /BAUD 115200''')
+        driver2.get('http://192.168.0.1/01.txt')
+        a = driver2.find_element_by_css_selector('body>pre').text + '\n\n'
+        cell_blocks = re.findall(r"(?s)Address: .*?\n\n", a)
+        count_existed = 0
+        for cell in cell_blocks:
+            b = ''
+            for j in cell.splitlines():
+                b += j.strip() + '\n'
+
+            f = open('../Config/01.txt', 'w')
+            f.write('[DATA]\n')
+            f.write(b)
+            f.close()
+            conf = configparser.ConfigParser()
+            conf.read_file(open('../Config/01.txt'))
+            actual_crt = [conf.get('DATA', 'Address'),
+                          conf.get('DATA', 'ESSID'),
+                          conf.get('DATA', 'HWMode'),
+                          conf.get('DATA', 'Encryption')]
+            api_scanResult = Helper.Helper_common.api_wifi_scanResult(0)
+
+            for result in api_scanResult:
+                if conf.get('DATA', 'Address') == result['macAddress']:
+                    expected_crt = [result['macAddress'],
+                                    result['ssid'],
+                                    result['phyMode'].replace('+', ''),
+                                    result['security']]
+                    try:
+                        self.assertListEqual(actual_crt, expected_crt)
+                        self.list_steps.append(
+                            '\n[Pass] 6.1 Check Values between API and CRT' + str(actual_crt))
+                    except AssertionError:
+                        self.list_steps.append(
+                            '\n[Fail] 6.1 Checks Value between API and CRT' + str(actual_crt))
+                        list_steps_fail.append(
+                            '6.1 Values between API and CRT wrong: Actual: ' + str((actual_crt))
+                            + ' Expected: ' + str(expected_crt))
+                        pass
+                    count_existed += 1
+                    break
+                else:
+                    continue
+
+        # Second command check
+        driver2.get('http://192.168.0.1/02.txt')
+        a = driver2.find_element_by_css_selector('body>pre').text + '\n\n'
+        cell_blocks = re.findall(r"(?s)Address: .*?\n\n", a)
+        for cell in cell_blocks:
+            f = open('../Config/02.txt', 'w')
+            f.write('[DATA]\n')
+            f.write(cell)
+            f.close()
+            conf = configparser.ConfigParser()
+            conf.read_file(open('../Config/02.txt'))
+            actual_crt = [conf.get('DATA', 'BSSID').split('Capability')[0].strip(),
+                          conf.get('DATA', 'SSID')]
+            api_scanResult = Helper.Helper_common.api_wifi_scanResult(0)
+
+            for result in api_scanResult:
+                if actual_crt[0] == result['macAddress']:
+                    expected_crt = [result['macAddress'],
+                                    result['ssid']]
+                    try:
+                        self.assertListEqual(actual_crt, expected_crt)
+                        self.list_steps.append(
+                            '\n[Pass] 6.2 Check Values between API and CRT' + str(actual_crt))
+                    except AssertionError:
+                        self.list_steps.append(
+                            '\n[Fail] 6.2 Checks Value between API and CRT' + str(actual_crt))
+                        list_steps_fail.append(
+                            '6.2 Values between API and CRT wrong: Actual: ' + str((actual_crt))
+                            + ' Expected: ' + str(expected_crt))
+                        pass
+                    count_existed += 1
+                    break
+                else:
+                    continue
+        # Not match = Total (len(block_lists))   -  Match case    <   20% Total
+        try:
+            self.assertLessEqual(len(cell_blocks) - count_existed, len(cell_blocks) * 0.2)
+            self.list_steps.append(
+                '\n[Pass] 6.3 Check number of not match wifi > = 20% of Total:' + str(
+                    len(cell_blocks) - count_existed))
+        except AssertionError:
+            self.list_steps.append(
+                '\n[Pass] 6.3 Check number of not match wifi > = 20% of Total:' + str(
+                    len(cell_blocks) - count_existed))
+            list_steps_fail.append(
+                '6.3 Number of not match wifi < = 20% of Total: Actual: ' + str(
+                    (len(cell_blocks) - count_existed))
+                + ' Expected: ' + str(len(cell_blocks) * 0.2))
+        driver2.quit()
+
+        self.assertListEqual(list_steps_fail, [], '[WF_2G_WR_10] Assertion 2.4 GHz Site Survey fail')
+
+    def test_WF_2G_WR_11(self):
+        driver = self.driver
+        self.def_name = Helper.Helper_common.get_func_name()
+        list_steps_fail = []
+        expected_quick_setup = ipv4 + '/#page-quick-setup'
+        try:
+            self.assertEqual(driver.current_url, expected_quick_setup)
+            self.list_steps.append('\n[Pass] 1. Login Quick setup: ' + driver.current_url)
+        except AssertionError:
+            self.list_steps.append('\n[Fail] 1. Login Quick setup: ' + driver.current_url)
+            list_steps_fail.append(
+                '1. URL QS wrong: Actual: ' + driver.current_url + ' Expected: ' + expected_quick_setup)
+        name_2g = driver.find_element_by_css_selector('[id="2g-network-name"]').text.strip()
+        # Configuration Advance
+        driver.find_element_by_css_selector('.next.config').click()
+        expected_url_target = ipv4 + '/#page-status-software'
+        try:
+            self.assertEqual(driver.current_url, expected_url_target)
+            self.list_steps.append('\n[Pass] 2.1 Check URL of Configuration Advance: ' + driver.current_url)
+        except AssertionError:
+            self.list_steps.append('\n[Fail] 2.1 Check URL of Configuration Advance: ' + driver.current_url)
+            list_steps_fail.append(
+                '2. URL Configuration Advance wrong: Actual: ' + driver.current_url + ' Expected: ' + expected_url_target)
+        time.sleep(0.5)
+        # Click Menu
+        driver.find_element_by_css_selector('span.icon').click()
+        time.sleep(0.5)
+        # Click Wifi
+        driver.find_element_by_css_selector('[for=menu-wi-fi]').click()
+        time.sleep(0.5)
+        # Click Radio
+        driver.find_element_by_css_selector('a[href="#page-wifi-radio"]').click()
+        expected_url_target = ipv4 + '/#page-wifi-radio'
+        try:
+            self.assertEqual(driver.current_url, expected_url_target)
+            self.list_steps.append('\n[Pass] 2.2 Check URL of Page Radio: ' + driver.current_url)
+        except AssertionError:
+            self.list_steps.append('\n[Fail] 2.2 Check URL of Page Radio: ' + driver.current_url)
+            list_steps_fail.append(
+                '2. URL Page Radio wrong: Actual: ' + driver.current_url + ' Expected: ' + expected_url_target)
+        time.sleep(0.5)
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 3. Click "2.4 GHZ" to select 2.4 Ghz interface and check the country code displayed in "País"section
+        driver.find_element_by_css_selector('[for=radio2g]').click()
+        country_style = driver.find_element_by_id('country').get_attribute('readonly')
+        country_code = driver.find_element_by_id('country').get_attribute('value')
+        actual = [country_style, country_code]
+        api_radio = Helper.Helper_common.api_wifi_radio(0)
+        expected = ['true', api_radio['advanced']['countryCode']]
+        try:
+            self.assertEqual(expected, actual)
+            self.list_steps.append('\n[Pass] 3. Check values between webUI and API: ' + str(actual))
+        except AssertionError:
+            self.list_steps.append('\n[Fail] 3. Check values between webUI and API: ' + str(actual))
+            list_steps_fail.append(
+                '3. Values between webUI and API wrong: Actual: ' + str(actual) + ' Expected: ' + str(expected))
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 4. Using the RG console to check the current configuration in wl driver by one of below commands:
+        list_cmd = ['grep -i -e "ccode" -e "regrev" /data/provisioned_wifi_wl1_vars.txt',
+                    'wl1 country']
+        Helper.Helper_common.write_command(list_cmd)
+        options = Helper.Helper_common.option_key(list_cmd)
+        os.system(
+            '''"C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT ./wl_mul_line.py /SERIAL '''
+            + rg_port + ''' /BAUD 115200''')
+        config = configparser.ConfigParser()
+        config.read_file(open(r'../Config/cmd_value.txt'))
+        actual = []
+        for i in range(len(list_cmd)):
+            actual.append(config.get('COMMAND', options[i]))
+
+        expected = ['ccode=BR regrev=24', 'BR (BR/24) BRAZIL']
+        try:
+            self.assertListEqual(actual, expected)
+            self.list_steps.append(
+                '\n[Pass] 4. Check Value return RG console ' + str(actual))
+        except AssertionError:
+            self.list_steps.append(
+                '\n[Fail] 4. Check Value return RG console ' + str(actual))
+            list_steps_fail.append(
+                '4. Value return RG console wrong: Actual: ' + str(actual) + ' Expected: ' + str(expected))
+            pass
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 5. Using the RG console to check the current configuration in wl driver by one of below commands:
+        list_cmd = ['wl1 country US/0']
+        Helper.Helper_common.write_command(list_cmd)
+        options = Helper.Helper_common.option_key(list_cmd)
+        os.system(
+            '''"C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT ./wl_test.py /SERIAL '''
+            + rg_port + ''' /BAUD 115200''')
+        config = configparser.ConfigParser()
+        config.read_file(open(r'../Config/cmd_value.txt'))
+        actual = []
+        for i in range(len(list_cmd)):
+            actual.append(config.get('COMMAND', options[i]))
+
+        expected = ['']
+        try:
+            self.assertListEqual(actual, expected)
+            self.list_steps.append(
+                '\n[Pass] 5. Check Value return RG console ' + str(actual))
+        except AssertionError:
+            self.list_steps.append(
+                '\n[Fail] 5. Check Value return RG console ' + str(actual))
+            list_steps_fail.append(
+                '5. Value return RG console wrong: Actual: ' + str(actual) + ' Expected: ' + str(expected))
+            pass
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 6. Using the RG console to check the current configuration in wl driver by one of below commands:
+        list_cmd = ['wl1 country']
+        Helper.Helper_common.write_command(list_cmd)
+        options = Helper.Helper_common.option_key(list_cmd)
+        os.system(
+            '''"C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT ./wl_test.py /SERIAL '''
+            + rg_port + ''' /BAUD 115200''')
+        config = configparser.ConfigParser()
+        config.read_file(open(r'../Config/cmd_value.txt'))
+        actual = []
+        for i in range(len(list_cmd)):
+            actual.append(config.get('COMMAND', options[i]))
+
+        expected = ['US (US/0) UNITED STATES']
+        try:
+            self.assertListEqual(actual, expected)
+            self.list_steps.append(
+                '\n[Pass] 6. Check Value return RG console ' + str(actual))
+        except AssertionError:
+            self.list_steps.append(
+                '\n[Fail] 6. Check Value return RG console ' + str(actual))
+            list_steps_fail.append(
+                '6. Value return RG console wrong: Actual: ' + str(actual) + ' Expected: ' + str(expected))
+            pass
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 7. Using the RG console to check the current configuration in wl driver by one of below commands:
+        list_cmd = ["sed -i '/ccode=/c\ccode=US/0' /data/provisioned_wifi_wl1_vars.txt",
+                    "sed -i '/regrev=/c\\regrev=US/0' /data/provisioned_wifi_wl1_vars.txt"]
+        Helper.Helper_common.write_command(list_cmd)
+        options = Helper.Helper_common.option_key(list_cmd)
+        os.system(
+            '''"C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT ./wl_test.py /SERIAL '''
+            + rg_port + ''' /BAUD 115200''')
+        config = configparser.ConfigParser()
+        config.read_file(open(r'../Config/cmd_value.txt'))
+        actual = []
+        for i in range(len(list_cmd)):
+            actual.append(config.get('COMMAND', options[i]))
+
+        expected = ['', '']
+        try:
+            self.assertListEqual(actual, expected)
+            self.list_steps.append(
+                '\n[Pass] 7. Check Value return RG console ' + str(actual))
+        except AssertionError:
+            self.list_steps.append(
+                '\n[Fail] 7. Check Value return RG console ' + str(actual))
+            list_steps_fail.append(
+                '7. Value return RG console wrong: Actual: ' + str(actual) + ' Expected: ' + str(expected))
+            pass
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 8. Using the RG console to check the current configuration in wl driver by one of below commands:
+
+        os.system(
+            '''"C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT ./reboot.py /SERIAL '''
+            + rg_port + ''' /BAUD 115200''')
+        time.sleep(120)
+        Helper.Helper_common.login(driver, self, ipv4)
+        expected = ipv4 + '/#page-quick-setup'
+        try:
+            self.assertEqual(driver.current_url, expected)
+            self.list_steps.append('\n[Pass] 8. Check reboot successfully: ' + driver.current_url)
+        except AssertionError:
+            self.list_steps.append('\n[Fail] 8. Check reboot successfully: ' + driver.current_url)
+            list_steps_fail.append(
+                '8. Reboot successfully: Actual: ' + driver.current_url + ' Expected: ' + expected)
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 9. Using the RG console to check the current configuration in wl driver by one of below commands:
+        list_cmd = ["wl1 country",
+                    "rm -rf /data/provisioned_wifi_wl1_vars.txt"]
+        Helper.Helper_common.write_command(list_cmd)
+        options = Helper.Helper_common.option_key(list_cmd)
+        os.system(
+            '''"C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT ./wl_test.py /SERIAL '''
+            + rg_port + ''' /BAUD 115200''')
+        config = configparser.ConfigParser()
+        config.read_file(open(r'../Config/cmd_value.txt'))
+        actual = []
+        for i in range(len(list_cmd)):
+            actual.append(config.get('COMMAND', options[i]))
+
+        expected = ['US (US/0) UNITED STATES',
+                    'The "provisioned_wifi_wl1_vars.txt" file was deleted from the "/data" directory (ls: /data/provisioned_wifi_wl1_vars.txt: No such file or directory)']
+        try:
+            self.assertListEqual(actual, expected)
+            self.list_steps.append(
+                '\n[Pass] 9. Check Value return RG console ' + str(actual))
+        except AssertionError:
+            self.list_steps.append(
+                '\n[Fail] 9. Check Value return RG console ' + str(actual))
+            list_steps_fail.append(
+                '9. Value return RG console wrong: Actual: ' + str(actual) + ' Expected: ' + str(expected))
+            pass
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 10. Using the RG console to check the current configuration in wl driver by one of below commands:
+        os.system(
+            '''"C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT ./reboot.py /SERIAL '''
+            + rg_port + ''' /BAUD 115200''')
+        time.sleep(120)
+        Helper.Helper_common.login(driver, self, ipv4)
+        expected = ipv4 + '/#page-quick-setup'
+        try:
+            self.assertEqual(driver.current_url, expected)
+            self.list_steps.append('\n[Pass] 10. Check reboot successfully: ' + driver.current_url)
+        except AssertionError:
+            self.list_steps.append('\n[Fail] 10. Check reboot successfully: ' + driver.current_url)
+            list_steps_fail.append(
+                '10. Reboot successfully: Actual: ' + driver.current_url + ' Expected: ' + expected_quick_setup)
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # 11. Using the RG console to check the current configuration in wl driver by one of below commands:
+        list_cmd = ["wl1 country"]
+        Helper.Helper_common.write_command(list_cmd)
+        options = Helper.Helper_common.option_key(list_cmd)
+        os.system(
+            '''"C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe" /SCRIPT ./wl_test.py /SERIAL '''
+            + rg_port + ''' /BAUD 115200''')
+        config = configparser.ConfigParser()
+        config.read_file(open(r'../Config/cmd_value.txt'))
+        actual = []
+        for i in range(len(list_cmd)):
+            actual.append(config.get('COMMAND', options[i]))
+
+        expected = ['BR (BR/24) BRAZIL']
+        try:
+            self.assertListEqual(actual, expected)
+            self.list_steps.append(
+                '\n[Pass] 11. Check Value return RG console ' + str(actual))
+        except AssertionError:
+            self.list_steps.append(
+                '\n[Fail] 11. Check Value return RG console ' + str(actual))
+            list_steps_fail.append(
+                '11. Value return RG console wrong: Actual: ' + str(actual) + ' Expected: ' + str(expected))
+            pass
+
+        self.assertListEqual(list_steps_fail, [], '[WF_2G_WR_11] Assertion 2.4 GHz Country code fail')
+
+    # def test_WF_2G_WPN_01(self):
+    #     driver = self.driver
+    #     self.def_name = Helper.Helper_common.get_func_name()
+    #     list_steps_fail = []
+    #     expected_quick_setup = ipv4 + '/#page-quick-setup'
+    #     try:
+    #         self.assertEqual(driver.current_url, expected_quick_setup)
+    #         self.list_steps.append('\n[Pass] 1. Login Quick setup: ' + driver.current_url)
+    #     except AssertionError:
+    #         self.list_steps.append('\n[Fail] 1. Login Quick setup: Actual: ' + driver.current_url + ' Expected: ' + expected_quick_setup)
+    #         list_steps_fail.append('1. URL QS wrong: ' + driver.current_url)
+    #     name_2g = driver.find_element_by_css_selector('[id="2g-network-name"]').text.strip()
+    #     # Configuration Advance
+    #     driver.find_element_by_css_selector('.next.config').click()
+    #     expected_url_target = ipv4 + '/#page-status-software'
+    #     try:
+    #         self.assertEqual(driver.current_url, expected_url_target)
+    #         self.list_steps.append('\n[Pass] 2.1 Check URL of Configuration Advance: ' + driver.current_url)
+    #     except AssertionError:
+    #         self.list_steps.append('\n[Fail] 2.1 Check URL of Configuration Advance: ' + driver.current_url)
+    #         list_steps_fail.append('2. URL Configuration Advance wrong: Actual: ' + driver.current_url + ' Expected: ' + expected_url_target)
+    #     time.sleep(1)
+    #     # Click Menu
+    #     driver.find_element_by_css_selector('span.icon').click()
+    #     time.sleep(1)
+    #     # Click Wifi
+    #     driver.find_element_by_css_selector('[for=menu-wi-fi]').click()
+    #     time.sleep(1)
+    #     # Click Radio
+    #     driver.find_element_by_css_selector('a[href="#page-wifi-radio"]').click()
+    #     expected_url_target = ipv4 + '/#page-wifi-radio'
+    #     try:
+    #         self.assertEqual(driver.current_url, expected_url_target)
+    #         self.list_steps.append('\n[Pass] 2.2 Check URL of Page Wifi Radio: ' + driver.current_url)
+    #     except AssertionError:
+    #         self.list_steps.append('\n[Fail] 2.2 Check URL of Page Wifi Radio: ' + driver.current_url)
+    #         list_steps_fail.append('2. URL Page Wifi Radio wrong: Actual: ' + driver.current_url + ' Expected: ' + expected_url_target)
+    #     time.sleep(1)
+    #
+    #     # 3. Restore the default wireless configurations by clicking the "Restaurar padrões sem fio" button
+    #     # from the "page-wifi-radio" page
+    #     restore_btn = driver.find_element_by_css_selector('button[value="Restaurar padrões sem fio"]')
+    #     ActionChains(driver).move_to_element(restore_btn).click().perform()
+    #     # Click OK
+    #     driver.find_element_by_css_selector('#ok').click()
+    #     Helper.Helper_common.wait_time(self, driver)
 
 if __name__ == '__main__':
     HTMLTestRunner.main()

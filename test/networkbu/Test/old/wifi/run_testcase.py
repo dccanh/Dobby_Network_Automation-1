@@ -9,7 +9,7 @@ def run_test(*argv):
     for i in range(1, len(sys.argv)):
         run_scripts += ' ' + str(sys.argv[i])
 
-    os.system('python HGJ310_Wifi.py ' + run_scripts + '> ../../../Report/old/wifi/report_ui_wifi_'+str(datetime.datetime.now()).replace(' ', '_').replace(':', '-')+'.html')
+    os.system('python HGJ310_Wifi.py ' + run_scripts + '> ../Report/report_'+str(datetime.datetime.now()).replace(' ', '_').replace(':', '-')+'.html')
 
     #os.system('netsh wlan connect name=HVNWifi')
 

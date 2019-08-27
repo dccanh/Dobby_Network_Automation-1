@@ -47,6 +47,7 @@ def main():
         crt.Sleep(500)
         data = crt.Screen.Get(3, MIN_ROW, MAX_ROW, MAX_COLUMNS)
         data = data.strip()
+        crt.Sleep(3000)
         result.append(data)
 
     f = open(config_path, 'w')
@@ -54,7 +55,10 @@ def main():
     f.close()
 
     for j in range(len(result)):
-        save_config('COMMAND', str(option_key(cm_list)[j]), str(result[j].split('[')[0].strip()))
+        a = str(result[j].split('[')[0].strip())
+        while '  ' in a:
+            a = a.replace('  ', ' ')
+        save_config('COMMAND', str(option_key(cm_list)[j]), a)
 
     end()
 

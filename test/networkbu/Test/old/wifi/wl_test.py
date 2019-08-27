@@ -91,7 +91,7 @@ def option_key(cm_list):
         x = ''
         for i in a:
             if not i.isalnum():
-                if i in '[]-':
+                if i in '[]-\\':
                     x += '\\' + i
                 else:
                     x += i
