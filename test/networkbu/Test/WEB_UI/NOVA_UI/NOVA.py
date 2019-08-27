@@ -48,8 +48,8 @@ com = rg_port
 model = config.get('PORT', 'model')
 
 # final_report = '../Report/final_report_' + str(datetime.datetime.now()).replace(' ', '_').replace(':', '-') + '.xlsx'
-final_report = 'final_report_' + str(datetime.datetime.now()).replace(' ', '_').replace(':', '-') + '.xlsx'
-final_report = os.path.join(root_dir, "Report", "WEBUI", final_report)
+final_report = 'final_ui_report_' + str(datetime.datetime.now()).replace(' ', '_').replace(':', '-') + '.xlsx'
+final_report = os.path.join(root_dir, "Report", "WEB_UI", final_report)
 Helper.Helper_common.reset_report_result(final_report)
 
 
