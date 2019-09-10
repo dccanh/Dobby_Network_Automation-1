@@ -91,7 +91,6 @@ public==2018.11.20
 py==1.7.0
 pyasn1==0.4.7
 pyasn1-modules==0.2.6
-PyAutoIt==0.4
 pycodestyle==2.5.0
 pycparser==2.19
 Pygments==2.4.2
@@ -137,7 +136,6 @@ tornado==6.0.3
 traitlets==4.3.2
 urllib3==1.25.3
 virtualenv==16.4.3
-vnquant==0.0.1
 wcwidth==0.1.7
 webdriver-manager==1.7
 webencodings==0.5.1
