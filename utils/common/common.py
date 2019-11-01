@@ -1,6 +1,5 @@
 import configparser
 import os
-import psutil
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 config_path = str(os.path.join(script_dir, "..", "..", "config", "config.ini"))
@@ -66,11 +65,6 @@ def get_firmware(user, URL_images):
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def kill_processes():
-    ps = psutil.pids()
-
     print("Need to kill some processes...")
-    for x in ps:
-        if (psutil.Process(x).name() == "SecureCRT.exe"):
-            psutil.Process(x).terminate()
-        if (psutil.Process(x).name() == "tftpd64.exe"):
-            psutil.Process(x).terminate()
+    os.system("taskkill /f /im  SecureCRT.exe")
+    os.system("taskkill /f /im  tftpd64.exe")
