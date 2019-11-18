@@ -1,0 +1,26 @@
+[URL]
+url = http://192.168.1.1
+sub_url = http://dearmyrouter.net
+
+[ACCOUNT]
+password = 0001
+user = admin
+
+[GENERAL]
+serial_number = 0001
+stage = Pilot
+version = t10x
+wifi_ssid = We Love You So Much_2G!!
+wifi_pw = humax_0001
+
+[CONSOLE]
+serial_port = COM3
+baud_rate = 115200
+
+[COMMAND_T10X]
+ws = /opt/humax/rego/www/
+
+[PATH]
+crt_common_path = C:\Users\Test\Desktop\DOBBY\client\test\networkbu\Helper\..\Helper\t10x\secure_crt\common.py
+crt_run_cmd_path = C:\Users\Test\Desktop\DOBBY\client\test\networkbu\Helper\..\Helper\t10x\secure_crt\run_command.py
+
