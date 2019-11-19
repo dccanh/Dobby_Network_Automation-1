@@ -5,13 +5,15 @@ from oauth2client.service_account import ServiceAccountCredentials
 import datetime
 from Helper.t10x.config.read_config import *
 from Helper.t10x.common import get_config
+from Helper.t10x.ls_path import *
 
+url = get_config('URL', 'url')
 stage = get_config('GENERAL', 'stage')
 version = get_config('GENERAL', 'version')
 a = str(datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'))
 sheet_name = stage + '_' + version + '_' +a
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-creds = ServiceAccountCredentials.from_json_keyfile_name('dn8c_cred.json', scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(gg_credential_path, scope)
 client = gspread.authorize(creds)
 
 # Duplicate GG sheet
@@ -24,7 +26,7 @@ sheet.update_cell(5, 7, a)
 sheet.update_cell(4, 7, stage)
 
 # Update URL
-sheet.update_cell(13, 5, url_login)
+sheet.update_cell(13, 5, url)
 sheet.update_cell(12, 5, version)
 
 third = sheet.update_cell(54, 5, sheet.cell(55, 5).value)
