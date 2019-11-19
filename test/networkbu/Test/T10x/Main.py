@@ -1,9 +1,10 @@
 import sys
+sys.path.append('../../')
 import unittest
 from selenium import webdriver
 import time
 from datetime import datetime
-from Helper.t10x.config.captcha import *
+# from Helper.t10x.config.captcha import *
 from Helper.t10x.config.data_expected import *
 from Helper.t10x.config.elements import *
 # from Helper.t10x.config.read_config import *
@@ -19,7 +20,7 @@ class Main(unittest.TestCase):
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
             self.driver = webdriver.Chrome(driver_path)  # open chrome
-            self.driver.maximize_window()
+            # self.driver.maximize_window()
         except:
             self.tearDown()
             raise
@@ -584,8 +585,6 @@ class Main(unittest.TestCase):
         # Get account information from web server and write to config.txt
         url_login = get_config('URL', 'url')
         user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
-        save_config(config_path, 'ACCOUNT', 'user', user_pw['userName'])
-        save_config(config_path, 'ACCOUNT', 'password', user_pw['passWord'])
 
         # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
@@ -705,7 +704,306 @@ class Main(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+    def test_Verify_the_operation_at_Login(self):
+        global list_actual, list_expected
+        self.key = 'MAIN_10'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 3 mins for factory
+        time.sleep(250)
 
+        filename_2 = 'account.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        url_login = get_config('URL', 'url')
+        get_result_command_from_server(url_ip=url_login, filename=filename_2)
+
+        user_request = get_config('ACCOUNT', 'user')
+        pass_word = get_config('ACCOUNT', 'password')
+        # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            time.sleep(1)
+            driver.get(url_login)
+            time.sleep(2)
+            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
+            time.sleep(1)
+            # Captcha
+            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+            captcha_text = get_captcha_string(captcha_src)
+            driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+            time.sleep(5)
+
+            # Check Privacy Policy
+            check_policy_popup = driver.find_element_by_css_selector(lg_privacy_policy_pop).is_displayed()
+
+            list_actual = [check_policy_popup]
+            list_expected = [return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1,2. Check pop-up Privacy is displayed')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1,2. Check pop-up Privacy is displayed. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('1,2. Assertion wong')
+        # ~~~~~~~~~~~~~~~~~~ Check Privacy
+        try:
+            ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+            time.sleep(1)
+            # Check Privacy Policy disappear
+            check_policy_popup = driver.find_element_by_css_selector(lg_privacy_policy_pop).is_displayed()
+            # Check Login page appear
+            check_lg_page = driver.find_element_by_css_selector(lg_page).is_displayed()
+            list_actual = [check_policy_popup, check_lg_page]
+            list_expected = [return_false, return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 3. Send: ESC. Check Privacy disappear, Home page displayed\n')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Send: ESC. Check Privacy disappear, Home page displayed. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('3. Assertion wong.')
+        # ~~~~~~~~~~~~~~~~~~~~~~ Check login again ~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            time.sleep(1)
+            driver.get(url_login)
+            time.sleep(2)
+            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
+            time.sleep(1)
+            # Captcha
+            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+            captcha_text = get_captcha_string(captcha_src)
+            driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+            time.sleep(5)
+
+            # Check Privacy Policy
+            check_policy_popup = driver.find_element_by_css_selector(lg_privacy_policy_pop).is_displayed()
+            check_btn_agree = driver.find_element_by_css_selector(btn_ok).get_property('disabled')
+
+            list_actual = [check_policy_popup, check_btn_agree]
+            list_expected = [return_true, return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 4. Check pop-up Privacy is displayed, Agree disabled')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Check pop-up Privacy is displayed, Agree disabled. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('4. Assertion wong')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~ Check Check scroll ~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            check_policy_popup = driver.find_element_by_css_selector(lg_privacy_policy_pop)
+            act = ActionChains(driver)
+            act.move_to_element(check_policy_popup)
+            act.click()
+            act.send_keys(Keys.ARROW_DOWN)
+            act.send_keys(Keys.PAGE_DOWN)
+            act.send_keys(Keys.PAGE_UP)
+            act.perform()
+            # Check btn Agree enabled
+            check_btn_agree = driver.find_element_by_css_selector(btn_ok).get_property('disabled')
+
+            list_actual = [check_btn_agree]
+            list_expected = [return_false]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 5. Send key: PAGE_UP, DOWN. Check Agree enabled')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Send key: PAGE_UP, DOWN. Check Agree enabled. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('5. Assertion wong')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~ Check Welcome ~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            # Click Agree
+            driver.find_element_by_css_selector(btn_ok).click()
+            # Check Welcome Dialog appear
+            time.sleep(3)
+            check_welcome = driver.find_element_by_css_selector(lg_welcome_header).is_displayed()
+            list_actual = [check_welcome]
+            list_expected = [return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 6. Click Agree. Check Welcome dialog displayed')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Click Agree. Check Welcome dialog displayed. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('6. Assertion wong')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~ Logout and Login Again ~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            # Logout
+            driver.get(url_login)
+            check_lg_page = driver.find_element_by_css_selector(lg_page).is_displayed()
+            # Input values
+            time.sleep(3)
+            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
+            time.sleep(1)
+            # Captcha
+            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+            captcha_text = get_captcha_string(captcha_src)
+            driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+            time.sleep(5)
+
+            # Check Welcome dialog
+            check_welcome = driver.find_element_by_css_selector(lg_welcome_header).is_displayed()
+            list_actual = [check_lg_page, check_welcome]
+            list_expected = [return_true, return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 7. Login again. Check Welcome dialog displayed')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 7. Login again. Check Welcome dialog displayed. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('. Assertion wong')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_Verify_the_operation_at_Login_page_with_incorrect_id_pw(self):
+        self.key = 'MAIN_11'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        WRONG_CAPTCHA = 'ciel'
+        WRONG_USER = 'ciel'
+        WRONG_PW = 'ciel'
+        # Get account information from web server and write to config.txt
+        url_login = get_config('URL', 'url')
+        user_request = get_config('ACCOUNT', 'user')
+        pass_word = get_config('ACCOUNT', 'password')
+        # ~~~~~~~~~~~~~~~~~ Correct ID/PW; InCorrect Captcha
+        try:
+            time.sleep(1)
+            driver.get(url_login)
+            time.sleep(2)
+            # Correct ID/PW
+            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
+            time.sleep(1)
+            # Incorrect Captcha
+            driver.find_element_by_css_selector(lg_captcha_box).send_keys(WRONG_CAPTCHA)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+            time.sleep(5)
+
+            # Check Msg Error
+            msg_error = driver.find_element_by_css_selector(lg_msg_error)
+            # Check Login page displayed
+            check_lg_page = driver.find_element_by_css_selector(lg_page).is_displayed()
+
+            list_actual = [msg_error, check_lg_page]
+            list_expected = [exp_wrong_captcha, return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1,2. Check Error Wrong Captcha, Page login displayed.')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1,2. Check Error Wrong Captcha Page login displayed. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('1,2. Assertion wong')
+        # ~~~~~~~~~~~~~~~~~ Incorrect ID/PW; Correct Captcha
+        try:
+            time.sleep(1)
+            driver.get(url_login)
+            time.sleep(2)
+            # InCorrect ID/PW
+            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(WRONG_USER)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(WRONG_PW)
+            time.sleep(1)
+            # Correct Captcha
+            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+            captcha_text = get_captcha_string(captcha_src)
+            driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+            time.sleep(5)
+
+            # Check MSG Error
+            msg_error = driver.find_element_by_css_selector(lg_msg_error)
+            # Check Login page displayed
+            check_lg_page = driver.find_element_by_css_selector(lg_page).is_displayed()
+            list_actual = [msg_error, check_lg_page]
+            list_expected = [exp_wrong_id_pw, return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 3. Check Error wrong ID& PW.')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check Error wrong ID& PW. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('3. Assertion wong')
+
+        # ~~~~~~~~~~~~~~~~~ Incorrect ID/PW; Correct Captcha Login 10 times
+        try:
+            time.sleep(1)
+            driver.get(url_login)
+            time.sleep(2)
+            # InCorrect ID/PW
+            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(WRONG_USER)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(WRONG_PW)
+            time.sleep(1)
+            # Correct Captcha
+            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+            captcha_text = get_captcha_string(captcha_src)
+            driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+            time.sleep(1)
+            list_error_msg = []
+            for i in range(1, 11):
+                driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+                time.sleep(2)
+                # Check MSG Error
+                msg_error = driver.find_element_by_css_selector(lg_msg_error)
+                list_error_msg.append(msg_error)
+            check_error_msg = True
+            # for e in list_error_msg:
+            #     if
+
+            check_lg_btn = driver.find_element_by_css_selector(lg_btn_login).is_displayed()
+
+            list_actual = [msg_error, check_lg_page]
+            list_expected = [exp_wrong_id_pw, return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 3. Check Error wrong ID& PW.')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check Error wrong ID& PW. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('3. Assertion wong')
+        self.assertListEqual(list_step_fail, [])
 
 if __name__ == '__main__':
     unittest.main()

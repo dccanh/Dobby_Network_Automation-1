@@ -33,7 +33,7 @@ def save_config(config_path, section, option, value):
     if not config.has_section(str(section).upper()):
         config.add_section(str(section).upper())
     config.set(str(section).upper(), str(option), str(value))
-    with open(config_path, 'r+') as config_file:
+    with open(config_path, 'w', encoding='utf-8') as config_file:
         config.write(config_file)
 
 
@@ -243,14 +243,12 @@ def get_result_command_from_server(url_ip, filename=False):
     command_result = '{' + get_all_text.split('@@@ PRINT OBJLIST START @@@')[1].split(' @@@@@@ PRINT OBJLIST END @@@@@@')[0]
     fit_result = command_result.split('''   },\n  },\n }''')[0]+'}}}'
 
-
     info = json.loads(fit_result)
     username = info['Device.Users.User.2']['Username']['paramValue']
     password = info['Device.Users.User.2']['Password']['paramValue']
-    print(username)
-    print(password)
-    # save_config(config_path, 'ACCOUNT', 'user', username)
-    # save_config(config_path, 'ACCOUNT', 'password', password)
+
+    save_config(config_path, 'ACCOUNT', 'user', username)
+    save_config(config_path, 'ACCOUNT', 'password', password)
     driver2.quit()
     return {'userName': username, 'passWord': password}
 

@@ -3,7 +3,7 @@ url = http://192.168.1.1
 sub_url = http://dearmyrouter.net
 
 [ACCOUNT]
-password = Dinhcongcanh1
+password = 0001
 user = admin
 
 [GENERAL]

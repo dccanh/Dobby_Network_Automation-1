@@ -24,7 +24,7 @@ lg_btn_login = 'button.button-login'
 lg_extra_info = '.extra-info>span'
 lg_privacy_policy_pop = '#privacy-dialog-id'
 lg_company_img = '.login-page>.company>a'
-
+lg_msg_error = '.login-page .msg-error'
 # ~~~~~~~~~~~~~~~~~ WELCOME
 lg_welcome_header = 'span.header-text'
 welcome_language = '.selected'
