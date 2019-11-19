@@ -21,6 +21,7 @@ expected_path = os.path.join(t10x_config_path, "data_expected.py")
 elements_path = os.path.join(t10x_config_path, "elements.py")
 read_config_path = os.path.join(t10x_config_path, "read_config.py")
 write_config_path = os.path.join(t10x_config_path, "write_config.py")
+gg_credential_path = os.path.join(t10x_config_path, "dn8c_cred.json")
 
 test_t10x_path = os.path.join(root_dir, "Test", "t10x")
 after_test_path = os.path.join(test_t10x_path, "After_test.py")

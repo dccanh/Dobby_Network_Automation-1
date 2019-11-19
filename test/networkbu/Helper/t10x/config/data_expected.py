@@ -34,3 +34,7 @@ exp_lg_captcha_holder = 'Enter the text below'
 exp_lg_extra_info = 'For the default Router Login ID and Password \nsee the label of the product.'
 exp_tooltip_img = 'http://quantum.humaxdigital.com/'
 exp_quantum_url = 'quantum.humaxdigital.com'
+
+# ~~~~~~~~~~~~~~~~~~~~~~~ Welcome
+exp_time_zone = '(GMT+07:00) Bangkok, Ho Chi Minh, Phnom Penh, Vientiane'
+exp_language = 'English'

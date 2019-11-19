@@ -22,9 +22,19 @@ lg_captcha_src = '.captcha-img>img'
 lg_captcha_box = 'input#uword'
 lg_btn_login = 'button.button-login'
 lg_extra_info = '.extra-info>span'
-lg_welcome_header = 'span.header-text'
 lg_privacy_policy_pop = '#privacy-dialog-id'
 lg_company_img = '.login-page>.company>a'
+
+# ~~~~~~~~~~~~~~~~~ WELCOME
+lg_welcome_header = 'span.header-text'
+welcome_language = '.selected'
+welcome_list_language = '.selected .custom-select-list>ul>li span'
+welcome_time_zone = '.selected+.selected'
+welcome_list_time_zone = '.selected+.selected .custom-select-list>ul>li span'
+welcome_start_btn = '#wizard-step-id button.start'
+welcome_next_btn = '#wizard-step-id button.next'
+welcome_let_go_btn = '#wizard-step-id button.summary'
+welcome_change_pw_fields = '.text-wrap .password-input input'
 # ~~~~~~~~~~~~~~~~~ REDIRECT
 network_tab = 'a[href="/network"]'
 network_internet_tab = 'a[href="/network/internet"]'
@@ -63,3 +73,7 @@ pop_up_btn_apply = '#language-popup button.active-button'
 # ~~~~~~~~~~~~~~~~ DIALOG
 btn_ok = 'button.confirm'
 dialog_loading = '.dialog-body>.loading'
+
+
+# ~~~~~~~~~~~~~~~~ HOME
+home_view_wrap = 'div.view-wrap.home'

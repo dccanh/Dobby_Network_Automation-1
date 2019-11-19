@@ -62,7 +62,7 @@ def next_available_row(sheet):
 
 def write_ggsheet(key, list_steps, func_name, duration):
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('dn8c_cred.json', scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name(gg_credential_path, scope)
     client = gspread.authorize(creds)
     sheet = client.open("[DOB] Report Automation").get_worksheet(1)
     next_row = next_available_row(sheet)
@@ -223,7 +223,7 @@ def login(driver):
     driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
     time.sleep(1)
     driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
-    time.sleep(3)
+    time.sleep(5)
 
     # Check Privacy Policy
     policy_popup = driver.find_elements_by_css_selector(lg_privacy_policy_pop)
@@ -247,10 +247,12 @@ def get_result_command_from_server(url_ip, filename=False):
     info = json.loads(fit_result)
     username = info['Device.Users.User.2']['Username']['paramValue']
     password = info['Device.Users.User.2']['Password']['paramValue']
-
-    save_config(config_path, 'ACCOUNT', 'user', username)
-    save_config(config_path, 'ACCOUNT', 'password', password)
+    print(username)
+    print(password)
+    # save_config(config_path, 'ACCOUNT', 'user', username)
+    # save_config(config_path, 'ACCOUNT', 'password', password)
     driver2.quit()
+    return {'userName': username, 'passWord': password}
 
 
 def get_url_ipconfig(ipconfig_field='Default Gateway'):

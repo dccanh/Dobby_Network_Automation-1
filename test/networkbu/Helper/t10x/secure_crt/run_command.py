@@ -12,9 +12,12 @@ web_dir = "/opt/humax/rego/www/"
 
 command = crt.Arguments.GetArg(0)
 file_name = crt.Arguments.GetArg(1)
-file_path = web_dir + file_name
+if file_name == '1':
+    cmd_str = str(command)
+else:
+    file_path = web_dir + file_name
 
-cmd_str = str(command + " > " + file_path)
+    cmd_str = str(command + " > " + file_path)
 
 
 def send_command(cmd):
