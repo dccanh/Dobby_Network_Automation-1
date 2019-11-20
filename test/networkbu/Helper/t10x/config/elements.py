@@ -46,7 +46,7 @@ wireless_primarynetwork_tab = 'a[href="/wireless/primarynetwork"]'
 wireless_guestnetwork_tab = 'a[href="/wireless/guestnetwork"]'
 wireless_wps_tab = 'a[href="/wireless/wps"]'
 
-
+current_tab_chosen = '#parent-menu:not(.hide)>#sub-menu>a.active'
 # ~~~~~~~~~~~~~~~~~ NETWORK
 ip_address_input_filed = 'div.ip-address [name="input-field"]'
 start_end_ip_address = '.ip-class-c .input-field input'
@@ -77,3 +77,9 @@ dialog_loading = '.dialog-body>.loading'
 
 # ~~~~~~~~~~~~~~~~ HOME
 home_view_wrap = 'div.view-wrap.home'
+home_img_connection = 'div.wan-connection>a.img-connection'
+home_wan_ls_fields = '.wrap-form'
+home_wan_ls_label = 'label.input-label'
+home_wan_ls_value = 'span.text-label'
+home_icon_fab = '.icon-fab'
+home_icon_more_fab = 'button.more-fab'

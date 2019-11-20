@@ -21,7 +21,7 @@ from faker import Faker
 from Helper.t10x.config.read_config import *
 from Helper.t10x.config.elements import *
 from Helper.t10x.config.captcha import *
-
+import base64
 from oauth2client.service_account import ServiceAccountCredentials
 from Helper.t10x.ls_path import *
 
@@ -267,3 +267,79 @@ def goto_menu(driver, parent_tab, child_tab):
     time.sleep(0.2)
     driver.find_element_by_css_selector(child_tab).click()
     time.sleep(0.5)
+
+
+def base64encode(user, pw):
+    import hashlib, binascii, base64
+    salt = base64.b64encode(('hmx#cpe@pbkdf2*SALT!' + user).encode('utf-8'))
+
+    # salt = binascii.hexlify(hash0_pw)
+    if salt is not None:
+        mode = 'sha512'
+        iterations = 1000
+        dklen = 64
+
+        hash0_pw = hashlib.pbkdf2_hmac(mode, pw.encode('utf-8'), salt, iterations, dklen)
+        # hash1_pw = binascii.hexlify(hash0_pw)
+        hash1_pw = base64.b64encode(hash0_pw)
+
+        hash2_pw = hash1_pw.decode('utf-8')
+        initial_data = 'HS:' + user + ':' + hash2_pw
+        byte_string = initial_data.encode('utf-8')
+        encoded_data = base64.b64encode(byte_string)
+        return encoded_data.decode('ascii')
+    else:
+        initial_data = 'HS:' + user + ':' + pw
+        byte_string = initial_data.encode('utf-8')
+        encoded_data = base64.b64encode(byte_string)
+
+        return encoded_data.decode('ascii')
+
+
+def send_request(url, method, headers, body, timeout=120):
+    result = requests.models.Response()
+    try:
+        if method.upper() == 'GET':
+            result = requests.get(url=url, headers=headers, json=body, timeout=timeout)
+        elif method.upper() == 'POST':
+            result = requests.post(url=url, headers=headers, json=body, timeout=timeout)
+        elif method.upper() == 'PUT':
+            result = requests.put(url=url, headers=headers, json=body, timeout=timeout)
+        elif method.upper() == 'DELETE':
+            result = requests.put(url=url, headers=headers, json=body, timeout=timeout)
+    except Exception:
+        result.status_code = 404
+    return result
+
+
+def call_api_login(user, pw):
+    """Method: POST; Require: user, pw; Return: JSON data"""
+    url = get_config('URL', 'url')
+    url_login = url + "/api/v1/gateway/users/login"
+    data = {
+        "userName": user,
+        "password": base64encode(user, pw)
+    }
+    res = requests.post(url=url_login, json=data)
+    json_data = json.loads(res.text)
+    return json_data
+
+
+def get_token(user, pw):
+    token = call_api_login(user, pw)["accessToken"]
+    return token
+
+
+def call_api(url, method, body, token):
+
+    headers = {
+        "content-type": "application/json",
+        "content-language": "en",
+        "access-token": token
+    }
+    res_data = send_request(url, method, headers, body)
+    if res_data.status_code != 404:
+        data = json.loads(res_data.text)
+    else:
+        data = {"body": "404", "statusCode": 404}
+    return data

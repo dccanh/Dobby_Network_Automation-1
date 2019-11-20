@@ -19,7 +19,7 @@ return_false = False
 
 # ~~~~~~~~~~~~~~~~~~~~~~~ URL redirect
 homepage = '/homepage'
-
+network_internet = '/network/internet'
 
 # ~~~~~~~~~~~~~~~~~~~~~~~ Console
 connect_wifi_msg = 'Connection request was completed successfully.'

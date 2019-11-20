@@ -185,7 +185,6 @@ class Main(unittest.TestCase):
         except:
             self.list_steps.append(
                 f'[Fail] 1,2. Check Login and Restore fail. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-            self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '1,2. Assertion wong.')
 
