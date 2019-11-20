@@ -20,7 +20,7 @@ class Main(unittest.TestCase):
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
             self.driver = webdriver.Chrome(driver_path)  # open chrome
-            # self.driver.maximize_window()
+            self.driver.maximize_window()
         except:
             self.tearDown()
             raise
@@ -885,7 +885,269 @@ class Main(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+    def test_Verify_the_operation_at_Login_page_with_incorrect_id_pw(self):
+        self.key = 'MAIN_11'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        WRONG_CAPTCHA = 'ciel'
+        WRONG_USER = 'ciel'
+        WRONG_PW = 'ciel'
+        # Get account information from web server and write to config.txt
+        url_login = get_config('URL', 'url')
+        user_request = get_config('ACCOUNT', 'user')
+        pass_word = get_config('ACCOUNT', 'password')
+        # ~~~~~~~~~~~~~~~~~ Correct ID/PW; InCorrect Captcha
+        try:
+            time.sleep(1)
+            driver.get(url_login)
+            time.sleep(2)
+            # Correct ID/PW
+            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
+            time.sleep(1)
+            # Incorrect Captcha
+            driver.find_element_by_css_selector(lg_captcha_box).send_keys(WRONG_CAPTCHA)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+            time.sleep(5)
 
+            # Check Msg Error
+            msg_error = driver.find_element_by_css_selector(lg_msg_error).text
+            # Check Login page displayed
+            check_lg_page = driver.find_element_by_css_selector(lg_page).is_displayed()
+
+            list_actual = [msg_error, check_lg_page]
+            list_expected = [exp_wrong_captcha, return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1,2. Check Error Wrong Captcha, Page login displayed.')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1,2. Check Error Wrong Captcha Page login displayed. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('1,2. Assertion wong')
+        # ~~~~~~~~~~~~~~~~~ Incorrect ID/PW; Correct Captcha
+        try:
+            time.sleep(1)
+            driver.get(url_login)
+            time.sleep(2)
+            # InCorrect ID/PW
+            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(WRONG_USER)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(WRONG_PW)
+            time.sleep(1)
+            # Correct Captcha
+            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+            captcha_text = get_captcha_string(captcha_src)
+            driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+            time.sleep(5)
+
+            # Check MSG Error
+            msg_error = driver.find_element_by_css_selector(lg_msg_error).text
+            # Check Login page displayed
+            check_lg_page = driver.find_element_by_css_selector(lg_page).is_displayed()
+            list_actual = [msg_error, check_lg_page]
+            list_expected = [exp_wrong_id_pw, return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 3. Check Error wrong ID& PW.')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check Error wrong ID& PW. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('3. Assertion wong')
+
+        # ~~~~~~~~~~~~~~~~~ Incorrect ID/PW; Correct Captcha Login 10 times
+        try:
+            time.sleep(1)
+            driver.get(url_login)
+            time.sleep(2)
+            # InCorrect ID/PW
+            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(WRONG_USER)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(WRONG_PW)
+            time.sleep(1)
+            # Correct Captcha
+            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+            captcha_text = get_captcha_string(captcha_src)
+            driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+            time.sleep(1)
+            list_error_msg = []
+            # Login 10 times
+            for i in range(1, 11):
+                driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+                time.sleep(2)
+                # Check MSG Error
+                msg_error = driver.find_element_by_css_selector(lg_msg_error).text
+                list_error_msg.append(msg_error)
+            # 9 errors
+            check_error_msg = True
+            for e in list_error_msg[:9]:
+                if e != exp_wrong_id_pw:
+                    check_error_msg = False
+
+            # Set up minute<=0, second
+            min = [i for i in range(0, 2)]
+            sec = [i for i in range(1, 61)]
+            check_error_msg_time = False
+            for i in min:
+                for j in sec:
+                    error_format = 'Too many failed login attempts. Try again in {min} minute(s) {sec} seconds.'.format(min=str(i), sec=str(j))
+                    if error_format == list_error_msg[9]:
+                        check_error_msg_time = True
+
+            check_lg_btn = driver.find_element_by_css_selector(lg_btn_login).is_enabled()
+
+            list_actual = [check_error_msg, check_error_msg_time, check_lg_btn]
+            list_expected = [return_true, check_error_msg_time, return_false]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 4. Check Error wrong ID& PW: 9 msg warning, 1 msg count time, lgin btn enabled after count.')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Check Error wrong ID& PW: 9 msg warning, 1 msg count time, lgin btn enabled after count. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('4. Assertion wong')
+
+        # ~~~~~~~~~~~~~~~~~ Incorrect ID/PW; Correct Captcha Login 2 times more
+        try:
+            while True:
+                time.sleep(0.5)
+                # Check MSG Error
+                msg_error = driver.find_element_by_css_selector(lg_msg_error).text
+                if msg_error == '':
+                    break
+
+            time.sleep(5)
+            driver.get(url_login)
+            time.sleep(2)
+            # InCorrect ID/PW
+            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(WRONG_USER)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(WRONG_PW)
+            time.sleep(1)
+            # Correct Captcha
+            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+            captcha_text = get_captcha_string(captcha_src)
+            driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+            time.sleep(1)
+            list_error_msg = []
+            # Login 2 times
+            for i in range(1, 3):
+                driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+                time.sleep(2)
+                # Check MSG Error
+                msg_error = driver.find_element_by_css_selector(lg_msg_error).text
+                list_error_msg.append(msg_error)
+            # 2 errors
+            check_error_msg = True
+            for e in list_error_msg[:1]:
+                if e != exp_wrong_id_pw:
+                    check_error_msg = False
+
+            # Set up minute<=2, second
+            min = [i for i in range(0, 3)]
+            sec = [i for i in range(1, 61)]
+            check_error_msg_time = False
+            for i in min:
+                for j in sec:
+                    error_format = 'Too many failed login attempts. Try again in {min} minute(s) {sec} seconds.'.format(min=str(i), sec=str(j))
+                    if error_format == list_error_msg[1]:
+                        check_error_msg_time = True
+
+            check_lg_btn = driver.find_element_by_css_selector(lg_btn_login).is_enabled()
+
+            list_actual = [check_error_msg, check_error_msg_time, check_lg_btn]
+            list_expected = [return_true, check_error_msg_time, return_false]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 5. Check Error wrong ID& PW: 1 msg warning, 1 msg count time, lgin btn enabled after count.')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Check Error wrong ID& PW: 1 msg warning, 1 msg count time, lgin btn enabled after count. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('5. Assertion wong')
+
+        # ~~~~~~~~~~~~~~~~~ Incorrect ID/PW; Correct Captcha Login 2 times more
+        try:
+
+            while True:
+                time.sleep(0.5)
+                # Check MSG Error
+                msg_error = driver.find_element_by_css_selector(lg_msg_error).text
+                if msg_error == '':
+                    break
+
+            time.sleep(5)
+            driver.get(url_login)
+            time.sleep(2)
+            # InCorrect ID/PW
+            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(WRONG_USER)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(WRONG_PW)
+            time.sleep(1)
+            # Correct Captcha
+            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+            captcha_text = get_captcha_string(captcha_src)
+            driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+            time.sleep(1)
+            list_error_msg = []
+            # Login 2 times
+            for i in range(1, 3):
+                driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+                time.sleep(2)
+                # Check MSG Error
+                msg_error = driver.find_element_by_css_selector(lg_msg_error).text
+                list_error_msg.append(msg_error)
+            # 2 errors
+            check_error_msg = True
+            for e in list_error_msg[:1]:
+                if e != exp_wrong_id_pw:
+                    check_error_msg = False
+
+            # Set up minute<=2, second
+            min = [i for i in range(0, 5)]
+            sec = [i for i in range(1, 61)]
+            check_error_msg_time = False
+            for i in min:
+                for j in sec:
+                    error_format = 'Too many failed login attempts. Try again in {min} minute(s) {sec} seconds.'.format(
+                        min=str(i), sec=str(j))
+                    if error_format == list_error_msg[1]:
+                        check_error_msg_time = True
+
+            check_lg_btn = driver.find_element_by_css_selector(lg_btn_login).is_enabled()
+
+            list_actual = [check_error_msg, check_error_msg_time, check_lg_btn]
+            list_expected = [return_true, check_error_msg_time, return_false]
+            check = assert_list(list_actual, list_expected)
+            # Wait ultil Done
+            while True:
+                time.sleep(0.5)
+                # Check MSG Error
+                msg_error = driver.find_element_by_css_selector(lg_msg_error).text
+                if msg_error == '':
+                    break
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 6. Check Error wrong ID& PW: 1 msg warning, 1 msg count time, lgin btn enabled after count.')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Check Error wrong ID& PW: 1 msg warning, 1 msg count time, lgin btn enabled after count. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('6. Assertion wong')
+        self.assertListEqual(list_step_fail, [])
 
 if __name__ == '__main__':
     unittest.main()
