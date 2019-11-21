@@ -151,7 +151,7 @@ class Home(unittest.TestCase):
                 '4. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
 
-    def test_Check_Connection_Internet_Information(self):
+    def test_03_Check_Connection_Internet_Information(self):
         global list_actual, list_expected
         self.key = 'HOME_03'
         driver = self.driver

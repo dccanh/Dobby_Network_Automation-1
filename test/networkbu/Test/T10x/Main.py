@@ -31,7 +31,7 @@ class Main(unittest.TestCase):
         write_ggsheet(self.key, self.list_steps, self.def_name, duration)
         self.driver.quit()
 
-    def test_Verify_the_Web_UI_connection_through_Gateway_IP(self):
+    def test_04_Verify_the_Web_UI_connection_through_Gateway_IP(self):
         global list_actual, list_expected, password_config, url_config, user_config
         self.key = 'MAIN_04'
         driver = self.driver
@@ -131,7 +131,7 @@ class Main(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_Verify_the_Default_setting_of_Language(self):
+    def test_05_Verify_the_Default_setting_of_Language(self):
         global list_actual, list_expected, password_config, url_config, user_config
         self.key = 'MAIN_05'
         driver = self.driver
@@ -327,7 +327,7 @@ class Main(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_Verify_the_Web_UI_connection_through_domain_address(self):
+    def test_06_Verify_the_Web_UI_connection_through_domain_address(self):
         global list_actual, list_expected, password_config, url_config, user_config
         self.key = 'MAIN_06'
         driver = self.driver
@@ -409,7 +409,7 @@ class Main(unittest.TestCase):
             list_step_fail.append('4. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
 
-    def test_Verify_the_Login_page(self):
+    def test_07_Verify_the_Login_page(self):
         global list_actual, list_expected, password_config, url_config, user_config
         self.key = 'MAIN_07'
         driver = self.driver
@@ -517,7 +517,7 @@ class Main(unittest.TestCase):
                 '4. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
 
-    def test_Verify_the_Humax_Retail_CPE_Site_operation(self):
+    def test_08_Verify_the_Humax_Retail_CPE_Site_operation(self):
         global list_actual, list_expected
         self.key = 'MAIN_08'
         driver = self.driver
@@ -563,7 +563,7 @@ class Main(unittest.TestCase):
             list_step_fail.append('2. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
 
-    def test_Verify_the_Login_operation(self):
+    def test_09_Verify_the_Login_operation(self):
         global list_actual, list_expected
         self.key = 'MAIN_09'
         driver = self.driver
@@ -703,7 +703,7 @@ class Main(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_Verify_the_operation_at_Login(self):
+    def test_10_Verify_the_operation_at_Login(self):
         global list_actual, list_expected
         self.key = 'MAIN_10'
         driver = self.driver
@@ -884,7 +884,7 @@ class Main(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_Verify_the_operation_at_Login_page_with_incorrect_id_pw(self):
+    def test_11_Verify_the_operation_at_Login_page_with_incorrect_id_pw(self):
         self.key = 'MAIN_11'
         driver = self.driver
         self.def_name = get_func_name()
