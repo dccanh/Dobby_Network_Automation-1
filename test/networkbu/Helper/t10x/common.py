@@ -263,6 +263,7 @@ def get_url_ipconfig(ipconfig_field='Default Gateway'):
 
 
 def goto_menu(driver, parent_tab, child_tab):
+    ActionChains(driver).move_to_element(driver.find_element_by_css_selector(parent_tab)).perform()
     driver.find_element_by_css_selector(parent_tab).click()
     time.sleep(0.2)
     driver.find_element_by_css_selector(child_tab).click()
@@ -343,3 +344,26 @@ def call_api(url, method, body, token):
     else:
         data = {"body": "404", "statusCode": 404}
     return data
+
+
+def check_page_exist(url):
+    # api_url = ipv4 + "/index.html"
+    try:
+        res = requests.get(url=url, timeout=1)
+        if (res.status_code == 200):
+            return True
+    except Exception:
+        return False
+
+
+def wait_DUT_activated(url):
+    count = 0
+    while True:
+        count += 1
+        url = url + "/index.html"
+        if check_page_exist(url):
+            return True
+        else:
+            print("          WAITING FOR THE DEVICE ACTIVED... | RE-TRY TIMES: " + str(count))
+            if (count % 180 == 0):
+                return False

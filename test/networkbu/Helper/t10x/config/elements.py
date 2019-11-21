@@ -40,7 +40,7 @@ network_tab = 'a[href="/network"]'
 network_internet_tab = 'a[href="/network/internet"]'
 network_lan_tab = 'a[href="/network/lan"]'
 network_operationmode_tab = 'a[href="/network/operationmode"]'
-
+home_tab = 'a[href="/home"]'
 wireless_tab = 'a[href="/wireless"]'
 wireless_primarynetwork_tab = 'a[href="/wireless/primarynetwork"]'
 wireless_guestnetwork_tab = 'a[href="/wireless/guestnetwork"]'
@@ -51,7 +51,11 @@ current_tab_chosen = '#parent-menu:not(.hide)>#sub-menu>a.active'
 ip_address_input_filed = 'div.ip-address [name="input-field"]'
 start_end_ip_address = '.ip-class-c .input-field input'
 
-
+dual_wan_input = '.dual-wan-card .wrap-input input'
+dual_wan_button = '.dual-wan-card .wrap-input .toggle-button'
+dual_wan_ls_fields = '.dual-wan-card .wrap-input'
+active_drop_down_values = '.custom-select-list.active>ul>li>button>span'
+dual_wan_apply_btn = '.dual-wan-card button.active-button'
 # ~~~~~~~~~~~~~~~~~ WIRELESS
 fields_in_2g = '.left .wrap-form'
 label_name_in_2g = '.wrap-label>.input-label'
@@ -83,3 +87,6 @@ home_wan_ls_label = 'label.input-label'
 home_wan_ls_value = 'span.text-label'
 home_icon_fab = '.icon-fab'
 home_icon_more_fab = 'button.more-fab'
+
+left = '.left'
+right = '.right'
