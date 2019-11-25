@@ -110,7 +110,7 @@ def wait_visible(driver, css_element):
         time.sleep(1)
         visible = driver.find_elements_by_css_selector(css_element)
         count += 1
-        if count == 60:
+        if count == 300:
             driver.quit()
             os.system("[Fail] Loaded time out.")
             return False
@@ -125,8 +125,9 @@ def wait_popup_disappear(driver, pop_up_element):
        time.sleep(1)
        visible = driver.find_elements_by_css_selector(pop_up_element)
        count += 1
-       if count == 60:
+       if count == 300:
            driver.quit()
+           os.system("[Fail] Loaded time out.")
            return False
    else:
        return True
@@ -258,14 +259,14 @@ def get_url_ipconfig(ipconfig_field='Default Gateway'):
     write_cmd = subprocess.check_output(cmd, encoding='oem')
     split_result = [i.strip() for i in write_cmd.splitlines()]
     default_gw = [i for i in split_result if i.startswith(ipconfig_field)]
-    url_ = 'http://'+(default_gw[0].split(': ')[1])
+    url_ = 'http://'+[i.split(': ')[1] for i in default_gw if i.split(': ')[1].startswith('192.168')][0]
     save_config(config_path, 'URL', 'url', url_)
 
 
 def goto_menu(driver, parent_tab, child_tab):
     ActionChains(driver).move_to_element(driver.find_element_by_css_selector(parent_tab)).perform()
-    driver.find_element_by_css_selector(parent_tab).click()
-    time.sleep(0.2)
+    # driver.find_element_by_css_selector(parent_tab).click()
+    time.sleep(0.5)
     driver.find_element_by_css_selector(child_tab).click()
     time.sleep(0.5)
 
@@ -361,9 +362,35 @@ def wait_DUT_activated(url):
     while True:
         count += 1
         url = url + "/index.html"
+        print(url)
         if check_page_exist(url):
             return True
         else:
             print("          WAITING FOR THE DEVICE ACTIVED... | RE-TRY TIMES: " + str(count))
+            time.sleep(1)
             if (count % 180 == 0):
                 return False
+
+
+def ping_to_url(url):
+    TIME_OUT = 'time out'
+    result = subprocess.check_output('ping ' + url)
+    if TIME_OUT not in result.decode('utf8'):
+        # Check there is no time out in pinged result > Successfully
+        return True
+    return False
+
+
+def wait_ping(url):
+    TIME_OUT = 'Request time out'
+    count = 0
+    while True:
+        result = subprocess.check_output('ping ' + url)
+        time.sleep(1)
+        count += 1
+        if TIME_OUT not in result.decode('utf8'):
+            break
+        else:
+            if count == 300:
+                print('Wait more than 300s')
+                break

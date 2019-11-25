@@ -56,6 +56,10 @@ dual_wan_button = '.dual-wan-card .wrap-input .toggle-button'
 dual_wan_ls_fields = '.dual-wan-card .wrap-input'
 active_drop_down_values = '.custom-select-list.active>ul>li>button>span'
 dual_wan_apply_btn = '.dual-wan-card button.active-button'
+internet_setting_block = '.internet-dual-setting-card'
+
+text_field_required = '//*[text()="This field is required"]'
+page_network = '.view-wrap.network'
 # ~~~~~~~~~~~~~~~~~ WIRELESS
 fields_in_2g = '.left .wrap-form'
 label_name_in_2g = '.wrap-label>.input-label'
@@ -74,10 +78,10 @@ list_language_option = '#language-popup ul>li>button>span'
 pop_up_btn_apply = '#language-popup button.active-button'
 
 
-# ~~~~~~~~~~~~~~~~ DIALOG
+# ~~~~~~~~~~~~~~.internet-dual-setting-card~~ DIALOG
 btn_ok = 'button.confirm'
 dialog_loading = '.dialog-body>.loading'
-
+btn_cancel = 'button.cancel'
 
 # ~~~~~~~~~~~~~~~~ HOME
 home_view_wrap = 'div.view-wrap.home'
@@ -87,6 +91,11 @@ home_wan_ls_label = 'label.input-label'
 home_wan_ls_value = 'span.text-label'
 home_icon_fab = '.icon-fab'
 home_icon_more_fab = 'button.more-fab'
-
+home_conection_img_wan_ip = '.wan-connection .more-info'
 left = '.left'
 right = '.right'
+wrap_input = '.wrap-input'
+input = 'input'
+apply = 'button.active-button'
+select = '.toggle-button'
+label = '.input-label'
