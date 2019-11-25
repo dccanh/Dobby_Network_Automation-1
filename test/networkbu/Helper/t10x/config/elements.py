@@ -57,7 +57,7 @@ dual_wan_ls_fields = '.dual-wan-card .wrap-input'
 active_drop_down_values = '.custom-select-list.active>ul>li>button>span'
 dual_wan_apply_btn = '.dual-wan-card button.active-button'
 internet_setting_block = '.internet-dual-setting-card'
-
+internet_setting_block_single = '.internet-setting-card'
 text_field_required = '//*[text()="This field is required"]'
 page_network = '.view-wrap.network'
 # ~~~~~~~~~~~~~~~~~ WIRELESS
@@ -86,6 +86,7 @@ btn_cancel = 'button.cancel'
 # ~~~~~~~~~~~~~~~~ HOME
 home_view_wrap = 'div.view-wrap.home'
 home_img_connection = 'div.wan-connection>a.img-connection'
+home_connection_description = 'div.wan-connection>.text-description'
 home_wan_ls_fields = '.wrap-form'
 home_wan_ls_label = 'label.input-label'
 home_wan_ls_value = 'span.text-label'
