@@ -40,3 +40,9 @@ exp_wrong_id_pw = 'Router login ID or password is not correct.'
 exp_time_zone = '(GMT+07:00) Bangkok, Ho Chi Minh, Phnom Penh, Vientiane'
 exp_language = 'English'
 header_login_text = 'Welcome to HUMAX T10X'
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~ Wireless
+exp_ssid_2g_default_val = 'We Love You So Much_2G!'
+exp_ssid_5g_default_val = 'We Love You So Much_5G!'
+exp_ssid_placeHolder = 'Enter the network name (SSID)'

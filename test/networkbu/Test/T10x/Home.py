@@ -40,11 +40,6 @@ class Home(unittest.TestCase):
         URL_API = URL_LOGIN + '/api/v1/network/wan/0'
         METHOD = 'GET'
         BODY = None
-        # Handle API
-        _token = get_token(USER_LOGIN, PW_LOGIN)
-        # Call API
-        res = call_api(URL_API, METHOD, BODY, _token)
-
         try:
             login(driver)
             time.sleep(1)
@@ -55,15 +50,16 @@ class Home(unittest.TestCase):
             # Enable Dual WAN
             goto_menu(driver, network_tab, network_internet_tab)
             time.sleep(1)
-            _check_dual_selected = driver.find_element_by_css_selector('.dual-wan-card .wrap-input input')
+            _check_dual_selected = driver.find_element_by_css_selector(dual_wan_input)
             if _check_dual_selected.is_selected():
-                driver.find_element_by_css_selector('.dual-wan-card .wrap-input').click()
+                driver.find_element_by_css_selector(dual_wan_button).click()
                 # Click Apply
-                driver.find_element_by_css_selector('.dual-wan-card button.active-button').click()
+                driver.find_element_by_css_selector(dual_wan_apply_btn).click()
                 wait_popup_disappear(driver, dialog_loading)
                 time.sleep(5)
+            time.sleep(5)
             driver.get(URL_LOGIN + homepage)
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
 
             # Click icons Internet connection
             driver.find_element_by_css_selector(home_img_connection).click()
@@ -82,6 +78,10 @@ class Home(unittest.TestCase):
                                     "gateway": "Gateway",
                                     "dnsServer1": "DNS Server 1",
                                     "dnsServer2": "DNS Server 2"}
+            # Handle API
+            _token = get_token(USER_LOGIN, PW_LOGIN)
+            # Call API
+            res = call_api(URL_API, METHOD, BODY, _token)
             ipv4 = res['ipv4']
 
             _actual = [dict_wan[i] for i in translate_key_api2ui.values()]
@@ -90,6 +90,8 @@ class Home(unittest.TestCase):
             _expected = [ipv4[i] for i in translate_key_api2ui.keys()]
             if ipv4['mode'] == 'dynamic':
                 _expected[0] = 'Dynamic IP'
+            elif ipv4['mode'] == 'staticc':
+                _expected[0] = 'Static IP'
             if ipv4['dnsServer2'] == '':
                 _expected[-1] = '0.0.0.0'
 

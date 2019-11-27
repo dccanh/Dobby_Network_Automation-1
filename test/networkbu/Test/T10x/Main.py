@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf8 -*-
 import sys
 sys.path.append('../../')
 import unittest
@@ -140,10 +142,14 @@ class Main(unittest.TestCase):
         self.list_steps = []
         url = get_config('URL', 'url')
         set_language_1 = 'English'
-        set_language_2 = 'Vietnamese'
+        set_language_2 = 'Tiếng Việt'
+
+        filename_ = 'account.txt'
+        command_ = 'capitest get Device.Users.User.2. leaf'
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             login(driver)
+            wait_popup_disappear(driver, dialog_loading)
             # Goto Homepage
             driver.get(url+homepage)
             time.sleep(1)
@@ -158,22 +164,16 @@ class Main(unittest.TestCase):
             driver.find_element_by_css_selector(btn_ok).click()
             # Wait until dialog loading disappear
             time.sleep(1)
-            visible = driver.find_elements_by_css_selector(dialog_loading)
-            count = 0
-            # Check time out = True mean time <= 5 mins
-            check_time_out = True
-            while len(visible) != 0:
-                time.sleep(1)
-                visible = driver.find_elements_by_css_selector(dialog_loading)
-                count += 1
-                # neu time > 300s => step2 fail
-                if count == 100:
-                    check_time_out = False
 
-            if check_time_out:
-                driver.refresh()
-                login(driver)
-            # wait_popup_disappear(driver, dialog_loading)
+            check_time_out = wait_popup_disappear(driver, dialog_loading)
+
+            run_cmd(command_, filename_)
+            time.sleep(3)
+            # Get account information from web server and write to config.txt
+            url_login = get_config('URL', 'url')
+            get_result_command_from_server(url_ip=url_login, filename=filename_)
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
 
             list_actual = [check_time_out]
@@ -196,6 +196,7 @@ class Main(unittest.TestCase):
 
             # System > Language
             driver.find_element_by_css_selector(system_btn).click()
+            time.sleep(0.2)
             driver.find_element_by_css_selector(sys_language).click()
 
             language_selected = driver.find_element_by_css_selector(language_selected_text)
@@ -206,13 +207,13 @@ class Main(unittest.TestCase):
                     if o.text == set_language_1:
                         o.click()
 
-            time.sleep(1)
-            # Apply
-            driver.find_element_by_css_selector(pop_up_btn_apply).click()
-            time.sleep(3)
-            # Confirm
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+                time.sleep(1)
+                # Apply
+                driver.find_element_by_css_selector(pop_up_btn_apply).click()
+                time.sleep(3)
+                # Confirm
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(2)
             # Goto Login page
             driver.get(url)
             time.sleep(3)
@@ -234,6 +235,7 @@ class Main(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Again
         try:
             login(driver)
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             # Goto Homepage
             driver.get(url+homepage)
@@ -249,22 +251,16 @@ class Main(unittest.TestCase):
             driver.find_element_by_css_selector(btn_ok).click()
             # Wait until dialog loading disappear
             time.sleep(1)
-            visible = driver.find_elements_by_css_selector(dialog_loading)
-            count = 0
-            # Check time out = True mean time <= 5 mins
-            check_time_out = True
-            while len(visible) != 0:
-                time.sleep(1)
-                visible = driver.find_elements_by_css_selector(dialog_loading)
-                count += 1
-                # neu time > 300s => step2 fail
-                if count == 100:
-                    check_time_out = False
 
-            if check_time_out:
-                driver.refresh()
-                login(driver)
-            # wait_popup_disappear(driver, dialog_loading)
+            check_time_out = wait_popup_disappear(driver, dialog_loading)
+
+            run_cmd(command_, filename_)
+            time.sleep(3)
+            # Get account information from web server and write to config.txt
+            url_login = get_config('URL', 'url')
+            get_result_command_from_server(url_ip=url_login, filename=filename_)
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
 
             list_actual = [check_time_out]
@@ -287,6 +283,7 @@ class Main(unittest.TestCase):
 
             # System > Language
             driver.find_element_by_css_selector(system_btn).click()
+            time.sleep(0.2)
             driver.find_element_by_css_selector(sys_language).click()
 
             language_selected = driver.find_element_by_css_selector(language_selected_text)
@@ -297,13 +294,13 @@ class Main(unittest.TestCase):
                     if o.text == set_language_2:
                         o.click()
 
-            time.sleep(1)
-            # Apply
-            driver.find_element_by_css_selector(pop_up_btn_apply).click()
-            time.sleep(3)
-            # Confirm
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+                time.sleep(1)
+                # Apply
+                driver.find_element_by_css_selector(pop_up_btn_apply).click()
+                time.sleep(3)
+                # Confirm
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(2)
             # Goto Login page
             driver.get(url)
             time.sleep(3)
@@ -323,7 +320,6 @@ class Main(unittest.TestCase):
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '6,7. Assertion wong.')
-
 
         self.assertListEqual(list_step_fail, [])
 
@@ -384,6 +380,7 @@ class Main(unittest.TestCase):
         try:
             time.sleep(1)
             driver.get(sub_url)
+            wait_popup_disappear(driver, dialog_loading)
             check_lg_page_displayed = len(driver.find_elements_by_css_selector(lg_page)) != 0
             check_lg_id_field = len(driver.find_elements_by_css_selector(lg_user)) != 0
             check_lg_password_field = len(driver.find_elements_by_css_selector(lg_password)) != 0
@@ -404,7 +401,8 @@ class Main(unittest.TestCase):
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Check login Page displayed, id, password, captcha img, captcha input field. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 4. Check login Page displayed, id, password, captcha img, captcha input field. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
@@ -424,6 +422,7 @@ class Main(unittest.TestCase):
         try:
             # Get and write URL
             driver.get(url_login)
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
             captcha_text = get_captcha_string(captcha_src)
@@ -570,24 +569,28 @@ class Main(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        url_login = get_config('URL', 'url')
         NEW_PASSWORD = 'Dinhcongcanh1'
         filename = '1'
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
         # Wait 5 mins for factory
-        time.sleep(300)
+        time.sleep(100)
+        wait_DUT_activated(url_login)
+        wait_ping('192.168.1.1')
 
         filename_2 = 'account.txt'
         commmand_2 = 'capitest get Device.Users.User.2. leaf'
         run_cmd(commmand_2, filename_2)
         time.sleep(3)
         # Get account information from web server and write to config.txt
-        url_login = get_config('URL', 'url')
+
         user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
 
         # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             login(driver)
+            wait_popup_disappear(driver, dialog_loading)
             # Welcome pop up displayed
             check_login = len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0
 
@@ -697,7 +700,8 @@ class Main(unittest.TestCase):
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4.Check Welcome dialog disappear, Home page display. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 4.Check Welcome dialog disappear, Home page display. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
 
@@ -710,18 +714,22 @@ class Main(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        url_login = get_config('URL', 'url')
         filename = '1'
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
         # Wait 3 mins for factory
-        time.sleep(250)
+        # time.sleep(250)
+        time.sleep(100)
+        wait_DUT_activated(url_login)
+        wait_ping('192.168.1.1')
 
         filename_2 = 'account.txt'
         commmand_2 = 'capitest get Device.Users.User.2. leaf'
         run_cmd(commmand_2, filename_2)
         time.sleep(3)
         # Get account information from web server and write to config.txt
-        url_login = get_config('URL', 'url')
+
         get_result_command_from_server(url_ip=url_login, filename=filename_2)
 
         user_request = get_config('ACCOUNT', 'user')
@@ -730,6 +738,7 @@ class Main(unittest.TestCase):
         try:
             time.sleep(1)
             driver.get(url_login)
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(2)
             driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
             time.sleep(1)
@@ -1129,7 +1138,7 @@ class Main(unittest.TestCase):
             list_actual = [check_error_msg, check_error_msg_time, check_lg_btn]
             list_expected = [return_true, check_error_msg_time, return_false]
             check = assert_list(list_actual, list_expected)
-            # Wait ultil Done
+            # Wait until Done
             while True:
                 time.sleep(0.5)
                 # Check MSG Error

@@ -24,7 +24,7 @@ from Helper.t10x.config.captcha import *
 import base64
 from oauth2client.service_account import ServiceAccountCredentials
 from Helper.t10x.ls_path import *
-
+from Helper.t10x.secure_crt.common import *
 
 
 def save_config(config_path, section, option, value):
@@ -206,35 +206,7 @@ def scroll_to(driver, element):
     driver.execute_script('window.scrollTo({}, {});'.format(coordinates['x'], coordinates['y']))
 
 
-def login(driver):
-    url_login = get_config('URL', 'url')
-    user_request = get_config('ACCOUNT', 'user')
-    pass_word = get_config('ACCOUNT', 'password')
-
-    time.sleep(1)
-    driver.get(url_login)
-    time.sleep(2)
-    driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
-    time.sleep(1)
-    driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
-    time.sleep(1)
-    # Captcha
-    captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
-    captcha_text = get_captcha_string(captcha_src)
-    driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
-    time.sleep(1)
-    driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
-    time.sleep(5)
-
-    # Check Privacy Policy
-    policy_popup = driver.find_elements_by_css_selector(lg_privacy_policy_pop)
-    if len(policy_popup):
-        ActionChains(driver).move_to_element(policy_popup[0]).click().send_keys(Keys.ARROW_DOWN).perform()
-        driver.find_element_by_css_selector(btn_ok).click()
-        time.sleep(3)
-
-
-def get_result_command_from_server(url_ip, filename=False):
+def get_result_command_from_server(url_ip, filename='1'):
     driver2 = webdriver.Chrome(driver_path)
     url_result = url_ip + '/' + filename
     time.sleep(1)
@@ -254,12 +226,67 @@ def get_result_command_from_server(url_ip, filename=False):
     return {'userName': username, 'passWord': password}
 
 
+def login(driver):
+    url_login = get_config('URL', 'url')
+    user_request = get_config('ACCOUNT', 'user')
+    pass_word = get_config('ACCOUNT', 'password')
+
+    time.sleep(1)
+    driver.get(url_login)
+    time.sleep(2)
+    driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
+    time.sleep(1)
+    driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
+    time.sleep(1)
+    # Captcha
+    captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+    captcha_text = get_captcha_string(captcha_src)
+    driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+    time.sleep(1)
+    driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+    # time.sleep(5)
+
+    # If login Fail. Get USER and PW again
+    msg_error = driver.find_element_by_css_selector(lg_msg_error).text
+    if msg_error != '':
+        filename_2 = 'account.txt'
+        command_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(command_2, filename_2)
+        time.sleep(3)
+        get_result_command_from_server(url_ip=url_login, filename=filename_2)
+
+        user_request = get_config('ACCOUNT', 'user')
+        pass_word = get_config('ACCOUNT', 'password')
+
+        time.sleep(1)
+        driver.get(url_login)
+        time.sleep(2)
+        driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
+        time.sleep(1)
+        driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
+        time.sleep(1)
+        # Captcha
+        captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+        captcha_text = get_captcha_string(captcha_src)
+        driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+        time.sleep(1)
+        driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+        time.sleep(5)
+
+    # Check Privacy Policy
+    policy_popup = driver.find_elements_by_css_selector(lg_privacy_policy_pop)
+    if len(policy_popup):
+        ActionChains(driver).move_to_element(policy_popup[0]).click().send_keys(Keys.ARROW_DOWN).perform()
+        driver.find_element_by_css_selector(btn_ok).click()
+        time.sleep(3)
+
+
 def get_url_ipconfig(ipconfig_field='Default Gateway'):
     cmd = 'ipconfig'
     write_cmd = subprocess.check_output(cmd, encoding='oem')
     split_result = [i.strip() for i in write_cmd.splitlines()]
     default_gw = [i for i in split_result if i.startswith(ipconfig_field)]
-    url_ = 'http://'+[i.split(': ')[1] for i in default_gw if i.split(': ')[1].startswith('192.168')][0]
+    url_ = 'http://'+[i.split(':')[1].strip() for i in default_gw if i.split(':')[1].strip().startswith('192.168.1')][0]
     save_config(config_path, 'URL', 'url', url_)
 
 
@@ -359,9 +386,10 @@ def check_page_exist(url):
 
 def wait_DUT_activated(url):
     count = 0
+    url = url + "/index.html"
     while True:
         count += 1
-        url = url + "/index.html"
+
         print(url)
         if check_page_exist(url):
             return True
