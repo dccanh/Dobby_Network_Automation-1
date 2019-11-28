@@ -55,3 +55,9 @@ exp_nw_folder_exist = 'The same network folder exists.'
 exp_max_row_usb_nw = 8
 exp_confirm_msg_edit = 'Cannot edit while server is running.\nTurn off the server and try again.'
 exp_confirm_msg_delete = 'Do you want to stop sharing FTP and media server?'
+
+
+# ~~~~~~~~~~~~~~~~~~~~~ Security
+exp_ls_parental_label = ['New Parental Code', 'Retype New Parental Code']
+exp_parental_pop_up_title = 'Enter the Parental Code.'
+exp_parental_error_msg = 'Incorrect Parental Code.'

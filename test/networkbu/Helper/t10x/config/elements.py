@@ -49,6 +49,13 @@ media_share_tab = 'a[href="/mediashare"]'
 media_share_usb_tab = 'a[href="/mediashare/usb"]'
 media_share_server_settings_tab = 'a[href="/mediashare/serversetting"]'
 current_tab_chosen = '#parent-menu:not(.hide)>#sub-menu>a.active'
+
+security_tab = 'a[href="/security"]'
+security_parentalcontrol_tab = 'a[href="/security/parentalcontrol"]'
+security_firewall_tab = 'a[href="/security/firewall"]'
+security_vpn_tab = 'a[href="/security/vpn"]'
+security_filtering_tab = 'a[href="/security/filtering"]'
+security_selfcheck_tab = 'a[href="/security/selfcheck"]'
 # ~~~~~~~~~~~~~~~~~ NETWORK
 ip_address_input_filed = 'div.ip-address [name="input-field"]'
 start_end_ip_address = '.ip-class-c .input-field input'
@@ -92,6 +99,14 @@ permission_read_check_box_radio_first_row = '.read-write [for=custom-checkbox-re
 
 ftp_server = '.left .ftp-card'
 media_item = '.media-item'
+
+# ~~~~~~~~~~~~~~~~~ SECURITY
+parental_code_card = '.parenatal-code-card'
+parental_popup_label = '.content-wrap .pin-item>.title'
+parental_popup_input = '.content-wrap .pin-item input'
+parental_popup_title = '.dialog-content .description-wrap'
+parental_wrap_input = '.content-wrap .pin-wrap input'
+security_page = '.security'
 
 # ~~~~~~~~~~~~~~~~ SYSTEM
 system_btn = '[title=System]'
@@ -138,3 +153,4 @@ table_row = 'tr'
 error_message = '.error-message'
 status = '.status'
 complete_dialog_msg = '.complete-dialog-message'
+error_text = '.error-text'
