@@ -82,7 +82,13 @@ permission_read_check_box = '.read-write #custom-checkbox-read-add'
 permission_read_check_box_radio = '.read-write [for=custom-checkbox-read-add]'
 tree_icon = '.tree-icon'
 path_name_lv1 = '.item-level-1>li .path-name>span'
+action_edit = '.action .edit'
+action_delete = '.action .delete'
 
+permission_write_check_box_first_row = '.read-write #custom-checkbox-write-0'
+permission_write_check_box_radio_first_row = '.read-write [for=custom-checkbox-write-0]'
+permission_read_check_box_first_row = '.read-write #custom-checkbox-read-0'
+permission_read_check_box_radio_first_row = '.read-write [for=custom-checkbox-read-0]'
 
 # ~~~~~~~~~~~~~~~~ SYSTEM
 system_btn = '[title=System]'
