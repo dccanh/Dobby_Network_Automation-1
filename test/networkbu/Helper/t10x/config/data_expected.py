@@ -53,3 +53,5 @@ exp_dialog_hide_ssid_title = 'If the Hide SSID is enabled, WPS function is inact
 # ~~~~~~~~~~~~~~~~~~~~~~ Media share
 exp_nw_folder_exist = 'The same network folder exists.'
 exp_max_row_usb_nw = 8
+exp_confirm_msg_edit = 'Cannot edit while server is running.\nTurn off the server and try again.'
+exp_confirm_msg_delete = 'Do you want to stop sharing FTP and media server?'

@@ -58,7 +58,16 @@ class MediaShare(unittest.TestCase):
             if len(network_table) == 0:
                 before_add = 0
             else:
-                before_add = len(network_block.find_elements_by_css_selector(tbody))
+                # Remove all
+                num_rule = len(network_block.find_elements_by_css_selector(tbody))
+                for r in range(num_rule):
+                    network_table[0].find_element_by_css_selector(action_delete).click()
+                    time.sleep(0.2)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    time.sleep(0.5)
+                before_add = 0
 
             # Click Add 1
             network_block.find_element_by_css_selector(add_class).click()
@@ -210,7 +219,7 @@ class MediaShare(unittest.TestCase):
                 # Description
 
                 description_field = edit_field.find_element_by_css_selector(description)
-                description_field.find_element_by_css_selector(input).send_keys(DESCRIPTION_4)
+                description_field.find_element_by_css_selector(input).send_keys(str(i))
                 # Folder path
                 path_field = edit_field.find_element_by_css_selector(path)
                 path_field.find_element_by_css_selector(input).click()
@@ -393,6 +402,171 @@ class MediaShare(unittest.TestCase):
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_06_Edit_Delete_Network_Folder_while_server_is_running(self):
+        self.key = 'MEDIA_SHARE_06'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+        # # Factory reset
+        URL_LOGIN = get_config('URL', 'url')
+        ACCOUNT_FTP = 'Anonymous'
+        SERVER_FTP = "FTP"
+        try:
+            login(driver)
+            time.sleep(1)
+            # Goto Homepage
+            driver.get(URL_LOGIN + homepage)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto media share USB
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            # Enable FTP server
+            server_ftp = driver.find_element_by_css_selector(ftp_server)
+            server_ftp_btn = server_ftp.find_element_by_css_selector(select)
+            server_ftp_input = server_ftp_btn.find_element_by_css_selector(input)
+            # If FTP is not enable => Enable
+            if not server_ftp_input.is_selected():
+                server_ftp_btn.click()
+            time.sleep(0.2)
+
+            media_fields = server_ftp.find_elements_by_css_selector(media_item)
+            # Account
+            media_fields[0].find_element_by_css_selector(input).click()
+            time.sleep(0.5)
+            ls_account = media_fields[0].find_elements_by_css_selector(secure_value_in_drop_down)
+            time.sleep(0.5)
+            for o in ls_account:
+                if o.text == ACCOUNT_FTP:
+                    o.click()
+                    break
+
+            # Network folder
+            media_fields[1].find_element_by_css_selector(input).click()
+            time.sleep(0.5)
+            ls_folder = media_fields[1].find_elements_by_css_selector(secure_value_in_drop_down)
+            time.sleep(0.5)
+            choice = random.choice(ls_folder)
+            option_value = choice.text
+            time.sleep(0.5)
+            choice.click()
+
+            # Apply
+            driver.find_element_by_css_selector(apply).click()
+            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Check and verify value
+            account_value = media_fields[0].find_element_by_css_selector(input).get_attribute('value')
+            nw_folder_value = media_fields[1].find_element_by_css_selector(input).get_attribute('value')
+
+
+            list_actual = [account_value, nw_folder_value]
+            list_expected = [ACCOUNT_FTP, option_value]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1,2,3. Edit FTP server: Check result same as configuration. ')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1,2,3. Edit FTP server: Check result same as configuration. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append(
+                '1,2,3. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
+        try:
+            # Goto media share USB
+            goto_menu(driver, media_share_tab, media_share_usb_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Network block
+            network_block = driver.find_element_by_css_selector(usb_network)
+            # Before delete
+            network_table = network_block.find_elements_by_css_selector(tbody)
+
+            for r in network_table:
+                if r.find_element_by_css_selector(description).text == nw_folder_value:
+                    check_folder_status = r.find_element_by_css_selector(status).text
+                    break
+
+            list_actual = [check_folder_status]
+            list_expected = [SERVER_FTP]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 4. Check status of network folder should be FTP')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Check status of network folder should be FTP. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
+        try:
+            for r in network_table:
+                if r.find_element_by_css_selector(description).text == nw_folder_value:
+                    r.find_element_by_css_selector(action_edit).click()
+            time.sleep(0.5)
+            # Check content of pop up
+            confirm_msg_edit = driver.find_element_by_css_selector(complete_dialog_msg).text
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.5)
+            # Verify
+            list_actual = [confirm_msg_edit]
+            list_expected = [exp_confirm_msg_edit]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 5. Check content of confirm message. ')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Check content of confirm message. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('5. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
+        try:
+            # Get first row> Click delete
+            time.sleep(1)
+            for r in network_table:
+                if r.find_element_by_css_selector(description).text == nw_folder_value:
+                    folder_path_delete = r.find_element_by_css_selector(path).text
+                    r.find_element_by_css_selector(action_delete).click()
+
+            time.sleep(1)
+            confirm_msg_delete = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            network_table = network_block.find_elements_by_css_selector(tbody)
+            total_path = []
+            for r in network_table:
+                total_path.append(r.find_element_by_css_selector(path).text)
+            # True if folder not in total folder => delete sucessfully
+            check_delete = True if folder_path_delete not in total_path else False
+
+            list_actual = [confirm_msg_delete, check_delete]
+            list_expected = [exp_confirm_msg_delete, return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 6. Delete a rule: Check pop-up content; check folder path not in total path')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Delete a rule: Check pop-up content; check folder path not in total path'
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('6. Assertion wong.')
+
 
         self.assertListEqual(list_step_fail, [])
 
