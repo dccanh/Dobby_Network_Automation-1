@@ -25,7 +25,8 @@ import base64
 from oauth2client.service_account import ServiceAccountCredentials
 from Helper.t10x.ls_path import *
 from Helper.t10x.secure_crt.common import *
-
+import re
+import xml.etree.ElementTree as ET
 
 def save_config(config_path, section, option, value):
     config = configparser.RawConfigParser()
@@ -422,3 +423,110 @@ def wait_ping(url):
             if count == 300:
                 print('Wait more than 300s')
                 break
+
+
+def scan_wifi(wifi_name=None):
+    cmd = 'netsh wlan show networks'
+    write_cmd = subprocess.check_output(cmd, encoding='oem')
+    ls_header = [i for i in write_cmd.splitlines() if i.startswith('SSID')]
+    ls_wifi_name = [i.split(': ')[1] for i in ls_header]
+    if wifi_name is not None:
+        while True:
+            write_cmd = subprocess.check_output(cmd, encoding='oem')
+            ls_header = [i for i in write_cmd.splitlines() if i.startswith('SSID')]
+            ls_wifi_name = [i.split(': ')[1] for i in ls_header]
+            if wifi_name in ls_wifi_name:
+                return True
+            else:
+                time.sleep(1)
+
+    return ls_wifi_name
+
+
+def change_nw_profile(wifi_xml_path, field, value):
+    """
+    :param wifi_xml_path: wifi_2g_path or wifi_5g_path
+    :param field: Fields name: SSID, Security or Password
+    :param value: Value of field
+    :return: overwrite wifi_xml_path new value
+    """
+    # Field
+    trans_dict = {"Ssid": "name",
+                  "Security": "authentication",
+                  "Encryption": "encryption",
+                  "Password": "keyMaterial"}
+
+    tree = ET.parse(wifi_xml_path)
+    root = tree.getroot()
+
+    ns0 = re.findall(r'{(.*?)}', root.tag)
+    _ns0 = './/{' + ns0[0] + '}'
+    xml_tag = trans_dict[field.capitalize()]
+
+    for i in root.findall(_ns0 + xml_tag):
+        i.text = value
+    tree.write(wifi_xml_path)
+
+
+def connect_wifi_from_xml(wifi_xml_path):
+    # Add network profile
+    cmd_add_profile = 'netsh wlan add profile filename='+wifi_xml_path
+    os.system(cmd_add_profile)
+
+    # Get SSID name
+    tree = ET.parse(wifi_xml_path)
+    root = tree.getroot()
+    ns0 = re.findall(r'{(.*?)}', root.tag)
+    _ns0 = './/{' + ns0[0] + '}'
+    xml_tag = 'name'
+    name = [i.text for i in root.findall(_ns0 + xml_tag)][1]
+
+    # Connect that name
+    cmd_connect = 'netsh wlan connect ssid='+name+'name='+name
+    result = subprocess.check_output(cmd_connect, encoding='oem')
+    if result == 'Connection request was completed successfully.':
+        return True
+    else:
+        return False
+
+
+def setting_wireless_security(block_left_right, secur_type=None, encryption=None, key_type=None):
+    # block_ = driver.find_element_by_css_selector(block_element)
+
+    security_ = block_left_right.find_element_by_css_selector(secure_value_field)
+    security_.click()
+    ls_security_ = security_.find_elements_by_css_selector(secure_value_in_drop_down)
+    time.sleep(0.5)
+    for o in ls_security_:
+        if o.get_attribute('option-value') == secur_type:
+            o.click()
+            break
+
+    if encryption is not None:
+        encryption_ = block_left_right.find_element_by_css_selector(encryption_value_field)
+        encryption_.click()
+        ls_encryption_ = encryption_.find_elements_by_css_selector(secure_value_in_drop_down)
+        time.sleep(0.5)
+        for o in ls_encryption_:
+            if o.get_attribute('option-value') == encryption:
+                o.click()
+                break
+
+    if key_type is not None:
+        key_type_ = block_left_right.find_element_by_css_selector(encryption_value_field)
+        key_type_.click()
+        ls_key_type_ = key_type_.find_elements_by_css_selector(secure_value_in_drop_down)
+        time.sleep(0.5)
+        for o in ls_key_type_:
+            if o.get_attribute('option-value') == key_type:
+                o.click()
+                break
+
+def apply_process(driver, block_left_right):
+    time.sleep(0.2)
+    block_left_right.find_element_by_css_selector(apply).click()
+    time.sleep(1)
+    wait_popup_disappear(driver, dialog_loading)
+    driver.find_element_by_css_selector(btn_ok).click()
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(2)

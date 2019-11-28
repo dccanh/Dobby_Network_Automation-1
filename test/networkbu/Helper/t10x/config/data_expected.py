@@ -46,3 +46,10 @@ header_login_text = 'Welcome to HUMAX T10X'
 exp_ssid_2g_default_val = 'We Love You So Much_2G!'
 exp_ssid_5g_default_val = 'We Love You So Much_5G!'
 exp_ssid_placeHolder = 'Enter the network name (SSID)'
+exp_password_error_msg = 'More than 8 characters.'
+exp_dialog_hide_ssid_title = 'If the Hide SSID is enabled, WPS function is inactivated.'
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~ Media share
+exp_nw_folder_exist = 'The same network folder exists.'
+exp_max_row_usb_nw = 8
