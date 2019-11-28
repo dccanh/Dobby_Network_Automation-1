@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../')
+sys.path.append('../../')
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import datetime

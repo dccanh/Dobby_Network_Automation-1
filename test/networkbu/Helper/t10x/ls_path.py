@@ -8,6 +8,8 @@ root_dir = os.path.join(os.path.dirname(script_dir), "..")
 config_dir = os.path.join(root_dir, "Config", "t10x")
 config_path = os.path.join(config_dir, "config.txt")
 captcha_dict_path = os.path.join(config_dir, "captcha.dict")
+wifi_2g_path = os.path.join(config_dir, "Wi-Fi-We Love You So Much_2G!.xml")
+wifi_5g_path = os.path.join(config_dir, "Wi-Fi-We Love You So Much_5G!.xml")
 
 driver_path = os.path.join(root_dir, "Driver", "chromedriver.exe")
 

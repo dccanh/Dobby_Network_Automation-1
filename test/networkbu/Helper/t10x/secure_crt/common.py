@@ -1,7 +1,19 @@
-from Helper.t10x.common import get_config
+# from Helper.t10x.common import get_config
+import  configparser
 from Helper.t10x.ls_path import *
 
+def get_config(section, option):
+    if not os.path.exists(config_path):
+        print("The config file not exist. Exit!!!")
+        return
 
+    config = configparser.RawConfigParser()
+    config.read(config_path)
+
+    if config.has_option(str(section).upper(), option):
+        return config.get(str(section).upper(), option)
+    else:
+        return
 serial = get_config("CONSOLE", "serial_port")
 baud_rate = get_config("CONSOLE", "baud_rate")
 SecureCRT_file = "C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe"

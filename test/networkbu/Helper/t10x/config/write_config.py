@@ -1,4 +1,5 @@
 import sys
+sys.path.append('../../../')
 from Helper.t10x.common import save_config
 from Helper.t10x.ls_path import *
 
