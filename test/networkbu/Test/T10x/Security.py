@@ -166,7 +166,114 @@ class Security(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+    def test_02_Parental_code_Change_Confirmation(self):
+        self.key = 'SECURITY_02'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_LOGIN = get_config('URL', 'url')
+        PARENTAL_CODE_KEY = '1234'
+        PARENTAL_NEW_CODE_KEY = '4321'
+        try:
+            login(driver)
+            time.sleep(1)
+            # Goto Homepage
+            driver.get(URL_LOGIN + homepage)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto media share USB
+            goto_menu(driver, security_tab, security_parentalcontrol_tab)
+            wait_popup_disappear(driver, dialog_loading)
 
+            # Input valid
+            parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+            #  New
+            ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            check_page_security = len(driver.find_elements_by_css_selector(security_page)) != 0
+            time.sleep(1)
+            check_pop_up_disable = len(driver.find_elements_by_css_selector(dialog_content)) == 0
+            list_actual = [check_page_security, check_pop_up_disable]
+            list_expected = [return_true, return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1,2,3. Check Security page displayed')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1,2,3. Check Security page displayed. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append(
+                '1,2,3. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
+        try:
+            parental_code = driver.find_element_by_css_selector(parental_code_card)
+            parental_input = parental_code.find_elements_by_css_selector(input)
+
+            # New parental code
+            parental_input[1].send_keys(PARENTAL_NEW_CODE_KEY)
+            # Retype parental code
+            parental_input[2].send_keys(PARENTAL_NEW_CODE_KEY)
+
+            # Apply
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Refresh
+            parental_code = driver.find_element_by_css_selector(parental_code_card)
+            parental_code_btn = parental_code.find_element_by_css_selector(select)
+            parental_code_btn.click()
+            wait_popup_disappear(driver, dialog_loading)
+            # Enable
+            time.sleep(1)
+            parental_code = driver.find_element_by_css_selector(parental_code_card)
+            parental_code_btn = parental_code.find_element_by_css_selector(select)
+            parental_code_btn.click()
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Input valid
+            parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+            #  New
+            ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_NEW_CODE_KEY).perform()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            check_page_security = len(driver.find_elements_by_css_selector(security_page)) != 0
+            time.sleep(1)
+            check_pop_up_disable = len(driver.find_elements_by_css_selector(dialog_content)) == 0
+
+            list_actual = [check_page_security, check_pop_up_disable]
+            list_expected = [return_true, return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 4. Change Parental code: Check Security page displayed. ')
+            self.list_steps.append('[END TC]')
+
+            parental_code = driver.find_element_by_css_selector(parental_code_card)
+            parental_input = parental_code.find_elements_by_css_selector(input)
+
+            # New parental code
+            parental_input[1].send_keys(PARENTAL_CODE_KEY)
+            # Retype parental code
+            parental_input[2].send_keys(PARENTAL_CODE_KEY)
+
+            # Apply
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Change Parental code: Check Security page displayed. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('4. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
 
 if __name__ == '__main__':
     unittest.main()
