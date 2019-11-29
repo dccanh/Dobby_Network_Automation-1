@@ -61,7 +61,7 @@ def next_available_row(sheet):
     return str(len(str_list) + 1)
 
 
-def write_ggsheet(key, list_steps, func_name, duration):
+def write_ggsheet(key, list_steps, func_name, duration, time_stamp=0):
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
     creds = ServiceAccountCredentials.from_json_keyfile_name(gg_credential_path, scope)
     client = gspread.authorize(creds)
@@ -78,6 +78,7 @@ def write_ggsheet(key, list_steps, func_name, duration):
             sheet.update_acell("C{}".format(next_row), 'PASS')
     sheet.update_acell("D{}".format(next_row), duration)
     sheet.update_acell("E{}".format(next_row), str(list_steps))
+    sheet.update_acell("H{}".format(next_row), str(time_stamp))
 
 
 def assert_list(list_actual_result, list_expected_result):

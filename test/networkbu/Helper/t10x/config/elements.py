@@ -107,7 +107,7 @@ parental_popup_input = '.content-wrap .pin-item input'
 parental_popup_title = '.dialog-content .description-wrap'
 parental_wrap_input = '.content-wrap .pin-wrap input'
 security_page = '.security'
-
+parental_pop_init_pw = '.parental-create-password-dialog'
 # ~~~~~~~~~~~~~~~~ SYSTEM
 system_btn = '[title=System]'
 sys_language = '[title=System]+ul>li:nth-child(1)>button'
