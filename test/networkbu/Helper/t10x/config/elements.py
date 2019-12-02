@@ -56,6 +56,13 @@ security_firewall_tab = 'a[href="/security/firewall"]'
 security_vpn_tab = 'a[href="/security/vpn"]'
 security_filtering_tab = 'a[href="/security/filtering"]'
 security_selfcheck_tab = 'a[href="/security/selfcheck"]'
+
+advanced_tab = 'a[href="/advanced"]'
+advanced_network_tab = 'a[href="/advanced/network"]'
+advanced_wireless_tab = 'a[href="/advanced/wireless"]'
+advanced_iptv_tab = 'a[href="/advanced/iptv"]'
+advanced_ddnswol_tab = 'a[href="/advanced/ddnswol"]'
+
 # ~~~~~~~~~~~~~~~~~ NETWORK
 ip_address_input_filed = 'div.ip-address [name="input-field"]'
 start_end_ip_address = '.ip-class-c .input-field input'
@@ -111,7 +118,8 @@ parental_pop_init_pw = '.parental-create-password-dialog'
 
 parental_rule_card = '.parental-rule-card'
 
-
+# ~~~~~~~~~~~~~~~~ ADVANCED
+advanced_extra_info = '.server-guide>div'
 
 
 # ~~~~~~~~~~~~~~~~ SYSTEM
@@ -163,3 +171,4 @@ complete_dialog_msg = '.complete-dialog-message'
 error_text = '.error-text'
 dialog_content = '.dialog-content'
 name_cls = '.name'
+content = '.content'

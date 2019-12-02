@@ -14,7 +14,7 @@ return_true = True
 return_false = False
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~`
-
+exp_time_out_msg = 'Automatically logs out after 20 minutes of inactivity.'
 exp_tooltip_logout = 'Logout'
 exp_logout_msg = 'Do you want to log out?'
 # ~~~~~~~~~~~~~~~~~~~~~~~ URL redirect
