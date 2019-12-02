@@ -1157,5 +1157,70 @@ class Main(unittest.TestCase):
             list_step_fail.append('6. Assertion wong')
         self.assertListEqual(list_step_fail, [])
 
+    def test_13_Verify_the_Log_out_operation(self):
+        self.key = 'MAIN_13'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_LOGIN = get_config('URL', 'url')
+        login(driver)
+        wait_popup_disappear(driver, dialog_loading)
+        if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+            driver.get(URL_LOGIN + homepage)
+            wait_popup_disappear(driver, dialog_loading)
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            tooltip = driver.find_element_by_css_selector(logout_btn).get_attribute('title')
+            driver.find_element_by_css_selector(logout_btn).click()
+
+            dialog_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            btn_ok_display = driver.find_element_by_css_selector(btn_ok).is_displayed()
+            check_btn_cancel = driver.find_element_by_css_selector(btn_cancel)
+            btn_cancel_display = check_btn_cancel.is_displayed()
+            # Click cancel
+            time.sleep(0.2)
+            check_btn_cancel.click()
+            check_home_page = driver.find_element_by_css_selector(home_view_wrap).is_displayed()
+            list_actual = [tooltip, dialog_msg, btn_ok_display, btn_cancel_display, check_home_page]
+            list_expected = [exp_tooltip_logout, exp_logout_msg, return_true, return_true, return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1. Check logout: Check tooltip, dialog msg, btn ok, cancel and home page is displayed')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Check logout: Check tooltip, dialog msg, btn ok, cancel and home page is displayed. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('1. Assertion wong')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            time.sleep(1)
+            driver.find_element_by_css_selector(logout_btn).click()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(btn_ok).click()
+
+            # Click cancel
+            check_login_page = driver.find_element_by_css_selector(lg_page).is_displayed()
+            list_actual = [check_login_page]
+            list_expected = [return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2. Click Logout >Ok: Check login page is displayed')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Click Logout >Ok: Check login page is displayed. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('2. Assertion wong')
+
+        self.assertListEqual(list_step_fail, [])
+
+
+
+
 if __name__ == '__main__':
     unittest.main()

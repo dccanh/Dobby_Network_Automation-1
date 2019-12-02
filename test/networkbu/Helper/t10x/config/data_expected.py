@@ -15,8 +15,8 @@ return_false = False
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~`
 
-
-
+exp_tooltip_logout = 'Logout'
+exp_logout_msg = 'Do you want to log out?'
 # ~~~~~~~~~~~~~~~~~~~~~~~ URL redirect
 homepage = '/homepage'
 network_internet = '/network/internet'

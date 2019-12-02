@@ -108,6 +108,12 @@ parental_popup_title = '.dialog-content .description-wrap'
 parental_wrap_input = '.content-wrap .pin-wrap input'
 security_page = '.security'
 parental_pop_init_pw = '.parental-create-password-dialog'
+
+parental_rule_card = '.parental-rule-card'
+
+
+
+
 # ~~~~~~~~~~~~~~~~ SYSTEM
 system_btn = '[title=System]'
 sys_language = '[title=System]+ul>li:nth-child(1)>button'
@@ -124,6 +130,7 @@ dialog_loading = '.dialog-body>.loading'
 btn_cancel = 'button.cancel'
 
 # ~~~~~~~~~~~~~~~~ HOME
+logout_btn = 'a.system-menu-logout'
 home_view_wrap = 'div.view-wrap.home'
 home_img_connection = 'div.wan-connection>a.img-connection'
 home_connection_description = 'div.wan-connection>.text-description'
@@ -155,3 +162,4 @@ status = '.status'
 complete_dialog_msg = '.complete-dialog-message'
 error_text = '.error-text'
 dialog_content = '.dialog-content'
+name_cls = '.name'

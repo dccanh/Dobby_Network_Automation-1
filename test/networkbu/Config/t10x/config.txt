@@ -12,7 +12,7 @@ stage = Ph1
 version = v1
 wifi_ssid_2g = We Love You So Much_2G!
 wifi_ssid_5g = We Love You So Much_5G!
-wifi_pw = 123!@ abcd #^&*()+_-={}[]|456:789.?`$%\;'"<>,/123!@ abcd #^&*()
+wifi_pw = humax_0001
 
 [CONSOLE]
 serial_port = COM3
