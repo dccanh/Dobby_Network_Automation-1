@@ -222,6 +222,94 @@ class Advanced(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+    def test_26_Confirm_WOL_Deletion(self):
+        self.key = 'ADVANCED_26'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
 
+        URL_LOGIN = get_config('URL', 'url')
+        MAC_VALUE = ['12', '34', '56', '78', 'AB', 'CD']
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            # Login
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(URL_LOGIN + homepage)
+                wait_popup_disappear(driver, dialog_loading)
+
+            # Goto Advanced > WoL
+            goto_menu(driver, advanced_tab, advanced_ddnswol_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            wol_block = driver.find_element_by_css_selector(right)
+            # Click Add button to change setting
+            wol_block.find_element_by_css_selector(add_class).click()
+            time.sleep(1)
+
+            mac_address = wol_block.find_element_by_css_selector(wol_mac_addr)
+            mac_address_input = mac_address.find_element_by_css_selector(input)
+            mac_address_input.click()
+
+            # Choose in list drop down
+            project_options = wol_block.find_elements_by_css_selector(secure_value_in_drop_down)
+            choice = random.choice(project_options)
+            ActionChains(driver).move_to_element(choice).perform()
+            option_value = choice.text
+            choice.click()
+            if option_value == 'Enter the MAC address':
+                mac_address_input = driver.find_element_by_css_selector(input_mac_addr)
+                ActionChains(driver).click(mac_address_input).send_keys(''.join(MAC_VALUE)).perform()
+                option_value = ':'.join(MAC_VALUE)
+            else:
+                option_value = option_value.splitlines()[-1]
+            # Save
+            driver.find_element_by_css_selector(btn_save).click()
+            # Verify
+            verify_mac_address_input = wol_block.find_element_by_css_selector(wol_mac_addr).text
+
+            list_actual = [verify_mac_address_input]
+            list_expected = [option_value]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1,2,3. Add a Mac address: Check add successfully: ' + option_value)
+        except:
+            self.list_steps.append(
+                f'[Fail] 1,2,3.  Add a Mac address: Check add successfully:  ' + option_value +
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append(
+                '1,2,3. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
+        try:
+            ls_rows = wol_block.find_elements_by_css_selector(rows)
+            for i in ls_rows:
+                if i.find_element_by_css_selector(wol_mac_addr).text == option_value:
+                    i.find_element_by_css_selector(delete_wol).click()
+                    time.sleep(1)
+
+            # Check not in
+            ls_mac = driver.find_elements_by_css_selector(wol_mac_addr)
+            ls_mac = [i.text for i in ls_mac]
+
+            check_delete = option_value not in ls_mac
+
+            list_actual = [check_delete]
+            list_expected = [return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 4. Delete row just added in previous step: ' + option_value)
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Delete row just added in previous step: ' + option_value +
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('4. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
 if __name__ == '__main__':
     unittest.main()

@@ -120,8 +120,9 @@ parental_rule_card = '.parental-rule-card'
 
 # ~~~~~~~~~~~~~~~~ ADVANCED
 advanced_extra_info = '.server-guide>div'
-
-
+wol_mac_addr = '.mac-address'
+delete_wol = '.last-child'
+input_mac_addr = '.right .mac-address input'
 # ~~~~~~~~~~~~~~~~ SYSTEM
 system_btn = '[title=System]'
 sys_language = '[title=System]+ul>li:nth-child(1)>button'
@@ -172,3 +173,4 @@ error_text = '.error-text'
 dialog_content = '.dialog-content'
 name_cls = '.name'
 content = '.content'
+rows = 'tbody>tr'
