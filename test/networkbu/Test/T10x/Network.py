@@ -16,14 +16,27 @@ class Network(unittest.TestCase):
             self.start_time = datetime.now()
             self.driver = webdriver.Chrome(driver_path)  # open chrome
             self.driver.maximize_window()
+            self.time_stamp = datetime.now()
         except:
             self.tearDown()
             raise
 
     def tearDown(self):
-        end_time = datetime.now()
-        duration = str((end_time - self.start_time))
-        write_ggsheet(self.key, self.list_steps, self.def_name, duration)
+        try:
+            end_time = datetime.now()
+            duration = str((end_time - self.start_time))
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
+        except:
+            # Connect by wifi if internet is down to handle exception for PPPoE
+            os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
+            time.sleep(1)
+            end_time = datetime.now()
+            duration = str((end_time - self.start_time))
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
+            time.sleep(5)
+            # Connect by LAN again
+            os.system('netsh wlan disconnect')
+            time.sleep(1)
         self.driver.quit()
 
     def test_01_Check_Internet_Status(self):
@@ -43,46 +56,68 @@ class Network(unittest.TestCase):
         BODY = None
         VALUE_DNS1 = '1'
         VALUE_DNS2 = '8'
+        PPPoE_USER = 'admin'
+        PPPoE_PW = 'admin'
         # Handle API
-        _token = get_token(USER_LOGIN, PW_LOGIN)
 
         try:
             login(driver)
             time.sleep(1)
             # Goto Homepage
             driver.get(URL_LOGIN + homepage)
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
 
             # Enable Dual WAN
             goto_menu(driver, network_tab, network_internet_tab)
-
-            internet_setting = driver.find_element_by_css_selector(internet_setting_block)
+            wait_popup_disappear(driver, dialog_loading)
+            if len(driver.find_elements_by_css_selector(internet_setting_block)) == 0:
+                internet_setting = driver.find_element_by_css_selector(internet_setting_block_single)
+            else:
+                internet_setting = driver.find_element_by_css_selector(internet_setting_block)
             ActionChains(driver).move_to_element(internet_setting).perform()
 
             # Settings
             internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
-            # Connection type
-            internet_setting_fields[1].click()
-            time.sleep(0.2)
-            ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
-            for o in ls_option:
-                if o.text == 'Dynamic IP':
-                    o.click()
-            # Manual DNS
-            _check_manual_dns_selected = internet_setting_fields[2].find_element_by_css_selector(input)
-            if not _check_manual_dns_selected.is_selected():
-                internet_setting_fields[2].click()
-                time.sleep(0.5)
-            internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # Connection type
+                if l.text == 'Connection Type':
+                    f.click()
+                    time.sleep(0.2)
+                    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+                    for o in ls_option:
+                        if o.text == 'Dynamic IP':
+                            o.click()
+                            break
+                    break
 
-            # DNS server 1
-            dns_1 = internet_setting_fields[3].find_elements_by_css_selector(input)
-            for i in dns_1:
-                ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).send_keys(VALUE_DNS1).perform()
-            # DNS server 2
-            dns_2 = internet_setting_fields[4].find_elements_by_css_selector(input)
-            for i in dns_2:
-                ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).send_keys(VALUE_DNS2).perform()
+            time.sleep(0.5)
+            # Settings
+            internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # Manual DNS
+                if l.text == 'Manual DNS':
+                    _check_manual_dns_selected = f.find_element_by_css_selector(input)
+                    if not _check_manual_dns_selected.is_selected():
+                        f.click()
+                        time.sleep(0.5)
+                        break
+                    break
+            # Get again
+            internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # DNS server 1
+                if l.text == 'DNS Server 1':
+                    dns_1 = f.find_elements_by_css_selector(input)
+                    for i in dns_1:
+                        ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).send_keys(VALUE_DNS1).perform()
+                # DNS server 2
+                elif l.text == 'DNS Server 2':
+                    dns_2 = f.find_elements_by_css_selector(input)
+                    for i in dns_2:
+                        ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).send_keys(VALUE_DNS2).perform()
             # Click Apply of this enable
             time.sleep(0.2)
             btn_apply = internet_setting.find_element_by_css_selector(apply)
@@ -104,15 +139,12 @@ class Network(unittest.TestCase):
             else:
                 check = assert_list([return_true], [return_true])
 
-            # list_actual = [_check_apply]
-            # list_expected = [return_true]
-            # check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Goto Network>Internet: Change values of Internet Settings\n')
+                '[Pass] 1,2. Goto Network>Internet: Change values of Internet Settings: Dynamic IP\n')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2. Goto Network>Internet: Change values of Internet Settings. '
+                f'[Fail] 1,2. Goto Network>Internet: Change values of Internet Settings: Dynamic IP. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             list_step_fail.append(
                 '1,2. Assertion wong.')
@@ -123,7 +155,10 @@ class Network(unittest.TestCase):
             time.sleep(5)
             login(driver)
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(2)
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(URL_LOGIN + homepage)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
             # Get Wan IP address
             wan_ip = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
             # Click icons Internet connection
@@ -145,6 +180,7 @@ class Network(unittest.TestCase):
                                     "gateway": "Gateway",
                                     "dnsServer1": "DNS Server 1",
                                     "dnsServer2": "DNS Server 2"}
+            _token = get_token(USER_LOGIN, PW_LOGIN)
             res_wan_primary = call_api(URL_API, METHOD, BODY, _token)
 
             _actual = [dict_wan[i] for i in translate_key_api2ui.values()]
@@ -167,58 +203,74 @@ class Network(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Check Information of WAN IP\n')
+                '[Pass] 3. Check information changed: Dynamic IP\n')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check Information of WAN IP. '
+                f'[Fail] 3. Check information changed: Dynamic IP. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             list_step_fail.append(
                 '3. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
         try:
-            # Ping to google
-            check_ping = ping_to_url(URL_PING_CHECK)
-            time.sleep(4)
-            list_actual = [check_ping]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                '[Pass] 4. Ping to Google successfully\n')
-        except:
-            self.list_steps.append(
-                f'[Fail] 4. Ping to Google successfully. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-            list_step_fail.append(
-                '4. Assertion wong.')
+            wan_ip_addr_value = dict_wan['WAN IP Address'].split('.')
+            wan_gateway_value = dict_wan['Gateway'].split('.')
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
-        try:
-            # Enable Dual WAN
             goto_menu(driver, network_tab, network_internet_tab)
-
-            internet_setting = driver.find_element_by_css_selector(internet_setting_block)
+            wait_popup_disappear(driver, dialog_loading)
+            if len(driver.find_elements_by_css_selector(internet_setting_block)) == 0:
+                internet_setting = driver.find_element_by_css_selector(internet_setting_block_single)
+            else:
+                internet_setting = driver.find_element_by_css_selector(internet_setting_block)
             ActionChains(driver).move_to_element(internet_setting).perform()
+
             # Settings
             internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
-            # Connection type
-            internet_setting_fields[1].click()
-            time.sleep(0.2)
-            ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
-            for o in ls_option:
-                if o.text == 'Static IP':
-                    o.click()
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # Connection type
+                if l.text == 'Connection Type':
+                    f.click()
+                    time.sleep(0.2)
+                    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+                    for o in ls_option:
+                        if o.text == 'Static IP':
+                            o.click()
+                            break
+                    break
 
             internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # WAN IP Address
+                if l.text == 'WAN IP Address':
+                    # WAN IP Address
+                    wan_ip_addr = f.find_elements_by_css_selector(input)
+                    for d, w in zip(wan_ip_addr, wan_ip_addr_value):
+                        ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                            Keys.CONTROL).send_keys(Keys.DELETE).send_keys(w).perform()
+                if l.text == 'Gateway':
+                    # Gateway
+                    gateway_ = f.find_elements_by_css_selector(input)
+                    for d, w in zip(gateway_, wan_gateway_value):
+                        ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                            Keys.CONTROL).send_keys(Keys.DELETE).send_keys(w).perform()
 
-            # WAN IP
-            wan_ip_number = wan_ip.split('.')
-            wan_ip_number[-1] = random.choice([str(i) for i in range(200, 254)])
-            wan_ip_addr = internet_setting_fields[2].find_elements_by_css_selector(input)
-            for el, va in zip(wan_ip_addr, wan_ip_number):
-                ActionChains(driver).move_to_element(el).click().send_keys(va).perform()
-            # Apply
+                # DNS server 1
+                if l.text == 'DNS Server 1':
+                    dns_1 = f.find_elements_by_css_selector(input)
+                    for i in dns_1:
+                        ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                            Keys.CONTROL).send_keys(VALUE_DNS1).perform()
+                # DNS server 2
+                elif l.text == 'DNS Server 2':
+                    dns_2 = f.find_elements_by_css_selector(input)
+                    for i in dns_2:
+                        ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                            Keys.CONTROL).send_keys(VALUE_DNS2).perform()
+                    break
+            # Click Apply of this enable
+            time.sleep(0.2)
             btn_apply = internet_setting.find_element_by_css_selector(apply)
             _check_apply = btn_apply.is_displayed()
             if _check_apply:
@@ -229,29 +281,35 @@ class Network(unittest.TestCase):
                 time.sleep(1)
                 wait_popup_disappear(driver, dialog_loading)
                 time.sleep(5)
-                wait_ping(URL_LOGIN)
-                # wait_popup_disappear(driver, dialog_loading)
-                # time.sleep(5)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(5)
 
-            list_actual = [_check_apply]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+                list_actual = [_check_apply]
+                list_expected = [return_true]
+                check = assert_list(list_actual, list_expected)
+            else:
+                check = assert_list([return_true], [return_true])
+
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 5. Goto Network>Internet: Change values of Internet Settings\n')
+                '[Pass] 4. Goto Network>Internet: Change values of Internet Settings: Static IP\n')
         except:
             self.list_steps.append(
-                f'[Fail] 5. Goto Network>Internet: Change values of Internet Settings. '
+                f'[Fail] 4. Goto Network>Internet: Change values of Internet Settings: Static IP '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             list_step_fail.append(
-                '5. Assertion wong.')
+                '4. Assertion wong.')
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
         try:
             # Login
             time.sleep(5)
             login(driver)
             wait_popup_disappear(driver, dialog_loading)
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(URL_LOGIN + homepage)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
             # Get Wan IP address
             wan_ip = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
             # Click icons Internet connection
@@ -273,6 +331,138 @@ class Network(unittest.TestCase):
                                     "gateway": "Gateway",
                                     "dnsServer1": "DNS Server 1",
                                     "dnsServer2": "DNS Server 2"}
+            _token = get_token(USER_LOGIN, PW_LOGIN)
+            res_wan_primary = call_api(URL_API, METHOD, BODY, _token)
+
+            _actual = [dict_wan[i] for i in translate_key_api2ui.values()]
+            _expected = []
+            for i in translate_key_api2ui.keys():
+                if i != 'linkType':
+                    _expected.append(res_wan_primary['ipv4'][i])
+                else:
+                    _expected.append(res_wan_primary[i])
+
+            if res_wan_primary['linkType'] == 'ethernet':
+                _expected[0] = 'Ethernet'
+            if res_wan_primary['ipv4']['mode'] == 'staticc':
+                _expected[1] = 'Static IP'
+            if res_wan_primary['ipv4']['dnsServer2'] == '':
+                _expected[-1] = '0.0.0.0'
+
+            list_actual = [_actual]
+            list_expected = [_expected]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 5. Check information changed: Static IP\n')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Check information changed: Static IP. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append(
+                '5. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
+        try:
+            goto_menu(driver, network_tab, network_internet_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            if len(driver.find_elements_by_css_selector(internet_setting_block)) == 0:
+                internet_setting = driver.find_element_by_css_selector(internet_setting_block_single)
+            else:
+                internet_setting = driver.find_element_by_css_selector(internet_setting_block)
+            ActionChains(driver).move_to_element(internet_setting).perform()
+
+            # Settings
+            internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # Connection type
+                if l.text == 'Connection Type':
+                    f.click()
+                    time.sleep(0.2)
+                    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+                    for o in ls_option:
+                        if o.text == 'PPPoE':
+                            o.click()
+                            break
+                    break
+            time.sleep(1)
+            internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # User name
+                if l.text == 'User Name':
+                    user_box = f.find_element_by_css_selector(input)
+                    ActionChains(driver).move_to_element(user_box).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                        Keys.CONTROL).send_keys(Keys.DELETE).send_keys(PPPoE_USER).perform()
+                if l.text == 'Password':
+                    # pw_box
+                    pw_box = f.find_element_by_css_selector(input)
+                    ActionChains(driver).move_to_element(pw_box).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                        Keys.CONTROL).send_keys(Keys.DELETE).send_keys(PPPoE_PW).perform()
+                    break
+
+            # Click Apply of this enable
+            time.sleep(0.2)
+            btn_apply = internet_setting.find_element_by_css_selector(apply)
+            _check_apply = btn_apply.is_displayed()
+            if _check_apply:
+                btn_apply.click()
+                time.sleep(0.5)
+                # Click OK
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(5)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(5)
+
+                list_actual = [_check_apply]
+                list_expected = [return_true]
+                check = assert_list(list_actual, list_expected)
+
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 6. Goto Network>Internet: Change values of Internet Settings: PPPoE ')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Goto Network>Internet: Change values of Internet Settings: PPPoE . '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append(
+                '6. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 7
+        try:
+            # Login
+            time.sleep(5)
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(URL_LOGIN + homepage)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            # Get Wan IP address
+            wan_ip = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
+            # Click icons Internet connection
+            driver.find_element_by_css_selector(home_img_connection).click()
+            time.sleep(1)
+
+            primary = driver.find_element_by_css_selector(left)
+            ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
+            dict_wan = {}
+            for w in ls_wan_field:
+                label = w.find_element_by_css_selector(home_wan_ls_label).text
+                value = w.find_element_by_css_selector(home_wan_ls_value).text
+                dict_wan.update({label: value})
+
+            translate_key_api2ui = {"linkType": "WAN Type",
+                                    "mode": "Connection Type",
+                                    "address": "WAN IP Address",
+                                    "subnet": "Subnet Mask",
+                                    "gateway": "Gateway",
+                                    "dnsServer1": "DNS Server 1",
+                                    "dnsServer2": "DNS Server 2"}
+            _token = get_token(USER_LOGIN, PW_LOGIN)
             res_wan_primary = call_api(URL_API, METHOD, BODY, _token)
 
             _actual = [dict_wan[i] for i in translate_key_api2ui.values()]
@@ -289,39 +479,22 @@ class Network(unittest.TestCase):
                 _expected[1] = 'Static IP'
             if res_wan_primary['ipv4']['dnsServer2'] == '':
                 _expected[-1] = '0.0.0.0'
-
+            time.sleep(5)
             list_actual = [_actual]
             list_expected = [_expected]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 6. Check Information of WAN IP\n')
-        except:
-            self.list_steps.append(
-                f'[Fail] 6. Check Information of WAN IP. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-            list_step_fail.append(
-                '6. Assertion wong.')
-
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 7
-        try:
-            # Ping to google
-            check_ping = ping_to_url(URL_PING_CHECK)
-            time.sleep(4)
-            list_actual = [check_ping]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                '[Pass] 7. Ping to Google successfully\n')
+                '[Pass] 7. Check information changed: PPPoE\n')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 7. Ping to Google successfully. '
+                f'[Fail] 7. Check information changed: PPPoE. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '7. Assertion wong.')
+
         self.assertListEqual(list_step_fail, [])
 
     def test_02_Check_Dynamic_IP_Operation(self):
@@ -347,49 +520,68 @@ class Network(unittest.TestCase):
             login(driver)
             time.sleep(1)
             # Goto Homepage
-            driver.get(URL_LOGIN + homepage)
-            time.sleep(2)
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(URL_LOGIN + homepage)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
 
             # Enable Dual WAN
             goto_menu(driver, network_tab, network_internet_tab)
 
-            internet_setting = driver.find_element_by_css_selector(internet_setting_block)
             if len(driver.find_elements_by_css_selector(internet_setting_block)) == 0:
                 internet_setting = driver.find_element_by_css_selector(internet_setting_block_single)
+            else:
+                internet_setting = driver.find_element_by_css_selector(internet_setting_block)
             ActionChains(driver).move_to_element(internet_setting).perform()
 
             # Settings
+            # Settings
             internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
-            # Connection type
-            internet_setting_fields[1].click()
-            time.sleep(0.2)
-            ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
-            for o in ls_option:
-                if o.text == 'Dynamic IP':
-                    o.click()
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # Connection type
+                if l.text == 'Connection Type':
+                    f.click()
+                    time.sleep(0.2)
+                    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+                    for o in ls_option:
+                        if o.text == 'Dynamic IP':
+                            o.click()
+                            break
+                    break
 
+            time.sleep(0.5)
+            # Settings
             internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
-            # Manual DNS
-            _check_manual_dns_selected = internet_setting_fields[2].find_element_by_css_selector(input)
-            if not _check_manual_dns_selected.is_selected():
-                internet_setting_fields[2].find_element_by_css_selector(select).click()
-                time.sleep(0.5)
-
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # Manual DNS
+                if l.text == 'Manual DNS':
+                    _check_manual_dns_selected = f.find_element_by_css_selector(input)
+                    if not _check_manual_dns_selected.is_selected():
+                        f.click()
+                        time.sleep(0.5)
+                        break
+                    break
+            # Get again
             internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
-            # DNS server 1
-            dns_1 = internet_setting_fields[3].find_elements_by_css_selector(input)
-            for d in dns_1:
-                ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                    Keys.CONTROL).send_keys(Keys.DELETE).perform()
-            # DNS server 2
-            dns_2 = internet_setting_fields[4].find_elements_by_css_selector(input)
-            for d in dns_2:
-                ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                    Keys.CONTROL).send_keys(Keys.DELETE).perform()
-
-            # Verify This field is required
-            check_required_warning = len(driver.find_elements_by_xpath(text_field_required)) > 0
-            list_actual = [check_required_warning]
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # DNS server 1
+                if l.text == 'DNS Server 1':
+                    dns_1 = f.find_elements_by_css_selector(input)
+                    for i in dns_1:
+                        ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                            Keys.CONTROL).send_keys(Keys.DELETE).perform()
+                # DNS server 2
+                elif l.text == 'DNS Server 2':
+                    dns_2 = f.find_elements_by_css_selector(input)
+                    for i in dns_2:
+                        ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                            Keys.CONTROL).send_keys(Keys.DELETE).perform()
+                break
+            check_require_warning = len(driver.find_elements_by_xpath(text_field_required)) > 0
+            list_actual = [check_require_warning]
             list_expected = [return_true]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
@@ -406,11 +598,16 @@ class Network(unittest.TestCase):
         try:
             # Disabled Manual DNS
             internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
-            # Manual DNS
-            _check_manual_dns_selected = internet_setting_fields[2].find_element_by_css_selector(input)
-            if _check_manual_dns_selected.is_selected():
-                internet_setting_fields[2].find_element_by_css_selector(select).click()
-                time.sleep(0.5)
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # Manual DNS
+                if l.text == 'Manual DNS':
+                    _check_manual_dns_selected = f.find_element_by_css_selector(input)
+                    if _check_manual_dns_selected.is_selected():
+                        f.click()
+                        time.sleep(0.5)
+                        break
+                    break
 
             time.sleep(0.2)
             btn_apply = internet_setting.find_element_by_css_selector(apply)
@@ -470,7 +667,10 @@ class Network(unittest.TestCase):
             time.sleep(10)
             login(driver)
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(5)
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(URL_LOGIN + homepage)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
             # Click icons Internet connection
             driver.find_element_by_css_selector(home_img_connection).click()
             time.sleep(1)
@@ -560,14 +760,17 @@ class Network(unittest.TestCase):
         VALUE_DNS1_SPLIT = VALUE_DNS1.split('.')
         VALUE_DNS2 = '8.8.8.8'
         VALUE_DNS2_SPLIT = VALUE_DNS2.split('.')
-
+        SUBNET_MASK = '255.255.255.0'
+        SUBNET_MASK_SPLIT = SUBNET_MASK.split('.')
         try:
             login(driver)
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             # Goto Homepage
-            driver.get(URL_LOGIN + homepage)
-            time.sleep(2)
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(URL_LOGIN + homepage)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
 
             # Click icons Internet connection
             driver.find_element_by_css_selector(home_img_connection).click()
@@ -586,43 +789,55 @@ class Network(unittest.TestCase):
             # Enable Dual WAN
             goto_menu(driver, network_tab, network_internet_tab)
 
-            internet_setting = driver.find_element_by_css_selector(internet_setting_block)
             if len(driver.find_elements_by_css_selector(internet_setting_block)) == 0:
                 internet_setting = driver.find_element_by_css_selector(internet_setting_block_single)
+            else:
+                internet_setting = driver.find_element_by_css_selector(internet_setting_block)
             ActionChains(driver).move_to_element(internet_setting).perform()
 
             # Settings
             internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
-            # Connection type
-            internet_setting_fields[1].click()
-            time.sleep(0.2)
-            ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
-            for o in ls_option:
-                if o.text == 'Static IP':
-                    o.click()
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # Connection type
+                if l.text == 'Connection Type':
+                    f.click()
+                    time.sleep(0.2)
+                    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+                    for o in ls_option:
+                        if o.text == 'Static IP':
+                            o.click()
+                            break
+                    break
 
+            # Get again
             internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
-            # WAN IP Address
-            wan_ip_addr = internet_setting_fields[2].find_elements_by_css_selector(input)
-            for d in wan_ip_addr:
-                ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                    Keys.CONTROL).send_keys(Keys.DELETE).perform()
-            # Gateway
-            gateway_ = internet_setting_fields[4].find_elements_by_css_selector(input)
-            for d in gateway_:
-                ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                    Keys.CONTROL).send_keys(Keys.DELETE).perform()
-
-            # DNS server 1
-            dns_1 = internet_setting_fields[5].find_elements_by_css_selector(input)
-            for d in dns_1:
-                ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                    Keys.CONTROL).send_keys(Keys.DELETE).perform()
-            # DNS server 2
-            dns_2 = internet_setting_fields[6].find_elements_by_css_selector(input)
-            for d in dns_2:
-                ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                    Keys.CONTROL).send_keys(Keys.DELETE).perform()
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # WAN IP Address
+                if l.text == 'WAN IP Address':
+                    wan_addr = f.find_elements_by_css_selector(input)
+                    for i in wan_addr:
+                        ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys(
+                            'a').key_up(Keys.CONTROL).send_keys(Keys.DELETE).perform()
+                # Gateway
+                if l.text == 'Gateway':
+                    wan_addr = f.find_elements_by_css_selector(input)
+                    for i in wan_addr:
+                        ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys(
+                            'a').key_up(Keys.CONTROL).send_keys(Keys.DELETE).perform()
+                # DNS server 1
+                if l.text == 'DNS Server 1':
+                    dns_1 = f.find_elements_by_css_selector(input)
+                    for i in dns_1:
+                        ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys(
+                            'a').key_up(Keys.CONTROL).send_keys(Keys.DELETE).perform()
+                # DNS server 2
+                elif l.text == 'DNS Server 2':
+                    dns_2 = f.find_elements_by_css_selector(input)
+                    for i in dns_2:
+                        ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys(
+                            'a').key_up(Keys.CONTROL).send_keys(Keys.DELETE).perform()
 
             # Verify This field is required
             check_required_warning = len(driver.find_elements_by_xpath(text_field_required)) > 0
@@ -641,28 +856,35 @@ class Network(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Disable Manual DNS
         try:
+            # Get again
             internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
-            # WAN IP Address
-            wan_ip_addr = internet_setting_fields[2].find_elements_by_css_selector(input)
-            for d, v in zip(wan_ip_addr, wan_ip_addr_value):
-                ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                    Keys.CONTROL).send_keys(v).perform()
-            # Gateway
-            gateway_ = internet_setting_fields[4].find_elements_by_css_selector(input)
-            for d, v in zip(gateway_, wan_gateway_value):
-                ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                    Keys.CONTROL).send_keys(v).perform()
-
-            # DNS server 1
-            dns_1 = internet_setting_fields[5].find_elements_by_css_selector(input)
-            for d, v in zip(dns_1, VALUE_DNS1_SPLIT):
-                ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                    Keys.CONTROL).send_keys(v).perform()
-            # DNS server 2
-            dns_2 = internet_setting_fields[6].find_elements_by_css_selector(input)
-            for d, v in zip(dns_2, VALUE_DNS2_SPLIT):
-                ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                    Keys.CONTROL).send_keys(v).perform()
+            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            for l, f in zip(internet_setting_label, internet_setting_fields):
+                # WAN IP Address
+                if l.text == 'WAN IP Address':
+                    wan_ip_addr = f.find_elements_by_css_selector(input)
+                    for d, v in zip(wan_ip_addr, wan_ip_addr_value):
+                        ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                            Keys.CONTROL).send_keys(v).perform()
+                # Gateway
+                if l.text == 'Gateway':
+                    gateway_ = f.find_elements_by_css_selector(input)
+                    for d, v in zip(gateway_, wan_gateway_value):
+                        ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                            Keys.CONTROL).send_keys(v).perform()
+                # DNS server 1
+                if l.text == 'DNS Server 1':
+                    dns_1 = f.find_elements_by_css_selector(input)
+                    for d, v in zip(dns_1, VALUE_DNS1_SPLIT):
+                        ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                            Keys.CONTROL).send_keys(v).perform()
+                # DNS server 2
+                elif l.text == 'DNS Server 2':
+                    dns_2 = f.find_elements_by_css_selector(input)
+                    for d, v in zip(dns_2, VALUE_DNS2_SPLIT):
+                        ActionChains(driver).move_to_element(d).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                            Keys.CONTROL).send_keys(v).perform()
+                    break
 
             time.sleep(0.2)
             btn_apply = internet_setting.find_element_by_css_selector(apply)
@@ -726,7 +948,10 @@ class Network(unittest.TestCase):
             time.sleep(5)
             login(driver)
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(5)
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(URL_LOGIN + homepage)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
             # Click icons Internet connection
             driver.find_element_by_css_selector(home_img_connection).click()
             time.sleep(1)
