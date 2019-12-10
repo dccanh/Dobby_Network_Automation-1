@@ -246,7 +246,6 @@ def login(driver):
     driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
     time.sleep(1)
     driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
-    # time.sleep(5)
 
     # If login Fail. Get USER and PW again
     msg_error = driver.find_element_by_css_selector(lg_msg_error).text
@@ -274,8 +273,10 @@ def login(driver):
         time.sleep(1)
         driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
         time.sleep(5)
-
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(1)
     # Check Privacy Policy
+    time.sleep(2)
     policy_popup = driver.find_elements_by_css_selector(lg_privacy_policy_pop)
     if len(policy_popup):
         ActionChains(driver).move_to_element(policy_popup[0]).click().send_keys(Keys.ARROW_DOWN).perform()
@@ -451,41 +452,48 @@ def change_nw_profile(wifi_xml_path, field, value):
     :param value: Value of field
     :return: overwrite wifi_xml_path new value
     """
-    # Field
+    value = value.replace('&', '&amp;')
+    value = value.replace('>', '&gt;')
+    value = value.replace('<', '&lt;')
     trans_dict = {"Ssid": "name",
                   "Security": "authentication",
                   "Encryption": "encryption",
                   "Password": "keyMaterial"}
+    temp_path = config_dir + '\\temp.txt'
 
-    tree = ET.parse(wifi_xml_path)
-    root = tree.getroot()
-
-    ns0 = re.findall(r'{(.*?)}', root.tag)
-    _ns0 = './/{' + ns0[0] + '}'
-    xml_tag = trans_dict[field.capitalize()]
-
-    for i in root.findall(_ns0 + xml_tag):
-        i.text = value
-    tree.write(wifi_xml_path)
+    os.rename(wifi_xml_path, temp_path)
+    time.sleep(1)
+    with open(temp_path) as f:
+        data = f.read()
+        a = [i.strip() for i in data.splitlines() if i.strip().startswith('<' + trans_dict[field] + '>')]
+        old = a[0].split('<' + trans_dict[field] + '>')[1].split('</' + trans_dict[field] + '>')[0]
+        b = data.replace(old, value)
+        f.close()
+    with open(temp_path, 'w') as f:
+        f.write(b)
+        f.close()
+    os.rename(temp_path, wifi_xml_path)
 
 
 def connect_wifi_from_xml(wifi_xml_path):
+    temp_path = config_dir + '\\temp.txt'
+    os.rename(wifi_xml_path, temp_path)
+    with open(temp_path) as f:
+        data = f.read()
+        name = [i.strip() for i in data.splitlines() if i.strip().startswith('<name>')]
+        _name = name[0].split('<name>')[1].split('</name>')[0]
+        f.close()
+    os.rename(temp_path, wifi_xml_path)
+
     # Add network profile
-    cmd_add_profile = 'netsh wlan add profile filename='+wifi_xml_path
+    cmd_add_profile = 'netsh wlan add profile filename="'+wifi_xml_path+'"'
+    print(cmd_add_profile)
     os.system(cmd_add_profile)
-
-    # Get SSID name
-    tree = ET.parse(wifi_xml_path)
-    root = tree.getroot()
-    ns0 = re.findall(r'{(.*?)}', root.tag)
-    _ns0 = './/{' + ns0[0] + '}'
-    xml_tag = 'name'
-    name = [i.text for i in root.findall(_ns0 + xml_tag)][1]
-
     # Connect that name
-    cmd_connect = 'netsh wlan connect ssid='+name+'name='+name
+    cmd_connect = 'netsh wlan connect ssid="'+_name+'" name="'+_name+'"'
+    print(cmd_connect)
     result = subprocess.check_output(cmd_connect, encoding='oem')
-    if result == 'Connection request was completed successfully.':
+    if result == 'Connection request was completed successfully.\n':
         return True
     else:
         return False
