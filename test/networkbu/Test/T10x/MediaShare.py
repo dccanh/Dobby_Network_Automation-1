@@ -9,7 +9,7 @@ from Helper.t10x.common import *
 from selenium import webdriver
 from faker import Faker
 
-class MediaShare(unittest.TestCase):
+class MEDIASHARE(unittest.TestCase):
     def setUp(self):
         try:
             os.system('echo. &echo ' + self._testMethodName)
@@ -570,5 +570,696 @@ class MediaShare(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+    # OK
+    def test_08_Create_account_for_file_sharing(self):
+        self.key = 'MEDIA_SHARE_08'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_LOGIN = get_config('URL', 'url')
+        TEST_STRING = '123 abc DEF 000222 !@##$&* ():><??+=a,.'
+        KEY_WORDS = ['admin', 'Admin', 'root', 'Anonymous']
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(URL_LOGIN + homepage)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(2)
+            # Goto media share USB
+            goto_menu(driver, media_share_tab, media_share_usb_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            # Network block
+            account_setting_block = driver.find_element_by_css_selector(account_setting_card)
+
+            # Click Add 1
+            account_setting_block.find_element_by_css_selector(add_class).click()
+            time.sleep(0.2)
+
+            # Edit mode
+            edit_field = account_setting_block.find_element_by_css_selector(edit_mode)
+            time.sleep(1)
+            id_field = edit_field.find_element_by_css_selector(id_cls)
+            id_value = id_field.find_element_by_css_selector(input)
+            ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                Keys.CONTROL).send_keys(TEST_STRING).perform()
+            time.sleep(1)
+            password_field = edit_field.find_element_by_css_selector(password_cls)
+            password_value = password_field.find_element_by_css_selector(input)
+            ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                Keys.CONTROL).send_keys(TEST_STRING).perform()
+            time.sleep(2)
+            driver.find_element_by_css_selector(btn_save).click()
+            time.sleep(1)
+            account_setting_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.4)
+            # Verify
+            ls_account = account_setting_block.find_elements_by_css_selector(rows)
+            verify_just_created_rows = ls_account[-1]
+            id_account = verify_just_created_rows.find_element_by_css_selector(id_cls).text
+
+            pw_eye = verify_just_created_rows.find_element_by_css_selector(password_eye)
+            act = ActionChains(driver)
+            act.click_and_hold(pw_eye)
+            time.sleep(1)
+            pw_account = verify_just_created_rows.find_element_by_css_selector(input_pw).get_attribute('value')
+            time.sleep(1)
+            act.release(pw_eye)
+            act.perform()
+
+            list_actual = [id_account, pw_account]
+            list_expected = [TEST_STRING[:32], TEST_STRING[:32]]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1,2. Add an account: Check ID and Password is 32 chars')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1,2. Add an account: Check ID and Password is 32 chars. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append(
+                '1,2. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
+        try:
+            # Click Add 1
+            account_setting_block.find_element_by_css_selector(add_class).click()
+            time.sleep(0.2)
+
+            # Edit mode
+            edit_field = account_setting_block.find_element_by_css_selector(edit_mode)
+
+            id_field = edit_field.find_element_by_css_selector(id_cls)
+            id_value = id_field.find_element_by_css_selector(input)
+            ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                Keys.CONTROL).send_keys(TEST_STRING).perform()
+            time.sleep(1)
+            password_field = edit_field.find_element_by_css_selector(password_cls)
+            password_value = password_field.find_element_by_css_selector(input)
+            ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                Keys.CONTROL).send_keys(TEST_STRING).perform()
+            time.sleep(0.5)
+            error_msg = account_setting_block.find_element_by_css_selector(error_message).text
+            list_actual = [error_msg]
+            list_expected = [exp_account_id_exist]
+            check = assert_list(list_actual, list_expected)
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(0.1)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 3. Change same ID: Check error message')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Change same ID: Check error message. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
+        try:
+            account_setting_block.find_element_by_css_selector(add_class).click()
+            time.sleep(0.2)
+
+            # Edit mode
+            edit_field = account_setting_block.find_element_by_css_selector(edit_mode)
+
+            id_field = edit_field.find_element_by_css_selector(id_cls)
+            id_value = id_field.find_element_by_css_selector(input)
+            ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                Keys.CONTROL).send_keys(TEST_STRING).perform()
+            time.sleep(0.2)
+            ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                Keys.CONTROL).send_keys(Keys.DELETE).perform()
+            time.sleep(1)
+            password_field = edit_field.find_element_by_css_selector(password_cls)
+            password_value = password_field.find_element_by_css_selector(input)
+            ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                Keys.CONTROL).send_keys(TEST_STRING).perform()
+            time.sleep(0.5)
+            error_msg_2 = account_setting_block.find_element_by_css_selector(error_message).text
+            list_actual = [error_msg_2]
+            list_expected = [exp_account_null_id]
+            check = assert_list(list_actual, list_expected)
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(0.1)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 4. Check Add New account with empty ID: Check error message')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Check Add New account with empty ID: Check error message. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
+        try:
+            account_setting_block.find_element_by_css_selector(add_class).click()
+            time.sleep(0.2)
+
+            # Edit mode
+            edit_field = account_setting_block.find_element_by_css_selector(edit_mode)
+
+            id_field = edit_field.find_element_by_css_selector(id_cls)
+            id_value = id_field.find_element_by_css_selector(input)
+            check_key_words = []
+            for k in KEY_WORDS:
+                ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                    Keys.CONTROL).send_keys(k).perform()
+                time.sleep(0.2)
+                password_field = edit_field.find_element_by_css_selector(password_cls)
+                password_value = password_field.find_element_by_css_selector(input)
+                ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                    Keys.CONTROL).send_keys(str(1)).perform()
+                time.sleep(0.2)
+                error_msg_3 = account_setting_block.find_element_by_css_selector(error_message).text
+                ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                    Keys.CONTROL).send_keys(Keys.DELETE).perform()
+                time.sleep(0.2)
+                check_key_words.append(error_msg_3 == exp_account_not_available)
+
+            time.sleep(0.5)
+            check_key_words = all(check_key_words)
+
+            list_actual = [check_key_words]
+            list_expected = [return_true]
+            check = assert_list(list_actual, list_expected)
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(0.5)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 5. Check Add KeyWords: Check error msg key words not available')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Check Add KeyWords: Check error msg key words not available. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('5. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
+        try:
+            ls_account = len(account_setting_block.find_elements_by_css_selector(rows))
+            for i in range(ls_account, 5):
+                # Click Add 1
+                account_setting_block.find_element_by_css_selector(add_class).click()
+                time.sleep(0.2)
+
+                # Edit mode
+                edit_field = account_setting_block.find_element_by_css_selector(edit_mode)
+
+                id_field = edit_field.find_element_by_css_selector(id_cls)
+                id_value = id_field.find_element_by_css_selector(input)
+                ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                    Keys.CONTROL).send_keys(str(i)).perform()
+                time.sleep(0.2)
+
+                password_field = edit_field.find_element_by_css_selector(password_cls)
+                password_value = password_field.find_element_by_css_selector(input)
+                ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys(
+                    'a').key_up(Keys.CONTROL).send_keys(str(i)).perform()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_save).click()
+                time.sleep(0.2)
+
+            ls_account = len(account_setting_block.find_elements_by_css_selector(rows))
+            list_actual = [ls_account]
+            list_expected = [5]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 6. Add max rule: Check max rule')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Add max rule: Check max rule. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('6. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    # OK
+    def test_09_Edit_Delete_account(self):
+        self.key = 'MEDIA_SHARE_09'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_LOGIN = get_config('URL', 'url')
+        TEST_STRING = str(random.randint(10, 100))
+        TEST_STRING_EDIT = str(random.randint(1, 10))
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(URL_LOGIN + homepage)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(2)
+            # Goto media share USB
+            goto_menu(driver, media_share_tab, media_share_usb_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            # Network block
+            account_setting_block = driver.find_element_by_css_selector(account_setting_card)
+
+            ls_account = len(account_setting_block.find_elements_by_css_selector(rows))
+            if ls_account == 0:
+                # Click Add 1
+                account_setting_block.find_element_by_css_selector(add_class).click()
+                time.sleep(0.2)
+                # Edit mode
+                edit_field = account_setting_block.find_element_by_css_selector(edit_mode)
+                time.sleep(1)
+                id_field = edit_field.find_element_by_css_selector(id_cls)
+                id_value = id_field.find_element_by_css_selector(input)
+                ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                    Keys.CONTROL).send_keys(TEST_STRING).perform()
+                time.sleep(1)
+                password_field = edit_field.find_element_by_css_selector(password_cls)
+                password_value = password_field.find_element_by_css_selector(input)
+                ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                    Keys.CONTROL).send_keys(TEST_STRING).perform()
+                time.sleep(2)
+                driver.find_element_by_css_selector(btn_save).click()
+                time.sleep(1)
+                account_setting_block.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(0.4)
+
+            # Verify
+            ls_account = account_setting_block.find_elements_by_css_selector(rows)
+            random_account = random.choice(ls_account)
+            old_id_account = random_account.find_element_by_css_selector(id_cls).text
+            index_chosen = [i.find_element_by_css_selector(id_cls).text for i in ls_account].index(old_id_account)
+
+            # Click Edit
+            random_account.find_element_by_css_selector(edit_cls).click()
+            time.sleep(0.5)
+            edit_field = driver.find_element_by_css_selector(edit_mode)
+            # Change ID, PW
+            password_field = edit_field.find_element_by_css_selector(password_cls)
+            password_value = password_field.find_element_by_css_selector(input)
+            ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                Keys.CONTROL).send_keys(TEST_STRING_EDIT).perform()
+            time.sleep(1)
+            id_field = edit_field.find_element_by_css_selector(id_cls)
+            id_value = id_field.find_element_by_css_selector(input)
+            ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                Keys.CONTROL).send_keys(TEST_STRING_EDIT).perform()
+
+            driver.find_element_by_css_selector(btn_save).click()
+            time.sleep(1)
+
+            ls_account = account_setting_block.find_elements_by_css_selector(rows)
+            verify_id_account = ls_account[index_chosen].find_element_by_css_selector(id_cls).text
+
+            pw_eye = ls_account[index_chosen].find_element_by_css_selector(password_eye)
+            act = ActionChains(driver)
+            act.click_and_hold(pw_eye)
+            time.sleep(1)
+            verify_pw_account = ls_account[index_chosen].find_element_by_css_selector(input_pw).get_attribute('value')
+            time.sleep(1)
+            act.release(pw_eye)
+            act.perform()
+
+            list_actual = [verify_id_account, verify_pw_account]
+            list_expected = [TEST_STRING_EDIT, TEST_STRING_EDIT]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1. Edit an random account: ID and PW changed')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Edit an random account: ID and PW changed. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append(
+                '1. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2
+        try:
+            ls_account = account_setting_block.find_elements_by_css_selector(rows)
+            # Click Edit
+            ls_account[index_chosen].find_element_by_css_selector(delete_cls).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver,dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            ls_account = account_setting_block.find_elements_by_css_selector(rows)
+            ls_account_id = [i.find_element_by_css_selector(id_cls).text for i in ls_account]
+            check_delete = verify_id_account not in ls_account_id
+            list_actual = [check_delete]
+            list_expected = [True]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 2. Delete a rule: Check that rule not in list account')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Delete a rule: Check that rule not in list account. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('2. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    # OK
+    def test_10_Edit_Delete_account_while_server_is_running(self):
+        self.key = 'MEDIA_SHARE_10'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_LOGIN = get_config('URL', 'url')
+        TEST_STRING = str(random.randint(10, 100))
+        TEST_STRING_EDIT = str(random.randint(1, 10))
+        DESCRIPTION_3 = '123!@ abcd #^&*'
+        PATH_FILE_1 = 'network_file_1'
+        fake = Faker()
+        # Pre-pare precondition
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(URL_LOGIN + homepage)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(2)
+            # Goto media share USB
+            goto_menu(driver, media_share_tab, media_share_usb_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Network Folder
+            network_block = driver.find_element_by_css_selector(usb_network)
+
+            network_table = network_block.find_elements_by_css_selector(tbody)
+            if len(network_table) == 0:
+                # Click Add 1
+                network_block.find_element_by_css_selector(add_class).click()
+                time.sleep(0.2)
+                # Edit mode
+                edit_field = network_block.find_element_by_css_selector(edit_mode)
+                # Description
+                description_field = edit_field.find_element_by_css_selector(description)
+                description_field.find_element_by_css_selector(input).send_keys(DESCRIPTION_3)
+                # Folder path
+                path_field = edit_field.find_element_by_css_selector(path)
+                path_field.find_element_by_css_selector(input).click()
+                time.sleep(0.5)
+                # Choose path
+                driver.find_element_by_css_selector(tree_icon).click()
+                time.sleep(0.2)
+                ls_path_lv1 = driver.find_elements_by_css_selector(path_name_lv1)
+                for o in ls_path_lv1:
+                    if o.text == PATH_FILE_1:
+                        ActionChains(driver).move_to_element(o).click().perform()
+                        break
+                # OK
+                driver.find_element_by_css_selector(btn_ok).click()
+                # Permission
+                per_write = edit_field.find_element_by_css_selector(permission_write_check_box)
+                if not per_write.is_selected():
+                    driver.find_element_by_css_selector(permission_write_check_box_radio).click()
+                # Save
+                driver.find_element_by_css_selector(btn_save).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            # Account block
+            account_setting_block = driver.find_element_by_css_selector(account_setting_card)
+
+            ls_account = len(account_setting_block.find_elements_by_css_selector(rows))
+            if ls_account == 0:
+                # Click Add 1
+                account_setting_block.find_element_by_css_selector(add_class).click()
+                time.sleep(0.2)
+                # Edit mode
+                edit_field = account_setting_block.find_element_by_css_selector(edit_mode)
+                time.sleep(1)
+                id_field = edit_field.find_element_by_css_selector(id_cls)
+                id_value = id_field.find_element_by_css_selector(input)
+                ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                    Keys.CONTROL).send_keys(TEST_STRING).perform()
+                time.sleep(1)
+                password_field = edit_field.find_element_by_css_selector(password_cls)
+                password_value = password_field.find_element_by_css_selector(input)
+                ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                    Keys.CONTROL).send_keys(TEST_STRING).perform()
+                time.sleep(2)
+                driver.find_element_by_css_selector(btn_save).click()
+                time.sleep(1)
+                account_setting_block.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(0.4)
+
+            # Verify
+            ls_account = account_setting_block.find_elements_by_css_selector(rows)
+            random_account = random.choice(ls_account)
+            id_account = random_account.find_element_by_css_selector(id_cls).text
+
+            # Enable server
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            # Enable FTP server
+            server_ftp = driver.find_element_by_css_selector(ftp_server)
+            server_ftp_btn = server_ftp.find_element_by_css_selector(select)
+            server_ftp_input = server_ftp_btn.find_element_by_css_selector(input)
+            # If FTP is not enable => Enable
+            if not server_ftp_input.is_selected():
+                server_ftp_btn.click()
+            time.sleep(0.2)
+            # Server Account
+            server_ftp = driver.find_element_by_css_selector(ftp_server)
+            input_label = server_ftp.find_elements_by_css_selector(' '.join([media_item, label]))
+            input_value = server_ftp.find_elements_by_css_selector(' '.join([media_item, wrap_input]))
+            for l, v in zip(input_label, input_value):
+                if l.text == 'Account':
+                    v.find_element_by_css_selector(input).click()
+                    ls_account_drop = v.find_elements_by_css_selector(secure_value_in_drop_down)
+                    time.sleep(0.5)
+                    for o in ls_account_drop:
+                        if o.text == id_account:
+                            o.click()
+                            break
+                if l.text == 'Network Folder':
+                    v.find_element_by_css_selector(input).click()
+                    ls_folder = v.find_elements_by_css_selector(secure_value_in_drop_down)
+                    time.sleep(0.5)
+                    choice = random.choice(ls_folder)
+                    time.sleep(0.5)
+                    choice.click()
+                    break
+            # Apply
+            driver.find_element_by_css_selector(apply).click()
+            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+
+            # Enable Windows Network Samba
+            server_samba = driver.find_element_by_css_selector(samba_server_card)
+            server_samba_btn = server_samba.find_element_by_css_selector(select)
+            server_samba_input = server_samba_btn.find_element_by_css_selector(input)
+            # If  not enable => Enable
+            if not server_samba_input.is_selected():
+                server_samba_btn.click()
+            time.sleep(0.2)
+            # Server Account
+            server_samba = driver.find_element_by_css_selector(samba_server_card)
+            input_label = server_samba.find_elements_by_css_selector(label)
+            input_value = server_samba.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(input_label, input_value):
+                if l.text == 'Connection Name':
+                    v.find_element_by_css_selector(input).send_keys(fake.name())
+                if l.text == 'Account':
+                    v.find_element_by_css_selector(input).click()
+                    ls_account_drop = v.find_elements_by_css_selector(secure_value_in_drop_down)
+                    time.sleep(0.5)
+                    for o in ls_account_drop:
+                        if o.text == id_account:
+                            o.click()
+                            break
+                if l.text == 'Network Folder':
+                    v.find_element_by_css_selector(input).click()
+                    ls_folder = v.find_elements_by_css_selector(secure_value_in_drop_down)
+                    time.sleep(0.5)
+                    choice = random.choice(ls_folder)
+                    time.sleep(0.5)
+                    choice.click()
+                    break
+            # Apply
+            server_samba.find_element_by_css_selector(apply).click()
+            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            self.list_steps.append('[PASS] Precondition')
+        except:
+            self.list_steps.append('[FAIL] Precondition')
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Prepare done precondition
+        try:
+            goto_menu(driver, media_share_tab, media_share_usb_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            # Verify
+            account_setting_block = driver.find_element_by_css_selector(account_setting_card)
+            ActionChains(driver).move_to_element(account_setting_block).perform()
+            ls_account = account_setting_block.find_elements_by_css_selector(rows)
+            random_account = random.choice(ls_account)
+            time.sleep(1)
+            # Click Edit
+            random_account.find_element_by_css_selector(edit_cls).click()
+            wait_visible(driver, dialog_content)
+            time.sleep(5)
+            edit_confirm_msg = driver.find_element_by_css_selector(complete_dialog_msg).text
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            # Click Delete
+            random_account.find_element_by_css_selector(delete_cls).click()
+            time.sleep(0.5)
+            delete_confirm_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            list_actual = [edit_confirm_msg, delete_confirm_msg]
+            list_expected = [exp_confirm_msg_edit, exp_delete_account_when_server_running]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1, 2. Edit and Delete account when server is running: Check Warning')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Edit and Delete account when server is running: Check Warning. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append(
+                '1, 2. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2
+        try:
+            # Goto Sever setting
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            server_ftp = driver.find_element_by_css_selector(ftp_server)
+            ftp_account_warning = server_ftp.find_element_by_css_selector(account_link_cls).text
+
+            server_samba = driver.find_element_by_css_selector(samba_server_card)
+            samba_account_warning = server_samba.find_element_by_css_selector(account_link_cls).text
+
+            list_actual = [ftp_account_warning, samba_account_warning]
+            list_expected = [exp_server_account_warning]*2
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 3. Delete OK: Check Server Accounts are not available')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Delete OK: Check Server Accounts are not available. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    # OK
+    def test_11_Check_mesage_when_creating_server_without_network_folder_account(self):
+        self.key = 'MEDIA_SHARE_11'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_LOGIN = get_config('URL', 'url')
+        TEST_STRING = str(random.randint(10, 100))
+        TEST_STRING_EDIT = str(random.randint(1, 10))
+        DESCRIPTION_3 = '123!@ abcd #^&*'
+        PATH_FILE_1 = 'network_file_1'
+        fake = Faker()
+        # Pre-pare precondition
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(URL_LOGIN + homepage)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(2)
+            # Goto media share USB
+            goto_menu(driver, media_share_tab, media_share_usb_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Network Folder
+            network_block = driver.find_element_by_css_selector(usb_network)
+            ActionChains(driver).move_to_element(network_block).perform()
+            network_table = network_block.find_elements_by_css_selector(tbody)
+            if len(network_table) > 0:
+                for r in range(len(network_table)):
+                    network_table[0].find_element_by_css_selector(action_delete).click()
+                    time.sleep(0.2)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    time.sleep(0.5)
+            # Account block
+            account_setting_block = driver.find_element_by_css_selector(account_setting_card)
+            ActionChains(driver).move_to_element(account_setting_block).perform()
+            ls_account = account_setting_block.find_elements_by_css_selector(rows)
+            if len(ls_account) > 0:
+                for r in range(len(ls_account)):
+                    ls_account[0].find_element_by_css_selector(delete_cls).click()
+                    time.sleep(0.2)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    time.sleep(0.5)
+            self.list_steps.append('[PASS] Precondition')
+        except:
+            self.list_steps.append('[FAIL] Precondition')
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Prepare done precondition
+
+        try:
+            # Goto Sever setting
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            ls_card = [ftp_server,
+                       samba_server_card,
+                       dlna_server_card,
+                       dev_dav_server_card,
+                       torrent_server_card,
+                       time_machine_server_card]
+            exp_msg = [exp_server_account_warning, exp_server_folder_warning]
+            _check_warning_msg = []
+            for i in ls_card:
+                server = driver.find_element_by_css_selector(i)
+                ActionChains(driver).move_to_element(server).perform()
+                server_btn = server.find_element_by_css_selector(select)
+                server_input = server_btn.find_element_by_css_selector(input)
+                if not server_input.is_selected():
+                    server_btn.click()
+                account_warning = server.find_elements_by_css_selector(account_link_cls)
+                account_warning_text = [i.text for i in account_warning]
+                _check_warning_msg.append(exp_msg == account_warning_text)
+            _check_warning_msg = all(_check_warning_msg)
+
+            list_actual = [_check_warning_msg]
+            list_expected = [return_true]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 1, 2. Check Message Server Accounts and Network Folder are not available')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Check Message Server Accounts and Network Folder are not available. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('1, 2. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
 if __name__ == '__main__':
     unittest.main()

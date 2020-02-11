@@ -1,0 +1,99 @@
+[MAIN]
+main2 = test_04_Verify_the_Web_UI_connection_through_Gateway_IP
+main3 = test_05_Verify_the_Default_setting_of_Language
+main4 = test_06_Verify_the_Web_UI_connection_through_domain_address
+main5 = test_07_Verify_the_Login_page
+main6 = test_08_Verify_the_Humax_Retail_CPE_Site_operation
+main7 = test_09_Verify_the_Login_operation
+main8 = test_10_Verify_the_operation_at_Login
+main9 = test_11_Verify_the_operation_at_Login_page_with_incorrect_id_pw
+main10 = test_13_Verify_the_Log_out_operation
+main11 = test_14_Verify_the_time_out_operation
+main12 = test_16_Check_Chrome_Browser_behavior
+main13 = test_17_Check_Firefox_Browser_behavior
+main14 = test_18_Check_Edge_Browser_behavior
+main15 = test_20_Verify_the_Winzard_Main_page
+main16 = test_22_Change_Password_Page_Confirmation
+main17 = test_23_Check_Correct_Password_operation
+main18 = test_24_Check_InCorrect_Password_operation
+main19 = test_28_Verification_of_Manual_Setup_Dynamic_IP
+main20 = test_29_Verification_of_Manual_Setup_Static_IP
+main21 = test_44_Help_Guide_Check_Help_Icon_action
+main22 = test_73_Verification_the_Footer_hyperlink_menu_operation
+main23 = test_74_Check_Keyword_Search_Function
+main24 = test_75_Verify_Hyperlink_Capabilities
+main25 = test_76_Verify_the_Network_hyperlink
+main26 = test_77_Verify_the_Security_hyperlink
+main27 = test_78_Verify_the_Wireless_hyperlink
+main28 = test_79_Verify_the_Home_hyperlink
+main29 = test_80_Verify_the_Media_Share_hyperlink
+main30 = test_81_Verify_the_QoS_hyperlink
+
+[HOME]
+home2 = test_01_Check_Internet_Image_Operation_when_Dual_WAN_is_off
+home3 = test_02_Check_Internet_Image_Operation_when_Dual_WAN_is_on
+home4 = test_03_Check_Connection_Internet_Information
+home5 = test_04_Verify_connection_status_according_to_WAN_connection_type_Dynamic_IP
+home6 = test_05_Verify_connection_status_according_to_WAN_connection_type_Static_IP
+home7 = test_09_Check_Router_Wireless_page
+home8 = test_10_Check_LAN_information
+home9 = test_11_Check_the_operation_of_LAN_Table_Icon
+home10 = test_12_Check_wireless_table_information
+home11 = test_13_Check_Wireless_Table_Icon_operation
+
+[NETWORK]
+network2 = test_01_Check_Internet_Status
+network3 = test_02_Check_Dynamic_IP_Operation
+network4 = test_03_Check_Static_IP_Operation
+network5 = test_06_Check_Primary_Setting
+network6 = test_07_Check_Secondary_Setting
+network7 = test_18_LAN_Change_Subnet_Mask
+network8 = test_21_Verify_Start_End_Ip_Address_input_value
+network9 = test_25_Reserved_IP_Confirm_duplicate_registration_prevention
+network10 = test_26_Verify_Max_entry_Registration
+network11 = test_27_Verify_update_Reserved_IP_address_follow_changing_Lan_IP
+
+[WIRELESS]
+wireless2 = test_02_Verification_of_the_Wifi_On_off_operation
+wireless3 = test_03_Verification_of_Security_Settings
+wireless4 = test_04_Verification_of_the_setting_WPA2_PSK_Password
+wireless5 = test_05_Verification_of_the_setting_WPA_WPA2_PSK_Password
+wireless6 = test_10_Verification_of_Hide_SSID_function
+wireless7 = test_11_Verification_of_WebUI_Access_Operation
+wireless8 = test_16_Check_SSID_setting
+wireless9 = test_17_Verification_of_Guest_Network_Duplicate_SSID_Registration
+wireless10 = test_19_Verification_of_setting_WPA2_PSK_Password
+wireless11 = test_20_Verification_of_setting_WPA_WPA2_PSK_Password
+wireless12 = test_25_Verification_of_Hide_SSID_action
+
+[SECURITY]
+security2 = test_01_Check_Parental_Code_setting
+security3 = test_02_Parental_code_Change_Confirmation
+security4 = test_03_Confirmation_Parental_code_Initialization
+security5 = test_04_Parental_Control_function_On_Off_check
+
+[ADVANCED]
+advanced2 = test_08_Local_Access_and_External_Access_confirmation
+advanced3 = test_26_Confirm_WOL_Deletion
+advanced4 = test_29_Check_message_for_exception_case_Port_Forwarding
+advanced5 = test_31_Confirm_Port_Forwarding_Delete
+advanced6 = test_35_Edit_Confirm_Delete_Port_Triggering
+advanced7 = test_36_Confirm_Delete_Port_Triggering
+advanced8 = test_47_Check_Ping_test_operation
+advanced9 = test_48_Check_Traceroute_operation
+
+[MEDIASHARE]
+mediashare2 = test_04_Confirmation_Network_Folder_Creation
+mediashare3 = test_05_Edit_Delete_Network_Folder
+mediashare4 = test_06_Edit_Delete_Network_Folder_while_server_is_running
+mediashare5 = test_08_Create_account_for_file_sharing
+mediashare6 = test_09_Edit_Delete_account
+mediashare7 = test_10_Edit_Delete_account_while_server_is_running
+mediashare8 = test_11_Check_mesage_when_creating_server_without_network_folder_account
+
+[QOS]
+qos2 = test_01_
+
+[NON_FUNCTION]
+non_function2 = test_01_
+

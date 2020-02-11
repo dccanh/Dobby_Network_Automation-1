@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
-	<name>We Love You So Much_2G!</name>
+	<name>HUMAX_Guest_2G!_1877</name>
 	<SSIDConfig>
 		<SSID>
 			<hex>5765204C6F766520596F7520536F204D7563685F324721</hex>
-			<name>We Love You So Much_2G!</name>
+			<name>HUMAX_Guest_2G!_1877</name>
 		</SSID>
 	</SSIDConfig>
 	<connectionType>ESS</connectionType>
@@ -19,7 +19,7 @@
 			<sharedKey>
 				<keyType>passPhrase</keyType>
 				<protected>false</protected>
-				<keyMaterial>humax_0001</keyMaterial>
+				<keyMaterial>00000000</keyMaterial>
 			</sharedKey>
 		</security>
 	</MSM>

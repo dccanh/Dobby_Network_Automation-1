@@ -3,7 +3,7 @@ sys.path.append('../../')
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import datetime
-from Helper.t10x.ls_path import *
+from Helper.t10x.ls_path import gg_credential_path
 a = str(datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M'))
 
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']

@@ -9,7 +9,7 @@ from Helper.t10x.common import *
 from selenium import webdriver
 from faker import Faker
 
-class Security(unittest.TestCase):
+class SECURITY(unittest.TestCase):
     def setUp(self):
         try:
             os.system('echo. &echo ' + self._testMethodName)
@@ -22,9 +22,21 @@ class Security(unittest.TestCase):
             raise
 
     def tearDown(self):
-        end_time = datetime.now()
-        duration = str((end_time - self.start_time))
-        write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
+        try:
+            end_time = datetime.now()
+            duration = str((end_time - self.start_time))
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
+        except:
+            # Connect by wifi if internet is down to handle exception for PPPoE
+            os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
+            time.sleep(1)
+            end_time = datetime.now()
+            duration = str((end_time - self.start_time))
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
+            time.sleep(5)
+            # Connect by LAN again
+            os.system('netsh wlan disconnect')
+            time.sleep(1)
         self.driver.quit()
 
     def test_01_Check_Parental_Code_setting(self):
@@ -422,6 +434,233 @@ class Security(unittest.TestCase):
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('6. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_04_Parental_Control_function_On_Off_check(self):
+        self.key = 'SECURITY_04'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_LOGIN = get_config('URL', 'url')
+        PARENTAL_CODE_KEY = '1234'
+
+        SOCIAL_NW = 'Social Network'
+        USER_DEFINE = 'User Define'
+        FACEBOOK = 'facebook'
+        GOOGLE = 'google.com'
+        try:
+            login(driver)
+            time.sleep(1)
+            # Goto Homepage
+            driver.get(URL_LOGIN + homepage)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto media share USB
+            goto_menu(driver, security_tab, security_parentalcontrol_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Input valid
+            parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+            if len(parental_field_input) > 0:
+                #  New
+                ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+
+            # Control Rule
+            rule_block = driver.find_element_by_css_selector(parental_rule_card)
+
+            # Click Add 1
+            rule_block.find_element_by_css_selector(add_class).click()
+            time.sleep(0.2)
+
+            # Edit mode
+            edit_field = rule_block.find_element_by_css_selector(edit_mode)
+
+            device_name_field = edit_field.find_element_by_css_selector(name_cls)
+            device_name_field.find_element_by_css_selector(input).click()
+
+            # Select all
+            opts = device_name_field.find_elements_by_css_selector(secure_value_in_drop_down)
+
+            for i in range(len(opts)-1):
+                opts = device_name_field.find_elements_by_css_selector(secure_value_in_drop_down)
+                opts[0].click()
+                device_name_field.find_element_by_css_selector(input).click()
+
+            # Setup the filter
+            edit_field.find_element_by_css_selector('.service-filter').find_element_by_css_selector(apply).click()
+            time.sleep(0.5)
+
+            ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
+            for f in ls_service:
+                if f.text == SOCIAL_NW:
+                    f.click()
+
+            ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
+            for s in ls_service_sub:
+                if s.text == FACEBOOK:
+                    if not len(s.find_elements_by_css_selector('.selected-icon')) > 0:
+                        s.click()
+
+            ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
+            for f in ls_service:
+                if f.text == USER_DEFINE:
+                    f.click()
+                    check_item_inner = driver.find_elements_by_css_selector('.child-item .item-inner')
+                    check_item_exist = any([i.text == GOOGLE for i in check_item_inner])
+                    if not check_item_exist:
+                        # Add url
+                        driver.find_element_by_css_selector(add_class).click()
+                        f.find_element_by_css_selector(input).send_keys(GOOGLE)
+                        time.sleep(1)
+                        f.find_element_by_css_selector(btn_save).click()
+                        time.sleep(1)
+
+            # Save
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+
+            # Schedule
+            edit_field.find_element_by_css_selector('.set-schedule').find_element_by_css_selector(apply).click()
+            time.sleep(1)
+            driver.find_element_by_css_selector('tr:nth-child(2)>:nth-child(19).hight-light').click()
+            driver.find_element_by_css_selector('tr:nth-child(2)>:nth-child(20).hight-light').click()
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_save).click()
+            wait_popup_disappear(driver, dialog_loading)
+            # driver.find_element_by_css_selector(btn_ok).click()
+            # wait_popup_disappear(driver, dialog_loading)
+            # Check Service Filter
+            ls_service_filter_items = driver.find_elements_by_css_selector(service_filter_items)
+            ls_service_filter_items_value = [s.text for s in ls_service_filter_items]
+            # Check block schedule
+            block_schedule_value = driver.find_element_by_css_selector(block_schedule).text
+            list_actual = [ls_service_filter_items_value, block_schedule_value]
+            list_expected = [exp_ls_service_filter_items_value, exp_block_schedule_value]
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1,2,3. Add rule: Check list of Service Filter and Block Schedule')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1,2,3. Add rule: Check list of Service Filter and Block Schedule. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('1,2,3. Assertion wong.')
+
+        FACEBOOK = 'http://facebook.com'
+        FACEBOOK_S = 'https://facebook.com'
+        GOOGLE = 'http://google.com'
+        GOOGLE_S = 'https://google.com'
+        for i in range(1, 7):
+            try:
+                try:
+                    fb_http_4 = requests.get(url=FACEBOOK, timeout=30).status_code
+                except:
+                    fb_http_4 = 500
+
+                try:
+                    fb_https_4 = requests.get(url=FACEBOOK_S, timeout=30).status_code
+                except:
+                    fb_https_4 = 500
+
+                try:
+                    gg_http_4 = requests.get(url=GOOGLE, timeout=30).status_code
+                except:
+                    gg_http_4 = 500
+
+                try:
+                    gg_https_4 = requests.get(url=GOOGLE_S, timeout=30).status_code
+                except:
+                    gg_https_4 = 500
+                check_step_4 = all([i != 200 for i in [fb_http_4, fb_https_4, gg_http_4, gg_https_4]])
+                # Disable Parental control
+                parental_code = driver.find_element_by_css_selector(parental_code_card)
+                parental_code_btn = parental_code.find_element_by_css_selector(select)
+                parental_code_check = parental_code.find_element_by_css_selector(input)
+                if parental_code_check.is_selected():
+                    parental_code_btn.click()
+                    # Input valid
+                    parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+                    if len(parental_field_input) > 0:
+                        #  New
+                        ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+                        time.sleep(0.5)
+                        driver.find_element_by_css_selector(btn_ok).click()
+                        wait_popup_disappear(driver, dialog_loading)
+
+                try:
+                    fb_http_6 = requests.get(url=FACEBOOK, timeout=30).status_code
+                except:
+                    fb_http_6 = 500
+
+                try:
+                    fb_https_6 = requests.get(url=FACEBOOK_S, timeout=30).status_code
+                except:
+                    fb_https_6 = 500
+
+                try:
+                    gg_http_6 = requests.get(url=GOOGLE, timeout=30).status_code
+                except:
+                    gg_http_6 = 500
+
+                try:
+                    gg_https_6 = requests.get(url=GOOGLE_S, timeout=30).status_code
+                except:
+                    gg_https_6 = 500
+                check_step_6 = all([i == 200 for i in [fb_http_6, fb_https_6, gg_http_6, gg_https_6]])
+
+                # Enable
+                parental_code = driver.find_element_by_css_selector(parental_code_card)
+                parental_code_btn = parental_code.find_element_by_css_selector(select)
+                parental_code_check = parental_code.find_element_by_css_selector(input)
+                if not parental_code_check.is_selected():
+                    parental_code_btn.click()
+                    # Input valid
+                    parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+                    if len(parental_field_input) > 0:
+                        #  New
+                        ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+                        time.sleep(0.5)
+                        driver.find_element_by_css_selector(btn_ok).click()
+                        wait_popup_disappear(driver, dialog_loading)
+
+                try:
+                    fb_http_8 = requests.get(url=FACEBOOK, timeout=30).status_code
+                except:
+                    fb_http_8 = 500
+
+                try:
+                    fb_https_8 = requests.get(url=FACEBOOK_S, timeout=30).status_code
+                except:
+                    fb_https_8 = 500
+
+                try:
+                    gg_http_8 = requests.get(url=GOOGLE, timeout=30).status_code
+                except:
+                    gg_http_8 = 500
+
+                try:
+                    gg_https_8 = requests.get(url=GOOGLE_S, timeout=30).status_code
+                except:
+                    gg_https_8 = 500
+                check_step_8 = all([i != 200 for i in [fb_http_8, fb_https_8, gg_http_8, gg_https_8]])
+
+                list_actual = [check_step_4, check_step_6, check_step_8]
+                list_expected = [return_false]*3
+                check = assert_list(list_actual, list_expected)
+                self.assertTrue(check["result"])
+                self.list_steps.append(f'[Pass] 4-8. -{str(i+1)}-. Check Access to FB, GG. ')
+                self.list_steps.append('[END TC]')
+            except:
+                self.list_steps.append(
+                    f'[Fail] 4-8. -{str(i+1)}-. Check Access to FB, GG. '
+                    f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                self.list_steps.append('[END TC]')
+                list_step_fail.append(f'4-8. -{str(i+1)}- Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
 

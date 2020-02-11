@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
+import os, sys
+sys.path.append('../../')
 import openpyxl
 import time
 import random
@@ -294,11 +295,23 @@ def get_url_ipconfig(ipconfig_field='Default Gateway'):
 
 
 def goto_menu(driver, parent_tab, child_tab):
-    ActionChains(driver).move_to_element(driver.find_element_by_css_selector(parent_tab)).perform()
-    # driver.find_element_by_css_selector(parent_tab).click()
+    ActionChains(driver).move_to_element(driver.find_element_by_css_selector(parent_tab)).click().perform()
     time.sleep(0.5)
-    driver.find_element_by_css_selector(child_tab).click()
-    time.sleep(0.5)
+    if child_tab != 0:
+        driver.find_element_by_css_selector(child_tab).click()
+        time.sleep(0.5)
+
+
+def detect_current_menu(driver):
+    # Detect current active tab in T10x
+    main_tab = driver.find_element_by_css_selector('#parent-menu>a.active.open').text
+
+    child_tab = driver.find_elements_by_css_selector('#sub-menu>.active')
+    if not len(child_tab):
+        child_tab = 0
+    else:
+        child_tab = child_tab[0].text
+    return main_tab, child_tab
 
 
 def base64encode(user, pw):
@@ -465,12 +478,15 @@ def change_nw_profile(wifi_xml_path, field, value):
     time.sleep(1)
     with open(temp_path) as f:
         data = f.read()
-        a = [i.strip() for i in data.splitlines() if i.strip().startswith('<' + trans_dict[field] + '>')]
-        old = a[0].split('<' + trans_dict[field] + '>')[1].split('</' + trans_dict[field] + '>')[0]
-        b = data.replace(old, value)
+        rows = [i.strip() for i in data.splitlines() if i.strip().startswith('<' + trans_dict[field] + '>')]
+        # old = a[0].split('<' + trans_dict[field] + '>')[1].split('</' + trans_dict[field] + '>')[0]
+        for r in rows:
+            old = r.split('<' + trans_dict[field] + '>')[1].split('</' + trans_dict[field] + '>')[0]
+            data = data.replace(old, value)
+        # b = data.replace(old, value)
         f.close()
     with open(temp_path, 'w') as f:
-        f.write(b)
+        f.write(data)
         f.close()
     os.rename(temp_path, wifi_xml_path)
 
@@ -489,14 +505,11 @@ def connect_wifi_from_xml(wifi_xml_path):
     cmd_add_profile = 'netsh wlan add profile filename="'+wifi_xml_path+'"'
     print(cmd_add_profile)
     os.system(cmd_add_profile)
+    time.sleep(2)
     # Connect that name
     cmd_connect = 'netsh wlan connect ssid="'+_name+'" name="'+_name+'"'
     print(cmd_connect)
-    result = subprocess.check_output(cmd_connect, encoding='oem')
-    if result == 'Connection request was completed successfully.\n':
-        return True
-    else:
-        return False
+    os.system(cmd_connect)
 
 
 def setting_wireless_security(block_left_right, secur_type=None, encryption=None, key_type=None):
@@ -531,6 +544,7 @@ def setting_wireless_security(block_left_right, secur_type=None, encryption=None
                 o.click()
                 break
 
+
 def apply_process(driver, block_left_right):
     time.sleep(0.2)
     block_left_right.find_element_by_css_selector(apply).click()
@@ -539,3 +553,9 @@ def apply_process(driver, block_left_right):
     driver.find_element_by_css_selector(btn_ok).click()
     wait_popup_disappear(driver, dialog_loading)
     time.sleep(2)
+
+
+def checkMACAddress(x):
+    if re.match("[0-9a-f]{2}([-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", x.lower()):
+        return True
+    return False
