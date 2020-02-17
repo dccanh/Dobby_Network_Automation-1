@@ -187,6 +187,9 @@ home_view_wrap = 'div.view-wrap.home'
 home_img_connection = 'div.wan-connection>a.img-connection'
 home_img_lan_connection = 'div.lan-connection>a.img-connection'
 home_connection_description = 'div.wan-connection>.text-description'
+home_img_usb_connection = 'div.usb-connection>a.img-connection'
+home_img_device_connection = 'div.device-connection>a.img-connection'
+
 home_wan_ls_fields = '.wrap-form'
 home_wan_ls_label = 'label.input-label'
 home_wan_ls_value = 'span.text-label'
@@ -238,6 +241,13 @@ card_cls = '.card'
 title_tabs_cls = '.title-tabs'
 card_tabs_cls = '.md-ink-ripple'
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ USB
+ele_usb_card = '.simple-usb'
+ele_space_use = '.space-used'
+ele_space_available = '.space-available'
+ele_space_bar = '.space-bar'
+ele_server_card = '.simple-server'
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ OTHERS
 ele_home_tab = 'a[href="/home"]'
 ele_humax_about = '[title="Link to About HUMAX Wi-Fi"]'
@@ -248,3 +258,13 @@ ele_humax_search_box = '.footer-input-inner>input'
 ele_humax_search_value_menu_2 = '.footer-list-group ul>li>a'
 ele_humax_search_value_menu_1 = '.footer-list-group>li>a'
 ele_humax_show = '.index-toggle-icon:not(.show)'
+ele_check_for_update_title = '.custom-dialog-header>h2'
+
+ele_device_more_info = '.device-connection .more-info'
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ YOUTUBE
+ele_playing = '.playing-mode'
+ele_buffering = '.buffering-mode'
+ele_skip_ad = '.ytp-ad-skip-button-text'
+ele_video = '.video-stream'

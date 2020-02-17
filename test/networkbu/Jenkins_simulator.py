@@ -10,11 +10,18 @@ from Test.T10x.Wireless import *
 from Test.T10x.Security import *
 from Test.T10x.Advanced import *
 from Test.T10x.MediaShare import *
-
+from Test.T10x.Non_Function import *
+import threading
+import signal
+try:
+    import keyboard
+except ModuleNotFoundError:
+    os.system('pip install keyboard')
+    import keyboard
 config_path = './Config/t10x/config.txt'
 testcase_data_path = './Image/testcase_data.txt'
 icon_path = './Image/sun.ico'
-
+VERSION_ENVIRONMENT = 'v0.1.2'
 
 def get_config(config_path, section, option):
     if not os.path.exists(config_path):
@@ -70,9 +77,9 @@ convert_module = {
 
 
 root = Tk()
-root.title("Canh______Ciel")
+root.title(f"Canh______Ciel______{VERSION_ENVIRONMENT}")
 root.iconbitmap(icon_path)
-titleLabel = Label(root, text="JENKINS SIMULATOR", anchor='center', font=40)
+titleLabel = Label(root, text="HUMAX T10X AUTOMATION", anchor='center', font=40)
 titleLabel.pack()
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 labelFile1 = Label(root, text="Stage:")
@@ -155,7 +162,7 @@ loopBox.pack()
 loopBox.place(x=140, y=470, width=50)
 def _advanceBtn():
     if root.winfo_height() == 440:
-        root.geometry("520x540+500+100")
+        root.geometry("520x560+500+100")
     else:
         root.geometry("520x440+500+100")
 
@@ -172,7 +179,7 @@ def _advanceBtn():
     # ~~~~~~~~~~~~~~~~
     progressLabel = StringVar()
     progress = Label(root, text='Progress:')
-    progress.place(x=250, y=505)
+    progress.place(x=250, y=520)
 
 
 def find_chosen_module():
@@ -190,6 +197,7 @@ def detect_run_testcase():
     modules_name = get_config(config_path, 'GENERAL', 'module').split(';')
     if len(modules_name) >= 1 and modules_name[0] != '':
         print('cd Test/T10x && python Before_test.py')
+        # os.system('TIMEOUT /T 20')
         os.system('cd Test/T10x && python Before_test.py')
         config_data = configparser.RawConfigParser()
         config_data.read(testcase_data_path)
@@ -241,15 +249,13 @@ def detect_run_testcase():
                 if module == 'ALL':
                     for m in convert_module[module]:
                         print(f'cd Test/T10x &&  python {m}')
+                        os.system(f'cd Test/T10x &&  python {m}')
                     break
                 else:
                     print(f'cd Test/T10x &&  python {convert_module[module]}')
                     os.system(f'cd Test/T10x &&  python {convert_module[module]}')
 
-                # for s in config_data.sections():
-                #     for i in config_data.items(s):
-                #         if i[1] == module:
-                #             print(f'cd Test/T10x &&  python {convert_module[module]}')
+
 
         print('cd Test/T10x && python After_test.py')
         os.system('cd Test/T10x && python After_test.py')
@@ -283,41 +289,17 @@ def _runBtn():
         linkLabel.place(x=170, y=420)
         linkLabel.bind("<Button-1>", lambda e: callback("https://sum.vn/Rx5Zy"))
 
-        # os.system('cd Test/T10x && python Before_test.py')
-        # print('cd Test/T10x && python Before_test.py')
-        # modules_name = get_config(config_path, 'GENERAL', 'module').split(';')
-        # for module in modules_name:
-        #     if module == 'MAIN':
-        #         os.system('TIMEOUT 5')
-        #         # os.system('python ./Test/T10x/Main.py')
-        #     if module == 'HOME':
-        #         os.system('python ./Test/T10x/Home.py')
-        #     if module == 'WIRELESS':
-        #         os.system('python ./Test/T10x/Wireless.py')
-        #     if module == 'NETWORK':
-        #         os.system('python ./Test/T10x/Network.py')
-        #     if module == 'MEDIA SHARE':
-        #         os.system('python ./Test/T10x/MediaShare.py')
-        #     if module == 'SECURITY':
-        #         os.system('python ./Test/T10x/Security.py')
-        #     if module == 'ADVANCED':
-        #         os.system('python ./Test/T10x/Security.py')
-        #     if module == 'ALL':
-        #         os.system('python ./Test/T10x/Main.py')
-        #         os.system('python ./Test/T10x/Home.py')
-        #         os.system('python ./Test/T10x/Wireless.py')
-        #         os.system('python ./Test/T10x/Network.py')
-        #         os.system('python ./Test/T10x/MediaShare.py')
-        #         os.system('python ./Test/T10x/Security.py')
-        #         os.system('python ./Test/T10x/Security.py')
-        #
-        # os.system('cd Test/T10x && python After_test.py')
+
         for i in range(int(loopBox.get())):
             print(f'\n**************\n_- Run times {str(i+1)} -_\n')
+
+
             detect_run_testcase()
-        progressLabel = StringVar()
+
+
+
         progress = Label(root, text=f'DONE at {str(datetime.now())}')
-        progress.place(x=318, y=505)
+        progress.place(x=318, y=520)
 
 
 def warning():
@@ -437,6 +419,7 @@ def _manualBtn():
     load_database_tc(SECURITY)
     load_database_tc(ADVANCED)
     load_database_tc(MEDIASHARE)
+    load_database_tc(NON_FUNCTION)
 
     list_module_chosen = find_chosen_module()
 
@@ -547,15 +530,40 @@ def _manualBtn():
     window.mainloop()
 
 
-exitButton = Button(root, text="Exit", command=exit_Btn, height=1, width=10)
-exitButton.place(x=170, y=370)
-mergeButton = Button(root, text="Run", command=_runBtn, height=1, width=10)
-mergeButton.place(x=280, y=370)
-advanceButton = Button(root, text="Advance", command=_advanceBtn, height=1, width=10)
-advanceButton.place(x=390, y=370)
-manualButton = Button(root, text="Manual", command=_manualBtn, height=1, width=10)
-manualButton.place(x=250, y=470)
 
+def _abortBtn():
+    print('Aboart')
+    keyboard.press('ctrl+c')
+    warning = messagebox.askokcancel('Warning!', 'System must to reload after abort.')
+    if warning:
+        root.destroy()
+        os.system('_run_app.bat')
+
+def run():
+    threadRun = threading.Thread(target=_runBtn)
+    threadRun.start()
+
+
+def abort():
+    threadAbort = threading.Thread(target=_abortBtn)
+    threadAbort.start()
+    # exit_Btn()
+
+
+
+
+
+
+exitButton = Button(root, text="Exit", command=exit_Btn, height=1, width=10, borderwidth=4)
+exitButton.place(x=170, y=370)
+mergeButton = Button(root, text="Run", command=run, height=1, width=10, borderwidth=4)
+mergeButton.place(x=280, y=370)
+advanceButton = Button(root, text="Advance", command=_advanceBtn, height=1, width=10, borderwidth=4)
+advanceButton.place(x=390, y=370)
+manualButton = Button(root, text="Manual", command=_manualBtn, height=1, width=10, borderwidth=4)
+manualButton.place(x=250, y=470)
+abortButton = Button(root, text="Abort", command=abort, height=1, width=10, borderwidth=4)
+abortButton.place(x=360, y=470)
 
 root.geometry("520x440+500+100")
 root.resizable(0, 0)

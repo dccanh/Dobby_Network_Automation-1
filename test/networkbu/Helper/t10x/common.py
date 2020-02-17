@@ -281,6 +281,7 @@ def login(driver):
     policy_popup = driver.find_elements_by_css_selector(lg_privacy_policy_pop)
     if len(policy_popup):
         ActionChains(driver).move_to_element(policy_popup[0]).click().send_keys(Keys.ARROW_DOWN).perform()
+        time.sleep(1)
         driver.find_element_by_css_selector(btn_ok).click()
         time.sleep(3)
 
@@ -296,7 +297,7 @@ def get_url_ipconfig(ipconfig_field='Default Gateway'):
 
 def goto_menu(driver, parent_tab, child_tab):
     ActionChains(driver).move_to_element(driver.find_element_by_css_selector(parent_tab)).click().perform()
-    time.sleep(0.5)
+    time.sleep(1)
     if child_tab != 0:
         driver.find_element_by_css_selector(child_tab).click()
         time.sleep(0.5)
@@ -559,3 +560,137 @@ def checkMACAddress(x):
     if re.match("[0-9a-f]{2}([-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", x.lower()):
         return True
     return False
+
+
+def handle_winzard_welcome(driver, NEW_PASSWORD='abc123', exp_language='English'):
+    exp_time_zone = '(GMT+07:00) Bangkok, Ho Chi Minh, Phnom Penh, Vientiane'
+    # Click to Language
+    driver.find_element_by_css_selector(welcome_language).click()
+    time.sleep(3)
+
+    # Choose Language
+    ls_time_zone = driver.find_elements_by_css_selector(welcome_list_language)
+    for t in ls_time_zone:
+        ActionChains(driver).move_to_element(t).perform()
+        if t.text == exp_language:
+            t.click()
+            break
+    time.sleep(3)
+    # Click to time zone
+    driver.find_element_by_css_selector(welcome_time_zone).click()
+    time.sleep(3)
+
+    # Choose time zone in drop down: Vn zone GMT +7
+    ls_time_zone = driver.find_elements_by_css_selector(welcome_list_time_zone)
+    for t in ls_time_zone:
+        ActionChains(driver).move_to_element(t).perform()
+        if t.text == exp_time_zone:
+            t.click()
+            break
+
+    time.sleep(3)
+    # Click start btn
+    driver.find_element_by_css_selector(welcome_start_btn).click()
+    time.sleep(3)
+    wait_visible(driver, welcome_change_pw_fields)
+    change_pw_fields = driver.find_elements_by_css_selector(welcome_change_pw_fields)
+
+    # A list contain values: Current Password, New Password, Retype new pw
+    ls_change_pw_value = [get_config('ACCOUNT', 'password'), NEW_PASSWORD, NEW_PASSWORD]
+    for p, v in zip(change_pw_fields, ls_change_pw_value):
+        ActionChains(driver).move_to_element(p).click().send_keys(v).perform()
+        time.sleep(0.5)
+
+    # Next Change pw
+    time.sleep(3)
+    wait_visible(driver, welcome_next_btn)
+    next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    if not next_btn.get_property('disabled'):
+        next_btn.click()
+    time.sleep(5)
+
+    # Next Operation Mode
+    time.sleep(3)
+    wait_visible(driver, welcome_next_btn)
+    next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    if not next_btn.get_property('disabled'):
+        next_btn.click()
+        time.sleep(0.5)
+    time.sleep(3)
+
+    # Next Internet Setup 1
+    time.sleep(2)
+    wait_visible(driver, welcome_next_btn)
+    next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    if not next_btn.get_property('disabled'):
+        next_btn.click()
+
+    # Next Internet setup 2
+    time.sleep(3)
+    wait_visible(driver, welcome_next_btn)
+    next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    if not next_btn.get_property('disabled'):
+        next_btn.click()
+
+    # Next Wireless Setup
+    time.sleep(3)
+    wait_visible(driver, welcome_next_btn)
+    next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    if not next_btn.get_property('disabled'):
+        next_btn.click()
+
+    # Next Humax Wifi App
+    time.sleep(3)
+    wait_visible(driver, welcome_next_btn)
+    next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    if not next_btn.get_property('disabled'):
+        next_btn.click()
+    time.sleep(3)
+
+    # Click Let's Go
+    time.sleep(3)
+    driver.find_element_by_css_selector(welcome_let_go_btn).click()
+    # Write config
+    save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD)
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(2)
+    wait_visible(driver, home_view_wrap)
+    time.sleep(5)
+
+
+def ping_to_address(PING_ADDRESS, PING_TIMES=4):
+    import pingparsing
+    ping_parser = pingparsing.PingParsing()
+    transmitter = pingparsing.PingTransmitter()
+    transmitter.destination = PING_ADDRESS
+    transmitter.count = PING_TIMES
+    result = transmitter.ping()
+    json_str = json.dumps(ping_parser.parse(result).as_dict(), indent=4)
+    str_to_json = json.loads(json_str)
+    return str_to_json
+
+
+def network_interface_action(interface='Ethernet', action='enable'):
+    # Interface option Wi-Fi / Ethernet
+    # Action: enabled/disabled
+    import ctypes
+
+    print("interface: " + interface + " | action: " + action)
+
+    cmd = f'netsh interface set interface name="{interface}" admin={action}'
+
+    def is_admin():
+        try:
+            return ctypes.windll.shell32.IsUserAnAdmin()
+        except:
+            return False
+
+    if is_admin():
+        # Code of your program here
+        subprocess.call(cmd, shell=True)
+    else:
+        # Re-run the program with admin rights
+        parameters = ""
+        for i in range(1, len(sys.argv)):
+            parameters = parameters + " \"" + str(sys.argv[i]) + "\""
+        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__ + parameters, None, 1)

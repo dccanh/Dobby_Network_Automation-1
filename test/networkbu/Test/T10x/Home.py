@@ -56,7 +56,9 @@ class HOME(unittest.TestCase):
             login(driver)
             time.sleep(1)
             # Goto Homepage
-            driver.get(URL_LOGIN + homepage)
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
+                handle_winzard_welcome(driver)
+                wait_popup_disappear(driver, dialog_loading)
             time.sleep(2)
 
             # Enable Dual WAN
@@ -189,7 +191,9 @@ class HOME(unittest.TestCase):
             login(driver)
             time.sleep(3)
             # Goto Homepage
-            driver.get(URL_LOGIN + homepage)
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
+                handle_winzard_welcome(driver)
+                wait_popup_disappear(driver, dialog_loading)
             time.sleep(2)
             # Enable Dual WAN
             goto_menu(driver, network_tab, network_internet_tab)
@@ -403,7 +407,6 @@ class HOME(unittest.TestCase):
         self.assertListEqual(list_step_fail, [])
 
     def test_03_Check_Connection_Internet_Information(self):
-
         global list_actual, list_expected
         self.key = 'HOME_03'
         driver = self.driver
@@ -428,7 +431,9 @@ class HOME(unittest.TestCase):
             login(driver)
             time.sleep(1)
             # Goto Homepage
-            driver.get(URL_LOGIN + homepage)
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
+                handle_winzard_welcome(driver)
+                wait_popup_disappear(driver, dialog_loading)
             time.sleep(2)
             # Click icons Internet connection
             driver.find_element_by_css_selector(home_img_connection).click()
@@ -495,7 +500,7 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             # Goto Homepage
             if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                driver.get(URL_LOGIN + homepage)
+                handle_winzard_welcome(driver)
                 wait_popup_disappear(driver, dialog_loading)
 
             goto_menu(driver, network_tab, network_internet_tab)
@@ -544,7 +549,7 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             # Goto Homepage
             if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                driver.get(URL_LOGIN + homepage)
+                handle_winzard_welcome(driver)
                 wait_popup_disappear(driver, dialog_loading)
 
             driver.find_element_by_css_selector(home_tab).click()
@@ -633,7 +638,7 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             # Goto Homepage
             if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                driver.get(URL_LOGIN + homepage)
+                handle_winzard_welcome(driver)
                 wait_popup_disappear(driver, dialog_loading)
 
             goto_menu(driver, network_tab, network_internet_tab)
@@ -704,7 +709,7 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             # Goto Homepage
             if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                driver.get(URL_LOGIN + homepage)
+                handle_winzard_welcome(driver)
                 wait_popup_disappear(driver, dialog_loading)
 
             driver.find_element_by_css_selector(home_tab).click()
@@ -786,7 +791,7 @@ class HOME(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             # Goto Homepage
             if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                driver.get(URL_LOGIN + homepage)
+                handle_winzard_welcome(driver)
                 wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             driver.find_element_by_css_selector(home_img_lan_connection).click()
@@ -873,7 +878,7 @@ class HOME(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             # Goto Homepage
             if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                driver.get(URL_LOGIN + homepage)
+                handle_winzard_welcome(driver)
                 wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             driver.find_element_by_css_selector(home_img_lan_connection).click()
@@ -966,7 +971,7 @@ class HOME(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             # Goto Homepage
             if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                driver.get(URL_LOGIN + homepage)
+                handle_winzard_welcome(driver)
                 wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
 
@@ -1049,28 +1054,28 @@ class HOME(unittest.TestCase):
         self.list_steps = []
         URL_LOGIN = get_config('URL', 'url')
 
-        # # Prepare DUT in default stage
-        # filename = '1'
-        # commmand = 'factorycfg.sh -a'
-        # run_cmd(commmand, filename=filename)
-        # # Wait 5 mins for factory
-        # time.sleep(100)
-        # wait_DUT_activated(URL_LOGIN)
-        # wait_ping('192.168.1.1')
-        #
-        # filename_2 = 'account.txt'
-        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        # run_cmd(commmand_2, filename_2)
-        # time.sleep(3)
-        # # Get account information from web server and write to config.txt
-        # user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        # Prepare DUT in default stage
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(100)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
 
         try:
             login(driver)
             wait_popup_disappear(driver, dialog_loading)
             # Goto Homepage
             if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                driver.get(URL_LOGIN + homepage)
+                handle_winzard_welcome(driver)
                 wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             # CLick Wireless Image
@@ -1176,7 +1181,7 @@ class HOME(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             # Goto Homepage
             if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                driver.get(URL_LOGIN + homepage)
+                handle_winzard_welcome(driver)
                 wait_popup_disappear(driver, dialog_loading)
 
             driver.find_element_by_css_selector(home_img_connection).click()
@@ -1208,5 +1213,462 @@ class HOME(unittest.TestCase):
             list_step_fail.append(
                 '3. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
+
+    def test_14_Check_Information_table_information(self):
+        self.key = 'HOME_14'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_LOGIN = get_config('URL', 'url')
+        SERIAL_NUMBER = get_config('GENERAL', 'serial_number')
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
+                handle_winzard_welcome(driver)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            # CLick Wireless Image
+            driver.find_element_by_css_selector(home_img_lan_connection).click()
+            time.sleep(2)
+
+            left_side = driver.find_element_by_css_selector(left)
+            information_block = left_side.find_elements_by_css_selector(card_cls)[1]
+
+            info_block_title = information_block.find_element_by_css_selector(title_tabs_cls).text
+            ls_info_field = information_block.find_elements_by_css_selector(home_wan_ls_fields)
+
+            actual_info_value = list()
+            for w in ls_info_field:
+                label = w.find_element_by_css_selector(home_wan_ls_label).text
+                if label == 'Model Name':
+                    value = w.find_element_by_css_selector(home_wan_ls_value).text
+                    actual_info_value.append(value)
+                if label == 'Serial Number':
+                    value = w.find_element_by_css_selector(home_wan_ls_value).text.endswith(SERIAL_NUMBER)
+                    actual_info_value.append(value)
+                # if label == 'Firmware Vesion':
+                #     value = w.find_element_by_css_selector(home_wan_ls_value).text
+                #     actual_info_value.append(value)
+                if label == 'Build Time':
+                    value = w.find_element_by_css_selector(home_wan_ls_value).text
+                    try:
+                        datetime.strptime(value, '%Y.%m.%d %H:%M:%S')
+                        actual_info_value.append(True)
+                    except ValueError:
+                        actual_info_value.append(False)
+            # Check for update
+            check_for_update = information_block.find_element_by_css_selector(apply)
+            check_for_update_text = check_for_update.text
+            check_for_update_color = check_for_update.value_of_css_property('background-color')
+
+            list_actual1 = [info_block_title, actual_info_value, check_for_update_text, check_for_update_color]
+            list_expected1 = ['Information', ['HUMAX T10X', True, True], 'Check for Update', 'rgba(23, 143, 230, 1)']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 3. Check Information title, Model name, End of Serial number, '
+                                   'type of build time, Tex of button, Color')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check Information title, Model name, End of Serial number, '
+                                   'type of build time, Tex of button, Color. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        try:
+            ActionChains(driver).move_to_element(check_for_update).click().perform()
+            time.sleep(3)
+            check_popup = len(driver.find_elements_by_css_selector(ele_check_for_update_title)) != 0
+
+            list_actual2 = [check_popup]
+            list_expected2 = [return_true]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 4. Check pop up appear')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Check pop up appear. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('4. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_18_Check_USB_Image_Operation(self):
+        self.key = 'HOME_18'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_LOGIN = get_config('URL', 'url')
+
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
+                handle_winzard_welcome(driver)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            # CLick Wireless Image
+            driver.find_element_by_css_selector(home_img_usb_connection).click()
+            time.sleep(2)
+            check_high_light = len(driver.find_elements_by_css_selector(''.join([home_img_usb_connection, '.active'])))
+            check_high_light = check_high_light != 0
+
+            check_num_usb = driver.find_element_by_css_selector('div.usb-connection .more-info').text
+            # Set default is 2 USB.
+
+            list_actual1 = [check_high_light, check_num_usb]
+            list_expected1 = [return_true, '2']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 2. Check USB Image selected, Check number of USB')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check USB Image selected, Check number of USB. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('2. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_20_Check_USB_Table_information(self):
+        self.key = 'HOME_20'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_LOGIN = get_config('URL', 'url')
+
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
+                handle_winzard_welcome(driver)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            # CLick USB Image
+            driver.find_element_by_css_selector(home_img_usb_connection).click()
+            time.sleep(3)
+            # Check USB block components
+            usb_card = driver.find_element_by_css_selector(ele_usb_card)
+
+            usb_title = usb_card.find_element_by_css_selector(title_tabs_cls).text
+            exist_btn_fab = len(usb_card.find_elements_by_css_selector(home_icon_fab)) == 1
+
+            time.sleep(2)
+            ls_info_field = usb_card.find_elements_by_css_selector(home_wan_ls_fields)
+            actual_info_value = list()
+
+            value = ls_info_field[0].find_element_by_css_selector(home_wan_ls_value).text
+            actual_info_value.append(value != '')
+            value = ls_info_field[2].find_element_by_css_selector(home_wan_ls_value).text
+            actual_info_value.append(value != '')
+
+            space_used = usb_card.find_element_by_css_selector(ele_space_use).text != ''
+            space_available = usb_card.find_element_by_css_selector(ele_space_available).text != ''
+            space_bar = len(usb_card.find_elements_by_css_selector(ele_space_bar)) != 0
+            btn_remove = usb_card.find_element_by_css_selector(apply).text
+
+            list_actual1 = [usb_title, exist_btn_fab, actual_info_value,
+                            space_used, space_available, space_bar, btn_remove]
+            list_expected1 = ['USB', return_true, [return_true]*2, return_true, return_true, return_true, 'Remove']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 3. Check Title, Exist button |||, Device name, Total size, not null, '
+                                   'space used, availabled, space bar not null, Btn Remove text')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check Title, Exist button |||, Device name, Total size, not null, '
+                                   'space used, availabled, space bar not null, Btn Remove text. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_22_Check_the_operation_of_USB_Icon(self):
+        self.key = 'HOME_22'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
+                handle_winzard_welcome(driver)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
+
+            # CLick USB Image
+            driver.find_element_by_css_selector(home_img_usb_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            # Check USB block components
+            usb_card = driver.find_elements_by_css_selector(ele_usb_card)[0]
+
+            # Click to Remove
+            usb_card.find_element_by_css_selector(home_icon_fab).click()
+            # Btn more fab is displayed
+            time.sleep(1)
+            more_fab = usb_card.find_element_by_css_selector(home_icon_more_fab).is_displayed()
+
+            # Click to icon more fab
+            driver.find_element_by_css_selector(home_icon_more_fab).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
+
+            current_tab = detect_current_menu(driver)
+
+            list_actual1 = [more_fab, current_tab]
+            list_expected1 = [return_true, ('MEDIA SHARE', 'USB')]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1,2,3. Click ||| btn; Check Display +; Click +; Check Display target USB page.')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail]1,2,3. Click ||| btn; Check Display +; Click +; Check Display target USB page. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3, 4. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_21_Check_the_Remove_Button_operation_of_USB_Table(self):
+        self.key = 'HOME_21'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
+                handle_winzard_welcome(driver)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
+
+            # CLick USB Image
+            driver.find_element_by_css_selector(home_img_usb_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            # Check USB block components
+            usb_card = driver.find_elements_by_css_selector(ele_usb_card)[0]
+
+            # Click to Remove
+            usb_card.find_element_by_css_selector(apply).click()
+            time.sleep(1)
+            # Verify confirmation
+            confirm_text = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # CLick OK
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(2)
+
+            confirm_remove_text = driver.find_element_by_css_selector(complete_dialog_msg).text
+            wait_popup_disappear(driver, dialog_loading)
+
+            # CLick OK
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(2)
+
+            check_popup_disappear = len(driver.find_elements_by_css_selector(dialog_content)) == 0
+
+            list_actual1 = [confirm_text, confirm_remove_text, check_popup_disappear]
+            list_expected1 = ['Do you want to safely remove the USB device?',
+                              'Remove the USB device safely from the router.',
+                              return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 3,4,5. Check popup confirm text, popup complete text, popup disappear.')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3,4,5. Check popup confirm text, popup complete text, popup disappear. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3, 4. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_25_Check_the_Server_Table_information(self):
+        self.key = 'HOME_25 '
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
+                handle_winzard_welcome(driver)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
+
+            # CLick USB Image
+            driver.find_element_by_css_selector(home_img_usb_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            # Check USB block components
+            server_card = driver.find_element_by_css_selector(ele_server_card)
+
+            server_title = server_card.find_element_by_css_selector(title_tabs_cls).text
+            exist_btn_fab = len(server_card.find_elements_by_css_selector(home_icon_fab)) == 1
+
+            ls_server_field = server_card.find_elements_by_css_selector(home_wan_ls_fields)
+
+            actual_value = list()
+            for w in ls_server_field:
+                label = w.find_element_by_css_selector(home_wan_ls_label).text
+                if label == 'FTP Server':
+                    value = w.find_element_by_css_selector(home_wan_ls_value).text
+                    actual_value.append(value)
+                if label == 'Windows Network (Samba)':
+                    value = w.find_element_by_css_selector(home_wan_ls_value).text
+                    actual_value.append(value)
+                if label == 'Media Server (DLNA)':
+                    value = w.find_element_by_css_selector(home_wan_ls_value).text
+                    actual_value.append(value)
+
+
+            list_actual1 = [server_title, exist_btn_fab] + actual_value
+            list_expected1 = ['Server', return_true] + ['Off']*3
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 3. Check Server title, icon fab, value fields.')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check Server title, icon fab, value fields. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_26_Check_Server_Table_Icon_operation(self):
+        self.key = 'HOME_26'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
+                handle_winzard_welcome(driver)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
+
+            # CLick USB Image
+            driver.find_element_by_css_selector(home_img_usb_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            # Check USB block components
+            server_card = driver.find_elements_by_css_selector(ele_server_card)[0]
+
+            # Click to fab
+            server_card.find_element_by_css_selector(home_icon_fab).click()
+            # Btn more fab is displayed
+            time.sleep(1)
+            more_fab = server_card.find_element_by_css_selector(home_icon_more_fab).is_displayed()
+
+            # Click to icon more fab
+            driver.find_element_by_css_selector(home_icon_more_fab).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
+
+            current_tab = detect_current_menu(driver)
+
+            list_actual1 = [more_fab, current_tab]
+            list_expected1 = [return_true, ('MEDIA SHARE', 'Server Settings')]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 3. Click ||| btn; Check Display +; Click +; Check Display target USB Server page.')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Click ||| btn; Check Display +; Click +; Check Display target USB Server page. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_27_Check_the_Devices_Image(self):
+        self.key = 'HOME_27'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
+                handle_winzard_welcome(driver)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
+
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            # Check USB block components
+            num_devices = driver.find_element_by_css_selector(ele_device_more_info).text
+
+            list_actual1 = [num_devices]
+            list_expected1 = ['1']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 3. Click Device icon, Check number of device.')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Click Device icon, Check number of device. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+
 if __name__ == '__main__':
     unittest.main()

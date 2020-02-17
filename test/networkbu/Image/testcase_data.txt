@@ -40,6 +40,14 @@ home8 = test_10_Check_LAN_information
 home9 = test_11_Check_the_operation_of_LAN_Table_Icon
 home10 = test_12_Check_wireless_table_information
 home11 = test_13_Check_Wireless_Table_Icon_operation
+home12 = test_14_Check_Information_table_information
+home13 = test_18_Check_USB_Image_Operation
+home14 = test_20_Check_USB_Table_information
+home15 = test_22_Check_the_operation_of_USB_Icon
+home16 = test_21_Check_the_Remove_Button_operation_of_USB_Table
+home17 = test_25_Check_the_Server_Table_information
+home18 = test_26_Check_Server_Table_Icon_operation
+home19 = test_27_Check_the_Devices_Image
 
 [NETWORK]
 network2 = test_01_Check_Internet_Status
@@ -91,9 +99,11 @@ mediashare6 = test_09_Edit_Delete_account
 mediashare7 = test_10_Edit_Delete_account_while_server_is_running
 mediashare8 = test_11_Check_mesage_when_creating_server_without_network_folder_account
 
-[QOS]
-qos2 = test_01_
-
 [NON_FUNCTION]
-non_function2 = test_01_
+non_function2 = test_02_Dynamic_Wired_Ping_Aging_INTERGRATION_WITH_05
+non_function3 = test_03_Wireless_24GHz_Ping_Aging_INTERGRATION_WITH_06
+non_function4 = test_04_Wireless_5GHz_Ping_Aging_INTERGRATION_WITH_07
+non_function5 = test_08_Static_Wired_Ping_Aging
+non_function6 = test_09_Static_Wireless_24GHz_Ping_Aging
+non_function7 = test_10_Static_Wireless_5GHz_Ping_Aging
 

@@ -13,7 +13,7 @@ version = v2
 wifi_ssid_2g = We Love You So Much_2G!
 wifi_ssid_5g = We Love You So Much_5G!
 wifi_pw = 123!@ abcd #^&*()+_-={}[]|456:789.?`$%\;'"<>,/123!@ abcd #^&*()
-module = test_77_Verify_the_Security_hyperlink;test_12_Check_wireless_table_information
+module = test_27_Check_the_Devices_Image
 
 [CONSOLE]
 serial_port = COM3

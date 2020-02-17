@@ -19,6 +19,7 @@ driver_safari_path = os.path.join(root_dir, "Driver", "SafariDriver.safariextz")
 t10x_crt_path = os.path.join(root_dir, "Helper", "t10x", "secure_crt")
 crt_common = os.path.join(t10x_crt_path, "common.py")
 crt_run_command = os.path.join(t10x_crt_path, "run_command.py")
+nw_interface_path = os.path.join(root_dir, "Helper", "t10x", "nw_interface.py")
 
 t10x_config_path = os.path.join(root_dir, "Helper", "t10x", "config")
 captcha_path = os.path.join(t10x_config_path, "captcha.py")
@@ -33,6 +34,8 @@ after_test_path = os.path.join(test_t10x_path, "After_test.py")
 before_test_path = os.path.join(test_t10x_path, "Before_test.py")
 pilot_path = os.path.join(test_t10x_path, "Pilot.py")
 
-
+files_path = os.path.join(root_dir, "Config", "Files")
+default_wifi_2g_path = os.path.join(files_path, "Wi-Fi-We Love You So Much_2G!.xml")
+default_wifi_5g_path = os.path.join(files_path, "Wi-Fi-We Love You So Much_5G!.xml")
 
 
