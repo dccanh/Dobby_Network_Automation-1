@@ -36,6 +36,7 @@ pilot_path = os.path.join(test_t10x_path, "Pilot.py")
 
 files_path = os.path.join(root_dir, "Config", "Files")
 default_wifi_2g_path = os.path.join(files_path, "Wi-Fi-We Love You So Much_2G!.xml")
-default_wifi_5g_path = os.path.join(files_path, "Wi-Fi-We Love You So Much_5G!.xml")
+wifi_default_file_path = os.path.join(files_path, "wifi_default_file.xml")
+wifi_none_secure_path = os.path.join(files_path, "wifi_none_secure.xml")
 
 

@@ -1,26 +1,21 @@
 <?xml version="1.0"?>
 <WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
-	<name>We Love You So Much_5G!</name>
+	<name>HUMAX_Guest_5G!_2306</name>
 	<SSIDConfig>
 		<SSID>
-			<hex>5765204C6F766520596F7520536F204D7563685F354721</hex>
-			<name>We Love You So Much_5G!</name>
+			<hex>48554d41585f47756573745f3547215f32333036</hex>
+			<name>HUMAX_Guest_5G!_2306</name>
 		</SSID>
 	</SSIDConfig>
 	<connectionType>ESS</connectionType>
-	<connectionMode>auto</connectionMode>
+	<connectionMode>manual</connectionMode>
 	<MSM>
 		<security>
 			<authEncryption>
-				<authentication>WPA2PSK</authentication>
-				<encryption>AES</encryption>
+				<authentication>open</authentication>
+				<encryption>none</encryption>
 				<useOneX>false</useOneX>
 			</authEncryption>
-			<sharedKey>
-				<keyType>passPhrase</keyType>
-				<protected>false</protected>
-				<keyMaterial>humax_0001</keyMaterial>
-			</sharedKey>
 		</security>
 	</MSM>
 	<MacRandomization xmlns="http://www.microsoft.com/networking/WLAN/profile/v3">

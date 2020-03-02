@@ -28,7 +28,7 @@ from Helper.t10x.ls_path import *
 from Helper.t10x.secure_crt.common import *
 import re
 import xml.etree.ElementTree as ET
-
+from winreg import *
 def save_config(config_path, section, option, value):
     config = configparser.RawConfigParser()
     config.read(config_path)
@@ -286,6 +286,19 @@ def login(driver):
         time.sleep(3)
 
 
+def grand_login(driver):
+    login(driver)
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(1)
+    # Goto Homepage
+    if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+        handle_winzard_welcome(driver)
+        wait_popup_disappear(driver, dialog_loading)
+    time.sleep(3)
+    check_ota_auto_update(driver)
+    time.sleep(1)
+
+
 def get_url_ipconfig(ipconfig_field='Default Gateway'):
     cmd = 'ipconfig'
     write_cmd = subprocess.check_output(cmd, encoding='oem')
@@ -341,6 +354,14 @@ def base64encode(user, pw):
 
         return encoded_data.decode('ascii')
 
+def base64encodev2(user, pw):
+    import hashlib, binascii, base64
+
+    initial_data = 'HS:' + user + ':' + pw
+    byte_string = initial_data.encode('utf-8')
+    encoded_data = base64.b64encode(byte_string)
+
+    return encoded_data.decode('ascii')
 
 def send_request(url, method, headers, body, timeout=120):
     result = requests.models.Response()
@@ -562,6 +583,12 @@ def checkMACAddress(x):
     return False
 
 
+def checkIPAddress(x):
+    if re.match("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$", x):
+        return True
+    return False
+
+
 def handle_winzard_welcome(driver, NEW_PASSWORD='abc123', exp_language='English'):
     exp_time_zone = '(GMT+07:00) Bangkok, Ho Chi Minh, Phnom Penh, Vientiane'
     # Click to Language
@@ -609,43 +636,55 @@ def handle_winzard_welcome(driver, NEW_PASSWORD='abc123', exp_language='English'
         next_btn.click()
     time.sleep(5)
 
-    # Next Operation Mode
-    time.sleep(3)
-    wait_visible(driver, welcome_next_btn)
-    next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    if not next_btn.get_property('disabled'):
-        next_btn.click()
-        time.sleep(0.5)
-    time.sleep(3)
+    while True:
+        time.sleep(2)
+        wait_visible(driver, welcome_next_btn)
+        next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+        if not next_btn.get_property('disabled'):
+            next_btn.click()
+        time.sleep(5)
 
-    # Next Internet Setup 1
-    time.sleep(2)
-    wait_visible(driver, welcome_next_btn)
-    next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    if not next_btn.get_property('disabled'):
-        next_btn.click()
+        if len(driver.find_elements_by_css_selector(welcome_let_go_btn)) > 0:
+            break
 
-    # Next Internet setup 2
-    time.sleep(3)
-    wait_visible(driver, welcome_next_btn)
-    next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    if not next_btn.get_property('disabled'):
-        next_btn.click()
 
-    # Next Wireless Setup
-    time.sleep(3)
-    wait_visible(driver, welcome_next_btn)
-    next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    if not next_btn.get_property('disabled'):
-        next_btn.click()
-
-    # Next Humax Wifi App
-    time.sleep(3)
-    wait_visible(driver, welcome_next_btn)
-    next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    if not next_btn.get_property('disabled'):
-        next_btn.click()
-    time.sleep(3)
+    # # Next Operation Mode
+    # time.sleep(3)
+    # wait_visible(driver, welcome_next_btn)
+    # next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    # if not next_btn.get_property('disabled'):
+    #     next_btn.click()
+    #     time.sleep(0.5)
+    # time.sleep(3)
+    #
+    # # Next Internet Setup 1
+    # time.sleep(2)
+    # wait_visible(driver, welcome_next_btn)
+    # next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    # if not next_btn.get_property('disabled'):
+    #     next_btn.click()
+    #
+    # # Next Internet setup 2
+    # time.sleep(3)
+    # wait_visible(driver, welcome_next_btn)
+    # next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    # if not next_btn.get_property('disabled'):
+    #     next_btn.click()
+    #
+    # # Next Wireless Setup
+    # time.sleep(3)
+    # wait_visible(driver, welcome_next_btn)
+    # next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    # if not next_btn.get_property('disabled'):
+    #     next_btn.click()
+    #
+    # # Next Humax Wifi App
+    # time.sleep(3)
+    # wait_visible(driver, welcome_next_btn)
+    # next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    # if not next_btn.get_property('disabled'):
+    #     next_btn.click()
+    # time.sleep(3)
 
     # Click Let's Go
     time.sleep(3)
@@ -694,3 +733,201 @@ def network_interface_action(interface='Ethernet', action='enable'):
         for i in range(1, len(sys.argv)):
             parameters = parameters + " \"" + str(sys.argv[i]) + "\""
         ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__ + parameters, None, 1)
+
+
+def api_change_wifi_setting(url_change, new_wifi_name='', get_only_mac=False, ):
+
+    user = get_config('ACCOUNT', 'user')
+    pw = get_config('ACCOUNT', 'password')
+    token = get_token(user, pw)
+
+    get_mac = call_api(url_change, 'GET', body='', token=token)['macAddress']
+    if get_only_mac:
+        return get_mac
+    else:
+        if new_wifi_name == '':
+            new_wifi_name = '_'.join(['wifi', get_mac.replace(':', '_')])
+        data = {
+            "active": True,
+            "name": new_wifi_name,
+            "macAddress": get_mac,
+            "hiddenSSID": False,
+            "APIsolate": False,
+            "webUIAccess": True,
+            "internetOnly": False,
+            "accessControl": False,
+            "security": {
+                "type": "WPA2/WPA-PSK",
+                "personal": {
+                    "password": "SFM6YWRtaW46aHVtYXhfMDAwMQ==",
+                    "encryption": "AES/TKIP",
+                    "groupKey": 3600
+                },
+                "enterprise": None,
+                "wep": None
+            },
+            "index": 0
+        }
+        call_api(url_change, 'PUT', body=data, token=token)
+        return new_wifi_name
+
+
+def write_data_to_xml(xml_path, new_name='',
+                      new_pw='humax_'+get_config('GENERAL', 'serial_number'),
+                      new_secure='',
+                      new_encryption='',
+                      new_key_type=''):
+    with open(xml_path) as wf:
+        data = wf.read()
+        if new_name != '':
+            rows_name = [i.strip() for i in data.splitlines() if i.strip().startswith('<name>')]
+            for r in rows_name:
+                old = r.split('<name>')[1].split('</name>')[0]
+                data = data.replace(old, new_name)
+
+            rows_hex = [i.strip() for i in data.splitlines() if i.strip().startswith('<hex>')][0]
+            old = rows_hex.split('<hex>')[1].split('</hex>')[0]
+            data = data.replace(old, new_name.encode('utf-8').hex())
+
+        if new_pw != '':
+            rows_hex = [i.strip() for i in data.splitlines() if i.strip().startswith('<keyMaterial>')][0]
+            old = rows_hex.split('<keyMaterial>')[1].split('</keyMaterial>')[0]
+            data = data.replace(old, new_pw)
+
+        if new_secure != '':
+            rows_hex = [i.strip() for i in data.splitlines() if i.strip().startswith('<authentication>')][0]
+            old = rows_hex.split('<authentication>')[1].split('</authentication>')[0]
+            data = data.replace(old, new_secure)
+
+        if new_encryption != '':
+            rows_hex = [i.strip() for i in data.splitlines() if i.strip().startswith('<encryption>')][0]
+            old = rows_hex.split('<encryption>')[1].split('</encryption>')[0]
+            data = data.replace(old, new_encryption)
+
+        if new_key_type != '':
+            rows_hex = [i.strip() for i in data.splitlines() if i.strip().startswith('<keyType>')][0]
+            old = rows_hex.split('<keyType>')[1].split('</keyType>')[0]
+            data = data.replace(old, new_key_type)
+
+        wf.close()
+
+    with open(xml_path, 'w') as f:
+        f.write(data)
+        f.close()
+
+
+def write_data_to_none_secure_xml(xml_path, new_name='',
+                      new_secure='',
+                      new_encryption=''):
+    with open(xml_path) as wf:
+        data = wf.read()
+        if new_name != '':
+            rows_name = [i.strip() for i in data.splitlines() if i.strip().startswith('<name>')]
+            for r in rows_name:
+                old = r.split('<name>')[1].split('</name>')[0]
+                data = data.replace(old, new_name)
+
+            rows_hex = [i.strip() for i in data.splitlines() if i.strip().startswith('<hex>')][0]
+            old = rows_hex.split('<hex>')[1].split('</hex>')[0]
+            data = data.replace(old, new_name.encode('utf-8').hex())
+
+        if new_secure != '':
+            rows_hex = [i.strip() for i in data.splitlines() if i.strip().startswith('<authentication>')][0]
+            old = rows_hex.split('<authentication>')[1].split('</authentication>')[0]
+            data = data.replace(old, new_secure)
+
+        if new_encryption != '':
+            rows_hex = [i.strip() for i in data.splitlines() if i.strip().startswith('<encryption>')][0]
+            old = rows_hex.split('<encryption>')[1].split('</encryption>')[0]
+            data = data.replace(old, new_encryption)
+        wf.close()
+
+    with open(xml_path, 'w') as f:
+        f.write(data)
+        f.close()
+
+
+def download_destination_path():
+    with OpenKey(HKEY_CURRENT_USER, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders') as key:
+        Downloads = QueryValueEx(key, '{374DE290-123F-4565-9164-39C4925E467B}')[0]
+
+    return Downloads
+
+
+def change_pw(driver, pw):
+    current_pw = get_config('ACCOUNT', 'password')
+    ls_pw_box = driver.find_elements_by_css_selector(' '.join([dialog_content, password_input_cls]))
+    # Current pw
+    ActionChains(driver).move_to_element(ls_pw_box[0]).click().send_keys(current_pw).perform()
+    time.sleep(0.2)
+    # New pw
+    ActionChains(driver).move_to_element(ls_pw_box[1]).click().send_keys(pw).perform()
+    time.sleep(0.2)
+    # Retype new pw
+    ActionChains(driver).move_to_element(ls_pw_box[2]).click().send_keys(pw).perform()
+    time.sleep(0.2)
+    # CLick to other place
+    driver.find_element_by_css_selector(apply).click()
+    time.sleep(0.2)
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(1)
+
+
+def check_ota_auto_update(driver):
+    if len(driver.find_elements_by_css_selector(ele_upgrade_server_popup)) > 0:
+        driver.find_element_by_css_selector(btn_cancel).click()
+        time.sleep(1)
+        # turn Off OTA
+        # Actions Systems > Backup
+        system_button = driver.find_element_by_css_selector(system_btn)
+        ActionChains(driver).move_to_element(system_button).click().perform()
+        time.sleep(0.5)
+        driver.find_element_by_css_selector(ele_sys_firmware_update).click()
+        time.sleep(0.5)
+        # Click disable auto update
+        driver.find_element_by_css_selector('.dialog-content .toggle-button').click()
+        wait_popup_disappear(driver, dialog_loading)
+        driver.find_element_by_css_selector(ele_close_button).click()
+        time.sleep(1)
+
+
+def wireless_get_default_ssid(driver, label_name):
+    edit_2g_label = driver.find_elements_by_css_selector(label_name_in_2g)
+    edit_2g_fields = driver.find_elements_by_css_selector(wrap_input)
+    for l, f in zip(edit_2g_label, edit_2g_fields):
+        # Connection type
+        if l.text == label_name:
+            default_ssid_2g_value = f.find_element_by_css_selector(input).get_attribute('value')
+            return default_ssid_2g_value
+
+
+def wireless_check_pw_eye(driver, block, change_pw=False, new_pw='00000000'):
+    if not change_pw:
+        pw_eye = block.find_element_by_css_selector(password_eye)
+        act = ActionChains(driver)
+        act.click_and_hold(pw_eye)
+        pw_default = block.find_element_by_css_selector(input_pw).get_attribute('value')
+        act.release(pw_eye)
+        act.perform()
+        return pw_default
+    else:
+        # Change password
+        pw_place = block.find_element_by_css_selector(input_pw)
+        ActionChains(driver).move_to_element(pw_place).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+            Keys.CONTROL).send_keys(new_pw).perform()
+        return new_pw
+
+
+def wireless_change_choose_option(driver, element_option, VALUE_OPTION):
+    # Ap dung cho:
+    # Security
+    # Encryption
+    # Key Type
+    action_wl = driver.find_element_by_css_selector(element_option)
+    action_wl.click()
+    ls_options = action_wl.find_elements_by_css_selector(secure_value_in_drop_down)
+    time.sleep(0.5)
+    for o in ls_options:
+        if o.get_attribute('option-value') == VALUE_OPTION:
+            o.click()
+            break

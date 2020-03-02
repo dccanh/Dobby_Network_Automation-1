@@ -1,5 +1,4 @@
-# from Helper.t10x.common import get_config
-import  configparser
+import configparser
 from Helper.t10x.ls_path import *
 
 def get_config(section, option):
@@ -19,6 +18,11 @@ baud_rate = get_config("CONSOLE", "baud_rate")
 SecureCRT_file = "C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe"
 script_path = crt_run_command
 
+# Kill if SecureCRT ran
+import subprocess
+ls = subprocess.check_output('tasklist')
+if b'SecureCRT.exe' in ls:
+    os.system("taskkill /f /im SecureCRT.exe")
 
 def run_cmd(cmd, filename):
     cmd = str("\""+ SecureCRT_file + "\"" + " /ARG \"" + cmd + "\" /ARG \"" + filename + "\" /SCRIPT \"" + script_path + "\" /SERIAL "+serial+" /BAUD "+baud_rate)

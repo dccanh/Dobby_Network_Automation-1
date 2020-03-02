@@ -20,7 +20,18 @@ except:
     os.system('pip install pingparsing')
     import pingparsing
 import threading
-PING_TIMES = 60
+
+METHOD = 'GET'
+USER = get_config('ACCOUNT', 'user')
+PW = get_config('ACCOUNT', 'password')
+token = get_token(USER, PW)
+URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
+# wifi_mac_2g = '_'.join(['wifi_2g', call_api(URL_2g, METHOD, body='', token=token)['macAddress'].replace(':', '_')])
+URL_5g = 'http://192.168.1.1/api/v1/wifi/1/ssid/0'
+# wifi_mac_5g = '_'.join(['wifi_5g', call_api(URL_5g, METHOD, body='', token=token)['macAddress'].replace(':', '_')])
+
+PING_TIMES = 20
+
 class NON_FUNCTION(unittest.TestCase):
     def setUp(self):
         try:
@@ -48,6 +59,7 @@ class NON_FUNCTION(unittest.TestCase):
             # Connect by LAN again
             os.system('netsh wlan disconnect')
             time.sleep(1)
+            
         self.driver.quit()
 
     def test_02_Dynamic_Wired_Ping_Aging_INTERGRATION_WITH_05(self):
@@ -122,15 +134,19 @@ class NON_FUNCTION(unittest.TestCase):
                 print(str(thread1.is_alive()) + ' th1 - ' + str(c))
                 time.sleep(1)
                 c += 1
-            c = 0
+
+            c, in_video_interface = 0, False
             while thread2.is_alive():
                 print(str(thread2.is_alive()) + ' th2 - ' + str(c))
+                video_form = len(driver.find_elements_by_css_selector(ele_playing))
+                if video_form > 0:
+                    in_video_interface = True
                 time.sleep(1)
                 c += 1
             time.sleep(2)
 
-            list_actual2 = [count_interrupt == 0, live_time >= PING_TIMES]
-            list_expected2 = [return_true]*2
+            list_actual2 = [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]
+            list_expected2 = [return_true]*3
 
             check2 = assert_list(list_actual2, list_expected2)
             key = 'NON_FUNCTION_05'
@@ -152,17 +168,22 @@ class NON_FUNCTION(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Check Ping {PING_ADDRESS} loss rate <= 1 on {str(PING_TIMES)} seconds')
+                f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
+                f'Loss rate {ping_result["packet_loss_rate"]} '
+                f'on {str(PING_TIMES)} seconds')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Check Ping {PING_ADDRESS} loss rate <= 1 on {str(PING_TIMES)} seconds'
+                f'[Fail] 1, 2. Check Ping {PING_ADDRESS}'
+                f'Loss rate {ping_result["packet_loss_rate"]}'
+                f' on {str(PING_TIMES)} seconds.'
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('1, 2. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
+        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
 
     def test_03_Wireless_24GHz_Ping_Aging_INTERGRATION_WITH_06(self):
         self.key = 'NON_FUNCTION_03'
@@ -170,6 +191,10 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+
+        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+        time.sleep(15)
+
         URL_LOGIN = get_config('URL', 'url')
         PING_ADDRESS = '8.8.8.8'
         # PING_TIMES = 43200
@@ -184,7 +209,7 @@ class NON_FUNCTION(unittest.TestCase):
         wait_DUT_activated(URL_LOGIN)
         wait_ping('192.168.1.1')
 
-        filename_2 = 'account.txt'
+        filename_2 = 'account1.txt'
         commmand_2 = 'capitest get Device.Users.User.2. leaf'
         run_cmd(commmand_2, filename_2)
         time.sleep(3)
@@ -192,14 +217,21 @@ class NON_FUNCTION(unittest.TestCase):
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
 
         try:
-            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+            new_2g_wf_name = api_change_wifi_setting(URL_2g)
+            time.sleep(3)
+            write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name)
+            time.sleep(3)
 
-            os.system(f'netsh wlan delete profile name="{exp_ssid_2g_default_val}"')
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
-            os.system(f'netsh wlan connect ssid="{exp_ssid_2g_default_val}" name="{exp_ssid_2g_default_val}"')
+
+
+            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
             time.sleep(5)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
         except:
             self.list_steps.append('[FAIL] Precondition connect 2G Wifi Fail')
 
@@ -248,16 +280,21 @@ class NON_FUNCTION(unittest.TestCase):
                 print(str(thread1.is_alive()) + ' th1 - ' + str(c))
                 time.sleep(1)
                 c += 1
-            c = 0
+
+            c, in_video_interface = 0, False
+
             while thread2.is_alive():
                 print(str(thread2.is_alive()) + ' th2 - ' + str(c))
+                video_form = len(driver.find_elements_by_css_selector(ele_playing))
+                if video_form > 0:
+                    in_video_interface = True
                 time.sleep(1)
                 c += 1
 
             time.sleep(3)
             print(live_time)
-            list_actual2 = [count_interrupt == 0, live_time >= PING_TIMES]
-            list_expected2 = [return_true]*2
+            list_actual2 = [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]
+            list_expected2 = [return_true]*3
 
             check2 = assert_list(list_actual2, list_expected2)
             key = 'NON_FUNCTION_06'
@@ -273,6 +310,9 @@ class NON_FUNCTION(unittest.TestCase):
                                    f'{str(count_interrupt)} interrupt times;'
                                    f'{str(live_time)} live times', '[END TC]']
                 write_ggsheet(key, test_steps_fail, name, duration, self.start_time)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
 
             list_actual1 = [ping_result['packet_loss_rate'] <= 1.0]
             list_expected1 = [return_true]
@@ -299,6 +339,7 @@ class NON_FUNCTION(unittest.TestCase):
             # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
             # os.system(f'netsh wlan disconnect interface="Wi-Fi"')
         self.assertListEqual(list_step_fail, [])
+        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
 
     def test_04_Wireless_5GHz_Ping_Aging_INTERGRATION_WITH_07(self):
         self.key = 'NON_FUNCTION_04'
@@ -306,6 +347,9 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+        time.sleep(15)
+
         URL_LOGIN = get_config('URL', 'url')
         PING_ADDRESS = '8.8.8.8'
         # PING_TIMES = 43200
@@ -328,14 +372,30 @@ class NON_FUNCTION(unittest.TestCase):
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
 
         try:
+            time.sleep(5)
+            new_5g_wf_name = api_change_wifi_setting(URL_5g)
+            time.sleep(3)
+            write_data_to_xml(default_wifi_2g_path, new_name=new_5g_wf_name)
+            time.sleep(3)
+
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+            time.sleep(5)
+
+            os.system(f'netsh wlan connect ssid="{new_5g_wf_name}" name="{new_5g_wf_name}"')
+            time.sleep(6)
+
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
 
-            os.system(f'netsh wlan delete profile name="{exp_ssid_5g_default_val}"')
-            # Connect Default 5GHz
-            os.system(f'netsh wlan add profile filename="{default_wifi_5g_path}"')
-            time.sleep(5)
-            os.system(f'netsh wlan connect ssid="{exp_ssid_5g_default_val}" name="{exp_ssid_5g_default_val}"')
-            time.sleep(5)
+
+            # os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            #
+            # os.system(f'netsh wlan delete profile name="{wifi_mac_5g}"')
+            # # Connect Default 5GHz
+            # os.system(f'netsh wlan add profile filename="{default_wifi_5g_path}"')
+            # time.sleep(5)
+            # os.system(f'netsh wlan connect ssid="{wifi_mac_5g}" name="{wifi_mac_5g}"')
+            # time.sleep(5)
         except:
             self.list_steps.append('[FAIL] Precondition connect 5G Wifi Fail')
 
@@ -384,19 +444,23 @@ class NON_FUNCTION(unittest.TestCase):
                 print(str(thread1.is_alive()) + ' th1 - ' + str(c))
                 time.sleep(1)
                 c += 1
-            c = 0
+
+            c, in_video_interface = 0, False
             while thread2.is_alive():
                 print(str(thread2.is_alive()) + ' th2 - ' + str(c))
+                video_form = len(driver.find_elements_by_css_selector(ele_playing))
+                if video_form > 0:
+                    in_video_interface = True
                 time.sleep(1)
                 c += 1
 
             time.sleep(2)
 
-            list_actual2 = [count_interrupt == 0, live_time >= PING_TIMES]
-            list_expected2 = [return_true]*2
+            list_actual2 = [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]
+            list_expected2 = [return_true]*3
 
             check2 = assert_list(list_actual2, list_expected2)
-            key = 'NON_FUNCTION_06'
+            key = 'NON_FUNCTION_07'
             name = 'test_07_Wireless_5GHz_Streaming_Aging'
             duration = '0'
             if check2['result']:
@@ -420,7 +484,7 @@ class NON_FUNCTION(unittest.TestCase):
             self.list_steps.append('[END TC]')
 
             # Enable Wire;Disconnect Wifi
-            # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
             # os.system(f'netsh wlan disconnect interface="Wi-Fi"')
         except:
             self.list_steps.append(
@@ -434,11 +498,162 @@ class NON_FUNCTION(unittest.TestCase):
             # Enable Wire;Disconnect Wifi
             # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
             # os.system(f'netsh wlan disconnect interface="Wi-Fi"')
-
+        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
         self.assertListEqual(list_step_fail, [])
 
     def test_08_Static_Wired_Ping_Aging(self):
         self.key = 'NON_FUNCTION_08'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+        time.sleep(15)
+        URL_LOGIN = get_config('URL', 'url')
+        PING_ADDRESS = '8.8.8.8'
+        # PING_TIMES = 43200
+        PING_YOUTUBE = 'youtube.com'
+        YOUTUBE_URL = 'https://www.youtube.com/watch?v=e6iGJIYUroo'
+        NEW_PASSWORD = 'abc123'
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(100)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            # Goto Homepage
+            check_login = len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0
+            if check_login:
+                wait_visible(driver, welcome_language)
+                time.sleep(1)
+                # Click start btn
+                driver.find_element_by_css_selector(welcome_start_btn).click()
+                time.sleep(3)
+                wait_visible(driver, welcome_change_pw_fields)
+                change_pw_fields = driver.find_elements_by_css_selector(welcome_change_pw_fields)
+
+                # A list contain values: Current Password, New Password, Retype new pw
+                ls_change_pw_value = [get_config('ACCOUNT', 'password'), NEW_PASSWORD, NEW_PASSWORD]
+                for p, v in zip(change_pw_fields, ls_change_pw_value):
+                    ActionChains(driver).move_to_element(p).click().send_keys(v).perform()
+                    time.sleep(0.5)
+
+                # Next Change pw
+                time.sleep(3)
+                wait_visible(driver, welcome_next_btn)
+                next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+                if not next_btn.get_property('disabled'):
+                    next_btn.click()
+                time.sleep(5)
+
+                # Next Operation Mode
+                time.sleep(3)
+                wait_visible(driver, welcome_next_btn)
+                next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+                if not next_btn.get_property('disabled'):
+                    next_btn.click()
+                    time.sleep(0.5)
+
+                # Click arrow down
+                time.sleep(3)
+                driver.find_element_by_css_selector(option_select).click()
+                time.sleep(2)
+                ls_connection_type = driver.find_elements_by_css_selector(
+                    welcome_internet_setup1_ls_option_connection_type)
+
+                # Click Static IP
+                for i in ls_connection_type:
+                    if i.text == 'Static IP':
+                        i.click()
+                time.sleep(1)
+
+                dns_2_input = driver.find_elements_by_css_selector('.wrap-form:last-child .wrap-input input')
+                for i in dns_2_input:
+                    ActionChains(driver).move_to_element(i).click().send_keys('0').perform()
+                    time.sleep(0.5)
+
+                len_let_go = len(driver.find_elements_by_css_selector(welcome_let_go_btn))
+                while len_let_go == 0:
+                    # Next Internet Setup 1
+                    time.sleep(2)
+                    wait_visible(driver, welcome_next_btn)
+                    next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+                    if not next_btn.get_property('disabled'):
+                        next_btn.click()
+                        time.sleep(3)
+                    len_let_go = len(driver.find_elements_by_css_selector(welcome_let_go_btn))
+
+                # Click Let's Go
+                time.sleep(3)
+                driver.find_element_by_css_selector(welcome_let_go_btn).click()
+                # Write config
+                save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(2)
+                wait_visible(driver, home_view_wrap)
+                time.sleep(5)
+
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(5)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
+            os.system(f'netsh wlan disconnect interface="Wi-Fi"')
+            time.sleep(5)
+        except:
+            self.list_steps.append('[Fail] Precondition connect 5G Wifi Fail')
+
+        try:
+            def thread_ping():
+                global ping_result
+                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)
+            thread1 = threading.Thread(target=thread_ping)
+            thread1.start()
+
+            c = 0
+            while thread1.is_alive():
+                print(str(thread1.is_alive()) + ' th1 - ' + str(c))
+                time.sleep(1)
+                c += 1
+
+            time.sleep(2)
+
+            list_actual1 = [ping_result['packet_loss_rate'] <= 1.0]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'on {str(PING_TIMES)} seconds')
+            self.list_steps.append('[END TC]')
+
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'on {str(PING_TIMES)} seconds'
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('1, 2. Assertion wong')
+
+        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+        self.assertListEqual(list_step_fail, [])
+
+    def test_09_Static_Wireless_24GHz_Ping_Aging(self):
+        self.key = 'NON_FUNCTION_09'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
@@ -543,174 +758,23 @@ class NON_FUNCTION(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
             time.sleep(5)
 
+            time.sleep(15)
+            new_2g_wf_name = api_change_wifi_setting(URL_2g)
+            time.sleep(3)
+            write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name)
+            time.sleep(3)
 
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(5)
-            os.system(f'netsh wlan disconnect interface="Wi-Fi"')
-            time.sleep(5)
-        except:
-            self.list_steps.append('[Fail] Precondition connect 5G Wifi Fail')
-
-        try:
-            def thread_ping():
-                global ping_result
-                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)
-            thread1 = threading.Thread(target=thread_ping)
-            thread1.start()
-
-            c = 0
-            while thread1.is_alive():
-                print(str(thread1.is_alive()) + ' th1 - ' + str(c))
-                time.sleep(1)
-                c += 1
-
-            time.sleep(2)
-
-            list_actual1 = [ping_result['packet_loss_rate'] <= 1.0]
-            list_expected1 = [return_true]
-            check = assert_list(list_actual1, list_expected1)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result["packet_loss_rate"])} '
-                f'on {str(PING_TIMES)} seconds')
-            self.list_steps.append('[END TC]')
-
-            # Enable Wire;Disconnect Wifi
-            # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            # os.system(f'netsh wlan disconnect interface="Wi-Fi"')
-        except:
-            self.list_steps.append(
-                f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result["packet_loss_rate"])} '
-                f'on {str(PING_TIMES)} seconds'
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
-            self.list_steps.append('[END TC]')
-            list_step_fail.append('1, 2. Assertion wong')
-
-            # Enable Wire;Disconnect Wifi
-            # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            # os.system(f'netsh wlan disconnect interface="Wi-Fi"')
-        self.assertListEqual(list_step_fail, [])
-
-    def test_09_Static_Wireless_24GHz_Ping_Aging(self):
-        self.key = 'NON_FUNCTION_09'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-        URL_LOGIN = get_config('URL', 'url')
-        PING_ADDRESS = '8.8.8.8'
-        # PING_TIMES = 43200
-        PING_YOUTUBE = 'youtube.com'
-        YOUTUBE_URL = 'https://www.youtube.com/watch?v=e6iGJIYUroo'
-        NEW_PASSWORD = 'abc123'
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(100)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-
-        try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            check_login = driver.find_elements_by_css_selector(lg_welcome_header) != 0
-            if check_login:
-                wait_visible(driver, welcome_language)
-                time.sleep(1)
-                # Click start btn
-                driver.find_element_by_css_selector(welcome_start_btn).click()
-                time.sleep(3)
-                wait_visible(driver, welcome_change_pw_fields)
-                change_pw_fields = driver.find_elements_by_css_selector(welcome_change_pw_fields)
-
-                # A list contain values: Current Password, New Password, Retype new pw
-                ls_change_pw_value = [get_config('ACCOUNT', 'password'), NEW_PASSWORD, NEW_PASSWORD]
-                for p, v in zip(change_pw_fields, ls_change_pw_value):
-                    ActionChains(driver).move_to_element(p).click().send_keys(v).perform()
-                    time.sleep(0.5)
-
-                # Next Change pw
-                time.sleep(3)
-                wait_visible(driver, welcome_next_btn)
-                next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-                if not next_btn.get_property('disabled'):
-                    next_btn.click()
-                time.sleep(5)
-
-                # Next Operation Mode
-                time.sleep(3)
-                wait_visible(driver, welcome_next_btn)
-                next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-                if not next_btn.get_property('disabled'):
-                    next_btn.click()
-                    time.sleep(0.5)
-
-                # Click arrow down
-                time.sleep(3)
-                driver.find_element_by_css_selector(option_select).click()
-                time.sleep(2)
-                ls_connection_type = driver.find_elements_by_css_selector(
-                    welcome_internet_setup1_ls_option_connection_type)
-
-                # Click Static IP
-                for i in ls_connection_type:
-                    if i.text == 'Static IP':
-                        i.click()
-                time.sleep(1)
-
-                dns_2_input = driver.find_elements_by_css_selector('.wrap-form:last-child .wrap-input input')
-                for i in dns_2_input:
-                    ActionChains(driver).move_to_element(i).click().send_keys('0').perform()
-                    time.sleep(0.5)
-
-                len_let_go = len(driver.find_elements_by_css_selector(welcome_let_go_btn))
-                while len_let_go == 0:
-                    # Next Internet Setup 1
-                    time.sleep(2)
-                    wait_visible(driver, welcome_next_btn)
-                    next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-                    if not next_btn.get_property('disabled'):
-                        next_btn.click()
-                        time.sleep(3)
-                    len_let_go = len(driver.find_elements_by_css_selector(welcome_let_go_btn))
-
-                # Click Let's Go
-                time.sleep(3)
-                driver.find_element_by_css_selector(welcome_let_go_btn).click()
-                # Write config
-                save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD)
-                wait_popup_disappear(driver, dialog_loading)
-                time.sleep(2)
-                wait_visible(driver, home_view_wrap)
-                time.sleep(5)
-
-                wait_popup_disappear(driver, dialog_loading)
-            time.sleep(5)
-
-
-            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-            time.sleep(5)
-            os.system(f'netsh wlan delete profile name="{exp_ssid_2g_default_val}"')
-            time.sleep(5)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
-            os.system(f'netsh wlan connect ssid="{exp_ssid_2g_default_val}" name="{exp_ssid_2g_default_val}"')
+
+            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
             time.sleep(5)
 
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+
         except:
-            self.list_steps.append('[Fail] Precondition connect 5G Wifi Fail')
+            self.list_steps.append('[Fail] Precondition connect 2G Wifi Fail')
 
         try:
             def thread_ping():
@@ -785,7 +849,7 @@ class NON_FUNCTION(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             # Goto Homepage
-            check_login = driver.find_elements_by_css_selector(lg_welcome_header) != 0
+            check_login = len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0
             if check_login:
                 wait_visible(driver, welcome_language)
                 time.sleep(1)
@@ -859,14 +923,29 @@ class NON_FUNCTION(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
             time.sleep(5)
 
+            time.sleep(15)
+            new_5g_wf_name = api_change_wifi_setting(URL_5g)
+            time.sleep(3)
+            write_data_to_xml(default_wifi_2g_path, new_name=new_5g_wf_name)
+            time.sleep(3)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+            time.sleep(5)
+
+            os.system(f'netsh wlan connect ssid="{new_5g_wf_name}" name="{new_5g_wf_name}"')
+            time.sleep(5)
+
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-            time.sleep(5)
-            os.system(f'netsh wlan delete profile name="{exp_ssid_5g_default_val}"')
-            time.sleep(5)
-            os.system(f'netsh wlan add profile filename="{default_wifi_5g_path}"')
-            time.sleep(5)
-            os.system(f'netsh wlan connect ssid="{exp_ssid_5g_default_val}" name="{exp_ssid_5g_default_val}"')
-            time.sleep(5)
+
+            #
+            # os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            # time.sleep(5)
+            # os.system(f'netsh wlan delete profile name="{wifi_mac_5g}"')
+            # time.sleep(5)
+            # os.system(f'netsh wlan add profile filename="{default_wifi_5g_path}"')
+            # time.sleep(5)
+            # os.system(f'netsh wlan connect ssid="{wifi_mac_5g}" name="{wifi_mac_5g}"')
+            # time.sleep(5)
 
         except:
             self.list_steps.append('[Fail] Precondition connect 5G Wifi Fail')

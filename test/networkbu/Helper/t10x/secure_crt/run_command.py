@@ -5,6 +5,11 @@ import sys
 sys.path.append('../../../')
 import time
 import re
+import ConfigParser
+
+config = ConfigParser.ConfigParser()
+config.read('C:\Users\Test\Desktop\DOBBY\client_3\client\\test\\networkbu\Config\\t10x\config.txt')
+serial_num = config.get('GENERAL', 'serial_number')
 
 
 T10x_Prompt = "HUMAX_T10X:~#"
@@ -31,7 +36,7 @@ def send_command(cmd):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def login_console():
     US      = "root"
-    PW      = "pw!0001"
+    PW      = "pw!"+serial_num
 
     crt.Screen.Send('\r')
     crt.Sleep(1000)

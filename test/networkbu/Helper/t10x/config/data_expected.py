@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+from Helper.t10x.common import get_config
 """
 $language: python
 $version: 3.7
@@ -8,7 +11,6 @@ Expected file:
 All variables is global variable and all of them imported in Test file to get "value" as Expected result
 
 """
-
 
 return_true = True
 return_false = False
@@ -40,7 +42,8 @@ exp_wrong_id_pw = 'Router login ID or password is not correct.'
 # ~~~~~~~~~~~~~~~~~~~~~~~ Welcome
 exp_time_zone = '(GMT+07:00) Bangkok, Ho Chi Minh, Phnom Penh, Vientiane'
 exp_language = 'English'
-header_login_text = 'Welcome to HUMAX T10X'
+# header_login_text = 'Welcome to HUMAX T10X'
+header_login_text = 'Welcome to ' + get_config('GENERAL', 'model')
 exp_welcome_msg_up = 'Edit your settings simply and easily to optimize your network environment and configure various functions.'
 exp_internet = 'Internet Setup'
 exp_wireless = 'Wireless Setup'
@@ -61,6 +64,9 @@ exp_password_error_msg = 'More than 8 characters.'
 exp_dialog_hide_ssid_title = 'If the Hide SSID is enabled, WPS function is inactivated.'
 exp_dialog_add_same_ssid = 'The Network Name(SSID) already exists. Enter another Network Name(SSID).'
 exp_wl_default_pw = '00000000'
+exp_short_pw_error_msg = "That's too short."
+exp_wps_red_message = "If both Hide SSIDs on both wireless networks are set to on, WPS is disabled."
+
 # ~~~~~~~~~~~~~~~~~~~~~~ Media share
 exp_nw_folder_exist = 'The same network folder exists.'
 exp_max_row_usb_nw = 8
@@ -100,3 +106,17 @@ exp_warning_local_port_same_external = 'The number of Local Ports must be the sa
 exp_add_local_external_port_exist = 'This Local Port/External Port already exists.'
 exp_none_text = ''
 exp_error_msg_ip_same_lan_ip = 'Enter another IP address. Cannot same as the LAN IP address.'
+
+# ~~~~~~~~~~~~~~~~~~~~ System
+# exp_backup_file_name = 'Setting_HUMAX T10X.bin'
+exp_backup_file_name = f'Setting_{get_config("GENERAL", "model")}.bin'
+exp_backup_confirm_msg = 'Do you want to back up the current setting file?'
+exp_restore_confirm_msg = 'Do you want to restore to the selected file? Restart the system to apply the changes.'
+
+
+
+# ~~~~~~~~~~~~~~~~~~~~ HOME
+exp_confirm_msg_add_resserve_ip = 'Do you want to reserve IP Address?'
+exp_confirm_msg_delete_resserve_ip = 'Do you want to delete this item?'
+
+exp_confirm_msg_add_mac_filtering = 'Do you want to add this MAC Address to MAC Filtering List?'

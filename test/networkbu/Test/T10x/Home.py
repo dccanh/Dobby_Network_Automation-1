@@ -37,9 +37,8 @@ class HOME(unittest.TestCase):
             os.system('netsh wlan disconnect')
             time.sleep(1)
         self.driver.quit()
-
+    # OK
     def test_01_Check_Internet_Image_Operation_when_Dual_WAN_is_off(self):
-        global list_actual, list_expected
         self.key = 'HOME_01'
         driver = self.driver
         self.def_name = get_func_name()
@@ -53,12 +52,7 @@ class HOME(unittest.TestCase):
         METHOD = 'GET'
         BODY = None
         try:
-            login(driver)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(2)
 
             # Enable Dual WAN
@@ -99,7 +93,6 @@ class HOME(unittest.TestCase):
             ipv4 = res['ipv4']
 
             _actual = [dict_wan[i] for i in translate_key_api2ui.values()]
-
 
             _expected = [ipv4[i] for i in translate_key_api2ui.keys()]
             if ipv4['mode'] == 'dynamic':
@@ -166,9 +159,8 @@ class HOME(unittest.TestCase):
             list_step_fail.append(
                 '4. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_02_Check_Internet_Image_Operation_when_Dual_WAN_is_on(self):
-        global list_actual, list_expected
         self.key = 'HOME_02'
         driver = self.driver
         self.def_name = get_func_name()
@@ -188,13 +180,9 @@ class HOME(unittest.TestCase):
         # Call API
 
         try:
-            login(driver)
-            time.sleep(3)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(2)
+
             # Enable Dual WAN
             goto_menu(driver, network_tab, network_internet_tab)
             time.sleep(2)
@@ -220,8 +208,8 @@ class HOME(unittest.TestCase):
                 driver.find_element_by_css_selector(dual_wan_apply_btn).click()
                 wait_popup_disappear(driver, dialog_loading)
                 time.sleep(5)
-
-            driver.get(URL_LOGIN + homepage)
+            time.sleep(1)
+            goto_menu(driver, home_tab, 0)
             time.sleep(2)
 
             res_dual_wan = call_api(URL_API_DUAL_WAN, METHOD, BODY, _token)
@@ -267,7 +255,8 @@ class HOME(unittest.TestCase):
                 value = w.find_element_by_css_selector(home_wan_ls_value).text
                 dict_secondary_wan.update({label: value})
 
-            translate_key_api2ui = {"mode": "Connection status",
+            translate_key_api2ui = {"name": "WAN Type",
+                                    "mode": "Connection status",
                                     "address": "WAN IP Address",
                                     "subnet": "Subnet Mask",
                                     "gateway": "Gateway",
@@ -275,12 +264,24 @@ class HOME(unittest.TestCase):
                                     "dnsServer2": "DNS Server 2"}
             secondary_info = res_wan_secondary
 
-            secondary_actual = [dict_secondary_wan[i] for i in translate_key_api2ui.values()]
-            secondary_expected = [secondary_info['ipv4'][i] for i in translate_key_api2ui.keys()]
+            secondary_actual = [''.join(dict_secondary_wan[i].split()) for i in translate_key_api2ui.values()]
+            secondary_expected = [secondary_info['name']]
+
             if secondary_info['connectivity'] == 'connected':
-                secondary_expected[0] = 'Connected'
-            if secondary_info['ipv4']['dnsServer2'] == '':
-                secondary_expected[-1] = '0.0.0.0'
+                secondary_expected.append('Connected')
+            elif secondary_info['connectivity'] == 'disconnected':
+                secondary_expected.append('Disconnected')
+
+            if secondary_info['ipv4']['address'] == '-':
+                secondary_expected.append('0.0.0.0')
+            if secondary_info['ipv4']['subnet'] == '-':
+                secondary_expected.append('0.0.0.0')
+            if secondary_info['ipv4']['gateway'] == '-':
+                secondary_expected.append('0.0.0.0')
+            if secondary_info['ipv4']['dnsServer1'] == '-':
+                secondary_expected.append('0.0.0.0')
+            if secondary_info['ipv4']['dnsServer2'] == '-':
+                secondary_expected.append('0.0.0.0')
 
             _check = True if (dict_primary_wan['WAN Type'] in ['Ethernet','USB Broadband', 'Android Tethering']) \
                              and (dict_primary_wan['Connection Type'] in ['Dynamic IP', 'Satatic IP', 'PPPoE']) else False
@@ -330,7 +331,7 @@ class HOME(unittest.TestCase):
             self.assertTrue(check["result"])
             self.list_steps.append(
                 '[Pass] 4. Click + btn. Check re-direct Network>Internet\n')
-            self.list_steps.append('[END TC]')
+
         except:
             self.list_steps.append(
                 f'[Fail] 4. Click + btn. Check re-direct Network>Internet. '
@@ -354,7 +355,7 @@ class HOME(unittest.TestCase):
             self.assertTrue(check["result"])
             self.list_steps.append(
                 '[Pass] 5. Home page is displayed\n')
-            self.list_steps.append('[END TC]')
+
         except:
             self.list_steps.append(
                 f'[Fail] 5. Home page is displayed. '
@@ -405,9 +406,8 @@ class HOME(unittest.TestCase):
             list_step_fail.append(
                 '7. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_03_Check_Connection_Internet_Information(self):
-        global list_actual, list_expected
         self.key = 'HOME_03'
         driver = self.driver
         self.def_name = get_func_name()
@@ -428,18 +428,16 @@ class HOME(unittest.TestCase):
         res_wan_v4 = call_api(URL_API_WAN_V4, METHOD, BODY, _token)
 
         try:
-            login(driver)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(2)
+
             # Click icons Internet connection
             driver.find_element_by_css_selector(home_img_connection).click()
             time.sleep(1)
+
+            primary = driver.find_element_by_css_selector(left)
             # Get information of WAN to a dictionary
-            ls_wan_field = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
             dict_wan = {}
             for w in ls_wan_field:
                 label = w.find_element_by_css_selector(home_wan_ls_label).text
@@ -470,7 +468,7 @@ class HOME(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Check WAN IPv4\n')
+                f'[Pass] 1,2. Check WAN IPv4. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -480,7 +478,7 @@ class HOME(unittest.TestCase):
                 '1,2. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_04_Verify_connection_status_according_to_WAN_connection_type_Dynamic_IP(self):
         self.key = 'HOME_04'
         driver = self.driver
@@ -495,13 +493,8 @@ class HOME(unittest.TestCase):
         METHOD = 'GET'
         BODY = None
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
 
             goto_menu(driver, network_tab, network_internet_tab)
             wait_popup_disappear(driver, dialog_loading)
@@ -537,20 +530,14 @@ class HOME(unittest.TestCase):
                         time.sleep(5)
 
                     break
-            self.list_steps.append('[PASS] Set Precondition Success')
+            self.list_steps.append('[Pass] Set Precondition Success')
         except:
-            self.list_steps.append('[FAIL] Set Precondition fail')
+            self.list_steps.append('[Fail] Set Precondition fail')
             list_step_fail.append('Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
 
             driver.find_element_by_css_selector(home_tab).click()
             wait_popup_disappear(driver, dialog_loading)
@@ -571,8 +558,9 @@ class HOME(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
+            primary = driver.find_element_by_css_selector(left)
             # Get information of WAN to a dictionary
-            ls_wan_field = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
             dict_wan = {}
             for w in ls_wan_field:
                 label = w.find_element_by_css_selector(home_wan_ls_label).text
@@ -616,7 +604,7 @@ class HOME(unittest.TestCase):
                 '1,2. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_05_Verify_connection_status_according_to_WAN_connection_type_Static_IP(self):
         self.key = 'HOME_05'
         driver = self.driver
@@ -630,16 +618,13 @@ class HOME(unittest.TestCase):
         URL_API_WAN_V4 = URL_LOGIN + '/api/v1/network/wan/0'
         METHOD = 'GET'
         BODY = None
-        VALUE_DNS2 = '1.1.1.1'
+        VALUE_DNS2 = '0.0.0.0'
         VALUE_DNS2_SPLIT = VALUE_DNS2.split('.')
+        _token = get_token(USER_LOGIN, PW_LOGIN)
+        # Call API
+        get_wan = call_api(URL_API_WAN_V4, METHOD, BODY, _token)['ipv4']['address']
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
 
             goto_menu(driver, network_tab, network_internet_tab)
             wait_popup_disappear(driver, dialog_loading)
@@ -679,6 +664,18 @@ class HOME(unittest.TestCase):
                             internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
                             internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
                             for l, f in zip(internet_setting_label, internet_setting_fields):
+                                if l.text == 'WAN IP Address':
+                                    wan = f.find_elements_by_css_selector(input)
+                                    for d, v in zip(wan, get_wan.split('.')):
+                                        ActionChains(driver).move_to_element(d).click().key_down(
+                                            Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).send_keys(
+                                            v).perform()
+                                if l.text == 'Gateway':
+                                    gateway = f.find_elements_by_css_selector(input)
+                                    for d, v in zip(gateway, VALUE_DNS2_SPLIT):
+                                        ActionChains(driver).move_to_element(d).click().key_down(
+                                            Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).send_keys(
+                                            v).perform()
                                 # DNS server 2
                                 if l.text == 'DNS Server 2':
                                     dns_2 = f.find_elements_by_css_selector(input)
@@ -697,20 +694,14 @@ class HOME(unittest.TestCase):
                             wait_popup_disappear(driver, dialog_loading)
                             time.sleep(5)
                     break
-            self.list_steps.append('[PASS] Set Precondition Success')
+            self.list_steps.append('[Pass] Set Precondition Success')
         except:
-            self.list_steps.append('[FAIL] Set Precondition fail')
+            self.list_steps.append('[Fail] Set Precondition fail')
             list_step_fail.append('Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
 
             driver.find_element_by_css_selector(home_tab).click()
             wait_popup_disappear(driver, dialog_loading)
@@ -718,6 +709,7 @@ class HOME(unittest.TestCase):
             driver.find_element_by_css_selector(home_img_connection).click()
             time.sleep(1)
             check_active = driver.find_element_by_css_selector(home_img_connection).is_enabled()
+
             list_actual = [check_active]
             list_expected = [return_true]
             check = assert_list(list_actual, list_expected)
@@ -731,8 +723,9 @@ class HOME(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
+            primary = driver.find_element_by_css_selector(left)
             # Get information of WAN to a dictionary
-            ls_wan_field = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
             dict_wan = {}
             for w in ls_wan_field:
                 label = w.find_element_by_css_selector(home_wan_ls_label).text
@@ -768,7 +761,9 @@ class HOME(unittest.TestCase):
             list_expected = [_expected, return_true]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Check Information display')
+            self.list_steps.append(f'[Pass] 2. Check Information display. '
+                                   f'Actual: {str(list_actual)}. '
+                                   f'Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -777,7 +772,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('2. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_09_Check_Router_Wireless_page(self):
         self.key = 'HOME_09'
         driver = self.driver
@@ -787,13 +782,9 @@ class HOME(unittest.TestCase):
         URL_LOGIN = get_config('URL', 'url')
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
+
             driver.find_element_by_css_selector(home_img_lan_connection).click()
             time.sleep(2)
 
@@ -860,7 +851,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('3.3 Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_10_Check_LAN_information(self):
         self.key = 'HOME_10'
         driver = self.driver
@@ -874,13 +865,9 @@ class HOME(unittest.TestCase):
         METHOD = 'GET'
         BODY = None
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
+
             driver.find_element_by_css_selector(home_img_lan_connection).click()
             time.sleep(2)
 
@@ -967,12 +954,7 @@ class HOME(unittest.TestCase):
         URL_LOGIN = get_config('URL', 'url')
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
 
             driver.find_element_by_css_selector(home_img_lan_connection).click()
@@ -1071,13 +1053,9 @@ class HOME(unittest.TestCase):
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
+
             # CLick Wireless Image
             driver.find_element_by_css_selector(home_img_lan_connection).click()
             time.sleep(2)
@@ -1115,11 +1093,14 @@ class HOME(unittest.TestCase):
             list_expected1 = ['We Love You So Much_2G!', 'WPA2/WPA-PSK', True, True]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Check Information of WL 2.4GHZ')
+            self.list_steps.append('[Pass] 3. Check Information of WL 2.4GHZ'
+                                   f'Actual: {str(list_actual1)}. '
+                                   f'Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Check Information of WL 2.4GHZ. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -1156,7 +1137,9 @@ class HOME(unittest.TestCase):
             list_expected2 = ['We Love You So Much_5G!', 'WPA2/WPA-PSK', True, True]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Check Information of WL 5GHZ')
+            self.list_steps.append('[Pass] 4. Check Information of WL 5GHZ' 
+                                   f'Actual: {str(list_actual2)}. '
+                                   f'Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1177,12 +1160,8 @@ class HOME(unittest.TestCase):
         URL_LOGIN = get_config('URL', 'url')
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
+            time.sleep(1)
 
             driver.find_element_by_css_selector(home_img_connection).click()
             time.sleep(0.5)
@@ -1223,13 +1202,9 @@ class HOME(unittest.TestCase):
         URL_LOGIN = get_config('URL', 'url')
         SERIAL_NUMBER = get_config('GENERAL', 'serial_number')
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
+
             # CLick Wireless Image
             driver.find_element_by_css_selector(home_img_lan_connection).click()
             time.sleep(2)
@@ -1249,9 +1224,10 @@ class HOME(unittest.TestCase):
                 if label == 'Serial Number':
                     value = w.find_element_by_css_selector(home_wan_ls_value).text.endswith(SERIAL_NUMBER)
                     actual_info_value.append(value)
-                # if label == 'Firmware Vesion':
-                #     value = w.find_element_by_css_selector(home_wan_ls_value).text
-                #     actual_info_value.append(value)
+                if label == 'Firmware Version':
+                    value = w.find_element_by_css_selector(home_wan_ls_value).text
+                    actual_info_value.append(value)
+
                 if label == 'Build Time':
                     value = w.find_element_by_css_selector(home_wan_ls_value).text
                     try:
@@ -1264,17 +1240,40 @@ class HOME(unittest.TestCase):
             check_for_update_text = check_for_update.text
             check_for_update_color = check_for_update.value_of_css_property('background-color')
 
-            list_actual1 = [info_block_title, actual_info_value, check_for_update_text, check_for_update_color]
-            list_expected1 = ['Information', ['HUMAX T10X', True, True], 'Check for Update', 'rgba(23, 143, 230, 1)']
+            expected_model_name = get_config('GENERAL', 'model')
+
+            # expected_current_firmware
+            USER_LOGIN = get_config('ACCOUNT', 'user')
+            PW_LOGIN = get_config('ACCOUNT', 'password')
+            URL_API = URL_LOGIN + '/api/v1/gateway/about'
+            METHOD = 'GET'
+            BODY = ''
+            _token = get_token(USER_LOGIN, PW_LOGIN)
+            # Call API
+            res = call_api(URL_API, METHOD, BODY, _token)
+            firmware_version = res['software']['version']
+
+            list_actual1 = [info_block_title,
+                            actual_info_value,
+                            check_for_update_text,
+                            check_for_update_color]
+            list_expected1 = ['Information',
+                              [expected_model_name, True, firmware_version, True],
+                              'Check for Update',
+                              'rgba(23, 143, 230, 1)']
+
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 3. Check Information title, Model name, End of Serial number, '
-                                   'type of build time, Tex of button, Color')
+                                   'type of build time, firm version,  Text of button, Color. '
+                                   f'Actual: {str(list_actual1)}. '
+                                   f'Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Check Information title, Model name, End of Serial number, '
-                                   'type of build time, Tex of button, Color. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                                   'type of build time, firm version,  Text of button, Color. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -1286,7 +1285,9 @@ class HOME(unittest.TestCase):
             list_expected2 = [return_true]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Check pop up appear')
+            self.list_steps.append('[Pass] 4. Check pop up appear. '
+                                   f'Actual: {str(list_actual2)}. '
+                                   f'Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1307,13 +1308,9 @@ class HOME(unittest.TestCase):
         URL_LOGIN = get_config('URL', 'url')
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
+
             # CLick Wireless Image
             driver.find_element_by_css_selector(home_img_usb_connection).click()
             time.sleep(2)
@@ -1348,13 +1345,9 @@ class HOME(unittest.TestCase):
         URL_LOGIN = get_config('URL', 'url')
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
+
             # CLick USB Image
             driver.find_element_by_css_selector(home_img_usb_connection).click()
             time.sleep(3)
@@ -1405,12 +1398,7 @@ class HOME(unittest.TestCase):
         self.list_steps = []
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(3)
 
             # CLick USB Image
@@ -1458,12 +1446,7 @@ class HOME(unittest.TestCase):
         self.list_steps = []
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(3)
 
             # CLick USB Image
@@ -1524,12 +1507,7 @@ class HOME(unittest.TestCase):
         self.list_steps = []
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(3)
 
             # CLick USB Image
@@ -1584,13 +1562,7 @@ class HOME(unittest.TestCase):
         self.list_steps = []
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
-            time.sleep(3)
+            grand_login(driver)
 
             # CLick USB Image
             driver.find_element_by_css_selector(home_img_usb_connection).click()
@@ -1637,13 +1609,7 @@ class HOME(unittest.TestCase):
         self.list_steps = []
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
-            time.sleep(3)
+            grand_login(driver)
 
             # CLick Device Image
             driver.find_element_by_css_selector(home_img_device_connection).click()
@@ -1668,7 +1634,1429 @@ class HOME(unittest.TestCase):
             list_step_fail.append('3. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
+    # OK
+    def test_28_Check_the_Devices_Sub_Menu_Information(self):
+        self.key = 'HOME_28'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
+        # Set precondition
+        try:
+            time.sleep(5)
+            new_2g_wf_name = api_change_wifi_setting(URL_2g)
+            time.sleep(3)
+            write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name)
+            time.sleep(3)
 
+            os.system(f'netsh wlan delete profile name="{new_2g_wf_name}"')
+            time.sleep(2)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+            time.sleep(5)
+
+            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
+            time.sleep(5)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
+            self.list_steps.append('[Pass] Set precondition fail: 1 wired + 1 wireless')
+        except:
+            self.list_steps.append('[Fail] Set precondition fail: 1 wired + 1 wireless')
+
+
+        try:
+            grand_login(driver)
+
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            table = driver.find_element_by_css_selector(ele_device_tab_titles)
+            tab_title = [i.text for i in table.find_elements_by_css_selector(ele_button_type)]
+
+            list_actual1 = tab_title
+            list_expected1 = ['Connected Devices', 'Disconnected Devices']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2. Check title of table.'
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.Check title of table. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+
+            list_step_fail.append('2. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~ Connected
+        try:
+            # +++++++++++++++++++++++++++++++++++++++++++++++++++
+            URL_API_CONNECTED = get_config('URL', 'url') + '/api/v1/gateway/devices?connected=true'
+            USERNAME = get_config('ACCOUNT', 'user')
+            PASSWORD = get_config('ACCOUNT', 'password')
+            METHOD = 'GET'
+            BODY = ''
+            _token = get_token(USERNAME, PASSWORD)
+            res_connected = call_api(URL_API_CONNECTED, METHOD, BODY, _token)
+
+            ls_expected_connected = list()
+            for r in res_connected:
+                dict_act = dict()
+                dict_act['name'] = r['name']
+                dict_act['ssid'] = r['path']
+                dict_act['mac'] = r['macAddress']
+                dict_act['ip'] = r['ipAddress']
+                ls_expected_connected.append(dict_act)
+
+            # +++++++++++++++++++++++++++++++++++++++++++++++++++
+            ls_actual_connected = list()
+            connected_rows = driver.find_elements_by_css_selector(ele_device_row_connected)
+            for r in connected_rows:
+                dict_row = dict()
+                dict_row['name'] = r.find_element_by_css_selector(name_cls).text
+                dict_row['ssid'] = r.find_element_by_css_selector(ele_ssid_cls).text
+                dict_row['mac'] = r.find_element_by_css_selector(wol_mac_addr).text
+                dict_row['ip'] = r.find_element_by_css_selector(ip_address_cls).text
+                ls_actual_connected.append(dict_row)
+
+            list_actual3 = ls_expected_connected
+            list_expected3 = ls_expected_connected
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 3.1 Check value rows displayed on Connected Devices Page.'
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3.1 Check value rows displayed on Connected Devices Page. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('3.1 Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~ Disconnected
+        try:
+            table.find_elements_by_css_selector(ele_button_type)[1].click()
+            time.sleep(2)
+            # ++++++++++++++++++++++++++++++++++++++++++++++++++
+            URL_API_DISCONNECTED = get_config('URL', 'url') + '/api/v1/gateway/devices?connected=false'
+            res_disconnected = call_api(URL_API_DISCONNECTED, METHOD, BODY, _token)
+            ls_expected_disconnected = list()
+            for r in res_disconnected:
+                dict_act = dict()
+                dict_act['name'] = r['name']
+                dict_act['mac'] = r['macAddress']
+                ls_expected_disconnected.append(dict_act)
+
+            # +++++++++++++++++++++++++++++++++++++++++++++++++++
+
+            ls_actual_disconnected = list()
+            disconnected_rows = driver.find_elements_by_css_selector(ele_device_row_disconnected)
+            for r in disconnected_rows:
+                dict_row = dict()
+                dict_row['name'] = r.find_element_by_css_selector(name_cls).text
+                dict_row['mac'] = r.find_element_by_css_selector(wol_mac_addr).text
+                ls_actual_disconnected.append(dict_row)
+
+            list_actual4 = ls_actual_disconnected
+            list_expected4 = ls_expected_disconnected
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 3.2 Check value rows displayed on Disconnected Devices Page.'
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3.2 Check value rows displayed on Disconnected Devices Page. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3.2 Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_29_Check_the_Connected_Devices_Information(self):
+        self.key = 'HOME_29'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+
+        try:
+            grand_login(driver)
+
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            table = driver.find_element_by_css_selector(ele_device_tab_titles)
+            check_title_tab = table.find_element_by_css_selector(ele_active_cls).text
+            check_btn_refresh = table.find_element_by_css_selector(ele_btn_refresh).is_displayed()
+            check_local_nw_title = table.find_element_by_css_selector(ele_device_network_title).text
+
+            check_connect_column_title = table.find_elements_by_css_selector(ele_device_connect_col_title)
+            check_connect_column_title_text = [i.text for i in check_connect_column_title]
+
+            check_edit_btn = len(table.find_elements_by_css_selector(edit_cls)) > 0
+
+            list_actual1 = [check_title_tab,
+                            check_btn_refresh,
+                            check_local_nw_title,
+                            check_connect_column_title_text,
+                            check_edit_btn]
+            list_expected1 = ['Connected Devices',
+                              return_true,
+                              'Local Network',
+                              ['Device Name', 'Interface', 'MAC Address', 'IP Address'],
+                              return_true]
+
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2. Check Connected Devices, [Refresh], Local Network, '
+                'Device name, Interface, MAC Address, IP Address, Edit icon are displayed .'
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.Check Connected Devices, [Refresh], Local Network, '
+                'Device name, Interface, MAC Address, IP Address, Edit icon are displayed . '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+
+            list_step_fail.append('2. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_30_Check_a_configuration_list_of_connected_devices_Edit(self):
+        self.key = 'HOME_30'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
+        current_pw = get_config('ACCOUNT', 'password')
+        try:
+            time.sleep(5)
+            os.system(f'netsh wlan disconnect')
+            time.sleep(5)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+            self.list_steps.append('[Pass] Precondition Successfully.')
+        except:
+            self.list_steps.append('[Fail] Precondition Fail')
+            list_step_fail.append('Assertion wong.')
+
+
+        try:
+            grand_login(driver)
+
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            default_device_tab = driver.find_element_by_css_selector(ele_active_connected_device)
+            default_device_tab_text = default_device_tab.text
+
+            actual_local_network_number = driver.find_element_by_css_selector(ele_count_cls).text
+
+            # Check USB block components
+            num_devices = driver.find_element_by_css_selector(ele_device_more_info).text
+
+            list_actual1 = [default_device_tab_text, actual_local_network_number]
+            list_expected1 = ['Connected Devices', num_devices]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 2. Check default tab in Devices, number of devices.'
+                                   f'Actual: {str(list_actual1)}. '
+                                   f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check default tab in Devices, number of devices. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('2. Assertion wong.')
+
+        try:
+            # Click Edit
+            driver.find_element_by_css_selector(edit_cls).click()
+            time.sleep(1)
+
+            img = driver.find_element_by_css_selector(ele_edit_device_img).get_attribute('class')
+
+            infor = driver.find_elements_by_css_selector(ele_info_cls)
+            infor_text = [i.text for i in infor]
+
+            check_mac = checkMACAddress(infor_text[0])
+            check_ip = checkIPAddress(infor_text[1])
+            check_port = infor_text[2].startswith('LAN Port')
+
+            ls_label = driver.find_elements_by_css_selector(label_name_in_2g)
+            ls_label_text = [i.text for i in ls_label]
+
+            expected_ls_label = ['Reserved IP', 'MAC Filtering', 'Parental Control', 'WoL (Wake on LAN)']
+
+            list_actual3 = [img, check_mac, check_ip, check_port, ls_label_text]
+            list_expected3 = ['pc', return_true, return_true, return_true, expected_ls_label]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 3. Check default tab in Devices, number of devices.'
+                                   f'Actual: {str(list_actual3)}. '
+                                   f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check default tab in Devices, number of devices. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        try:
+            time.sleep(5)
+            new_2g_wf_name = api_change_wifi_setting(URL_2g)
+            time.sleep(3)
+            write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name, new_pw=current_pw)
+            time.sleep(3)
+
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+            time.sleep(5)
+
+            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
+            time.sleep(5)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(1)
+            self.list_steps.append('4. [Pass] Connect wifi Successfully.')
+        except:
+            self.list_steps.append('4. [Fail] Connect wifi Fail')
+            list_step_fail.append('4. Assertion wong.')
+
+        try:
+            time.sleep(5)
+            # Re-Load
+            driver.refresh()
+            time.sleep(10)
+            check_ota_auto_update(driver)
+            time.sleep(2)
+            # Click Edit
+            driver.find_element_by_css_selector(edit_cls).click()
+            time.sleep(2)
+
+            img = driver.find_element_by_css_selector(ele_edit_device_img).get_attribute('class')
+
+            infor = driver.find_elements_by_css_selector(ele_info_cls)
+            infor_text = [i.text for i in infor]
+
+            check_mac = checkMACAddress(infor_text[0])
+            check_ip = checkIPAddress(infor_text[1])
+            check_wifi = infor_text[2] == 'Wi-Fi 2.4GHz'
+
+            ls_label = driver.find_elements_by_css_selector(label_name_in_2g)
+            ls_label_text = [i.text for i in ls_label]
+
+            expected_ls_label = ['Reserved IP', 'MAC Filtering', 'Parental Control', 'WoL (Wake on LAN)']
+
+            list_actual5 = [img, check_mac, check_ip, check_wifi, ls_label_text]
+            list_expected5 = ['pc', return_true, return_true, return_true, expected_ls_label]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 5. Check default tab in Devices, number of devices.'
+                                   f'Actual: {str(list_actual5)}. '
+                                   f'Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Check default tab in Devices, number of devices. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('5. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_31_Reserved_IP_registration_deletion_confirmation(self):
+        self.key = 'HOME_31'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
+        current_pw = get_config('ACCOUNT', 'password')
+
+        # Disconnect Wireless, connect LAN
+        try:
+            os.system(f'netsh wlan disconnect')
+            time.sleep(5)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+            self.list_steps.append('[Pass] Precondition Successfully.')
+        except:
+            self.list_steps.append('[Fail] Precondition Fail')
+            list_step_fail.append('Assertion wong.')
+
+        # Check popup appear after click Edit
+        try:
+            grand_login(driver)
+
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Click Edit
+            driver.find_element_by_css_selector(edit_cls).click()
+            time.sleep(2)
+
+            check_dialog_display = len(driver.find_elements_by_css_selector(dialog_content)) > 0
+
+            list_actual1 = [check_dialog_display]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 2. Click Edit; Check popup display.'
+                                   f'Actual: {str(list_actual1)}. '
+                                   f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Click Edit; Check popup display. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('2. Assertion wong.')
+
+        # Reserved IP OK
+        try:
+            # Click Reserved IP
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'Reserved IP':
+                    add_reserved_btn = f.find_element_by_css_selector(ele_advanced_button)
+                    break
+            if len(add_reserved_btn.find_elements_by_css_selector(add_class)) > 0:
+                # Click
+                add_reserved_btn.click()
+            time.sleep(0.2)
+            # Check confirm message
+            check_confirm_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(0.2)
+            # Click Cancel
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(0.2)
+            # Check popup confirm disappear
+            check_confirm_pop_disappear = len(driver.find_elements_by_css_selector(confirm_dialog_msg)) == 0
+
+            # Click Reserved IP
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'Reserved IP':
+                    add_reserved_btn = f.find_element_by_css_selector(ele_advanced_button)
+                    break
+            # Click reserved
+            if len(add_reserved_btn.find_elements_by_css_selector(add_class)) > 0:
+                add_reserved_btn.click()
+            time.sleep(0.2)
+            # Click OK
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Check Reserved to "-"
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'Reserved IP':
+                    check_delete_icon = f.find_element_by_css_selector(ele_icon_cls).get_attribute('class')
+                    break
+            check_delete_icon = check_delete_icon == 'icon delete'
+
+            list_actual3 = [check_confirm_msg, check_confirm_pop_disappear, check_delete_icon]
+            list_expected3 = [exp_confirm_msg_add_resserve_ip, return_true, return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 3. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
+                                   'Click add again -> Click OK -> Check add icon change to delete icon'
+                                   f'Actual: {str(list_actual3)}. '
+                                   f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
+                'Click add again -> Click OK -> Check add icon change to delete icon'
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3. Assertion wong.')
+
+        # Verify reserved IP in Network Lan
+        try:
+            # Click Cancel
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(1)
+            # Table first row
+            first_row = driver.find_element_by_css_selector(ele_table_row)
+            # Get information
+            device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+            device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
+
+            goto_menu(driver, network_tab, network_lan_tab)
+            time.sleep(1)
+
+            check_add_in_lan = False
+            reserved_block_rows = driver.find_elements_by_css_selector(rows)
+            if len(reserved_block_rows) > 0:
+                for r in reserved_block_rows:
+                    if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
+                        if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
+                            check_add_in_lan = True
+
+            list_actual4 = [check_add_in_lan]
+            list_expected4 = [return_true]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 4. Add reserved IP -> Check add successfully in Network Lan'
+                                   f'Actual: {str(list_actual4)}. '
+                                   f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Add reserved IP -> Check add successfully in Network Lan'
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        # Delete Reserved IP, Check delete in Network LAN
+        try:
+            time.sleep(3)
+            # Goto Home
+            goto_menu(driver, home_tab, 0)
+            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Click Edit
+            driver.find_element_by_css_selector(edit_cls).click()
+            time.sleep(2)
+            # Click Reserved IP
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'Reserved IP':
+                    add_reserved_btn = f.find_element_by_css_selector(ele_advanced_button)
+                    break
+            # Click
+            if len(add_reserved_btn.find_elements_by_css_selector(delete_cls)) > 0:
+                add_reserved_btn.click()
+
+            time.sleep(0.2)
+            # Check confirm message
+            check_confirm_delete_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(0.2)
+            # Click ok
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.2)
+            wait_popup_disappear(driver, dialog_loading)
+
+             # Click Cancel reserved Popup
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(1)
+            # Table first row
+            first_row = driver.find_element_by_css_selector(ele_table_row)
+            # Get information
+            device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+            device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
+
+            goto_menu(driver, network_tab, network_lan_tab)
+            time.sleep(1)
+
+            check_add_in_lan = True
+            reserved_block_rows = driver.find_elements_by_css_selector(rows)
+            if len(reserved_block_rows) > 0:
+                for r in reserved_block_rows:
+                    if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
+                        if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
+                            check_add_in_lan = False
+
+            list_actual5 = [check_confirm_delete_msg, check_add_in_lan]
+            list_expected5 = [exp_confirm_msg_delete_resserve_ip, return_true]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 5,6,7. Delete reserved IP -> Check Delete successfully in Network Lan'
+                                   f'Actual: {str(list_actual5)}. '
+                                   f'Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5,6,7. Delete reserved IP -> Check Delete successfully in Network Lan'
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            list_step_fail.append('5,6,7. Assertion wong.')
+
+        # Connect Wifi
+        try:
+            time.sleep(5)
+            new_2g_wf_name = api_change_wifi_setting(URL_2g)
+            time.sleep(3)
+            write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name, new_pw=current_pw)
+            time.sleep(3)
+
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+            time.sleep(5)
+
+            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
+            time.sleep(110)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(1)
+            self.list_steps.append('8.0 [Pass] Connect wifi Successfully.')
+        except:
+            self.list_steps.append('8.0 [Fail] Connect wifi Fail')
+            list_step_fail.append('8.0 Assertion wong.')
+
+        try:
+            # Refresh page
+            driver.refresh()
+            time.sleep(5)
+
+            goto_menu(driver, home_tab, 0)
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Click Edit
+            driver.find_element_by_css_selector(edit_cls).click()
+            time.sleep(2)
+
+            check_dialog_display = len(driver.find_elements_by_css_selector(dialog_content)) > 0
+
+            list_actual1 = [check_dialog_display]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 8.1. Click Edit; Check popup display.'
+                                   f'Actual: {str(list_actual1)}. '
+                                   f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8.1. Click Edit; Check popup display. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('8.1. Assertion wong.')
+
+        try:
+            # Click Reserved IP
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'Reserved IP':
+                    add_reserved_btn = f.find_element_by_css_selector(ele_advanced_button)
+                    break
+            # Click
+            if len(add_reserved_btn.find_elements_by_css_selector(add_class)) > 0:
+                add_reserved_btn.click()
+            time.sleep(0.2)
+            # Check confirm message
+            check_confirm_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(0.2)
+            # Click Cancel
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(0.2)
+            # Check popup confirm disappear
+            check_confirm_pop_disappear = len(driver.find_elements_by_css_selector(confirm_dialog_msg)) == 0
+
+            # Click Reserved IP
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'Reserved IP':
+                    add_reserved_btn = f.find_element_by_css_selector(ele_advanced_button)
+                    break
+            # Click reserved
+            if len(add_reserved_btn.find_elements_by_css_selector(add_class)) > 0:
+                add_reserved_btn.click()
+            time.sleep(0.2)
+            # Click OK
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Check Reserved to "-"
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'Reserved IP':
+                    check_delete_icon = f.find_element_by_css_selector(ele_icon_cls).get_attribute('class')
+                    break
+            check_delete_icon = check_delete_icon == 'icon delete'
+
+            list_actual3 = [check_confirm_msg, check_confirm_pop_disappear, check_delete_icon]
+            list_expected3 = [exp_confirm_msg_add_resserve_ip, return_true, return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 8.2. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
+                                   'Click add again -> Click OK -> Check add icon change to delete icon'
+                                   f'Actual: {str(list_actual3)}. '
+                                   f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8.2. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
+                'Click add again -> Click OK -> Check add icon change to delete icon'
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('8.2. Assertion wong.')
+
+        try:
+            # Click Cancel
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(1)
+            # Table first row
+            first_row = driver.find_element_by_css_selector(ele_table_row)
+            # Get information
+            device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+            device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
+
+            goto_menu(driver, network_tab, network_lan_tab)
+            time.sleep(1)
+
+            check_add_in_lan = False
+            reserved_block_rows = driver.find_elements_by_css_selector(rows)
+            if len(reserved_block_rows) > 0:
+                for r in reserved_block_rows:
+                    if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
+                        if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
+                            check_add_in_lan = True
+
+            list_actual4 = [check_add_in_lan]
+            list_expected4 = [return_true]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 8.3. Add reserved IP -> Check add successfully in Network Lan'
+                                   f'Actual: {str(list_actual4)}. '
+                                   f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8.3 reserved IP -> Check add successfully in Network Lan'
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('8.3. Assertion wong.')
+
+        try:
+            # Goto Home
+            goto_menu(driver, home_tab, 0)
+            time.sleep(2)
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Click Edit
+            driver.find_element_by_css_selector(edit_cls).click()
+            time.sleep(2)
+            # Click Reserved IP
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'Reserved IP':
+                    add_reserved_btn = f.find_element_by_css_selector(ele_advanced_button)
+                    break
+            # Click
+            if len(add_reserved_btn.find_elements_by_css_selector(delete_cls)) > 0:
+                add_reserved_btn.click()
+            time.sleep(0.2)
+            # Check confirm message
+            check_confirm_delete_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(0.2)
+            # Click ok
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Click Cancel reserved Popup
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(1)
+            # Table first row
+            first_row = driver.find_element_by_css_selector(ele_table_row)
+            # Get information
+            device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+            device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
+
+            goto_menu(driver, network_tab, network_lan_tab)
+            time.sleep(1)
+
+            check_add_in_lan = True
+            reserved_block_rows = driver.find_elements_by_css_selector(rows)
+            if len(reserved_block_rows) > 0:
+                for r in reserved_block_rows:
+                    if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
+                        if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
+                            check_add_in_lan = False
+
+            list_actual5 = [check_confirm_delete_msg, check_add_in_lan]
+            list_expected5 = [exp_confirm_msg_delete_resserve_ip, return_true]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 8.4. Delete reserved IP -> Check Delete successfully in Network Lan'
+                                   f'Actual: {str(list_actual5)}. '
+                                   f'Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8.4. Delete reserved IP -> Check Delete successfully in Network Lan'
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('8.4. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    # HOME 32 chua dc
+    def test_32_Mac_Filtering_registration_deletion_confirmation(self):
+        self.key = 'HOME_32'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
+        current_pw = get_config('ACCOUNT', 'password')
+
+        # Disconnect Wireless, connect LAN
+        try:
+            os.system(f'netsh wlan disconnect')
+            time.sleep(5)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+            self.list_steps.append('[Pass] Precondition Successfully.')
+        except:
+            self.list_steps.append('[Fail] Precondition Fail')
+            list_step_fail.append('Assertion wong.')
+
+        # Check popup appear after click Edit
+        try:
+            grand_login(driver)
+
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Table first row
+            first_row = driver.find_element_by_css_selector(ele_table_row)
+            # Get information
+            before_device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+
+            # Click Edit
+            driver.find_element_by_css_selector(edit_cls).click()
+            time.sleep(2)
+
+            check_dialog_display = len(driver.find_elements_by_css_selector(dialog_content)) > 0
+
+            list_actual1 = [check_dialog_display]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 2. Click Edit; Check popup display.'
+                                   f'Actual: {str(list_actual1)}. '
+                                   f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Click Edit; Check popup display. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('2. Assertion wong.')
+
+        # Mac Filtering OK
+        try:
+            # Click Mac Filtering
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+                    add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
+                    break
+            if len(add_mac_btn.find_elements_by_css_selector(add_class)) > 0:
+                # Click
+                add_mac_btn.click()
+            time.sleep(0.2)
+            # Check confirm message
+            check_confirm_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(0.2)
+            # Click Cancel
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(0.2)
+            # Check popup confirm disappear
+            check_confirm_pop_disappear = len(driver.find_elements_by_css_selector(confirm_dialog_msg)) == 0
+
+            # Click Mac Filtering
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+                    add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
+                    break
+            # Click mac
+            if len(add_mac_btn.find_elements_by_css_selector(add_class)) > 0:
+                add_mac_btn.click()
+            time.sleep(0.2)
+            # Click OK
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Switch to disconnect devices
+            driver.find_element_by_css_selector(ele_second_tab).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+
+            # Table first row
+            first_row = driver.find_element_by_css_selector(ele_table_row)
+            # Get information
+            after_device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+
+            list_actual3 = [check_confirm_msg, check_confirm_pop_disappear, before_device_mac]
+            list_expected3 = [exp_confirm_msg_add_mac_filtering, return_true, after_device_mac]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 3, 4. Check confirm add Mac Filtering msg, Click Cancel-> Check popup disappear. '
+                                   'Click add again -> Click OK -> Check MAC display in Disconnect Devices'
+                                   f'Actual: {str(list_actual3)}. '
+                                   f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3, 4. Check confirm add Mac Filtering msg, Click Cancel-> Check popup disappear. '
+                'Click add again -> Click OK -> Check MAC display in Disconnect Devices'
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3, 4. Assertion wong.')
+
+            # Connect Wifi
+        try:
+            time.sleep(5)
+            new_2g_wf_name = api_change_wifi_setting(URL_2g)
+            time.sleep(3)
+            write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name, new_pw=current_pw)
+            time.sleep(3)
+
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+            time.sleep(5)
+
+            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
+            time.sleep(110)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(1)
+            self.list_steps.append('8.0 [Pass] Connect wifi Successfully.')
+        except:
+            self.list_steps.append('8.0 [Fail] Connect wifi Fail')
+            list_step_fail.append('8.0 Assertion wong.')
+
+
+
+
+
+
+
+        # Verify Mac Filtering in Network Lan
+        try:
+            # Click Cancel
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(1)
+            # Table first row
+            first_row = driver.find_element_by_css_selector(ele_table_row)
+            # Get information
+            device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+            device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
+
+            goto_menu(driver, network_tab, network_lan_tab)
+            time.sleep(1)
+
+            check_add_in_lan = False
+            reserved_block_rows = driver.find_elements_by_css_selector(rows)
+            if len(reserved_block_rows) > 0:
+                for r in reserved_block_rows:
+                    if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
+                        if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
+                            check_add_in_lan = True
+
+            list_actual4 = [check_add_in_lan]
+            list_expected4 = [return_true]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 4. Add Mac Filtering -> Check add successfully in Network Lan'
+                                   f'Actual: {str(list_actual4)}. '
+                                   f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Add Mac Filtering -> Check add successfully in Network Lan'
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        # Delete Mac Filtering, Check delete in Network LAN
+        try:
+            time.sleep(3)
+            # Goto Home
+            goto_menu(driver, home_tab, 0)
+            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Click Edit
+            driver.find_element_by_css_selector(edit_cls).click()
+            time.sleep(2)
+            # Click Mac Filtering
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+                    add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
+                    break
+            # Click
+            if len(add_mac_btn.find_elements_by_css_selector(delete_cls)) > 0:
+                add_mac_btn.click()
+
+            time.sleep(0.2)
+            # Check confirm message
+            check_confirm_delete_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(0.2)
+            # Click ok
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.2)
+            wait_popup_disappear(driver, dialog_loading)
+
+             # Click Cancel reserved Popup
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(1)
+            # Table first row
+            first_row = driver.find_element_by_css_selector(ele_table_row)
+            # Get information
+            device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+            device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
+
+            goto_menu(driver, network_tab, network_lan_tab)
+            time.sleep(1)
+
+            check_add_in_lan = True
+            reserved_block_rows = driver.find_elements_by_css_selector(rows)
+            if len(reserved_block_rows) > 0:
+                for r in reserved_block_rows:
+                    if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
+                        if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
+                            check_add_in_lan = False
+
+            list_actual5 = [check_confirm_delete_msg, check_add_in_lan]
+            list_expected5 = [exp_confirm_msg_delete_resserve_ip, return_true]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 5,6,7. Delete Mac Filtering -> Check Delete successfully in Network Lan'
+                                   f'Actual: {str(list_actual5)}. '
+                                   f'Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5,6,7. Delete Mac Filtering -> Check Delete successfully in Network Lan'
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            list_step_fail.append('5,6,7. Assertion wong.')
+
+        # Connect Wifi
+        try:
+            time.sleep(5)
+            new_2g_wf_name = api_change_wifi_setting(URL_2g)
+            time.sleep(3)
+            write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name, new_pw=current_pw)
+            time.sleep(3)
+
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+            time.sleep(5)
+
+            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
+            time.sleep(110)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(1)
+            self.list_steps.append('8.0 [Pass] Connect wifi Successfully.')
+        except:
+            self.list_steps.append('8.0 [Fail] Connect wifi Fail')
+            list_step_fail.append('8.0 Assertion wong.')
+
+        try:
+            # Refresh page
+            driver.refresh()
+            time.sleep(5)
+
+            goto_menu(driver, home_tab, 0)
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Click Edit
+            driver.find_element_by_css_selector(edit_cls).click()
+            time.sleep(2)
+
+            check_dialog_display = len(driver.find_elements_by_css_selector(dialog_content)) > 0
+
+            list_actual1 = [check_dialog_display]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 8.1. Click Edit; Check popup display.'
+                                   f'Actual: {str(list_actual1)}. '
+                                   f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8.1. Click Edit; Check popup display. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('8.1. Assertion wong.')
+
+        try:
+            # Click Mac Filtering
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+                    add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
+                    break
+            # Click
+            if len(add_mac_btn.find_elements_by_css_selector(add_class)) > 0:
+                add_mac_btn.click()
+            time.sleep(0.2)
+            # Check confirm message
+            check_confirm_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(0.2)
+            # Click Cancel
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(0.2)
+            # Check popup confirm disappear
+            check_confirm_pop_disappear = len(driver.find_elements_by_css_selector(confirm_dialog_msg)) == 0
+
+            # Click Mac Filtering
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+                    add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
+                    break
+            # Click reserved
+            if len(add_mac_btn.find_elements_by_css_selector(add_class)) > 0:
+                add_mac_btn.click()
+            time.sleep(0.2)
+            # Click OK
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Check Reserved to "-"
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+                    check_delete_icon = f.find_element_by_css_selector(ele_icon_cls).get_attribute('class')
+                    break
+            check_delete_icon = check_delete_icon == 'icon delete'
+
+            list_actual3 = [check_confirm_msg, check_confirm_pop_disappear, check_delete_icon]
+            list_expected3 = [exp_confirm_msg_add_mac_filtering, return_true, return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 8.2. Check confirm add Mac Filtering msg, Click Cancel-> Check popup disappear. '
+                                   'Click add again -> Click OK -> Check add icon change to delete icon'
+                                   f'Actual: {str(list_actual3)}. '
+                                   f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8.2. Check confirm add Mac Filtering msg, Click Cancel-> Check popup disappear. '
+                'Click add again -> Click OK -> Check add icon change to delete icon'
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('8.2. Assertion wong.')
+
+        try:
+            # Click Cancel
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(1)
+            # Table first row
+            first_row = driver.find_element_by_css_selector(ele_table_row)
+            # Get information
+            device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+            device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
+
+            goto_menu(driver, network_tab, network_lan_tab)
+            time.sleep(1)
+
+            check_add_in_lan = False
+            reserved_block_rows = driver.find_elements_by_css_selector(rows)
+            if len(reserved_block_rows) > 0:
+                for r in reserved_block_rows:
+                    if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
+                        if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
+                            check_add_in_lan = True
+
+            list_actual4 = [check_add_in_lan]
+            list_expected4 = [return_true]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 8.3. Add Mac Filtering -> Check add successfully in Network Lan'
+                                   f'Actual: {str(list_actual4)}. '
+                                   f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8.3 Mac Filtering -> Check add successfully in Network Lan'
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('8.3. Assertion wong.')
+
+        try:
+            # Goto Home
+            goto_menu(driver, home_tab, 0)
+            time.sleep(2)
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Click Edit
+            driver.find_element_by_css_selector(edit_cls).click()
+            time.sleep(2)
+            # Click Mac Filtering
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+                    add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
+                    break
+            # Click
+            if len(add_mac_btn.find_elements_by_css_selector(delete_cls)) > 0:
+                add_mac_btn.click()
+            time.sleep(0.2)
+            # Check confirm message
+            check_confirm_delete_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(0.2)
+            # Click ok
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Click Cancel reserved Popup
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(1)
+            # Table first row
+            first_row = driver.find_element_by_css_selector(ele_table_row)
+            # Get information
+            device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+            device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
+
+            goto_menu(driver, network_tab, network_lan_tab)
+            time.sleep(1)
+
+            check_add_in_lan = True
+            reserved_block_rows = driver.find_elements_by_css_selector(rows)
+            if len(reserved_block_rows) > 0:
+                for r in reserved_block_rows:
+                    if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
+                        if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
+                            check_add_in_lan = False
+
+            list_actual5 = [check_confirm_delete_msg, check_add_in_lan]
+            list_expected5 = [exp_confirm_msg_delete_resserve_ip, return_true]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 8.4. Delete Mac Filtering -> Check Delete successfully in Network Lan'
+                                   f'Actual: {str(list_actual5)}. '
+                                   f'Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8.4. Delete Mac Filtering -> Check Delete successfully in Network Lan'
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('8.4. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_33_Confirm_Parental_Control_information_display(self):
+        self.key = 'HOME_33'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_API = get_config('URL', 'url') + '/api/v1/gateway/devices/1'
+
+        try:
+
+            os.system(f'netsh wlan disconnect')
+            time.sleep(5)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+            self.list_steps.append('[Pass] Precondition Successfully.')
+        except:
+            self.list_steps.append('[Fail] Precondition Fail')
+            list_step_fail.append('Assertion wong.')
+
+        try:
+            grand_login(driver)
+
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Click Edit
+            driver.find_element_by_css_selector(edit_cls).click()
+            time.sleep(2)
+
+            check_dialog_display = len(driver.find_elements_by_css_selector(dialog_content)) > 0
+
+            list_actual1 = [check_dialog_display]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 2. Click Edit; Check popup display.'
+                                   f'Actual: {str(list_actual1)}. '
+                                   f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Click Edit; Check popup display. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('2. Assertion wong.')
+
+        try:
+            # Check parental control
+            # Find all wrap form
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'Parental Control':
+                    parental_value = f.find_element_by_css_selector(home_wan_ls_value).text
+                    break
+
+            # Check API
+            user = get_config('ACCOUNT', 'user')
+            pw = get_config('ACCOUNT', 'password')
+            token = get_token(user, pw)
+            res = call_api(URL_API, 'GET', body='', token=token)
+            check_parental_api = res['advanced']['parentalContrl']
+
+            list_actual3 = [parental_value, check_parental_api]
+            list_expected3 = ['Off', False]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 3. Check Parental Control value in Web UI and API.'
+                                   f'Actual: {str(list_actual3)}. '
+                                   f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check Parental Control value in Web UI and API. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    # HOME 38. Confuse
+    def test_38_Check_Disconnect_Devices_information(self):
+        self.key = 'HOME_38'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_API = get_config('URL', 'url') + '/api/v1/gateway/devices/1'
+
+        try:
+
+            os.system(f'netsh wlan disconnect')
+            time.sleep(5)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+            self.list_steps.append('[Pass] Precondition Successfully.')
+        except:
+            self.list_steps.append('[Fail] Precondition Fail')
+            list_step_fail.append('Assertion wong.')
+
+        try:
+            grand_login(driver)
+
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Click Edit
+            driver.find_element_by_css_selector(edit_cls).click()
+            time.sleep(2)
+
+            check_dialog_display = len(driver.find_elements_by_css_selector(dialog_content)) > 0
+
+            list_actual1 = [check_dialog_display]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 2. Click Edit; Check popup display.'
+                                   f'Actual: {str(list_actual1)}. '
+                                   f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Click Edit; Check popup display. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('2. Assertion wong.')
+
+        try:
+            # Check parental control
+            # Find all wrap form
+            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+            for f in all_wrap_form:
+                if f.find_element_by_css_selector(home_wan_ls_label).text == 'Parental Control':
+                    parental_value = f.find_element_by_css_selector(home_wan_ls_value).text
+                    break
+
+            # Check API
+            user = get_config('ACCOUNT', 'user')
+            pw = get_config('ACCOUNT', 'password')
+            token = get_token(user, pw)
+            res = call_api(URL_API, 'GET', body='', token=token)
+            check_parental_api = res['advanced']['parentalContrl']
+
+            list_actual3 = [parental_value, check_parental_api]
+            list_expected3 = ['Off', False]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 3. Check Parental Control value in Web UI and API.'
+                                   f'Actual: {str(list_actual3)}. '
+                                   f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check Parental Control value in Web UI and API. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
 
 if __name__ == '__main__':
     unittest.main()
