@@ -65,7 +65,9 @@ def write_ggsheet(key, list_steps, func_name, duration, time_stamp=0):
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
     creds = ServiceAccountCredentials.from_json_keyfile_name(gg_credential_path, scope)
     client = gspread.authorize(creds)
-    sheet = client.open("[DOB] Report Automation").get_worksheet(1)
+    # sheet = client.open("[DOB] Report Automation").get_worksheet(1)
+    get_gg_sheet_name = get_config('REPORT', 'sheet_name')
+    sheet = client.open("[DOB] Report Automation").worksheet(get_gg_sheet_name)
     next_row = next_available_row(sheet)
     sheet.update_acell("A{}".format(next_row), key)
     sheet.update_acell("B{}".format(next_row), func_name)

@@ -4,14 +4,14 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import datetime
 from Helper.t10x.config.read_config import *
-from Helper.t10x.common import get_config
+from Helper.t10x.common import get_config, save_config
 from Helper.t10x.ls_path import *
 
 url = get_config('URL', 'url')
 stage = get_config('GENERAL', 'stage')
 version = get_config('GENERAL', 'version')
 a = str(datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'))
-sheet_name = stage + '_' + version + '_' +a
+sheet_name = stage + '_' + version + '_' + a
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 creds = ServiceAccountCredentials.from_json_keyfile_name(gg_credential_path, scope)
 client = gspread.authorize(creds)
@@ -34,5 +34,6 @@ second = sheet.update_cell(55, 5, sheet.cell(56, 5).value)
 first = sheet.update_cell(56, 5, sheet.cell(57, 5).value)
 now = sheet.update_cell(57, 5, sheet_name)
 
-# sheet0 = client.open("[VPEA] Report Automation").get_worksheet(0)
-# sheet_name = sheet0.update_cell(3, 8, sheet_name)
+
+# Save google sheet name
+save_config(config_path, 'REPORT', 'sheet_name', sheet_name)

@@ -69,7 +69,7 @@ class MAIN(unittest.TestCase):
 
             url_config = get_config('URL', 'url')
             time.sleep(1)
-            check_url = True if url_config is not '' else False
+            check_url = True if url_config != '' else False
             # Check url, account info is not None
             list_actual1 = [check_url]
             list_expected1 = [return_true]
