@@ -238,7 +238,7 @@ class ADVANCED(unittest.TestCase):
             list_step_fail.append('8. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_26_Confirm_WOL_Deletion(self):
         self.key = 'ADVANCED_26'
         driver = self.driver
@@ -250,12 +250,7 @@ class ADVANCED(unittest.TestCase):
         MAC_VALUE = ['12', '34', '56', '78', 'AB', 'CD']
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            # Login
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
 
             # Goto Advanced > WoL
             goto_menu(driver, advanced_tab, advanced_ddnswol_tab)
@@ -292,10 +287,11 @@ class ADVANCED(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Add a Mac address: Check add successfully: ' + option_value)
+                f'[Pass] 1,2,3. Add a Mac address: Check add successfully: {option_value}'
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3.  Add a Mac address: Check add successfully:  ' + option_value +
+                f'[Fail] 1,2,3.  Add a Mac address: Check add successfully:  {option_value}'
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             list_step_fail.append(
                 '1,2,3. Assertion wong.')
@@ -314,21 +310,22 @@ class ADVANCED(unittest.TestCase):
 
             check_delete = option_value not in ls_mac
 
-            list_actual = [check_delete]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+            list_actual2 = [check_delete]
+            list_expected2 = [return_true]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Delete row just added in previous step: ' + option_value)
+            self.list_steps.append(f'[Pass] 4. Delete row just added in previous step: {option_value}'
+                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Delete row just added in previous step: ' + option_value +
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 4. Delete row just added in previous step: {option_value}'
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_29_Check_message_for_exception_case_Port_Forwarding(self):
         self.key = 'ADVANCED_29'
         driver = self.driver
@@ -342,11 +339,7 @@ class ADVANCED(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Login
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
 
             # Goto Advanced > WoL
             goto_menu(driver, advanced_tab, advanced_portforwarding_tab)
@@ -372,16 +365,18 @@ class ADVANCED(unittest.TestCase):
             error_msg = driver.find_element_by_css_selector(custom_error_cls).text
             # click Cancel
             driver.find_element_by_css_selector(btn_cancel).click()
-            list_actual = [error_msg]
-            list_expected = [exp_destination_same_lan_ip_error_msg]
-            check = assert_list(list_actual, list_expected)
+
+            list_actual1 = [error_msg]
+            list_expected1 = [exp_destination_same_lan_ip_error_msg]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1. Enable DMZ, put Destination same as LAN ip address: Check error message.')
+                '[Pass] 1. Enable DMZ, put Destination same as LAN ip address: Check error message.'
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1. Enable DMZ, put Destination same as LAN ip address: Check error message. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append(
                 '1. Assertion wong.')
 
@@ -423,15 +418,16 @@ class ADVANCED(unittest.TestCase):
             port_forwarding_block.find_element_by_css_selector(btn_save).click()
             time.sleep(0.5)
 
-            list_actual = [warning_msg]
-            list_expected = [exp_warning_local_port_same_external]
-            check = assert_list(list_actual, list_expected)
+            list_actual2 = [warning_msg]
+            list_expected2 = [exp_warning_local_port_same_external]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Put External ports different Local ports: Check Warning message')
+            self.list_steps.append('[Pass] 2. Put External ports different Local ports: Check Warning message'
+                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
                 f'[Fail] 2. Put External ports different Local ports: Check Warning message. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             list_step_fail.append('2. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
@@ -464,16 +460,17 @@ class ADVANCED(unittest.TestCase):
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.5)
 
-            list_actual = [warning_msg]
-            list_expected = [exp_add_local_external_port_exist]
-            check = assert_list(list_actual, list_expected)
+            list_actual3 = [warning_msg]
+            list_expected3 = [exp_add_local_external_port_exist]
+            check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Put Local/External ports same as previous rule: Check Warning message')
+            self.list_steps.append('[Pass] 3. Put Local/External ports same as previous rule: Check Warning message'
+                                   f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Put Local/External ports same as previous rule: Check Warning message. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('3. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
@@ -629,7 +626,7 @@ class ADVANCED(unittest.TestCase):
     #         self.list_steps.append('[END TC]')
     #         list_step_fail.append('3. Assertion wong.')
     #     self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_31_Confirm_Port_Forwarding_Delete(self):
         self.key = 'ADVANCED_31'
         driver = self.driver
@@ -649,11 +646,8 @@ class ADVANCED(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Login
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
+
 
             # Goto Advanced > WoL
             goto_menu(driver, advanced_tab, advanced_portforwarding_tab)
@@ -726,7 +720,8 @@ class ADVANCED(unittest.TestCase):
             list_expected = [after_delete]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Delete rule successfully.')
+            self.list_steps.append('[Pass] 1. Delete rule successfully.'
+                                   f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -737,7 +732,7 @@ class ADVANCED(unittest.TestCase):
                 '1. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_35_Edit_Confirm_Delete_Port_Triggering(self):
         self.key = 'ADVANCED_35'
         driver = self.driver
@@ -757,11 +752,7 @@ class ADVANCED(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Login
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
 
             # Goto Advanced > port triggering
             goto_menu(driver, advanced_tab, advanced_porttriggering_tab)
@@ -852,7 +843,8 @@ class ADVANCED(unittest.TestCase):
             list_expected = [START_END_2]*2
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Delete rule successfully.')
+            self.list_steps.append('[Pass] 1. Delete rule successfully.'
+                                   f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -862,7 +854,7 @@ class ADVANCED(unittest.TestCase):
             list_step_fail.append('1. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_36_Confirm_Delete_Port_Triggering(self):
         self.key = 'ADVANCED_36'
         driver = self.driver
@@ -882,11 +874,7 @@ class ADVANCED(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Login
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
 
             # Goto Advanced > port triggering
             goto_menu(driver, advanced_tab, advanced_porttriggering_tab)
@@ -958,7 +946,8 @@ class ADVANCED(unittest.TestCase):
             list_expected = [after_delete]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Delete rule successfully.')
+            self.list_steps.append('[Pass] 1. Delete rule successfully.'
+                                   f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -969,7 +958,7 @@ class ADVANCED(unittest.TestCase):
                 '1. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_47_Check_Ping_test_operation(self):
         self.key = 'ADVANCED_47'
         driver = self.driver
@@ -983,11 +972,8 @@ class ADVANCED(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Login
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
+
             # Goto Advanced > port triggering
             goto_menu(driver, advanced_tab, advanced_diagnostics_tab)
             wait_popup_disappear(driver, dialog_loading)
@@ -1026,15 +1012,16 @@ class ADVANCED(unittest.TestCase):
             result += f"--- {PING_TARGET} ping statistics ---\n\n"
             result += f"{ping_count} packets transmitted, {ping_count} received, 0% packet loss, "
 
-            list_actual = [assert_result]
-            list_expected = [result]
-            check = assert_list(list_actual, list_expected)
+            list_actual1 = [assert_result]
+            list_expected1 = [result]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Test result format of Ping test.')
+            self.list_steps.append('[Pass] 1. Test result format of Ping test.'
+                                   f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1. Test result format of Ping test. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append('1. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1044,21 +1031,22 @@ class ADVANCED(unittest.TestCase):
             time.sleep(0.5)
             clear_result = driver.find_element_by_css_selector(diagnostic_result).get_attribute('value')
 
-            list_actual = [clear_result]
-            list_expected = [exp_none_text]
-            check = assert_list(list_actual, list_expected)
+            list_actual2 = [clear_result]
+            list_expected2 = [exp_none_text]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Clear button: Check delete successfully.')
+            self.list_steps.append('[Pass] 2. Clear button: Check delete successfully.'
+                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 2. Clear button: Check delete successfully. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('2. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_48_Check_Traceroute_operation(self):
         self.key = 'ADVANCED_48'
         driver = self.driver
@@ -1072,11 +1060,8 @@ class ADVANCED(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Login
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
+
             # Goto Advanced > port triggering
             goto_menu(driver, advanced_tab, advanced_diagnostics_tab)
             wait_popup_disappear(driver, dialog_loading)
@@ -1108,15 +1093,16 @@ class ADVANCED(unittest.TestCase):
             result = f"traceroute to {PING_TARGET} ({PING_TARGET}), {trace_max} hops max, 38 byte packets\n\n"
             result += f" 1  dearmyrouter.net "
 
-            list_actual = [assert_result]
-            list_expected = [result]
-            check = assert_list(list_actual, list_expected)
+            list_actual2 = [assert_result]
+            list_expected2 = [result]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Test result format of Traceroute.')
+            self.list_steps.append('[Pass] 1. Test result format of Traceroute.'
+                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1. Test result format of Traceroute. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             list_step_fail.append('1. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1126,16 +1112,17 @@ class ADVANCED(unittest.TestCase):
             time.sleep(0.5)
             clear_result = driver.find_element_by_css_selector(diagnostic_result).get_attribute('value')
 
-            list_actual = [clear_result]
-            list_expected = [exp_none_text]
-            check = assert_list(list_actual, list_expected)
+            list_actual2 = [clear_result]
+            list_expected2 = [exp_none_text]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Clear button: Check delete successfully.')
+            self.list_steps.append('[Pass] 2. Clear button: Check delete successfully.'
+                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 2. Clear button: Check delete successfully. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('2. Assertion wong.')
 
