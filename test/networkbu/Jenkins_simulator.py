@@ -1,5 +1,5 @@
-from tkinter import Tk, Frame,BOTH,Label,filedialog,constants, messagebox
-from tkinter import*
+from tkinter import Tk, Frame, BOTH, Label, filedialog, constants, messagebox
+from tkinter import *
 import configparser, os, datetime
 import webbrowser
 from PIL import ImageTk, Image
@@ -13,6 +13,7 @@ from Test.T10x.MediaShare import *
 from Test.T10x.Non_Function import *
 import threading
 import signal
+
 try:
     import keyboard
 except ModuleNotFoundError:
@@ -21,7 +22,8 @@ except ModuleNotFoundError:
 config_path = './Config/t10x/config.txt'
 testcase_data_path = './Image/testcase_data.txt'
 icon_path = './Image/sun.ico'
-VERSION_ENVIRONMENT = 'v0.1.2'
+VERSION_ENVIRONMENT = 'v0.1.3'
+
 
 def get_config(config_path, section, option):
     if not os.path.exists(config_path):
@@ -55,11 +57,12 @@ def callback(url):
 
 def load_database_tc(module_name):
     main_cls = module_name
-    tc_name = [i[0] for i in [(name, t) for name, t in main_cls.__dict__.items() if type(t).__name__ == 'function' and not name.startswith('__')]]
+    tc_name = [i[0] for i in [(name, t) for name, t in main_cls.__dict__.items() if
+                              type(t).__name__ == 'function' and not name.startswith('__')]]
     test_class1_name = main_cls.__name__
     for i in range(len(tc_name)):
         if tc_name[i].startswith('test_'):
-            save_config(testcase_data_path, test_class1_name, test_class1_name+str(i), tc_name[i])
+            save_config(testcase_data_path, test_class1_name, test_class1_name + str(i), tc_name[i])
 
 
 convert_module = {
@@ -72,9 +75,8 @@ convert_module = {
     'SECURITY': 'Security.py',
     'ADVANCED': 'Advanced.py',
     'NON_FUNCTION': 'Non_Function.py',
-    'ALL': ['Main.py', 'Home.py', 'Wireless.py', 'Network.py', 'MediaShare.py', 'Security.py', 'Advanced.py',]
+    'ALL': ['Main.py', 'Home.py', 'Wireless.py', 'Network.py', 'MediaShare.py', 'Security.py', 'Advanced.py', ]
 }
-
 
 root = Tk()
 root.title(f"Canh______Ciel______{VERSION_ENVIRONMENT}")
@@ -106,7 +108,7 @@ cusVersion2.set(get_config(config_path, 'GENERAL', 'version'))
 version2.place(x=140, y=90, height=25, width=330)
 
 cusNumber3 = StringVar()
-number3 = Entry(root,textvariable=cusNumber3)
+number3 = Entry(root, textvariable=cusNumber3)
 number3.pack()
 cusNumber3.set(get_config(config_path, 'GENERAL', 'serial_number'))
 number3.place(x=140, y=140, height=25, width=330)
@@ -131,15 +133,15 @@ Module5 = BooleanVar()
 Module6 = BooleanVar()
 Module7 = BooleanVar()
 Module8 = BooleanVar()
-check0 = Checkbutton(root, text=moduleChoices[0], variable=Module0).place(x=140+0*100, y=270)
-check1 = Checkbutton(root, text=moduleChoices[1], variable=Module1).place(x=140+1*100, y=270)
-check2 = Checkbutton(root, text=moduleChoices[2], variable=Module2).place(x=140+2*100, y=270)
-check3 = Checkbutton(root, text=moduleChoices[3], variable=Module3).place(x=140+0*100, y=270+30)
-check4 = Checkbutton(root, text=moduleChoices[4], variable=Module4).place(x=140+1*100, y=270+30)
-check5 = Checkbutton(root, text=moduleChoices[5], variable=Module5).place(x=140+2*100, y=270+30)
-check6 = Checkbutton(root, text=moduleChoices[6], variable=Module6).place(x=140+0*100, y=270+60)
-check7 = Checkbutton(root, text=moduleChoices[7], variable=Module7).place(x=140+1*100, y=270+60)
-check8 = Checkbutton(root, text=moduleChoices[8], variable=Module8).place(x=140+2*100, y=270+60)
+check0 = Checkbutton(root, text=moduleChoices[0], variable=Module0).place(x=140 + 0 * 100, y=270)
+check1 = Checkbutton(root, text=moduleChoices[1], variable=Module1).place(x=140 + 1 * 100, y=270)
+check2 = Checkbutton(root, text=moduleChoices[2], variable=Module2).place(x=140 + 2 * 100, y=270)
+check3 = Checkbutton(root, text=moduleChoices[3], variable=Module3).place(x=140 + 0 * 100, y=270 + 30)
+check4 = Checkbutton(root, text=moduleChoices[4], variable=Module4).place(x=140 + 1 * 100, y=270 + 30)
+check5 = Checkbutton(root, text=moduleChoices[5], variable=Module5).place(x=140 + 2 * 100, y=270 + 30)
+check6 = Checkbutton(root, text=moduleChoices[6], variable=Module6).place(x=140 + 0 * 100, y=270 + 60)
+check7 = Checkbutton(root, text=moduleChoices[7], variable=Module7).place(x=140 + 1 * 100, y=270 + 60)
+check8 = Checkbutton(root, text=moduleChoices[8], variable=Module8).place(x=140 + 2 * 100, y=270 + 60)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 notiLabel = Label(root, text="")
 notiLabel.place(x=170, y=400)
@@ -155,28 +157,27 @@ lstc_box.place(x=140, y=440, height=25, width=330)
 # ~~~~~~~~~~~~~~~
 loopLabel = Label(root, text="Loop times:")
 loopLabel.pack()
-loopLabel.place(x=30, y=470)
+loopLabel.place(x=30, y=480)
 
 loopBox = Spinbox(root, from_=1, to_=10)
 loopBox.pack()
-loopBox.place(x=140, y=470, width=50)
+loopBox.place(x=140, y=480, width=50)
+
+
 def _advanceBtn():
+    global now_x, now_y
+    now_x = root.winfo_x()
+    now_y = root.winfo_y()
     if root.winfo_height() == 440:
-        root.geometry("520x560+500+100")
+        root.geometry(f"520x560+{str(now_x)}+{str(now_y)}")
     else:
-        root.geometry("520x440+500+100")
+        root.geometry(f"520x440+{str(now_x)}+{str(now_y)}")
 
 
-    # ~~~~~~~~~~~~~~~
-    startLabel = Label(root, text="Start time:")
-    startLabel.pack()
-    startLabel.place(x=30, y=500)
+    global MakeReport
+    MakeReport = BooleanVar()
+    report_val = Checkbutton(root, text='Report to new sheet', variable=MakeReport).place(x=80, y=520)
 
-    startLabelV = IntVar()
-    start = Radiobutton(root, text='Now', variable=startLabelV, state=DISABLED)
-    start.place(x=140, y=500)
-    start.select()
-    # ~~~~~~~~~~~~~~~~
     progressLabel = StringVar()
     progress = Label(root, text='Progress:')
     progress.place(x=250, y=520)
@@ -196,49 +197,17 @@ def detect_run_testcase():
 
     modules_name = get_config(config_path, 'GENERAL', 'module').split(';')
     if len(modules_name) >= 1 and modules_name[0] != '':
-        print('cd Test/T10x && python Before_test.py')
-        # os.system('TIMEOUT /T 20')
-        os.system('cd Test/T10x && python Before_test.py')
+
+        if MakeReport.get():
+            print('cd Test/T10x && python Before_test.py')
+            # os.system('TIMEOUT /T 20')
+            os.system('cd Test/T10x && python Before_test.py')
+
+
         config_data = configparser.RawConfigParser()
         config_data.read(testcase_data_path)
 
         for module in modules_name:
-            # if module == 'MAIN':
-            #     os.system('TIMEOUT 5')
-            #     # os.system('cd Test/T10x && python Main.py')
-            #     print('cd Test/T10x && python Main.py')
-            # if module == 'HOME':
-            #     # os.system('cd Test/T10x && python Home.py')
-            #     print('cd Test/T10x && python Home.py')
-            # if module == 'WIRELESS':
-            #     # os.system('cd Test/T10x && python Wireless.py')
-            #     print('cd Test/T10x && python Wireless.py')
-            # if module == 'NETWORK':
-            #     # os.system('cd Test/T10x && python Network.py')
-            #     print('cd Test/T10x && python Network.py')
-            # if module == 'MEDIASHARE':
-            #     # os.system('cd Test/T10x && python MediaShare.py')
-            #     print('cd Test/T10x && python MediaShare.py')
-            # if module == 'SECURITY':
-            #     # os.system('cd Test/T10x && python Security.py')
-            #     print('cd Test/T10x && python Security.py')
-            # if module == 'ADVANCED':
-            #     # os.system('cd Test/T10x && python Security.py')
-            #     print('cd Test/T10x && python Security.py')
-            # if module == 'ALL':
-            #     # os.system('cd Test/T10x && python Home.py')
-            #     # os.system('cd Test/T10x && python Wireless.py')
-            #     # os.system('cd Test/T10x && python Network.py')
-            #     # os.system('cd Test/T10x && python MediaShare.py')
-            #     # os.system('cd Test/T10x && python Security.py')
-            #     # os.system('cd Test/T10x && python Security.py')
-            #     print('cd Test/T10x && python Home.py')
-            #     print('cd Test/T10x && python Wireless.py')
-            #     print('cd Test/T10x && python Network.py')
-            #     print('cd Test/T10x && python MediaShare.py')
-            #     print('cd Test/T10x && python Security.py')
-            #     print('cd Test/T10x && python Security.py')
-
             if module.startswith('test_'):
                 for s in config_data.sections():
                     for i in config_data.items(s):
@@ -256,7 +225,6 @@ def detect_run_testcase():
                     os.system(f'cd Test/T10x &&  python {convert_module[module]}')
 
 
-
         print('cd Test/T10x && python After_test.py')
         os.system('cd Test/T10x && python After_test.py')
     else:
@@ -271,9 +239,8 @@ def _runBtn():
 
     list_choiced = find_chosen_module()
 
-
-    if 'ALL' in list_choiced or moduleChoices==list_choiced:
-        list_choiced=['ALL']
+    if 'ALL' in list_choiced or moduleChoices == list_choiced:
+        list_choiced = ['ALL']
     # global list_choiced_inform
     list_choiced_inform = ';'.join(list_choiced)
 
@@ -281,7 +248,7 @@ def _runBtn():
         save_config(config_path, 'GENERAL', 'module', lstc_box.get())
     else:
         save_config(config_path, 'GENERAL', 'module', list_choiced_inform)
-    
+
     if warning():
         notiLabel.configure(text=f'__- Ready to execute module -__', anchor="center")
         linkLabel.configure(text='See progress of report here', fg='blue', anchor="center")
@@ -289,14 +256,10 @@ def _runBtn():
         linkLabel.place(x=170, y=420)
         linkLabel.bind("<Button-1>", lambda e: callback("https://sum.vn/Rx5Zy"))
 
-
         for i in range(int(loopBox.get())):
-            print(f'\n**************\n_- Run times {str(i+1)} -_\n')
-
+            print(f'\n**************\n_- Run times {str(i + 1)} -_\n')
 
             detect_run_testcase()
-
-
 
         progress = Label(root, text=f'DONE at {str(datetime.now())}')
         progress.place(x=318, y=520)
@@ -427,14 +390,18 @@ def _manualBtn():
     config.read(testcase_data_path)
 
     window = Toplevel(root)
-    window.geometry("985x550+300+300")
+    window.geometry(f"985x550+{str(now_x)}+{now_y}")
     window.resizable(0, 0)
     window.title("Ciel pick test case")
 
+
+
+
+
     frame = Frame(window, relief=RAISED, borderwidth=12)
     frame.pack(fill=BOTH, expand=True)
-    # window.pack(fill=BOTH, expand=True)
 
+    # window.pack(fill=BOTH, expand=True)
 
     def _addColor():
         selected = listBox.curselection()
@@ -474,7 +441,6 @@ def _manualBtn():
             ls_tc.set(individual_tc_string)
             window.destroy()
             manualButton.configure(state='normal')
-
 
     def _cancelBtn():
         window.destroy()
@@ -527,6 +493,13 @@ def _manualBtn():
     OKBtn = Button(window, text="Save", width=15, command=_okBtn)
     OKBtn.pack(side=RIGHT, anchor='center', padx=5, pady=5)
 
+
+    def on_closing():
+        # Destroy window and enable Manual button
+        manualButton.configure(state='normal')
+        window.destroy()
+    window.protocol("WM_DELETE_WINDOW", on_closing)
+
     window.mainloop()
 
 
@@ -539,6 +512,7 @@ def _abortBtn():
         root.destroy()
         os.system('_run_app.bat')
 
+
 def run():
     threadRun = threading.Thread(target=_runBtn)
     threadRun.start()
@@ -548,10 +522,6 @@ def abort():
     threadAbort = threading.Thread(target=_abortBtn)
     threadAbort.start()
     # exit_Btn()
-
-
-
-
 
 
 exitButton = Button(root, text="Exit", command=exit_Btn, height=1, width=10, borderwidth=4)
@@ -564,6 +534,65 @@ manualButton = Button(root, text="Manual", command=_manualBtn, height=1, width=1
 manualButton.place(x=250, y=470)
 abortButton = Button(root, text="Abort", command=abort, height=1, width=10, borderwidth=4)
 abortButton.place(x=360, y=470)
+
+
+# =======================================================================================
+def show_guideline():
+    guide_text = '''
+    This is the User manual of HUMAX T10X AUTOMATION desktop application.
+    After each official release ver will be plus +1
+    '''
+    messagebox.showinfo(title='Application Manual', message=guide_text)
+
+
+def guide_ver_0_1_1():
+    guide_text = '''
+        Release date: 01/01/2020.
+        Content:
+            + Build first class of Application
+            + Link testcases created to app store file
+            + Create basic functions
+        '''
+    messagebox.showinfo(title='Release ver 0.1.1', message=guide_text)
+
+
+def guide_ver_0_1_2():
+    guide_text = '''
+        Release date: 01/02/2020.
+        Content:
+            + Update functions of Application
+            + Add more testcases
+        '''
+    messagebox.showinfo(title='Release ver 0.1.2', message=guide_text)
+
+
+def guide_ver_0_1_3():
+    guide_text = '''
+        Release date: 03/03/2020.
+        Content:
+            + Update Menu of Application.
+            + Fixed bugs move app.
+            + Add feature report to new sheet or not.
+            + Improve code of test cases.
+            + Prepare show demo in 13/03/2020.
+        '''
+    messagebox.showinfo(title='Release ver 0.1.3', message=guide_text)
+
+
+menu = Menu(root)
+root.config(menu=menu)
+
+about = Menu(menu)
+about.add_command(label='Guideline', command=show_guideline)
+menu.add_cascade(label='About', menu=about)
+
+release = Menu(menu)
+release.add_command(label='v0.1.1', command=guide_ver_0_1_1)
+release.add_command(label='v0.1.2', command=guide_ver_0_1_2)
+release.add_command(label='v0.1.3', command=guide_ver_0_1_3)
+menu.add_cascade(label='Release', menu=release)
+
+# =======================================================================================
 
 root.geometry("520x440+500+100")
 root.resizable(0, 0)
