@@ -11,6 +11,8 @@ from selenium import webdriver
 
 class HOME(unittest.TestCase):
     def setUp(self):
+        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+        time.sleep(15)
         try:
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()

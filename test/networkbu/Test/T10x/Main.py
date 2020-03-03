@@ -19,6 +19,8 @@ from selenium.webdriver.support.select import Select
 class MAIN(unittest.TestCase):
     def setUp(self):
         try:
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
             if '_Firefox' in self._testMethodName:
@@ -374,8 +376,7 @@ class MAIN(unittest.TestCase):
     def test_06_Verify_the_Web_UI_connection_through_domain_address(self):
         self.key = 'MAIN_06'
         driver = self.driver
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(15)
+
 
         self.def_name = get_func_name()
         list_step_fail = []
@@ -423,16 +424,18 @@ class MAIN(unittest.TestCase):
             command = f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"'
             check_connect_wifi = subprocess.check_output(command)
             check_connect_wifi = check_connect_wifi.decode('ascii').strip()
-            list_actual = [check_connect_wifi]
-            list_expected = [connect_wifi_msg]
-            check = assert_list(list_actual, list_expected)
+
+            list_actual3 = [check_connect_wifi]
+            list_expected3 = [connect_wifi_msg]
+            check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 '[Pass] 3. Check Msg connect wifi successfully\n')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check Msg connect wifi successfully. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-            list_step_fail.append('4. Assertion wong.')
+                f'[Fail] 3. Check Msg connect wifi successfully. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~ Check login again ~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
@@ -445,13 +448,13 @@ class MAIN(unittest.TestCase):
             check_lg_captcha_img = len(driver.find_elements_by_css_selector(lg_captcha_src)) != 0
             check_lg_captcha_field = len(driver.find_elements_by_css_selector(lg_captcha_box)) != 0
 
-            list_actual = [check_lg_page_displayed,
+            list_actual4 = [check_lg_page_displayed,
                            check_lg_id_field,
                            check_lg_password_field,
                            check_lg_captcha_img,
                            check_lg_captcha_field]
-            list_expected = [return_true]*5
-            check = assert_list(list_actual, list_expected)
+            list_expected4 = [return_true]*5
+            check = assert_list(list_actual4, list_expected4)
             os.system('netsh wlan disconnect')
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -460,7 +463,7 @@ class MAIN(unittest.TestCase):
         except:
             self.list_steps.append(
                 f'[Fail] 4. Check login Page displayed, id, password, captcha img, captcha input field. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
@@ -1731,7 +1734,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('2. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_21_Verify_the_Language_operation_on_Winzard_page(self):
         self.key = 'MAIN_21'
         driver = self.driver
@@ -1744,14 +1747,14 @@ class MAIN(unittest.TestCase):
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
         # Wait 5 mins for factory
-        time.sleep(120)
+        time.sleep(150)
         wait_DUT_activated(url_login)
         wait_ping('192.168.1.1')
 
         filename_2 = 'account.txt'
         commmand_2 = 'capitest get Device.Users.User.2. leaf'
         run_cmd(commmand_2, filename_2)
-        time.sleep(3)
+        time.sleep(4)
         # Get account information from web server and write to config.txt
 
         user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
@@ -1811,20 +1814,24 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('1. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK F
     def test_22_Change_Password_Page_Confirmation(self):
         self.key = 'MAIN_22'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
+        URL_LOGIN = get_config('URL', 'url')
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             login(driver)
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(2)
             check_welcome = len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0
+            if not check_welcome:
+                driver.get(URL_LOGIN + '/welcome')
+                time.sleep(1)
+                check_welcome = len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0
 
             list_actual1 = [check_welcome]
             list_expected1 = [return_true]
@@ -4042,6 +4049,7 @@ class MAIN(unittest.TestCase):
             # Click
             popup.find_element_by_css_selector(arrow_down_cls).click()
             time.sleep(2)
+            from pywinauto import Application
             app = Application().connect(title_re="Open")
             app.Open.Edit.SetText(backup_path)
             time.sleep(2)

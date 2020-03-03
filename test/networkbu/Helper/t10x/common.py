@@ -13,7 +13,6 @@ import gspread
 import configparser
 import pyodbc
 from selenium import webdriver
-from pywinauto.application import Application
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from datetime import datetime
@@ -39,9 +38,6 @@ def save_config(config_path, section, option, value):
         config.write(config_file)
 
 
-# save_config(config_path, 'PATH', 'crt_common_path', crt_common)
-# save_config(config_path, 'PATH', 'crt_run_cmd_path', crt_run_command)
-
 
 def get_config(section, option):
     if not os.path.exists(config_path):
@@ -55,6 +51,9 @@ def get_config(section, option):
         return config.get(str(section).upper(), option)
     else:
         return
+
+serial_num = get_config('GENERAL', 'serial_number')
+save_config(config_path, 'ACCOUNT', 'default_pw', serial_num)
 
 
 def next_available_row(sheet):
@@ -258,7 +257,7 @@ def login(driver):
         get_result_command_from_server(url_ip=url_login, filename=filename_2)
 
         user_request = get_config('ACCOUNT', 'user')
-        pass_word = get_config('ACCOUNT', 'password')
+        pass_word = get_config('ACCOUNT', 'default_pw')
 
         time.sleep(1)
         driver.get(url_login)
@@ -388,6 +387,19 @@ def call_api_login(user, pw):
         "password": base64encode(user, pw)
     }
     res = requests.post(url=url_login, json=data)
+
+    if res.status_code != 200:
+
+        user = get_config('ACCOUNT', 'user')
+        pw = get_config('ACCOUNT', 'default_pw')
+        data = {
+            "userName": user,
+            "password": base64encode(user, pw)
+        }
+        res = requests.post(url=url_login, json=data)
+        if res.status_code == 200:
+            save_config(config_path, 'ACCOUNT', 'password', pw)
+
     json_data = json.loads(res.text)
     return json_data
 

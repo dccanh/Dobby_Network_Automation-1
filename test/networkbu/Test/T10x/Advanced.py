@@ -27,7 +27,7 @@ class ADVANCED(unittest.TestCase):
         duration = str((end_time - self.start_time))
         write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
         self.driver.quit()
-
+    # OK F
     def test_08_Local_Access_and_External_Access_confirmation(self):
         self.key = 'ADVANCED_08'
         driver = self.driver
@@ -35,16 +35,27 @@ class ADVANCED(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        URL_LOGIN = get_config('URL', 'url')
+        URL_LOGIN = url_login = get_config('URL', 'url')
         URL_LOGIN_HTTPS = URL_LOGIN.replace('http', 'https')
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(150)
+        wait_DUT_activated(url_login)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(4)
+        # Get account information from web server and write to config.txt
+
+        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Login
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(3)
             wan_ip = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
             # Goto Advanced > Network
@@ -69,16 +80,17 @@ class ADVANCED(unittest.TestCase):
             exp_local = 'Local Access'+URL_LOGIN+','
             exp_remote = 'Remote Access-'
 
-            list_actual = [local_val, remote_val]
-            list_expected = [exp_local, exp_remote]
-            check = assert_list(list_actual, list_expected)
+            list_actual1 = [local_val, remote_val]
+            list_expected1 = [exp_local, exp_remote]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Disabled Remote and HTTPS Access: Check extra text')
+                f'[Pass] 1,2,3. Disabled Remote and HTTPS Access: Check extra text' 
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1,2,3. Disabled Remote and HTTPS Access: Check extra text. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append(
                 '1,2,3. Assertion wong.')
 
@@ -96,15 +108,16 @@ class ADVANCED(unittest.TestCase):
             exp_local = 'Local Access'+URL_LOGIN+', '+URL_LOGIN_HTTPS+':'+http_port
             exp_remote = 'Remote Access-'
 
-            list_actual = [local_val, remote_val]
-            list_expected = [exp_local, exp_remote]
-            check = assert_list(list_actual, list_expected)
+            list_actual2 = [local_val, remote_val]
+            list_expected2 = [exp_local, exp_remote]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Enable HTTPS Access: Check extra text')
+            self.list_steps.append('[Pass] 4. Enable HTTPS Access: Check extra text'
+                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
                 f'[Fail] 4. Enable HTTPS Access: Check extra text. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             list_step_fail.append('4. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
@@ -123,16 +136,17 @@ class ADVANCED(unittest.TestCase):
             exp_local = 'Local Access' + URL_LOGIN + ','
             exp_remote = 'Remote Access-'
 
-            list_actual = [local_val, remote_val]
-            list_expected = [exp_local, exp_remote]
-            check = assert_list(list_actual, list_expected)
+            list_actual3 = [local_val, remote_val]
+            list_expected3 = [exp_local, exp_remote]
+            check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 5. Disabled Remote and HTTPS Access: Check extra text')
+                '[Pass] 5. Disabled Remote and HTTPS Access: Check extra text'
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
         except:
             self.list_steps.append(
                 f'[Fail] 5. Disabled Remote and HTTPS Access: Check extra text. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             list_step_fail.append(
                 '5. Assertion wong.')
 
@@ -150,15 +164,16 @@ class ADVANCED(unittest.TestCase):
             exp_local = 'Local Access' + URL_LOGIN + ','
             exp_remote = 'Remote Access' + 'http://' + wan_ip + ':' + remote_port
 
-            list_actual = [local_val, remote_val]
-            list_expected = [exp_local, exp_remote]
-            check = assert_list(list_actual, list_expected)
+            list_actual4 = [local_val, remote_val]
+            list_expected4 = [exp_local, exp_remote]
+            check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 6. Enable Remote Access: Check extra text')
+            self.list_steps.append('[Pass] 6. Enable Remote Access: Check extra text'
+                                   f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
         except:
             self.list_steps.append(
                 f'[Fail] 6. Enable Remote Access: Check extra text. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
             list_step_fail.append('6. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 7
@@ -176,16 +191,17 @@ class ADVANCED(unittest.TestCase):
             exp_local = 'Local Access' + URL_LOGIN + ','
             exp_remote = 'Remote Access-'
 
-            list_actual = [local_val, remote_val]
-            list_expected = [exp_local, exp_remote]
-            check = assert_list(list_actual, list_expected)
+            list_actual5 = [local_val, remote_val]
+            list_expected5 = [exp_local, exp_remote]
+            check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 7. Disabled Remote and HTTPS Access: Check extra text')
+                '[Pass] 7. Disabled Remote and HTTPS Access: Check extra text'
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
         except:
             self.list_steps.append(
                 f'[Fail] 7. Disabled Remote and HTTPS Access: Check extra text. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
             list_step_fail.append(
                 '7. Assertion wong.')
 
@@ -207,16 +223,17 @@ class ADVANCED(unittest.TestCase):
             exp_local = 'Local Access' + URL_LOGIN + ', ' + URL_LOGIN_HTTPS + ':' + http_port
             exp_remote = 'Remote Access' + 'https://' + wan_ip + ':' + remote_port
 
-            list_actual = [local_val, remote_val]
-            list_expected = [exp_local, exp_remote]
-            check = assert_list(list_actual, list_expected)
+            list_actual6 = [local_val, remote_val]
+            list_expected6 = [exp_local, exp_remote]
+            check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 8. Enable Remote, HTTPS Access: Check extra text')
+            self.list_steps.append('[Pass] 8. Enable Remote, HTTPS Access: Check extra text'
+                                   f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 8. Enable Remote, HTTPS Access: Check extra text. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('8. Assertion wong.')
 
