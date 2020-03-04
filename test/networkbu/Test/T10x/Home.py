@@ -111,7 +111,7 @@ class HOME(unittest.TestCase):
                 _expected[-1] = '0.0.0.0'
             time.sleep(1)
             _check = True if (dict_wan['WAN Type'] in ['Ethernet','USB Broadband', 'Android Tethering']) \
-                             and (dict_wan['Connection Type'] in ['Dynamic IP', 'Satatic IP', 'PPPoE']) else False
+                             and (dict_wan['Connection Type'] in ['Dynamic IP', 'Static IP', 'PPPoE']) else False
 
             list_actual = [_actual, _check]
             list_expected = [_expected, return_true]
@@ -300,7 +300,7 @@ class HOME(unittest.TestCase):
                 secondary_expected.append('0.0.0.0')
 
             _check = True if (dict_primary_wan['WAN Type'] in ['Ethernet','USB Broadband', 'Android Tethering']) \
-                             and (dict_primary_wan['Connection Type'] in ['Dynamic IP', 'Satatic IP', 'PPPoE']) else False
+                             and (dict_primary_wan['Connection Type'] in ['Dynamic IP', 'Static IP', 'PPPoE']) else False
 
             list_actual1 = [primary_actual, secondary_actual, _check]
             list_expected1 = [primary_expected, secondary_expected, return_true]
@@ -518,20 +518,20 @@ class HOME(unittest.TestCase):
 
         URL_LOGIN = get_config('URL', 'url')
 
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        # filename = '1'
+        # commmand = 'factorycfg.sh -a'
+        # run_cmd(commmand, filename=filename)
+        # # Wait 5 mins for factory
+        # time.sleep(150)
+        # wait_DUT_activated(URL_LOGIN)
+        # wait_ping('192.168.1.1')
+        #
+        # filename_2 = 'account.txt'
+        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        # run_cmd(commmand_2, filename_2)
+        # time.sleep(3)
+        # # Get account information from web server and write to config.txt
+        # user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
 
         USER_LOGIN = get_config('ACCOUNT', 'user')
         PW_LOGIN = get_config('ACCOUNT', 'password')
@@ -606,7 +606,7 @@ class HOME(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            primary = driver.find_element_by_css_selector(left)
+            primary = driver.find_element_by_css_selector(ele_wan_block)
             # Get information of WAN to a dictionary
             ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
             dict_wan = {}
