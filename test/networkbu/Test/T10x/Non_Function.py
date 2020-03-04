@@ -30,13 +30,16 @@ URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
 URL_5g = 'http://192.168.1.1/api/v1/wifi/1/ssid/0'
 # wifi_mac_5g = '_'.join(['wifi_5g', call_api(URL_5g, METHOD, body='', token=token)['macAddress'].replace(':', '_')])
 
-PING_TIMES = 20
+PING_TIMES = 60
+
 
 class NON_FUNCTION(unittest.TestCase):
     def setUp(self):
         try:
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             self.driver = webdriver.Chrome(driver_path)
             self.driver.maximize_window()
         except:
@@ -45,10 +48,14 @@ class NON_FUNCTION(unittest.TestCase):
 
     def tearDown(self):
         try:
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         except:
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             # Connect by wifi if internet is down to handle exception for PPPoE
             os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
             time.sleep(1)
@@ -68,6 +75,7 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+
         URL_LOGIN = get_config('URL', 'url')
         NEW_PASSWORD = 'abc123'
         filename = '1'
@@ -170,7 +178,9 @@ class NON_FUNCTION(unittest.TestCase):
             self.list_steps.append(
                 f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
                 f'Loss rate {ping_result["packet_loss_rate"]} '
-                f'on {str(PING_TIMES)} seconds')
+                f'on {str(PING_TIMES)} seconds. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -183,7 +193,6 @@ class NON_FUNCTION(unittest.TestCase):
             list_step_fail.append('1, 2. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
 
     def test_03_Wireless_24GHz_Ping_Aging_INTERGRATION_WITH_06(self):
         self.key = 'NON_FUNCTION_03'
@@ -191,9 +200,6 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(15)
 
         URL_LOGIN = get_config('URL', 'url')
         PING_ADDRESS = '8.8.8.8'
@@ -205,7 +211,7 @@ class NON_FUNCTION(unittest.TestCase):
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
         # Wait 5 mins for factory
-        time.sleep(100)
+        time.sleep(150)
         wait_DUT_activated(URL_LOGIN)
         wait_ping('192.168.1.1')
 
@@ -226,7 +232,6 @@ class NON_FUNCTION(unittest.TestCase):
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
-
 
             os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
             time.sleep(5)
@@ -320,26 +325,20 @@ class NON_FUNCTION(unittest.TestCase):
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
-                f'Loss rate {str(ping_result["packet_loss_rate"])} on {str(PING_TIMES)} seconds')
+                f'Loss rate {str(ping_result["packet_loss_rate"])} on {str(PING_TIMES)} seconds. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
-
-            # Enable Wire;Disconnect Wifi
-            # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            # os.system(f'netsh wlan disconnect interface="Wi-Fi"')
         except:
             self.list_steps.append(
                 f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; '
-                f'Loss rate {str(ping_result["packet_loss_rate"])} on {str(PING_TIMES)} seconds'
+                f'Loss rate {str(ping_result["packet_loss_rate"])} on {str(PING_TIMES)} seconds. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('1, 2. Assertion wong')
 
-            # Enable Wire;Disconnect Wifi
-            # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            # os.system(f'netsh wlan disconnect interface="Wi-Fi"')
         self.assertListEqual(list_step_fail, [])
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
 
     def test_04_Wireless_5GHz_Ping_Aging_INTERGRATION_WITH_07(self):
         self.key = 'NON_FUNCTION_04'
@@ -347,8 +346,6 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(15)
 
         URL_LOGIN = get_config('URL', 'url')
         PING_ADDRESS = '8.8.8.8'
@@ -360,7 +357,7 @@ class NON_FUNCTION(unittest.TestCase):
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
         # Wait 5 mins for factory
-        time.sleep(100)
+        time.sleep(150)
         wait_DUT_activated(URL_LOGIN)
         wait_ping('192.168.1.1')
 
@@ -386,16 +383,7 @@ class NON_FUNCTION(unittest.TestCase):
             time.sleep(6)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-
-
-            # os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-            #
-            # os.system(f'netsh wlan delete profile name="{wifi_mac_5g}"')
-            # # Connect Default 5GHz
-            # os.system(f'netsh wlan add profile filename="{default_wifi_5g_path}"')
-            # time.sleep(5)
-            # os.system(f'netsh wlan connect ssid="{wifi_mac_5g}" name="{wifi_mac_5g}"')
-            # time.sleep(5)
+            time.sleep(4)
         except:
             self.list_steps.append('[FAIL] Precondition connect 5G Wifi Fail')
 
@@ -479,26 +467,22 @@ class NON_FUNCTION(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result["packet_loss_rate"])} '
-                f'on {str(PING_TIMES)} seconds')
+                f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
+                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'on {str(PING_TIMES)} seconds. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
-
-            # Enable Wire;Disconnect Wifi
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            # os.system(f'netsh wlan disconnect interface="Wi-Fi"')
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; '
+                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
                 f'on {str(PING_TIMES)} seconds'
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('1, 2. Assertion wong')
 
-            # Enable Wire;Disconnect Wifi
-            # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            # os.system(f'netsh wlan disconnect interface="Wi-Fi"')
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
         self.assertListEqual(list_step_fail, [])
 
     def test_08_Static_Wired_Ping_Aging(self):
@@ -507,8 +491,7 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(15)
+
         URL_LOGIN = get_config('URL', 'url')
         PING_ADDRESS = '8.8.8.8'
         # PING_TIMES = 43200
@@ -519,7 +502,7 @@ class NON_FUNCTION(unittest.TestCase):
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
         # Wait 5 mins for factory
-        time.sleep(100)
+        time.sleep(150)
         wait_DUT_activated(URL_LOGIN)
         wait_ping('192.168.1.1')
 
@@ -636,20 +619,22 @@ class NON_FUNCTION(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result["packet_loss_rate"])} '
-                f'on {str(PING_TIMES)} seconds')
+                f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
+                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'on {str(PING_TIMES)} seconds. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
-
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result["packet_loss_rate"])} '
-                f'on {str(PING_TIMES)} seconds'
+                f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; '
+                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'on {str(PING_TIMES)} seconds. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('1, 2. Assertion wong')
 
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
         self.assertListEqual(list_step_fail, [])
 
     def test_09_Static_Wireless_24GHz_Ping_Aging(self):
@@ -658,6 +643,7 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+
         URL_LOGIN = get_config('URL', 'url')
         PING_ADDRESS = '8.8.8.8'
         # PING_TIMES = 43200
@@ -668,7 +654,7 @@ class NON_FUNCTION(unittest.TestCase):
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
         # Wait 5 mins for factory
-        time.sleep(100)
+        time.sleep(150)
         wait_DUT_activated(URL_LOGIN)
         wait_ping('192.168.1.1')
 
@@ -772,7 +758,7 @@ class NON_FUNCTION(unittest.TestCase):
             time.sleep(5)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-
+            time.sleep(5)
         except:
             self.list_steps.append('[Fail] Precondition connect 2G Wifi Fail')
 
@@ -796,25 +782,22 @@ class NON_FUNCTION(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result["packet_loss_rate"])} '
-                f'on {str(PING_TIMES)} seconds')
+                f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
+                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'on {str(PING_TIMES)} seconds. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
-
-            # Enable Wire;Disconnect Wifi
-            # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            # os.system(f'netsh wlan disconnect interface="Wi-Fi"')
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; '
+                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
                 f'on {str(PING_TIMES)} seconds'
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('1, 2. Assertion wong')
 
-            # Enable Wire;Disconnect Wifi
-            # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            # os.system(f'netsh wlan disconnect interface="Wi-Fi"')
         self.assertListEqual(list_step_fail, [])
 
     def test_10_Static_Wireless_5GHz_Ping_Aging(self):
@@ -823,6 +806,7 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+
         URL_LOGIN = get_config('URL', 'url')
         PING_ADDRESS = '8.8.8.8'
         # PING_TIMES = 43200
@@ -833,7 +817,7 @@ class NON_FUNCTION(unittest.TestCase):
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
         # Wait 5 mins for factory
-        time.sleep(100)
+        time.sleep(150)
         wait_DUT_activated(URL_LOGIN)
         wait_ping('192.168.1.1')
 
@@ -936,17 +920,6 @@ class NON_FUNCTION(unittest.TestCase):
             time.sleep(5)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-
-            #
-            # os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-            # time.sleep(5)
-            # os.system(f'netsh wlan delete profile name="{wifi_mac_5g}"')
-            # time.sleep(5)
-            # os.system(f'netsh wlan add profile filename="{default_wifi_5g_path}"')
-            # time.sleep(5)
-            # os.system(f'netsh wlan connect ssid="{wifi_mac_5g}" name="{wifi_mac_5g}"')
-            # time.sleep(5)
-
         except:
             self.list_steps.append('[Fail] Precondition connect 5G Wifi Fail')
 
@@ -971,12 +944,12 @@ class NON_FUNCTION(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result["packet_loss_rate"])} '
-                f'on {str(PING_TIMES)} seconds')
+                f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
+                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'on {str(PING_TIMES)} seconds. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
-            # Enable Wire;Disconnect Wifi
-            # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            # os.system(f'netsh wlan disconnect interface="Wi-Fi"')
         except:
             self.list_steps.append(
                 f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result["packet_loss_rate"])} '
@@ -986,10 +959,8 @@ class NON_FUNCTION(unittest.TestCase):
             self.list_steps.append('[END TC]')
             list_step_fail.append('1, 2. Assertion wong')
 
-            # Enable Wire;Disconnect Wifi
-            # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            # os.system(f'netsh wlan disconnect interface="Wi-Fi"')
         self.assertListEqual(list_step_fail, [])
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -19,10 +19,10 @@ from selenium.webdriver.support.select import Select
 class MAIN(unittest.TestCase):
     def setUp(self):
         try:
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             if '_Firefox' in self._testMethodName:
                 self.driver = webdriver.Firefox(executable_path=driver_firefox_path)
             elif '_Edge' in self._testMethodName:
@@ -38,10 +38,14 @@ class MAIN(unittest.TestCase):
 
     def tearDown(self):
         try:
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         except:
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             # Connect by wifi if internet is down to handle exception for PPPoE
             os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
             time.sleep(1)
@@ -60,8 +64,7 @@ class MAIN(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(15)
+
         # ~~~~~~~~~~~~~~~~~~~~~~ Get info URL, ACCOUNT ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Get and write URL
@@ -114,9 +117,6 @@ class MAIN(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~ Connect Wifi ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            # wifi_name = get_config('GENERAL', 'wifi_ssid_2g')
-            # command = 'netsh wlan connect ssid="' + wifi_name + '" name="' + wifi_name+'" interface=Wi-Fi'
-
             URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
             new_2g_wf_name = api_change_wifi_setting(URL_2g)
             time.sleep(3)
@@ -163,7 +163,7 @@ class MAIN(unittest.TestCase):
                            check_lg_captcha_field]
             list_expected4 = [return_true]*5
             check = assert_list(list_actual4, list_expected4)
-            os.system('netsh wlan disconnect')
+            # os.system('netsh wlan disconnect')
             self.assertTrue(check["result"])
             self.list_steps.append(
                 '[Pass] 5 Check login Page displayed, id, password, captcha img, captcha input field\n')
@@ -2042,41 +2042,40 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
         url_login = get_config('URL', 'url')
 
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(100)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
+        # filename = '1'
+        # commmand = 'factorycfg.sh -a'
+        # run_cmd(commmand, filename=filename)
+        # # Wait 5 mins for factory
+        # time.sleep(100)
+        # wait_DUT_activated(url_login)
+        # wait_ping('192.168.1.1')
+        #
+        # filename_2 = 'account.txt'
+        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        # run_cmd(commmand_2, filename_2)
+        # time.sleep(3)
         # Get account information from web server and write to config.txt
 
-        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        # user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
         WRONG_PW = 'acb000'
         NEW_PASSWORD = 'acb123'
         RETYPE_NEW_PASSWORD = 'acb321'
+
         try:
             login(driver)
             wait_popup_disappear(driver, dialog_loading)
             # Welcome pop up displayed
             check_login = len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0
-            if not check_login:
-                driver.get(url_login+'/welcome')
 
             list_actual1 = [check_login]
             list_expected1 = [return_true]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Check pop-up welcome appear')
+                '[Pass] 1,2. Check pop-up welcome appear')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3. Check pop-up welcome appear. '
+                f'[Fail] 1,2. Check pop-up welcome appear. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             list_step_fail.append('1,2,3. Assertion wong')
@@ -2515,7 +2514,7 @@ class MAIN(unittest.TestCase):
             time.sleep(3)
 
             list_actual4 = [ls_label_text, check_manual_dns_displayed]
-            list_expected4 = [['Connection Type', 'IP Address', 'Subnet Mask', 'Getway', 'DNS Server 1', 'DNS Server 2'],
+            list_expected4 = [['Connection Type', 'IP Address', 'Subnet Mask', 'Gateway', 'DNS Server 1', 'DNS Server 2'],
                               return_true]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
@@ -2984,6 +2983,7 @@ class MAIN(unittest.TestCase):
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
         time.sleep(3)
+
         try:
             grand_login(driver)
             time.sleep(1)

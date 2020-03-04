@@ -74,7 +74,8 @@ def write_ggsheet(key, list_steps, func_name, duration, time_stamp=0):
     if '[Fail]' in str(list_steps):
         sheet.update_acell("C{}".format(next_row), 'FAIL')
     else:
-        if '[END TC]' not in str(list_steps):
+        # if '[END TC]' not in str(list_steps):
+        if '[END TC]' not in list_steps:
             sheet.update_acell("C{}".format(next_row), 'ERROR')
         else:
             sheet.update_acell("C{}".format(next_row), 'PASS')

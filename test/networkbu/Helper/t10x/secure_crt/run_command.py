@@ -8,7 +8,12 @@ import re
 import ConfigParser
 
 config = ConfigParser.ConfigParser()
-config.read('C:\Users\Test\Desktop\DOBBY\client_3\client\\test\\networkbu\Config\\t10x\config.txt')
+# config.read('C:\Users\Test\Desktop\DOBBY\client_3\client\\test\\networkbu\Config\\t10x\config.txt')
+script_dir = os.path.dirname(os.path.realpath(__file__))
+root_dir = os.path.join(os.path.dirname(script_dir), "..", "..")
+
+config_dir = os.path.join(root_dir, "Config", "t10x", "config.txt")
+config.read(config_dir)
 serial_num = config.get('GENERAL', 'serial_number')
 
 
