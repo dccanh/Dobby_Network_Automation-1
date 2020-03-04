@@ -11,11 +11,12 @@ from selenium import webdriver
 
 class HOME(unittest.TestCase):
     def setUp(self):
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(15)
+
         try:
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             self.driver = webdriver.Chrome(driver_path)  # open chrome
             self.driver.maximize_window()
         except:
@@ -24,10 +25,14 @@ class HOME(unittest.TestCase):
 
     def tearDown(self):
         try:
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         except:
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             # Connect by wifi if internet is down to handle exception for PPPoE
             os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
             time.sleep(1)
@@ -53,6 +58,7 @@ class HOME(unittest.TestCase):
         URL_API = URL_LOGIN + '/api/v1/network/wan/0'
         METHOD = 'GET'
         BODY = None
+
         try:
             grand_login(driver)
             time.sleep(2)
@@ -103,18 +109,23 @@ class HOME(unittest.TestCase):
                 _expected[0] = 'Static IP'
             if ipv4['dnsServer2'] == '':
                 _expected[-1] = '0.0.0.0'
-
+            time.sleep(1)
             _check = True if (dict_wan['WAN Type'] in ['Ethernet','USB Broadband', 'Android Tethering']) \
                              and (dict_wan['Connection Type'] in ['Dynamic IP', 'Satatic IP', 'PPPoE']) else False
+
             list_actual = [_actual, _check]
             list_expected = [_expected, return_true]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Check WAN IPv4\n')
+                '[Pass] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
+                f'Actual: {str(list_actual)}. '
+                f'Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2. Check WAN IPv4. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
+                f'Actual: {str(list_actual)}. '
+                f'Expected: {str(list_expected)}')
             list_step_fail.append(
                 '1,2. Assertion wong.')
 
@@ -126,16 +137,17 @@ class HOME(unittest.TestCase):
             time.sleep(0.2)
             more_fab = driver.find_element_by_css_selector(home_icon_more_fab).is_displayed()
 
-            list_actual = [more_fab]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+            list_actual2 = [more_fab]
+            list_expected2 = [return_true]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Check btn + is displayed when click btn |||\n')
+                '[Pass] 3. Check btn + is displayed when click btn |||. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Check btn + is displayed when click btn |||. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             list_step_fail.append(
                 '3. Assertion wong.')
 
@@ -146,20 +158,22 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             current_tab = driver.find_element_by_css_selector(current_tab_chosen).get_attribute('href')
 
-            list_actual = [current_tab]
-            list_expected = [URL_LOGIN + network_internet]
-            check = assert_list(list_actual, list_expected)
+            list_actual3 = [current_tab]
+            list_expected3 = [URL_LOGIN + network_internet]
+            check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 4. Click + btn. Check re-direct Network>Internet\n')
+                '[Pass] 4. Click + btn. Check re-direct Network>Internet\1'
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 4. Click + btn. Check re-direct Network>Internet. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '4. Assertion wong.')
+
         self.assertListEqual(list_step_fail, [])
     # OK
     def test_02_Check_Internet_Image_Operation_when_Dual_WAN_is_on(self):
@@ -265,7 +279,7 @@ class HOME(unittest.TestCase):
                                     "dnsServer1": "DNS Server 1",
                                     "dnsServer2": "DNS Server 2"}
             secondary_info = res_wan_secondary
-
+            time.sleep(1)
             secondary_actual = [''.join(dict_secondary_wan[i].split()) for i in translate_key_api2ui.values()]
             secondary_expected = [secondary_info['name']]
 
@@ -287,15 +301,20 @@ class HOME(unittest.TestCase):
 
             _check = True if (dict_primary_wan['WAN Type'] in ['Ethernet','USB Broadband', 'Android Tethering']) \
                              and (dict_primary_wan['Connection Type'] in ['Dynamic IP', 'Satatic IP', 'PPPoE']) else False
-            list_actual = [primary_actual, secondary_actual, _check]
-            list_expected = [primary_expected, secondary_expected, return_true]
-            check = assert_list(list_actual, list_expected)
+
+            list_actual1 = [primary_actual, secondary_actual, _check]
+            list_expected1 = [primary_expected, secondary_expected, return_true]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Check WAN IPv4\n')
+                '[Pass] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2. Check WAN IPv4. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             list_step_fail.append(
                 '1,2. Assertion wong.')
 
@@ -307,16 +326,17 @@ class HOME(unittest.TestCase):
             time.sleep(0.2)
             more_fab = driver.find_element_by_css_selector(home_icon_more_fab).is_displayed()
 
-            list_actual = [more_fab]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+            list_actual3 = [more_fab]
+            list_expected3 = [return_true]
+            check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Check btn + is displayed when click btn |||\n')
+                '[Pass] 3. Check btn + is displayed when click btn |||. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Check btn + is displayed when click btn |||. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             list_step_fail.append(
                 '3. Assertion wong.')
 
@@ -327,17 +347,17 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             current_tab = driver.find_element_by_css_selector(current_tab_chosen).get_attribute('href')
 
-            list_actual = [current_tab]
-            list_expected = [URL_LOGIN + network_internet]
-            check = assert_list(list_actual, list_expected)
+            list_actual4 = [current_tab]
+            list_expected4 = [URL_LOGIN + network_internet]
+            check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 4. Click + btn. Check re-direct Network>Internet\n')
-
+                '[Pass] 4. Click + btn. Check re-direct Network>Internet. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
         except:
             self.list_steps.append(
                 f'[Fail] 4. Click + btn. Check re-direct Network>Internet. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
             list_step_fail.append(
                 '4. Assertion wong.')
 
@@ -351,17 +371,17 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             check_home_displayed = driver.find_element_by_css_selector(home_view_wrap).is_displayed()
 
-            list_actual = [check_home_displayed]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+            list_actual5 = [check_home_displayed]
+            list_expected5 = [return_true]
+            check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 5. Home page is displayed\n')
-
+                '[Pass] 5. Home page is displayed. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
         except:
             self.list_steps.append(
                 f'[Fail] 5. Home page is displayed. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
             list_step_fail.append(
                 '5. Assertion wong.')
 
@@ -373,16 +393,17 @@ class HOME(unittest.TestCase):
             time.sleep(0.2)
             more_fab = driver.find_element_by_css_selector(home_icon_more_fab).is_displayed()
 
-            list_actual = [more_fab]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+            list_actual6 = [more_fab]
+            list_expected6 = [return_true]
+            check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 6. Check btn + is displayed when click btn |||\n')
+                '[Pass] 6. Check btn + is displayed when click btn |||. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
         except:
             self.list_steps.append(
                 f'[Fail] 6. Check btn + is displayed when click btn |||. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
             list_step_fail.append(
                 '6. Assertion wong.')
 
@@ -393,20 +414,22 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             current_tab = driver.find_element_by_css_selector(current_tab_chosen).get_attribute('href')
 
-            list_actual = [current_tab]
-            list_expected = [URL_LOGIN + network_internet]
-            check = assert_list(list_actual, list_expected)
+            list_actual7 = [current_tab]
+            list_expected7 = [URL_LOGIN + network_internet]
+            check = assert_list(list_actual7, list_expected7)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 7. Click + btn. Check re-direct Network>Internet\n')
+                '[Pass] 7. Click + btn. Check re-direct Network>Internet. '
+                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 7. Click + btn. Check re-direct Network>Internet. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '7. Assertion wong.')
+
         self.assertListEqual(list_step_fail, [])
     # OK
     def test_03_Check_Connection_Internet_Information(self):
@@ -445,6 +468,7 @@ class HOME(unittest.TestCase):
                 label = w.find_element_by_css_selector(home_wan_ls_label).text
                 value = w.find_element_by_css_selector(home_wan_ls_value).text
                 dict_wan.update({label: value})
+            time.sleep(1)
 
             translate_key_api2ui = {"mode": "Connection Type",
                                     "address": "WAN IP Address",
@@ -465,16 +489,20 @@ class HOME(unittest.TestCase):
             # Check value of Wan type and Connection Type
             _check = True if (dict_wan['WAN Type'] in ['Ethernet','USB Broadband', 'Android Tethering']) \
                              and (dict_wan['Connection Type'] in ['Dynamic IP', 'Satatic IP', 'PPPoE']) else False
+            time.sleep(1)
+
             list_actual = [_actual, _check]
             list_expected = [_expected, return_true]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1,2. Check WAN IPv4. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Pass] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2. Check WAN IPv4. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '1,2. Assertion wong.')
@@ -487,10 +515,26 @@ class HOME(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+
         URL_LOGIN = get_config('URL', 'url')
+
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(150)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+
         USER_LOGIN = get_config('ACCOUNT', 'user')
         PW_LOGIN = get_config('ACCOUNT', 'password')
-
         URL_API_WAN_V4 = URL_LOGIN + '/api/v1/network/wan/0'
         METHOD = 'GET'
         BODY = None
@@ -547,15 +591,17 @@ class HOME(unittest.TestCase):
             driver.find_element_by_css_selector(home_img_connection).click()
             time.sleep(1)
             check_active = driver.find_element_by_css_selector(home_img_connection).is_enabled()
-            list_actual = [check_active]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+
+            list_actual1 = [check_active]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Check Internet Image is high light')
+            self.list_steps.append('[Pass] 1. Check Internet Image is high light. '
+                                   f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1. Check Internet Image is high light. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append('1. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -592,15 +638,19 @@ class HOME(unittest.TestCase):
             # Check value of Wan type and Connection Type
             _check = True if (dict_wan['WAN Type'] in ['Ethernet','USB Broadband', 'Android Tethering']) \
                              and (dict_wan['Connection Type'] in ['Dynamic IP', 'Static IP', 'PPPoE']) else False
+
             list_actual = [_actual, _check]
             list_expected = [_expected, return_true]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Check WAN IPv4\n')
+            self.list_steps.append(
+                '[Pass] 2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Check WAN IPv4. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '1,2. Assertion wong.')
@@ -614,9 +664,23 @@ class HOME(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         URL_LOGIN = get_config('URL', 'url')
+
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(150)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+        filename_2 = 'account.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+
         USER_LOGIN = get_config('ACCOUNT', 'user')
         PW_LOGIN = get_config('ACCOUNT', 'password')
-
         URL_API_WAN_V4 = URL_LOGIN + '/api/v1/network/wan/0'
         METHOD = 'GET'
         BODY = None
@@ -625,77 +689,84 @@ class HOME(unittest.TestCase):
         _token = get_token(USER_LOGIN, PW_LOGIN)
         # Call API
         get_wan = call_api(URL_API_WAN_V4, METHOD, BODY, _token)['ipv4']['address']
+
+        NEW_PASSWORD = 'abc123'
         try:
-            grand_login(driver)
-
-            goto_menu(driver, network_tab, network_internet_tab)
+            login(driver)
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            # Goto Homepage
+            # Click start btn
+            driver.find_element_by_css_selector(welcome_start_btn).click()
+            time.sleep(3)
+            wait_visible(driver, welcome_change_pw_fields)
+            change_pw_fields = driver.find_elements_by_css_selector(welcome_change_pw_fields)
 
-            if not len(driver.find_elements_by_css_selector(internet_setting_block)):
-                internet_setting = driver.find_element_by_css_selector(internet_setting_block_single)
-            else:
-                internet_setting = driver.find_element_by_css_selector(internet_setting_block)
-            ActionChains(driver).move_to_element(internet_setting).perform()
-            # Settings
-            internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
-            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
-            for l, f in zip(internet_setting_label, internet_setting_fields):
-                # Connection type
-                if l.text == 'Connection Type':
-                    if f.text != 'Static IP':
-                        f.click()
-                        time.sleep(0.2)
-                        ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
-                        for o in ls_option:
-                            if o.text == 'Static IP':
-                                o.click()
-                                break
-                        btn_apply = internet_setting.find_element_by_css_selector(apply)
-                        _check_apply = btn_apply.is_enabled()
-                        if _check_apply:
-                            btn_apply.click()
-                            time.sleep(0.5)
-                            # Click OK
-                            driver.find_element_by_css_selector(btn_ok).click()
-                            time.sleep(1)
-                            wait_popup_disappear(driver, dialog_loading)
-                            time.sleep(5)
-                            wait_popup_disappear(driver, dialog_loading)
-                            time.sleep(5)
-                        else:
-                            internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
-                            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
-                            for l, f in zip(internet_setting_label, internet_setting_fields):
-                                if l.text == 'WAN IP Address':
-                                    wan = f.find_elements_by_css_selector(input)
-                                    for d, v in zip(wan, get_wan.split('.')):
-                                        ActionChains(driver).move_to_element(d).click().key_down(
-                                            Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).send_keys(
-                                            v).perform()
-                                if l.text == 'Gateway':
-                                    gateway = f.find_elements_by_css_selector(input)
-                                    for d, v in zip(gateway, VALUE_DNS2_SPLIT):
-                                        ActionChains(driver).move_to_element(d).click().key_down(
-                                            Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).send_keys(
-                                            v).perform()
-                                # DNS server 2
-                                if l.text == 'DNS Server 2':
-                                    dns_2 = f.find_elements_by_css_selector(input)
-                                    for d, v in zip(dns_2, VALUE_DNS2_SPLIT):
-                                        ActionChains(driver).move_to_element(d).click().key_down(
-                                            Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).send_keys(
-                                            v).perform()
-                            btn_apply = internet_setting.find_element_by_css_selector(apply)
-                            btn_apply.click()
-                            time.sleep(0.5)
-                            # Click OK
-                            driver.find_element_by_css_selector(btn_ok).click()
-                            time.sleep(1)
-                            wait_popup_disappear(driver, dialog_loading)
-                            time.sleep(5)
-                            wait_popup_disappear(driver, dialog_loading)
-                            time.sleep(5)
-                    break
+            # A list contain values: Current Password, New Password, Retype new pw
+            ls_change_pw_value = [get_config('ACCOUNT', 'password'), NEW_PASSWORD, NEW_PASSWORD]
+            for p, v in zip(change_pw_fields, ls_change_pw_value):
+                ActionChains(driver).move_to_element(p).click().send_keys(v).perform()
+                time.sleep(0.5)
+
+            # Next Change pw
+            time.sleep(3)
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+            time.sleep(5)
+
+            # Next Operation Mode
+            time.sleep(3)
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+                time.sleep(0.5)
+
+            # Click arrow down
+            time.sleep(3)
+            driver.find_element_by_css_selector(option_select).click()
+            time.sleep(2)
+            ls_connection_type = driver.find_elements_by_css_selector(
+                welcome_internet_setup1_ls_option_connection_type)
+
+            # Click Static IP
+            for i in ls_connection_type:
+                if i.text == 'Static IP':
+                    i.click()
+            time.sleep(1)
+
+            dns_2_input = driver.find_elements_by_css_selector('.wrap-form:last-child .wrap-input input')
+            for i in dns_2_input:
+                ActionChains(driver).move_to_element(i).click().send_keys('0').perform()
+                time.sleep(0.5)
+
+            len_let_go = len(driver.find_elements_by_css_selector(welcome_let_go_btn))
+            while len_let_go == 0:
+                # Next Internet Setup 1
+                time.sleep(2)
+                wait_visible(driver, welcome_next_btn)
+                next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+                if not next_btn.get_property('disabled'):
+                    next_btn.click()
+                    time.sleep(3)
+                len_let_go = len(driver.find_elements_by_css_selector(welcome_let_go_btn))
+
+            # Click Let's Go
+            time.sleep(3)
+            driver.find_element_by_css_selector(welcome_let_go_btn).click()
+            # Write config
+            save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(2)
+            wait_visible(driver, home_view_wrap)
+            time.sleep(5)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
+            check_ota_auto_update(driver)
+            time.sleep(1)
+
             self.list_steps.append('[Pass] Set Precondition Success')
         except:
             self.list_steps.append('[Fail] Set Precondition fail')
@@ -703,8 +774,7 @@ class HOME(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            grand_login(driver)
-
+            time.sleep(3)
             driver.find_element_by_css_selector(home_tab).click()
             wait_popup_disappear(driver, dialog_loading)
             # Click icons Internet connection
@@ -712,20 +782,21 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             check_active = driver.find_element_by_css_selector(home_img_connection).is_enabled()
 
-            list_actual = [check_active]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+            list_actual1 = [check_active]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Check Internet Image is high light')
+            self.list_steps.append('[Pass] 1. Check Internet Image is high light. '
+                                   f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1. Check Internet Image is high light. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append('1. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            primary = driver.find_element_by_css_selector(left)
+            primary = driver.find_element_by_css_selector(ele_wan_block)
             # Get information of WAN to a dictionary
             ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
             dict_wan = {}
@@ -733,7 +804,7 @@ class HOME(unittest.TestCase):
                 label = w.find_element_by_css_selector(home_wan_ls_label).text
                 value = w.find_element_by_css_selector(home_wan_ls_value).text
                 dict_wan.update({label: value})
-
+            time.sleep(1)
             translate_key_api2ui = {"mode": "Connection Type",
                                     "address": "WAN IP Address",
                                     "subnet": "Subnet Mask",
@@ -741,10 +812,15 @@ class HOME(unittest.TestCase):
                                     "dnsServer1": "DNS Server 1",
                                     "dnsServer2": "DNS Server 2"}
             # Handle API
+            USER_LOGIN = get_config('ACCOUNT', 'user')
+            PW_LOGIN = get_config('ACCOUNT', 'password')
             _token = get_token(USER_LOGIN, PW_LOGIN)
+            time.sleep(2)
             # Call API
             res_wan_v4 = call_api(URL_API_WAN_V4, METHOD, BODY, _token)
+            time.sleep(2)
             ipv4 = res_wan_v4['ipv4']
+            time.sleep(2)
             # Get values of Web UI and API based on translate diction
             _actual = [dict_wan[i] for i in translate_key_api2ui.values()]
             _expected = [ipv4[i] for i in translate_key_api2ui.keys()]
@@ -756,20 +832,25 @@ class HOME(unittest.TestCase):
                 _expected[0] = 'Static IP'
             if ipv4['dnsServer2'] == '':
                 _expected[-1] = '0.0.0.0'
+            time.sleep(1)
             # Check value of Wan type and Connection Type
             _check = True if (dict_wan['WAN Type'] in ['Ethernet','USB Broadband', 'Android Tethering']) \
                              and (dict_wan['Connection Type'] in ['Dynamic IP', 'Static IP', 'PPPoE']) else False
-            list_actual = [_actual, _check]
-            list_expected = [_expected, return_true]
-            check = assert_list(list_actual, list_expected)
+
+            list_actual2 = [_actual, _check]
+            list_expected2 = [_expected, return_true]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append(f'[Pass] 2. Check Information display. '
-                                   f'Actual: {str(list_actual)}. '
-                                   f'Expected: {str(list_expected)}')
+            self.list_steps.append(
+                f'[Pass] 2. Check Information display. Check WAN type in options, and Connection Type in options. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Check Information display. Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 2. Check Information display. Check WAN type in options, and Connection Type in options. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('2. Assertion wong.')
 
@@ -803,7 +884,8 @@ class HOME(unittest.TestCase):
             list_expected1 = ['LAN', 'IPv4', 'IPv6', return_true]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3.1 Check LAN block: Title, IPv4, IPv6, Icon ||| displayed')
+            self.list_steps.append(f'[Pass] 3.1 Check LAN block: Title, IPv4, IPv6, Icon ||| displayed. '
+                                   f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3.1 Check LAN block: Title, IPv4, IPv6, Icon ||| displayed. '
@@ -825,7 +907,8 @@ class HOME(unittest.TestCase):
             list_expected2 = ['Wireless', '2.4GHz', '5GHz', return_true]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3.2 Check Wireless block: Title, 2.4GHz, 5GHz, Icon ||| displayed')
+            self.list_steps.append('[Pass] 3.2 Check Wireless block: Title, 2.4GHz, 5GHz, Icon ||| displayed. '
+                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3.2 Check Wireless block: Title, 2.4GHz, 5GHz, Icon ||| displayed. '
@@ -843,7 +926,8 @@ class HOME(unittest.TestCase):
             list_expected3 = ['Information', 'CPU Status', 'Ethernet Port Status', 'Memory Status']
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3.3 Check Information, CPU Status, Ethernet Port Status, Memory Status. ')
+            self.list_steps.append('[Pass] 3.3 Check Information, CPU Status, Ethernet Port Status, Memory Status. '
+                                   f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -888,11 +972,13 @@ class HOME(unittest.TestCase):
                 value = w.find_element_by_css_selector(home_wan_ls_value).text
                 actual_lan_v4_value.append(value)
                 actual_lan_v4_label.append(label)
-
+            time.sleep(2)
             # Handle API
             _token = get_token(USER_LOGIN, PW_LOGIN)
+            time.sleep(2)
             # Call API
             res = call_api(URL_API, METHOD, BODY, _token)
+            time.sleep(2)
 
             api_lan_ip = res['ipv4']['ipAddress']
             api_subnet = res['ipv4']['subnet']
@@ -904,11 +990,13 @@ class HOME(unittest.TestCase):
                               api_dhcp_start_IP, api_dhcp_end_IP, api_mac_address]
             expected_lan_v4_label = ['LAN IP Address', 'Subnet Mask', 'DHCP Server',
                                      'Start IP Address', 'End IP Address', 'MAC Address']
+
             list_actual1 = [actual_lan_v4_value, actual_lan_v4_label]
             list_expected1 = [expected_lan_v4_value, expected_lan_v4_label]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3 Check LAN block information')
+            self.list_steps.append('[Pass] 3 Check LAN block information'
+                                   f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Check LAN block information. '
@@ -932,21 +1020,23 @@ class HOME(unittest.TestCase):
 
             expected_lan_v6_label = ['LAN IPv6 Address', 'Prefix Length',
                                      'Assigned Type', 'MAC Address']
-            list_actual1 = [actual_lan_v6_label]
-            list_expected1 = [expected_lan_v6_label]
-            check = assert_list(list_actual1, list_expected1)
+
+            list_actual2 = [actual_lan_v6_label]
+            list_expected2 = [expected_lan_v6_label]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Check LAN block information IPv6: Check Label')
+            self.list_steps.append('[Pass] 4. Check LAN block information IPv6: Check Label. '
+                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 4. Check LAN block information IPv6: Check Label. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_11_Check_the_operation_of_LAN_Table_Icon(self):
         self.key = 'HOME_11'
         driver = self.driver
@@ -981,9 +1071,13 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [more_fab, current_tab]
             list_expected1 = [return_true, ('NETWORK', 'LAN')]
+
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3, 4. Click ||| btn; Check Display +; Click +; Check Display target IPv4 page.')
+            self.list_steps.append(
+                '[Pass] 3, 4. Click ||| btn; Check Display +; Click +; Check Display target IPv4 page. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3, 4. Click ||| btn; Check Display +; Click +; Check Display target IPv4 page. '
@@ -1018,7 +1112,10 @@ class HOME(unittest.TestCase):
             list_expected2 = [return_true, ('ADVANCED', 'IPv6')]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 5. Click ||| btn; Check Display +; Click +; Check Display target IPv6 page')
+            self.list_steps.append(
+                '[Pass] 5. Click ||| btn; Check Display +; Click +; Check Display target IPv6 page'
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1029,7 +1126,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('5. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_12_Check_wireless_table_information(self):
         self.key = 'HOME_12'
         driver = self.driver
@@ -1043,7 +1140,7 @@ class HOME(unittest.TestCase):
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
         # Wait 5 mins for factory
-        time.sleep(100)
+        time.sleep(150)
         wait_DUT_activated(URL_LOGIN)
         wait_ping('192.168.1.1')
 
@@ -1095,12 +1192,12 @@ class HOME(unittest.TestCase):
             list_expected1 = ['We Love You So Much_2G!', 'WPA2/WPA-PSK', True, True]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Check Information of WL 2.4GHZ'
+            self.list_steps.append('[Pass] 3. Check Information of WL 2.4GHZ: SSID, Sercurity, PW, MAC address. '
                                    f'Actual: {str(list_actual1)}. '
                                    f'Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check Information of WL 2.4GHZ. '
+                f'[Fail] 3. Check Information of WL 2.4GHZ: SSID, Sercurity, PW, MAC address. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             list_step_fail.append('3. Assertion wong.')
@@ -1139,20 +1236,20 @@ class HOME(unittest.TestCase):
             list_expected2 = ['We Love You So Much_5G!', 'WPA2/WPA-PSK', True, True]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Check Information of WL 5GHZ' 
+            self.list_steps.append('[Pass] 4. Check Information of WL 5GHZ: SSID, Sercurity, PW, MAC address' 
                                    f'Actual: {str(list_actual2)}. '
                                    f'Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Check Information of WL 5GHZ. '
+                f'[Fail] 4. Check Information of WL 5GHZ: SSID, Sercurity, PW, MAC address. '
                 f'Actual: {str(list_actual2)}. '
                 f'Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_13_Check_Wireless_Table_Icon_operation(self):
         self.key = 'HOME_13'
         driver = self.driver
@@ -1184,7 +1281,8 @@ class HOME(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Click + btn. Check re-direct Network>LAN\n')
+                f'[Pass] 3. Click + btn. Check re-direct Network>LAN. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1193,8 +1291,9 @@ class HOME(unittest.TestCase):
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '3. Assertion wong.')
-        self.assertListEqual(list_step_fail, [])
 
+        self.assertListEqual(list_step_fail, [])
+    # OK
     def test_14_Check_Information_table_information(self):
         self.key = 'HOME_14'
         driver = self.driver
@@ -1203,6 +1302,7 @@ class HOME(unittest.TestCase):
         self.list_steps = []
         URL_LOGIN = get_config('URL', 'url')
         SERIAL_NUMBER = get_config('GENERAL', 'serial_number')
+
         try:
             grand_login(driver)
             time.sleep(1)
@@ -1251,8 +1351,10 @@ class HOME(unittest.TestCase):
             METHOD = 'GET'
             BODY = ''
             _token = get_token(USER_LOGIN, PW_LOGIN)
+            time.sleep(2)
             # Call API
             res = call_api(URL_API, METHOD, BODY, _token)
+            time.sleep(2)
             firmware_version = res['software']['version']
 
             list_actual1 = [info_block_title,
@@ -1300,7 +1402,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('4. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_18_Check_USB_Image_Operation(self):
         self.key = 'HOME_18'
         driver = self.driver
@@ -1337,7 +1439,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('2. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_20_Check_USB_Table_information(self):
         self.key = 'HOME_20'
         driver = self.driver
@@ -1379,7 +1481,9 @@ class HOME(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 3. Check Title, Exist button |||, Device name, Total size, not null, '
-                                   'space used, availabled, space bar not null, Btn Remove text')
+                                   'space used, availabled, space bar not null, Btn Remove text. ' 
+                                   f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1391,7 +1495,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('3. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_22_Check_the_operation_of_USB_Icon(self):
         self.key = 'HOME_22'
         driver = self.driver
@@ -1439,7 +1543,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('3, 4. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_21_Check_the_Remove_Button_operation_of_USB_Table(self):
         self.key = 'HOME_21'
         driver = self.driver
@@ -1500,7 +1604,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('3, 4. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_25_Check_the_Server_Table_information(self):
         self.key = 'HOME_25 '
         driver = self.driver
@@ -1555,7 +1659,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('3. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_26_Check_Server_Table_Icon_operation(self):
         self.key = 'HOME_26'
         driver = self.driver
@@ -1602,7 +1706,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('3. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_27_Check_the_Devices_Image(self):
         self.key = 'HOME_27'
         driver = self.driver
@@ -1783,14 +1887,13 @@ class HOME(unittest.TestCase):
             list_step_fail.append('3.2 Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_29_Check_the_Connected_Devices_Information(self):
         self.key = 'HOME_29'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
 
         try:
             grand_login(driver)
@@ -1820,7 +1923,6 @@ class HOME(unittest.TestCase):
                               'Local Network',
                               ['Device Name', 'Interface', 'MAC Address', 'IP Address'],
                               return_true]
-
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -1840,7 +1942,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('2. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK F
     def test_30_Check_a_configuration_list_of_connected_devices_Edit(self):
         self.key = 'HOME_30'
         driver = self.driver
@@ -1849,6 +1951,7 @@ class HOME(unittest.TestCase):
         self.list_steps = []
         URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
         current_pw = get_config('ACCOUNT', 'password')
+
         try:
             time.sleep(5)
             os.system(f'netsh wlan disconnect')
@@ -1860,7 +1963,6 @@ class HOME(unittest.TestCase):
         except:
             self.list_steps.append('[Fail] Precondition Fail')
             list_step_fail.append('Assertion wong.')
-
 
         try:
             grand_login(driver)
@@ -1988,7 +2090,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('5. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_31_Reserved_IP_registration_deletion_confirmation(self):
         self.key = 'HOME_31'
         driver = self.driver
@@ -2894,7 +2996,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('8.4. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_33_Confirm_Parental_Control_information_display(self):
         self.key = 'HOME_33'
         driver = self.driver

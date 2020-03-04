@@ -755,7 +755,8 @@ def api_change_wifi_setting(url_change, new_wifi_name='', get_only_mac=False, ):
     user = get_config('ACCOUNT', 'user')
     pw = get_config('ACCOUNT', 'password')
     token = get_token(user, pw)
-
+    wifi_default_pw = 'humax_' + get_config('GENERAL', 'serial_number')
+    hash_pw = base64encodev2(user, wifi_default_pw)
     get_mac = call_api(url_change, 'GET', body='', token=token)['macAddress']
     if get_only_mac:
         return get_mac
@@ -774,7 +775,7 @@ def api_change_wifi_setting(url_change, new_wifi_name='', get_only_mac=False, ):
             "security": {
                 "type": "WPA2/WPA-PSK",
                 "personal": {
-                    "password": "SFM6YWRtaW46aHVtYXhfMDAwMQ==",
+                    "password": hash_pw,
                     "encryption": "AES/TKIP",
                     "groupKey": 3600
                 },

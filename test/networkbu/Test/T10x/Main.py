@@ -57,7 +57,7 @@ class MAIN(unittest.TestCase):
             os.system('netsh wlan disconnect')
             time.sleep(1)
         self.driver.quit()
-    # OK
+
     def test_04_Verify_the_Web_UI_connection_through_Gateway_IP(self):
         self.key = 'MAIN_04'
         driver = self.driver
@@ -2135,7 +2135,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('3, 5. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_25_Verify_of_Dynamic_IP_auto_detection(self):
         self.key = 'MAIN_25'
         driver = self.driver
@@ -2559,7 +2559,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('5. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_29_Verification_of_Manual_Setup_Static_IP(self):
         self.key = 'MAIN_29'
         driver = self.driver
@@ -2766,7 +2766,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('4. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_38_Winzard_Summary(self):
         self.key = 'MAIN_38'
         driver = self.driver
@@ -3544,7 +3544,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('8-9. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_61_Check_InValid_Password_operation(self):
         self.key = 'MAIN_61'
         driver = self.driver
@@ -3674,7 +3674,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('4. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_62_System_Password_Minimum_and_maximum_number_of_input(self):
         self.key = 'MAIN_62'
         driver = self.driver
@@ -3765,7 +3765,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('3. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_63_Check_Backup_Operation(self):
         self.key = 'MAIN_63'
         driver = self.driver
@@ -4019,7 +4019,7 @@ class MAIN(unittest.TestCase):
             commmand = 'factorycfg.sh -a'
             run_cmd(commmand, filename=filename)
             # Wait 5 mins for factory
-            time.sleep(120)
+            time.sleep(150)
             wait_DUT_activated(url_login)
             wait_ping('192.168.1.1')
 
@@ -4190,7 +4190,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('8. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_72_System_Verify_Winzard_popup(self):
         self.key = 'MAIN_72'
         driver = self.driver
@@ -4226,7 +4226,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('2. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_73_Verification_the_Footer_hyperlink_menu_operation(self):
         self.key = 'MAIN_73'
         driver = self.driver
@@ -4323,7 +4323,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('4. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_74_Check_Keyword_Search_Function(self):
         self.key = 'MAIN_74'
         driver = self.driver
@@ -4388,7 +4388,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('3. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_75_Verify_Hyperlink_Capabilities(self):
         self.key = 'MAIN_75'
         driver = self.driver
@@ -4453,7 +4453,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('3. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_76_Verify_the_Network_hyperlink(self):
         self.key = 'MAIN_76'
         driver = self.driver
@@ -4559,7 +4559,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('4. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_77_Verify_the_Security_hyperlink(self):
         self.key = 'MAIN_77'
         driver = self.driver
@@ -4696,7 +4696,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('5, 6, 7. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_78_Verify_the_Wireless_hyperlink(self):
         self.key = 'MAIN_78'
         driver = self.driver
@@ -4782,7 +4782,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('4. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_79_Verify_the_Home_hyperlink(self):
         self.key = 'MAIN_79'
         driver = self.driver

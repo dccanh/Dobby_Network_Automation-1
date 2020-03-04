@@ -143,8 +143,8 @@ check6 = Checkbutton(root, text=moduleChoices[6], variable=Module6).place(x=140 
 check7 = Checkbutton(root, text=moduleChoices[7], variable=Module7).place(x=140 + 1 * 100, y=270 + 60)
 check8 = Checkbutton(root, text=moduleChoices[8], variable=Module8).place(x=140 + 2 * 100, y=270 + 60)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-notiLabel = Label(root, text="")
-notiLabel.place(x=170, y=400)
+# notiLabel = Label(root, text="")
+# notiLabel.place(x=170, y=400)
 linkLabel = Label(root, text="")
 
 labelFile6 = Label(root, text="Individual TC:")
@@ -250,10 +250,10 @@ def _runBtn():
         save_config(config_path, 'GENERAL', 'module', list_choiced_inform)
 
     if warning():
-        notiLabel.configure(text=f'__- Ready to execute module -__', anchor="center")
-        linkLabel.configure(text='See progress of report here', fg='blue', anchor="center")
+        # notiLabel.configure(text=f'__- Ready to execute module -__', anchor="center")
+        linkLabel.configure(text='< << <<< <<<< <<<<<Go to report page>>>>> >>>> >>> >> >', fg='blue', anchor="center")
         linkLabel.pack()
-        linkLabel.place(x=170, y=420)
+        linkLabel.place(x=140, y=410)
         linkLabel.bind("<Button-1>", lambda e: callback("https://sum.vn/Rx5Zy"))
 
         for i in range(int(loopBox.get())):

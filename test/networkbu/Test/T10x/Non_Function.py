@@ -26,9 +26,9 @@ USER = get_config('ACCOUNT', 'user')
 PW = get_config('ACCOUNT', 'password')
 token = get_token(USER, PW)
 URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
-# wifi_mac_2g = '_'.join(['wifi_2g', call_api(URL_2g, METHOD, body='', token=token)['macAddress'].replace(':', '_')])
+
 URL_5g = 'http://192.168.1.1/api/v1/wifi/1/ssid/0'
-# wifi_mac_5g = '_'.join(['wifi_5g', call_api(URL_5g, METHOD, body='', token=token)['macAddress'].replace(':', '_')])
+
 
 PING_TIMES = 60
 
@@ -82,7 +82,7 @@ class NON_FUNCTION(unittest.TestCase):
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
         # Wait 5 mins for factory
-        time.sleep(100)
+        time.sleep(150)
         wait_DUT_activated(URL_LOGIN)
         wait_ping('192.168.1.1')
 
@@ -223,14 +223,13 @@ class NON_FUNCTION(unittest.TestCase):
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
 
         try:
-            time.sleep(5)
             new_2g_wf_name = api_change_wifi_setting(URL_2g)
+            time.sleep(10)
+            write_data_to_xml(wifi_default_file_path, new_name=new_2g_wf_name)
             time.sleep(3)
-            write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name)
-            time.sleep(3)
-
+            os.system(f'netsh wlan delete profile name="{new_2g_wf_name}"')
             # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
             time.sleep(5)
 
             os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
@@ -371,12 +370,13 @@ class NON_FUNCTION(unittest.TestCase):
         try:
             time.sleep(5)
             new_5g_wf_name = api_change_wifi_setting(URL_5g)
+            time.sleep(10)
+            write_data_to_xml(wifi_default_file_path, new_name=new_5g_wf_name)
             time.sleep(3)
-            write_data_to_xml(default_wifi_2g_path, new_name=new_5g_wf_name)
+            os.system(f'netsh wlan delete profile name="{new_5g_wf_name}"')
             time.sleep(3)
-
             # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
             time.sleep(5)
 
             os.system(f'netsh wlan connect ssid="{new_5g_wf_name}" name="{new_5g_wf_name}"')
@@ -591,7 +591,8 @@ class NON_FUNCTION(unittest.TestCase):
 
                 wait_popup_disappear(driver, dialog_loading)
             time.sleep(5)
-
+            check_ota_auto_update(driver)
+            time.sleep(1)
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
             time.sleep(15)
             os.system(f'netsh wlan disconnect interface="Wi-Fi"')
@@ -743,15 +744,16 @@ class NON_FUNCTION(unittest.TestCase):
 
                 wait_popup_disappear(driver, dialog_loading)
             time.sleep(5)
-
+            check_ota_auto_update(driver)
             time.sleep(15)
             new_2g_wf_name = api_change_wifi_setting(URL_2g)
+            time.sleep(10)
+            write_data_to_xml(wifi_default_file_path, new_name=new_2g_wf_name)
             time.sleep(3)
-            write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name)
+            os.system(f'netsh wlan delete profile name="{new_2g_wf_name}"')
             time.sleep(3)
-
             # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
             time.sleep(5)
 
             os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
@@ -906,14 +908,17 @@ class NON_FUNCTION(unittest.TestCase):
 
                 wait_popup_disappear(driver, dialog_loading)
             time.sleep(5)
+            check_ota_auto_update(driver)
 
             time.sleep(15)
             new_5g_wf_name = api_change_wifi_setting(URL_5g)
+            time.sleep(10)
+            write_data_to_xml(wifi_default_file_path, new_name=new_5g_wf_name)
             time.sleep(3)
-            write_data_to_xml(default_wifi_2g_path, new_name=new_5g_wf_name)
+            os.system(f'netsh wlan delete profile name="{new_5g_wf_name}"')
             time.sleep(3)
             # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
             time.sleep(5)
 
             os.system(f'netsh wlan connect ssid="{new_5g_wf_name}" name="{new_5g_wf_name}"')
