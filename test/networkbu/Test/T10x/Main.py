@@ -57,7 +57,7 @@ class MAIN(unittest.TestCase):
             os.system('netsh wlan disconnect')
             time.sleep(1)
         self.driver.quit()
-
+    # OK
     def test_04_Verify_the_Web_UI_connection_through_Gateway_IP(self):
         self.key = 'MAIN_04'
         driver = self.driver
@@ -121,8 +121,8 @@ class MAIN(unittest.TestCase):
             new_2g_wf_name = api_change_wifi_setting(URL_2g)
             time.sleep(3)
             write_data_to_xml(wifi_default_file_path, new_name=new_2g_wf_name)
-            time.sleep(3)
-            os.system(f'netsh wlan delete profile name="{wifi_default_file_path}"')
+            time.sleep(10)
+            os.system(f'netsh wlan delete profile name="{new_2g_wf_name}"')
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
             time.sleep(5)
@@ -150,6 +150,7 @@ class MAIN(unittest.TestCase):
         try:
             time.sleep(1)
             driver.get(url_config)
+            time.sleep(2)
             check_lg_page_displayed = len(driver.find_elements_by_css_selector(lg_page)) != 0
             check_lg_id_field = len(driver.find_elements_by_css_selector(lg_user)) != 0
             check_lg_password_field = len(driver.find_elements_by_css_selector(lg_password)) != 0
@@ -177,7 +178,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('5. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_05_Verify_the_Default_setting_of_Language(self):
         self.key = 'MAIN_05'
         driver = self.driver
@@ -194,7 +195,7 @@ class MAIN(unittest.TestCase):
         try:
             grand_login(driver)
 
-            time.sleep(1)
+            time.sleep(3)
 
             # System > Restart / Factory > Factory Reset > OK
             driver.find_element_by_css_selector(system_btn).click()
@@ -208,13 +209,6 @@ class MAIN(unittest.TestCase):
             time.sleep(1)
 
             check_time_out = wait_popup_disappear(driver, dialog_loading)
-
-            # run_cmd(command_, filename_)
-            time.sleep(3)
-            # Get account information from web server and write to config.txt
-            url_login = get_config('URL', 'url')
-            get_result_command_from_server(url_ip=url_login, filename=filename_)
-            login(driver)
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
 
@@ -235,10 +229,7 @@ class MAIN(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~ Change Language
         try:
             # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
-            driver.get(url + homepage)
+            grand_login(driver)
             time.sleep(1)
 
             # System > Language
@@ -301,10 +292,6 @@ class MAIN(unittest.TestCase):
 
             # run_cmd(command_, filename_)
             time.sleep(3)
-            # Get account information from web server and write to config.txt
-            url_login = get_config('URL', 'url')
-            get_result_command_from_server(url_ip=url_login, filename=filename_)
-            login(driver)
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
 
@@ -323,10 +310,7 @@ class MAIN(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~ Change Language and verify
         try:
             # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)):
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
-            driver.get(url + homepage)
+            grand_login(driver)
             time.sleep(1)
 
             # System > Language
@@ -356,7 +340,7 @@ class MAIN(unittest.TestCase):
             welcome_text = driver.find_element_by_css_selector(lg_welcome_text).text
 
             list_actual4 = [welcome_text]
-            list_expected4= [expected_welcome_text_vi]
+            list_expected4 = [expected_welcome_text_vi]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -757,6 +741,7 @@ class MAIN(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         url_login = get_config('URL', 'url')
+
         filename = '1'
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
@@ -793,10 +778,10 @@ class MAIN(unittest.TestCase):
             driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
             time.sleep(1)
             driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
-            time.sleep(7)
+            time.sleep(5)
 
             # Check Privacy Policy
-            check_policy_popup = len(driver.find_elements_by_css_selector(lg_privacy_policy_pop)) != 0
+            check_policy_popup = len(driver.find_elements_by_css_selector(lg_privacy_policy_pop)) > 0
 
             list_actual1 = [check_policy_popup]
             list_expected1 = [return_true]
@@ -810,6 +795,7 @@ class MAIN(unittest.TestCase):
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             list_step_fail.append('1,2. Assertion wong')
+
         # ~~~~~~~~~~~~~~~~~~ Check Privacy
         try:
             ActionChains(driver).send_keys(Keys.ESCAPE).perform()
@@ -818,6 +804,7 @@ class MAIN(unittest.TestCase):
             check_policy_popup = len(driver.find_elements_by_css_selector(lg_privacy_policy_pop)) != 0
             # Check Login page appear
             check_lg_page = driver.find_element_by_css_selector(lg_page).is_displayed()
+
             list_actual2 = [check_policy_popup, check_lg_page]
             list_expected2 = [return_false, return_true]
             check = assert_list(list_actual2, list_expected2)
@@ -830,6 +817,7 @@ class MAIN(unittest.TestCase):
                 f'Actual: {str(list_actual2)}. '
                 f'Expected: {str(list_expected2)}')
             list_step_fail.append('3. Assertion wong.')
+
         # ~~~~~~~~~~~~~~~~~~~~~~ Check login again ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             time.sleep(1)
@@ -898,6 +886,7 @@ class MAIN(unittest.TestCase):
             # Check Welcome Dialog appear
             time.sleep(3)
             check_welcome = len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0
+
             list_actual5 = [check_welcome]
             list_expected5 = [return_true]
             check = assert_list(list_actual5, list_expected5)
@@ -932,6 +921,7 @@ class MAIN(unittest.TestCase):
 
             # Check Welcome dialog
             check_welcome = driver.find_element_by_css_selector(lg_welcome_header).is_displayed()
+
             list_actual6 = [check_lg_page, check_welcome]
             list_expected6 = [return_true, return_true]
             check = assert_list(list_actual6, list_expected6)
@@ -1280,6 +1270,8 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+
+
     def test_14_Verify_the_time_out_operation(self):
         self.key = 'MAIN_14'
         driver = self.driver
@@ -1570,65 +1562,68 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    # NOT GOOD
-    def test_18_Check_Edge_Browser_behavior(self):
-        self.key = 'MAIN_18'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-        url_login = get_config('URL', 'url')
-        user_request = get_config('ACCOUNT', 'user')
-        pass_word = get_config('ACCOUNT', 'password')
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        try:
-            driver.get(url_login)
-            time.sleep(1)
 
-            list_actual1 = [url_login]
-            list_expected1 = [driver.current_url]
-            check = assert_list(list_actual1, list_expected1)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                '[Pass] 1. Check URL Login Page in Edge')
-        except:
-            self.list_steps.append(
-                f'[Fail] 1. Check URL Login Page in Edge. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
-            list_step_fail.append('1. Assertion wong')
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        try:
-            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
-            time.sleep(1)
-            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
-            time.sleep(1)
-            # Captcha
-            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
-            captcha_text = get_captcha_string(captcha_src)
-            driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
-            time.sleep(1)
+    # def test_18_Check_Edge_Browser_behavior(self):
+    #     self.key = 'MAIN_18'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     url_login = get_config('URL', 'url')
+    #     user_request = get_config('ACCOUNT', 'user')
+    #     pass_word = get_config('ACCOUNT', 'password')
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         driver.get(url_login)
+    #         time.sleep(1)
+    #
+    #         list_actual1 = [url_login]
+    #         list_expected1 = [driver.current_url]
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             '[Pass] 1. Check URL Login Page in Edge')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 1. Check URL Login Page in Edge. '
+    #             f'Actual: {str(list_actual1)}. '
+    #             f'Expected: {str(list_expected1)}')
+    #         list_step_fail.append('1. Assertion wong')
+    #
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
+    #         time.sleep(1)
+    #         driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
+    #         time.sleep(1)
+    #         # Captcha
+    #         captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+    #         captcha_text = get_captcha_string(captcha_src)
+    #         driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+    #         time.sleep(1)
+    #
+    #         user_value = driver.find_element_by_css_selector(lg_user).get_attribute('value')
+    #         captcha_value = driver.find_element_by_css_selector(lg_captcha_box).get_attribute('value')
+    #
+    #         list_actual2 = [user_value, captcha_value]
+    #         list_expected2 = [user_request, captcha_text]
+    #         check = assert_list(list_actual2, list_expected2)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 2. Check input correct username and captcha')
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 2. Check input correct username and captcha. '
+    #             f'Actual: {str(list_actual2)}. '
+    #             f'Expected: {str(list_expected2)}')
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('2. Assertion wong')
+    #
+    #     self.assertListEqual(list_step_fail, [])
 
-            user_value = driver.find_element_by_css_selector(lg_user).get_attribute('value')
-            captcha_value = driver.find_element_by_css_selector(lg_captcha_box).get_attribute('value')
 
-            list_actual2 = [user_value, captcha_value]
-            list_expected2 = [user_request, captcha_text]
-            check = assert_list(list_actual2, list_expected2)
-            self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Check input correct username and captcha')
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                f'[Fail] 2. Check input correct username and captcha. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
-            self.list_steps.append('[END TC]')
-            list_step_fail.append('2. Assertion wong')
-
-        self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_20_Verify_the_Winzard_Main_page(self):
         self.key = 'MAIN_20'
         driver = self.driver
@@ -1684,7 +1679,7 @@ class MAIN(unittest.TestCase):
                 time.sleep(3)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(2)
+            time.sleep(5)
             check_welcome = len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0
 
             list_actual1 = [check_agree_enable, check_welcome]
@@ -1711,6 +1706,7 @@ class MAIN(unittest.TestCase):
             language_box = len(driver.find_elements_by_css_selector(welcome_language_wz)) != 0
             timezone_box = len(driver.find_elements_by_css_selector(welcome_timezone_wz)) != 0
             text_welcome_btn_start = driver.find_element_by_css_selector(welcome_start_btn).text
+
             list_actual2 = [text_welcome_title, text_welcome_msg_up, text_welcome_pic_first,
                             text_welcome_pic_second, text_welcome_pic_third, text_welcome_msg_down,
                             language_box, timezone_box, text_welcome_btn_start]
@@ -1881,7 +1877,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('2. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_23_Check_Correct_Password_operation(self):
         self.key = 'MAIN_23'
         driver = self.driver
@@ -1894,7 +1890,7 @@ class MAIN(unittest.TestCase):
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
         # Wait 5 mins for factory
-        time.sleep(100)
+        time.sleep(150)
         wait_DUT_activated(url_login)
         wait_ping('192.168.1.1')
 
@@ -1909,9 +1905,7 @@ class MAIN(unittest.TestCase):
             login(driver)
             wait_popup_disappear(driver, dialog_loading)
             # Welcome pop up displayed
-            check_login = len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0
-            if not check_login:
-                driver.get(url_login+'/welcome')
+            check_login = len(driver.find_elements_by_css_selector(lg_welcome_header)) > 0
 
             list_actual1 = [check_login]
             list_expected1 = [return_true]
@@ -1963,47 +1957,15 @@ class MAIN(unittest.TestCase):
                 ActionChains(driver).move_to_element(p).click().send_keys(v).perform()
                 time.sleep(0.5)
 
-            # Next Change pw
-            time.sleep(3)
-            wait_visible(driver, welcome_next_btn)
-            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-            if not next_btn.get_property('disabled'):
-                next_btn.click()
-
-            # Next Operation Mode
-            time.sleep(3)
-            wait_visible(driver, welcome_next_btn)
-            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-            if not next_btn.get_property('disabled'):
-                next_btn.click()
-
-            # Next Internet Setup 1
-            time.sleep(3)
-            wait_visible(driver, welcome_next_btn)
-            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-            if not next_btn.get_property('disabled'):
-                next_btn.click()
-
-            # Next Internet setup 2
-            time.sleep(3)
-            wait_visible(driver, welcome_next_btn)
-            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-            if not next_btn.get_property('disabled'):
-                next_btn.click()
-
-            # Next Wireless Setup
-            time.sleep(3)
-            wait_visible(driver, welcome_next_btn)
-            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-            if not next_btn.get_property('disabled'):
-                next_btn.click()
-
-            # Next Humax Wifi App
-            time.sleep(3)
-            wait_visible(driver, welcome_next_btn)
-            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-            if not next_btn.get_property('disabled'):
-                next_btn.click()
+            while True:
+                time.sleep(2)
+                wait_visible(driver, welcome_next_btn)
+                next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+                if not next_btn.get_property('disabled'):
+                    next_btn.click()
+                time.sleep(5)
+                if len(driver.find_elements_by_css_selector(welcome_let_go_btn)) > 0:
+                    break
 
             # Click Let's Go
             time.sleep(3)
@@ -2013,16 +1975,20 @@ class MAIN(unittest.TestCase):
             wait_visible(driver, home_view_wrap)
             time.sleep(5)
             save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD)
-            # check_home_displayed = driver.find_element_by_css_selector(home_view_wrap).is_displayed()
+            check_ota_auto_update(driver)
 
             login(driver)
             time.sleep(3)
+            check_ota_auto_update(driver)
+            time.sleep(1)
             check_login = len(driver.find_elements_by_css_selector(home_view_wrap)) != 0
+
             list_actual2 = [check_login]
             list_expected2 = [return_true]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Check title Change PW, message , Default Login ID, list Label, list placeholder')
+            self.list_steps.append(
+                '[Pass] 2. Check title Change PW, message , Default Login ID, list Label, list placeholder')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -2033,7 +1999,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('2. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK F
     def test_24_Check_InCorrect_Password_operation(self):
         self.key = 'MAIN_24'
         driver = self.driver
@@ -2042,32 +2008,22 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
         url_login = get_config('URL', 'url')
 
-        # filename = '1'
-        # commmand = 'factorycfg.sh -a'
-        # run_cmd(commmand, filename=filename)
-        # # Wait 5 mins for factory
-        # time.sleep(100)
-        # wait_DUT_activated(url_login)
-        # wait_ping('192.168.1.1')
-        #
-        # filename_2 = 'account.txt'
-        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        # run_cmd(commmand_2, filename_2)
-        # time.sleep(3)
-        # Get account information from web server and write to config.txt
-
-        # user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
         WRONG_PW = 'acb000'
         NEW_PASSWORD = 'acb123'
         RETYPE_NEW_PASSWORD = 'acb321'
 
         try:
-            login(driver)
+            grand_login(driver)
             wait_popup_disappear(driver, dialog_loading)
             # Welcome pop up displayed
-            check_login = len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0
+            driver.find_element_by_css_selector(system_btn).click()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(ele_sys_winzard).click()
+            time.sleep(2)
 
-            list_actual1 = [check_login]
+            check_winzard = len(driver.find_elements_by_css_selector(ele_winzard_step_id)) > 0
+
+            list_actual1 = [check_winzard]
             list_expected1 = [return_true]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
@@ -2335,6 +2291,7 @@ class MAIN(unittest.TestCase):
     #
     #     self.assertListEqual(list_step_fail, [])
 
+    # OK
     def test_28_Verification_of_Manual_Setup_Dynamic_IP(self):
         self.key = 'MAIN_28'
         driver = self.driver
@@ -2365,9 +2322,7 @@ class MAIN(unittest.TestCase):
             login(driver)
             wait_popup_disappear(driver, dialog_loading)
             # Welcome pop up displayed
-            check_login = len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0
-            if not check_login:
-                driver.get(url_login+'/welcome')
+            check_login = len(driver.find_elements_by_css_selector(lg_welcome_header)) > 0
 
             list_actual1 = [check_login]
             list_expected1 = [return_true]
@@ -2491,27 +2446,15 @@ class MAIN(unittest.TestCase):
             ls_label_text = [i.text for i in ls_label]
             check_manual_dns_displayed = 'Manual DNS' in driver.page_source
 
-            # Next Internet setup 2
-            time.sleep(3)
-            wait_visible(driver, welcome_next_btn)
-            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-            if not next_btn.get_property('disabled'):
-                next_btn.click()
-
-            # Next Wireless Setup
-            time.sleep(3)
-            wait_visible(driver, welcome_next_btn)
-            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-            if not next_btn.get_property('disabled'):
-                next_btn.click()
-
-            # Next Humax Wifi App
-            time.sleep(3)
-            wait_visible(driver, welcome_next_btn)
-            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-            if not next_btn.get_property('disabled'):
-                next_btn.click()
-            time.sleep(3)
+            while True:
+                time.sleep(2)
+                wait_visible(driver, welcome_next_btn)
+                next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+                if not next_btn.get_property('disabled'):
+                    next_btn.click()
+                time.sleep(5)
+                if len(driver.find_elements_by_css_selector(welcome_let_go_btn)) > 0:
+                    break
 
             list_actual4 = [ls_label_text, check_manual_dns_displayed]
             list_expected4 = [['Connection Type', 'IP Address', 'Subnet Mask', 'Gateway', 'DNS Server 1', 'DNS Server 2'],
@@ -2543,7 +2486,8 @@ class MAIN(unittest.TestCase):
 
             driver.get(GOOGLE_URL)
             time.sleep(5)
-            check_google = len(driver.find_elements_by_css_selector('[alt="Google"]')) != 0
+            check_google = len(driver.find_elements_by_css_selector(google_img)) > 0
+
             list_actual5 = [check_youtube, check_google]
             list_expected5 = [return_true]*2
             check = assert_list(list_actual5, list_expected5)
@@ -3304,7 +3248,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    # Check lai casse 60
+
     def test_60_System_Change_password(self):
         self.key = 'MAIN_60'
         driver = self.driver
@@ -3315,20 +3259,20 @@ class MAIN(unittest.TestCase):
         url_login = get_config('URL', 'url')
         NEW_PASSWORD_1 = 'abc111'
         NEW_PASSWORD_2 = 'abc222'
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(120)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        # filename = '1'
+        # commmand = 'factorycfg.sh -a'
+        # run_cmd(commmand, filename=filename)
+        # # Wait 5 mins for factory
+        # time.sleep(120)
+        # wait_DUT_activated(url_login)
+        # wait_ping('192.168.1.1')
+        #
+        # filename_2 = 'account.txt'
+        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        # run_cmd(commmand_2, filename_2)
+        # time.sleep(3)
+        # # Get account information from web server and write to config.txt
+        # user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
 
         try:
             grand_login(driver)
@@ -3482,7 +3426,6 @@ class MAIN(unittest.TestCase):
                 f'Actual: {str(list_actual5)}. '
                 f'Expected: {str(list_expected5)}')
             list_step_fail.append('7.2 Assertion wong')
-
 
         try:
             # Check Login with old PW
@@ -3873,6 +3816,8 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+
+
     def test_64_Check_Restore_Operation(self):
         self.key = 'MAIN_64'
         driver = self.driver
@@ -4096,7 +4041,7 @@ class MAIN(unittest.TestCase):
             app = Application().connect(title_re="Open")
             app.Open.Edit.SetText(backup_path)
             time.sleep(2)
-            app.Open.Open.click()
+            app.Open.Open.Click()
             time.sleep(2)
 
             popup = driver.find_element_by_css_selector(dialog_content)

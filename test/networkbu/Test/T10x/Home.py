@@ -96,10 +96,11 @@ class HOME(unittest.TestCase):
                                     "dnsServer2": "DNS Server 2"}
             # Handle API
             _token = get_token(USER_LOGIN, PW_LOGIN)
+            time.sleep(1)
             # Call API
             res = call_api(URL_API, METHOD, BODY, _token)
             ipv4 = res['ipv4']
-
+            time.sleep(1)
             _actual = [dict_wan[i] for i in translate_key_api2ui.values()]
 
             _expected = [ipv4[i] for i in translate_key_api2ui.keys()]

@@ -158,6 +158,7 @@ block_schedule = 'td.schedule>span'
 
 ele_firewall_medium = '.medium'
 ele_firewall_lv_medium = '.circle-icon.medium'
+ele_security_check_parental = '.toggle-right'
 # ~~~~~~~~~~~~~~~~ ADVANCED
 advanced_extra_info = '.server-guide>div'
 wol_mac_addr = '.mac-address'
@@ -316,3 +317,6 @@ ele_playing = '.playing-mode'
 ele_buffering = '.buffering-mode'
 ele_skip_ad = '.ytp-ad-skip-button-text'
 ele_video = '.video-stream'
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ FACEBOOK
+ele_verify_facebook = '#facebook .fb_logo'

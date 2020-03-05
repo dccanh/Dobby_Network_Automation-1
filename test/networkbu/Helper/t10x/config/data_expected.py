@@ -29,7 +29,7 @@ connect_wifi_msg = 'Connection request was completed successfully.'
 disconnect_wifi_msg = 'Disconnection request was completed successfully for interface "Wi-Fi".'
 
 expected_welcome_text_en = 'WELCOME!'
-expected_welcome_text_vi = 'CHÀO MỪNG!'
+expected_welcome_text_vi = 'CHÀO MỪNG!'
 
 exp_lg_id_holder = 'Enter the router login ID'
 exp_lg_password_holder = 'Enter the Password'

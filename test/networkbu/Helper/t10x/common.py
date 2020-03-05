@@ -235,6 +235,9 @@ def login(driver):
     url_login = get_config('URL', 'url')
     user_request = get_config('ACCOUNT', 'user')
     pass_word = get_config('ACCOUNT', 'password')
+    call_api_login(user_request, pass_word)
+    user_request = get_config('ACCOUNT', 'user')
+    pass_word = get_config('ACCOUNT', 'password')
 
     time.sleep(1)
     driver.get(url_login)
@@ -320,7 +323,9 @@ def goto_menu(driver, parent_tab, child_tab):
 
 def detect_current_menu(driver):
     # Detect current active tab in T10x
-    main_tab = driver.find_element_by_css_selector('#parent-menu>a.active.open').text
+    main_tab = driver.find_element_by_css_selector('#parent-menu>a.active.open')
+    ActionChains(driver).move_to_element(main_tab).perform()
+    main_tab = main_tab.text
 
     child_tab = driver.find_elements_by_css_selector('#sub-menu>.active')
     if not len(child_tab):
