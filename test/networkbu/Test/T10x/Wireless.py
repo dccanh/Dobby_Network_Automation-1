@@ -39,7 +39,7 @@ class WIRELESS(unittest.TestCase):
             os.system('netsh wlan disconnect')
             time.sleep(1)
         self.driver.quit()
-
+    # OK
     def test_02_Verification_of_the_Wifi_On_off_operation(self):
         self.key = 'WIRELESS_02'
         driver = self.driver
@@ -65,6 +65,7 @@ class WIRELESS(unittest.TestCase):
         get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         SSID_NAME = '123! @ # ^  * ( ) + _ - = { } [ ] | 456:789 . ? ` $ % \ ;  , /'
+
         try:
             grand_login(driver)
             time.sleep(2)
@@ -89,13 +90,14 @@ class WIRELESS(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Check Default SSID name and placeholder of 2G, 5G \n')
+                '[Pass] 1,2. Check Default SSID name and placeholder of 2G, 5G. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1,2. Check Default SSID name and placeholder of 2G, 5G. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             list_step_fail.append(
-                '1,2,3. Assertion wong.')
+                '1,2. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
         try:
@@ -125,7 +127,8 @@ class WIRELESS(unittest.TestCase):
             list_expected = [SSID_NAME[:32], SSID_NAME[:32]]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Change name of SSID 2G/5G\n')
+            self.list_steps.append('[Pass] 3. Change name of SSID 2G/5G. '
+                                   f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -267,7 +270,7 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('5,6. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK F
     def test_04_Verification_of_the_setting_WPA2_PSK_Password(self):
         self.key = 'WIRELESS_04'
         driver = self.driver
@@ -279,7 +282,22 @@ class WIRELESS(unittest.TestCase):
         # # # Factory reset
         URL_LOGIN = get_config('URL', 'url')
         URL_PING_CHECK = '192.168.1.1'
-
+        # # Factory reset
+        URL_LOGIN = get_config('URL', 'url')
+        URL_PING_CHECK = '192.168.1.1'
+        filename = '1'
+        command = 'factorycfg.sh -a'
+        run_cmd(command, filename=filename)
+        time.sleep(150)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping(URL_PING_CHECK)
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        filename_2 = 'account.txt'
+        command_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(command_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         GOOGLE_URL = 'http://google.com'
         SECURITY_TYPE = 'WPA2-PSK'
@@ -322,7 +340,8 @@ class WIRELESS(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Check Default Password of 2G, 5G \n')
+                '[Pass] 1,2. Check Default Password of 2G, 5G. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1,2. Check Default Password of 2G, 5G. '
@@ -368,7 +387,8 @@ class WIRELESS(unittest.TestCase):
             list_expected2 = [exp_password_error_msg]*2
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Change password < 8 char of  2G/5G ')
+            self.list_steps.append('[Pass] 3. Change password < 8 char of  2G/5G. '
+                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Change password < 8 char of  2G/5G . '
@@ -428,7 +448,8 @@ class WIRELESS(unittest.TestCase):
             list_expected4 = [expected_pw]*2
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Change password > 63 chars of  2G/5G ')
+            self.list_steps.append('[Pass] 4. Change password > 63 chars of  2G/5G. '
+                                   f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
         except:
             self.list_steps.append(
                 f'[Fail] 4. Change password > 63 chars of  2G/5G . '
@@ -478,7 +499,8 @@ class WIRELESS(unittest.TestCase):
             list_expected5 = [return_true]*2
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 5. Connect to Google using of  2G/5G wifi ')
+            self.list_steps.append('[Pass] 5. Connect to Google using of  2G/5G wifi. '
+                                   f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
