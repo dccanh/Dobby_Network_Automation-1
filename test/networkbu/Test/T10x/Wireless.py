@@ -53,7 +53,7 @@ class WIRELESS(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        # # Factory reset
+        # Factory reset
         URL_LOGIN = get_config('URL', 'url')
         URL_PING_CHECK = '192.168.1.1'
         filename = '1'
@@ -153,19 +153,13 @@ class WIRELESS(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        # # Factory reset
         URL_LOGIN = get_config('URL', 'url')
-
-        # # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         GOOGLE_URL = 'http://google.com'
 
         VALID_PASSWORD = '0123456789'
-        PASSWORD_4 = '123!@ abcd #^&*()+_-={}[]|456:789.?`$%\;\'"<>,/123!@ abcd #^&*()+_-={}[]|456:789.?`$%\;\'"<>,/'
+
         try:
-            login(driver)
-            time.sleep(1)
-            # Goto Homepage
-            driver.get(URL_LOGIN + homepage)
+            grand_login(driver)
             time.sleep(2)
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
@@ -186,13 +180,55 @@ class WIRELESS(unittest.TestCase):
             SECURITY_TYPE = 'NONE'
             # 2G Change security
             setting_wireless_security(block_2g, SECURITY_TYPE)
-            # Apply
-            apply(driver, block_2g)
+            block_2g.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
 
+            wl_2g_ssid = wireless_get_default_ssid(driver, 'Network Name(SSID)')
+            os.system(f'netsh wlan delete profile name="{wl_2g_ssid}"')
+            write_data_to_none_secure_xml(wifi_none_secure_path, new_name=wl_2g_ssid)
+            os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
+            time.sleep(5)
+            os.system(f'netsh wlan connect ssid="{wl_2g_ssid}" name="{wl_2g_ssid}"')
+            time.sleep(10)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+
+            # Google
+            driver.get(GOOGLE_URL)
+            time.sleep(10)
+            check_2g_none = len(driver.find_elements_by_css_selector(google_img)) > 0
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
             # 5G Change security
             setting_wireless_security(block_5g, SECURITY_TYPE)
-            # Apply
-            apply(driver, block_5g)
+            block_5g.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            wl_5g_ssid = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
+            os.system(f'netsh wlan delete profile name="{wl_5g_ssid}"')
+            write_data_to_none_secure_xml(wifi_none_secure_path, new_name=wl_5g_ssid)
+            os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
+            time.sleep(5)
+            os.system(f'netsh wlan connect ssid="{wl_5g_ssid}" name="{wl_5g_ssid}"')
+            time.sleep(10)
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+
+            # Google
+            driver.get(GOOGLE_URL)
+            time.sleep(10)
+            check_2g_none = len(driver.find_elements_by_css_selector(google_img)) > 0
+
+
+
+
 
             list_actual = []
             list_expected = []

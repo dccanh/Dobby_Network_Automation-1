@@ -14,6 +14,8 @@ class NETWORK(unittest.TestCase):
         try:
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             self.driver = webdriver.Chrome(driver_path)  # open chrome
             self.driver.maximize_window()
             self.time_stamp = datetime.now()
@@ -23,10 +25,14 @@ class NETWORK(unittest.TestCase):
 
     def tearDown(self):
         try:
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
         except:
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             # Connect by wifi if internet is down to handle exception for PPPoE
             os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
             time.sleep(1)
@@ -40,7 +46,6 @@ class NETWORK(unittest.TestCase):
         self.driver.quit()
 
     def test_01_Check_Internet_Status(self):
-        global list_actual, list_expected, wan_ip
         self.key = 'NETWORK_01'
         driver = self.driver
         self.def_name = get_func_name()
@@ -61,11 +66,7 @@ class NETWORK(unittest.TestCase):
         # Handle API
 
         try:
-            login(driver)
-            time.sleep(1)
-            # Goto Homepage
-            driver.get(URL_LOGIN + homepage)
-            wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
 
             # Enable Dual WAN
             goto_menu(driver, network_tab, network_internet_tab)
@@ -141,7 +142,8 @@ class NETWORK(unittest.TestCase):
 
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Goto Network>Internet: Change values of Internet Settings: Dynamic IP\n')
+                '[Pass] 1,2. Goto Network>Internet: Change values of Internet Settings: Dynamic IP. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1,2. Goto Network>Internet: Change values of Internet Settings: Dynamic IP. '
@@ -152,20 +154,16 @@ class NETWORK(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
         try:
             # Login
-            time.sleep(5)
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
+
             # Get Wan IP address
             wan_ip = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
             # Click icons Internet connection
             driver.find_element_by_css_selector(home_img_connection).click()
             time.sleep(1)
 
-            primary = driver.find_element_by_css_selector(left)
+            primary = driver.find_element_by_css_selector(ele_wan_block)
             ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
             dict_wan = {}
             for w in ls_wan_field:
@@ -181,8 +179,9 @@ class NETWORK(unittest.TestCase):
                                     "dnsServer1": "DNS Server 1",
                                     "dnsServer2": "DNS Server 2"}
             _token = get_token(USER_LOGIN, PW_LOGIN)
+            time.sleep(2)
             res_wan_primary = call_api(URL_API, METHOD, BODY, _token)
-
+            time.sleep(2)
             _actual = [dict_wan[i] for i in translate_key_api2ui.values()]
             _expected = []
             for i in translate_key_api2ui.keys():
@@ -203,7 +202,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Check information changed: Dynamic IP\n')
+                '[Pass] 3. Check information changed: Dynamic IP. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Check information changed: Dynamic IP. '
@@ -292,7 +292,8 @@ class NETWORK(unittest.TestCase):
 
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 4. Goto Network>Internet: Change values of Internet Settings: Static IP\n')
+                '[Pass] 4. Goto Network>Internet: Change values of Internet Settings: Static IP. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 4. Goto Network>Internet: Change values of Internet Settings: Static IP '
@@ -303,13 +304,9 @@ class NETWORK(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
         try:
             # Login
-            time.sleep(5)
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
+
             # Get Wan IP address
             wan_ip = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
             # Click icons Internet connection
@@ -354,7 +351,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 5. Check information changed: Static IP\n')
+                '[Pass] 5. Check information changed: Static IP. ' 
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 5. Check information changed: Static IP. '
@@ -423,7 +421,8 @@ class NETWORK(unittest.TestCase):
 
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 6. Goto Network>Internet: Change values of Internet Settings: PPPoE ')
+                '[Pass] 6. Goto Network>Internet: Change values of Internet Settings: PPPoE '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 6. Goto Network>Internet: Change values of Internet Settings: PPPoE . '
@@ -434,12 +433,7 @@ class NETWORK(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 7
         try:
             # Login
-            time.sleep(5)
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
             # Get Wan IP address
             wan_ip = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
@@ -480,30 +474,47 @@ class NETWORK(unittest.TestCase):
             if res_wan_primary['ipv4']['dnsServer2'] == '':
                 _expected[-1] = '0.0.0.0'
             time.sleep(5)
+
             list_actual = [_actual]
             list_expected = [_expected]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 7. Check information changed: PPPoE\n')
+                '[Pass] 7. Check information changed: PPPoE. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 7. Check information changed: PPPoE. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
-            list_step_fail.append(
-                '7. Assertion wong.')
+            list_step_fail.append('7. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
 
     def test_02_Check_Dynamic_IP_Operation(self):
-        global list_actual, list_expected, internet_setting
         self.key = 'NETWORK_02'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        URL_LOGIN = url_login = get_config('URL', 'url')
+        # filename = '1'
+        # commmand = 'factorycfg.sh -a'
+        # run_cmd(commmand, filename=filename)
+        # # Wait 5 mins for factory
+        # time.sleep(150)
+        # wait_DUT_activated(url_login)
+        # wait_ping('192.168.1.1')
+        #
+        # filename_2 = 'account.txt'
+        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        # run_cmd(commmand_2, filename_2)
+        # time.sleep(3)
+        # # Get account information from web server and write to config.txt
+        # user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        # time.sleep(3)
+
 
         URL_LOGIN = get_config('URL', 'url')
         USER_LOGIN = get_config('ACCOUNT', 'user')
@@ -517,13 +528,7 @@ class NETWORK(unittest.TestCase):
         # Handle API
 
         try:
-            login(driver)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            grand_login(driver)
 
             # Enable Dual WAN
             goto_menu(driver, network_tab, network_internet_tab)
@@ -562,35 +567,38 @@ class NETWORK(unittest.TestCase):
                         f.click()
                         time.sleep(0.5)
                         break
-                    break
+
             # Get again
             internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
             internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+            time.sleep(1)
             for l, f in zip(internet_setting_label, internet_setting_fields):
                 # DNS server 1
                 if l.text == 'DNS Server 1':
                     dns_1 = f.find_elements_by_css_selector(input)
                     for i in dns_1:
                         ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                            Keys.CONTROL).send_keys(Keys.DELETE).perform()
+                            Keys.CONTROL).send_keys(0).perform()
                 # DNS server 2
                 elif l.text == 'DNS Server 2':
                     dns_2 = f.find_elements_by_css_selector(input)
                     for i in dns_2:
                         ActionChains(driver).move_to_element(i).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                            Keys.CONTROL).send_keys(Keys.DELETE).perform()
-                break
+                            Keys.CONTROL).send_keys(0).perform()
+
             check_require_warning = len(driver.find_elements_by_xpath(text_field_required)) > 0
-            list_actual = [check_require_warning]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+
+            list_actual3 = [check_require_warning]
+            list_expected3 = [return_true]
+            check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Delete DNS server info: Check text This field is required\n')
+                '[Pass] 1,2,3. Delete DNS server info: Check text This field is required display. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3. Delete DNS server info: Check text This field is required. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 1,2,3. Delete DNS server info: Check text This field is required display. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             list_step_fail.append(
                 '1,2,3. Assertion wong.')
 
@@ -624,16 +632,17 @@ class NETWORK(unittest.TestCase):
             # Check Page network should be kept
             check_page_nw = len(driver.find_elements_by_css_selector(page_network)) > 0
 
-            list_actual = [check_page_nw]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+            list_actual4 = [check_page_nw]
+            list_expected4 = [return_true]
+            check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 4,5. Disbaled DNS. Apply>Cancel: Check Page NW kept\n')
+                '[Pass] 4,5. Disbaled DNS. Apply>Cancel: Check Page NW kept. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
         except:
             self.list_steps.append(
                 f'[Fail] 4,5. Disbaled DNS. Apply>Cancel: Check Page NW kept. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
             list_step_fail.append(
                 '4,5. Assertion wong.')
 
@@ -664,25 +673,22 @@ class NETWORK(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 7
         try:
             # Login
-            time.sleep(10)
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
             # Click icons Internet connection
             driver.find_element_by_css_selector(home_img_connection).click()
             time.sleep(1)
 
-            primary = driver.find_element_by_css_selector(left)
+            primary = driver.find_element_by_css_selector(ele_wan_block)
             ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
             dict_wan = {}
             for w in ls_wan_field:
                 label_wan = w.find_element_by_css_selector(home_wan_ls_label).text
                 value = w.find_element_by_css_selector(home_wan_ls_value).text
                 dict_wan.update({label_wan: value})
+
             _token = get_token(USER_LOGIN, PW_LOGIN)
+            time.sleep(2)
             translate_key_api2ui = {"linkType": "WAN Type",
                                     "mode": "Connection Type",
                                     "address": "WAN IP Address",
@@ -691,7 +697,7 @@ class NETWORK(unittest.TestCase):
                                     "dnsServer1": "DNS Server 1",
                                     "dnsServer2": "DNS Server 2"}
             res_wan_primary = call_api(URL_API, METHOD, BODY, _token)
-
+            time.sleep(2)
             _actual = [dict_wan[i] for i in translate_key_api2ui.values()]
             _expected = []
             for i in translate_key_api2ui.keys():
@@ -704,19 +710,19 @@ class NETWORK(unittest.TestCase):
                 _expected[0] = 'Ethernet'
             if res_wan_primary['ipv4']['mode'] == 'dynamic':
                 _expected[1] = 'Dynamic IP'
-            # if res_wan_primary['ipv4']['dnsServer2'] == '':
-            #     _expected[-1] = '0.0.0.0'
 
-            list_actual = [_actual]
-            list_expected = [_expected]
-            check = assert_list(list_actual, list_expected)
+
+            list_actual7 = [_actual]
+            list_expected7 = [_expected]
+            check = assert_list(list_actual7, list_expected7)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 7. Check Information of WAN IP\n')
+                '[Pass] 7. Check Information of WAN IP. '
+                f'Actual: {str(list_actual7)}. Expected: {str(list_actual7)}')
         except:
             self.list_steps.append(
                 f'[Fail] 7. Check Information of WAN IP. '
-                f'Actual: {str(_actual)}. Expected: {str(_expected)}')
+                f'Actual: {str(list_actual7)}. Expected: {str(list_actual7)}')
             list_step_fail.append(
                 '7. Assertion wong.')
 
@@ -725,24 +731,25 @@ class NETWORK(unittest.TestCase):
             # Ping to google
             check_ping = ping_to_url(URL_PING_CHECK)
             time.sleep(4)
-            list_actual = [check_ping]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+
+            list_actual8 = [check_ping]
+            list_expected8 = [return_true]
+            check = assert_list(list_actual8, list_expected8)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 8. Ping to Google successfully\n')
+                '[Pass] 8. Ping to Google successfully. '
+                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 8. Ping to Google successfully. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '8. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
 
     def test_03_Check_Static_IP_Operation(self):
-        global list_actual, list_expected, internet_setting, wan_ip_addr_value, wan_gateway_value
         self.key = 'NETWORK_03'
         driver = self.driver
         self.def_name = get_func_name()
@@ -762,21 +769,16 @@ class NETWORK(unittest.TestCase):
         VALUE_DNS2_SPLIT = VALUE_DNS2.split('.')
         SUBNET_MASK = '255.255.255.0'
         SUBNET_MASK_SPLIT = SUBNET_MASK.split('.')
+
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
 
             # Click icons Internet connection
             driver.find_element_by_css_selector(home_img_connection).click()
             time.sleep(1)
 
-            primary = driver.find_element_by_css_selector(left)
+            primary = driver.find_element_by_css_selector(ele_wan_block)
             ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
             dict_wan = {}
             for w in ls_wan_field:
@@ -841,6 +843,7 @@ class NETWORK(unittest.TestCase):
 
             # Verify This field is required
             check_required_warning = len(driver.find_elements_by_xpath(text_field_required)) > 0
+
             list_actual = [check_required_warning]
             list_expected = [return_true]
             check = assert_list(list_actual, list_expected)
@@ -942,16 +945,13 @@ class NETWORK(unittest.TestCase):
                 '[Fail] 6. Apply and Wait for reboot. ')
             list_step_fail.append(
                 '6. Assertion wong.')
+
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 7
         try:
             # Login
-            time.sleep(5)
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
+
             # Click icons Internet connection
             driver.find_element_by_css_selector(home_img_connection).click()
             time.sleep(1)
@@ -972,6 +972,7 @@ class NETWORK(unittest.TestCase):
                                     "dnsServer1": "DNS Server 1",
                                     "dnsServer2": "DNS Server 2"}
             _token = get_token(USER_LOGIN, PW_LOGIN)
+            time.sleep(1)
             res_wan_primary = call_api(URL_API, METHOD, BODY, _token)
 
             _actual = [dict_wan[i] for i in translate_key_api2ui.values()]
@@ -1021,8 +1022,9 @@ class NETWORK(unittest.TestCase):
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '8. Assertion wong.')
-        self.assertListEqual(list_step_fail, [])
 
+        self.assertListEqual(list_step_fail, [])
+    # OK
     def test_06_Check_Primary_Setting(self):
         self.key = 'NETWORK_06'
         driver = self.driver
@@ -1033,13 +1035,7 @@ class NETWORK(unittest.TestCase):
         URL_LOGIN = get_config('URL', 'url')
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
 
             # Enable Dual WAN
@@ -1121,7 +1117,7 @@ class NETWORK(unittest.TestCase):
                 '1,2,3. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_07_Check_Secondary_Setting(self):
         self.key = 'NETWORK_07'
         driver = self.driver
@@ -1132,13 +1128,7 @@ class NETWORK(unittest.TestCase):
         URL_LOGIN = get_config('URL', 'url')
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
 
             # Enable Dual WAN
@@ -1220,7 +1210,7 @@ class NETWORK(unittest.TestCase):
                 '1,2,3. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_18_LAN_Change_Subnet_Mask(self):
         self.key = 'NETWORK_18'
         driver = self.driver
@@ -1231,13 +1221,7 @@ class NETWORK(unittest.TestCase):
         URL_LOGIN = get_config('URL', 'url')
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
             # Network Lan Tab
             goto_menu(driver, network_tab, network_lan_tab)
@@ -1383,7 +1367,7 @@ class NETWORK(unittest.TestCase):
                 '4,5,6. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK F
     def test_21_Verify_Start_End_Ip_Address_input_value(self):
         self.key = 'NETWORK_21'
         driver = self.driver
@@ -1395,13 +1379,7 @@ class NETWORK(unittest.TestCase):
         LAN_IP_ADDRESS_SPLIT = LAN_IP_ADDRESS.split('.')
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
             # Network Lan Tab
             goto_menu(driver, network_tab, network_lan_tab)
@@ -1591,393 +1569,231 @@ class NETWORK(unittest.TestCase):
             list_step_fail.append(
                 '4. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
-
-    # def test_24_Reserved_IP_Add_a_Rule(self):
-    #     self.key = 'NETWORK_24'
-    #     driver = self.driver
-    #     self.def_name = get_func_name()
-    #     list_step_fail = []
-    #     self.list_steps = []
-    #     URL_LOGIN = get_config('URL', 'url')
-    #
-    #     try:
-    #         login(driver)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(1)
-    #         # Goto Homepage
-    #         if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-    #             driver.get(URL_LOGIN + homepage)
-    #             wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(1)
-    #         # Network Lan Tab
-    #         goto_menu(driver, network_tab, network_lan_tab)
-    #
-    #         lan_block = driver.find_element_by_css_selector(network_lan_card)
-    #         # Settings
-    #         lan_fields = lan_block.find_elements_by_css_selector(wrap_input)
-    #         lan_label = lan_block.find_elements_by_css_selector(label_name_in_2g)
-    #         for l, f in zip(lan_label, lan_fields):
-    #             if l.text == 'DHCP Server':
-    #                 if not f.find_element_by_css_selector(input).is_selected():
-    #                     f.find_element_by_css_selector(select).click()
-    #                     time.sleep(0.5)
-    #
-    #         # Control Rule
-    #         reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
-    #         # Click Add 1
-    #         reserved_ip_block.find_element_by_css_selector(add_class).click()
-    #         time.sleep(0.2)
-    #         # Edit mode
-    #         edit_field = reserved_ip_block.find_element_by_css_selector(edit_mode)
-    #
-    #         device_name_field = edit_field.find_element_by_css_selector(wol_mac_addr)
-    #         device_placeholder = device_name_field.find_element_by_css_selector(input).get_attribute('placeholder')
-    #         device_name_field.find_element_by_css_selector(input).click()
-    #         # Select all
-    #         time.sleep(0.5)
-    #         opts = device_name_field.find_elements_by_css_selector(secure_value_in_drop_down)
-    #         time.sleep(0.5)
-    #         ip_addr_dropdown_value = opts[0].text
-    #         opts[0].click()
-    #         time.sleep(0.5)
-    #         driver.find_element_by_css_selector(btn_save).click()
-    #         time.sleep(0.2)
-    #
-    #         driver.find_element_by_css_selector(apply).click()
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(1)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         wait_popup_disappear(driver, dialog_loading)
-    #
-    #         # Verify
-    #         ls_rule = reserved_ip_block.find_elements_by_css_selector(rows)
-    #         check_registered = False
-    #         for r in ls_rule:
-    #             if r.find_element_by_css_selector(mac_desc_cls).text == ip_addr_dropdown_value:
-    #                 check_registered = True
-    #                 ip_address = r.find_element_by_css_selector(ip_address_cls)
-    #
-    #         list_actual = [device_placeholder, check_registered]
-    #         list_expected = [exp_reserved_device_placeholder, return_true]
-    #         check = assert_list(list_actual, list_expected)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             '[Pass] 1,2,3. Register Reserved IP address: Check place holder, register success\n')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 1,2,3. Register Reserved IP address: Check place holder, register success. '
-    #             f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-    #         list_step_fail.append(
-    #             '1,2,3. Assertion wong.')
-    #
-    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #     try:
-    #         time.sleep(1)
-    #         IP_SMALL = str(random.randint(1, 32))
-    #         # Settings
-    #         lan_fields = lan_block.find_elements_by_css_selector(wrap_input)
-    #         lan_label = lan_block.find_elements_by_css_selector(label_name_in_2g)
-    #         for l, f in zip(lan_label, lan_fields):
-    #             if l.text == 'Start IP Address':
-    #                 ip_addr_fields = f.find_elements_by_css_selector(input_not_disabled)
-    #                 for f in ip_addr_fields:
-    #                     ActionChains(driver).move_to_element(f).click().key_down(Keys.CONTROL).send_keys(
-    #                         'a').key_up(Keys.CONTROL).send_keys(IP_SMALL).perform()
-    #             if l.text == 'End IP Address':
-    #                 ip_addr_fields = f.find_elements_by_css_selector(input_not_disabled)
-    #                 for f in ip_addr_fields:
-    #                     ActionChains(driver).move_to_element(f).click().key_down(Keys.CONTROL).send_keys(
-    #                         'a').key_up(Keys.CONTROL).send_keys(IP_SMALL).perform()
-    #                 break
-    #         # Click Apply
-    #         lan_block.find_element_by_css_selector(submit_btn).click()
-    #         time.sleep(0.5)
-    #
-    #         # Verify Message
-    #         error_msg = lan_block.find_element_by_css_selector(error_message).text
-    #
-    #         list_actual = [error_msg]
-    #         list_expected = [exp_error_msg_start_end_small]
-    #         check = assert_list(list_actual, list_expected)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             '[Pass] 2. Set start IP Address, End IP Address Small: Check Error Message\n')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 2. Set start IP Address, End IP Address Small: Check Error Message. '
-    #             f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-    #         list_step_fail.append(
-    #             '2. Assertion wong.')
-    #
-    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #     try:
-    #         # Settings
-    #         lan_fields = lan_block.find_elements_by_css_selector(wrap_input)
-    #         lan_label = lan_block.find_elements_by_css_selector(label_name_in_2g)
-    #         for l, f in zip(lan_label, lan_fields):
-    #             if l.text == 'Start IP Address':
-    #                 ip_addr_fields = f.find_elements_by_css_selector(input_not_disabled)
-    #                 for f, v in zip(ip_addr_fields, LAN_IP_ADDRESS_SPLIT[3:]):
-    #                     ActionChains(driver).move_to_element(f).click().key_down(Keys.CONTROL).send_keys(
-    #                         'a').key_up(Keys.CONTROL).send_keys(v).perform()
-    #             if l.text == 'End IP Address':
-    #                 ip_addr_fields = f.find_elements_by_css_selector(input_not_disabled)
-    #                 for f, v in zip(ip_addr_fields, LAN_IP_ADDRESS_SPLIT[3:]):
-    #                     ActionChains(driver).move_to_element(f).click().key_down(Keys.CONTROL).send_keys(
-    #                         'a').key_up(Keys.CONTROL).send_keys(v).perform()
-    #                 break
-    #         # Click Apply
-    #         lan_block.find_element_by_css_selector(submit_btn).click()
-    #         time.sleep(0.5)
-    #
-    #         # Verify Message
-    #         error_msg = lan_block.find_element_by_css_selector(error_message).text
-    #
-    #         list_actual = [error_msg]
-    #         list_expected = [exp_error_msg_start_end_same_lan_ip]
-    #         check = assert_list(list_actual, list_expected)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             '[Pass] 3. Set start IP Address, End IP Address Same as Lan IP Address: Check Error Message\n')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 3. Set start IP Address, End IP Address Same as Lan IP Address: Check Error Message. '
-    #             f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-    #         list_step_fail.append(
-    #             '3. Assertion wong.')
-    #
-    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #     try:
-    #         # 1 Edit Start IP address > End IP address
-    #         START_IP_ADDRESS = '192.168.1.3'
-    #         START_IP_ADDRESS_SPLIT = START_IP_ADDRESS.split('.')
-    #         END_IP_ADDRESS = '192.168.1.100'
-    #         END_IP_ADDRESS_SPLIT = END_IP_ADDRESS.split('.')
-    #
-    #         # Settings
-    #         lan_fields = lan_block.find_elements_by_css_selector(wrap_input)
-    #         lan_label = lan_block.find_elements_by_css_selector(label_name_in_2g)
-    #         for l, f in zip(lan_label, lan_fields):
-    #             if l.text == 'Start IP Address':
-    #                 ip_addr_fields = f.find_elements_by_css_selector(input_not_disabled)
-    #                 for f, v in zip(ip_addr_fields, START_IP_ADDRESS_SPLIT[3:]):
-    #                     ActionChains(driver).move_to_element(f).click().key_down(Keys.CONTROL).send_keys(
-    #                         'a').key_up(Keys.CONTROL).send_keys(v).perform()
-    #             if l.text == 'End IP Address':
-    #                 ip_addr_fields = f.find_elements_by_css_selector(input_not_disabled)
-    #                 for f, v in zip(ip_addr_fields, END_IP_ADDRESS_SPLIT[3:]):
-    #                     ActionChains(driver).move_to_element(f).click().key_down(Keys.CONTROL).send_keys(
-    #                         'a').key_up(Keys.CONTROL).send_keys(v).perform()
-    #                 break
-    #         # Click Apply
-    #         lan_block.find_element_by_css_selector(submit_btn).click()
-    #         time.sleep(0.5)
-    #
-    #         # Verify Message
-    #         error_msg = driver.find_element_by_css_selector(dialog_content).text
-    #
-    #         list_actual = [error_msg]
-    #         list_expected = [exp_error_msg_start_end_include_lan_ip]
-    #         check = assert_list(list_actual, list_expected)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             '[Pass] 4. Set start IP Address, End IP Address Same as Lan IP Address: Check Error Message\n')
-    #         self.list_steps.append('[END TC]')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 4. Set start IP Address, End IP Address Same as Lan IP Address: Check Error Message. '
-    #             f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-    #         self.list_steps.append('[END TC]')
-    #         list_step_fail.append(
-    #             '4. Assertion wong.')
-    #     self.assertListEqual(list_step_fail, [])
-
+    # OK F
     def test_25_Reserved_IP_Confirm_duplicate_registration_prevention(self):
         self.key = 'NETWORK_25'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        URL_LOGIN = get_config('URL', 'url')
 
+        MAC_2 = '22:22:22:22:22:22'
+        IP_2  = '192.168.1.16'
+        MAC_4 = '44:44:44:44:44:44'
+        IP_4 = '192.168.1.16'
+        MAC_6 = '66:66:66:66:66:66'
+        IP_6 = '192.168.1.1'
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+
             # Network Lan Tab
             goto_menu(driver, network_tab, network_lan_tab)
+
             wait_popup_disappear(driver, dialog_loading)
             reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
-            # Check exist rule
-            if not len(reserved_ip_block.find_elements_by_css_selector(rows)):
-                # Click Add
-                reserved_ip_block.find_element_by_css_selector(add_class).click()
-                edit_field = reserved_ip_block.find_element_by_css_selector(edit_mode)
 
-                ip_addr_value = edit_field.find_element_by_css_selector(wol_mac_addr)
-                ActionChains(driver).move_to_element(ip_addr_value).click().perform()
-                time.sleep(0.5)
+            nw_add_reserved_ip(driver, MAC_2, IP_2)
 
-                reserved_ip_block.find_elements_by_css_selector(secure_value_in_drop_down)[0].click()
-                time.sleep(0.5)
-                reserved_ip_block.find_element_by_css_selector(btn_save).click()
-                time.sleep(0.2)
-                reserved_ip_block.find_element_by_css_selector(apply).click()
-                wait_popup_disappear(driver, dialog_loading)
-                driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(0.2)
+            reserved_ip_block.find_element_by_css_selector(btn_save).click()
+            time.sleep(0.2)
+            reserved_ip_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.2)
+
             # Get info of first row
             first_row = reserved_ip_block.find_elements_by_css_selector(rows)[0]
             mac_address = first_row.find_element_by_css_selector(mac_desc_cls).text
             mac_address = mac_address.splitlines()[1]
             ip_addr = first_row.find_element_by_css_selector(ip_address_cls).text
-            ip_addr_split = ip_addr.split('.')[-1]
-            # Add more reserved IP
-            reserved_ip_block.find_element_by_css_selector(add_class).click()
-            edit_field = reserved_ip_block.find_element_by_css_selector(edit_mode)
-            edit_field.find_element_by_css_selector(wol_mac_addr).click()
-            time.sleep(0.5)
-            option_dropdown = reserved_ip_block.find_element_by_css_selector(secure_value_in_drop_down)
-            list_mac_addr = option_dropdown.find_elements_by_css_selector(mac_addr_text_cls)
-            for m in list_mac_addr:
-                if m.text == mac_address:
-                    m.click()
-                    break
-            error_msg = reserved_ip_block.find_element_by_css_selector(error_message).text
-            # Cancel
-            reserved_ip_block.find_element_by_css_selector(btn_cancel).click()
 
-            list_actual = [error_msg]
-            list_expected = [exp_mac_address_exists]
-            check = assert_list(list_actual, list_expected)
+            list_actual1 = [mac_address, ip_addr]
+            list_expected1 = [MAC_2, IP_2]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Check Error message: MAC address exists')
+            self.list_steps.append(
+                f'[Pass] 1, 2. Check Add Reserved IP successfully. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1. Check Error message: MAC address exists. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 1, 2. Check Add Reserved IP successfully. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append('1. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            # Add more reserved IP
-            reserved_ip_block.find_element_by_css_selector(add_class).click()
-            edit_field = reserved_ip_block.find_element_by_css_selector(edit_mode)
-
-            ip_addr_ = edit_field.find_element_by_css_selector(ip_address_cls).find_element_by_css_selector(input)
-            ActionChains(driver).move_to_element(ip_addr_).click().key_down(Keys.CONTROL + 'a').send_keys(
-                Keys.DELETE).key_up(Keys.CONTROL).send_keys(ip_addr_split).perform()
-
-            edit_field.find_element_by_css_selector(wol_mac_addr).click()
-            time.sleep(0.5)
-            reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
-            option_dropdown = reserved_ip_block.find_elements_by_css_selector(secure_value_in_drop_down)
-            list_mac_addr = list()
-            for o in option_dropdown[:-1]:
-                list_mac_addr.append(o.find_element_by_css_selector(mac_addr_text_cls))
-            for m in list_mac_addr:
-                if m.text != mac_address:
-                    m.click()
-                    break
-
+            nw_add_reserved_ip(driver, MAC_4, IP_4)
+            time.sleep(1)
             reserved_ip_block.find_element_by_css_selector(btn_save).click()
-            time.sleep(0.2)
+            time.sleep(1)
             error_msg = reserved_ip_block.find_element_by_css_selector(custom_error_cls).text
             # Cancel
             reserved_ip_block.find_element_by_css_selector(btn_cancel).click()
 
-            list_actual = [error_msg]
-            list_expected = [exp_ip_address_exists]
-            check = assert_list(list_actual, list_expected)
+            list_actual2 = [error_msg]
+            list_expected2 = [exp_ip_address_exists]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Check Error message: IP address exists')
+            self.list_steps.append(f'[Pass] 3. Check Add a new Reserved IP same IP address: Check error msg. '
+                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Check Error message: IP address exists. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-            list_step_fail.append('2. Assertion wong.')
+                f'[Fail] 3. Check Add a new Reserved IP same IP address: Check error msg. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            list_step_fail.append('3. Assertion wong.')
+
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            # Add more reserved IP
-            reserved_ip_block.find_element_by_css_selector(add_class).click()
-            edit_field = reserved_ip_block.find_element_by_css_selector(edit_mode)
+            nw_add_reserved_ip(driver, MAC_2, IP_6)
+            time.sleep(1)
+            # reserved_ip_block.find_element_by_css_selector(btn_save).click()
+            time.sleep(1)
+            error_msg = reserved_ip_block.find_element_by_css_selector(error_message).text
+            # Cancel
+            reserved_ip_block.find_element_by_css_selector(btn_cancel).click()
 
-            ip_addr_ = edit_field.find_element_by_css_selector(ip_address_cls).find_element_by_css_selector(input)
-            ActionChains(driver).move_to_element(ip_addr_).click().key_down(Keys.CONTROL + 'a').send_keys(
-                Keys.DELETE).key_up(Keys.CONTROL).send_keys('1').perform()
-
-            edit_field.find_element_by_css_selector(wol_mac_addr).click()
-            time.sleep(0.5)
-            reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
-            option_dropdown = reserved_ip_block.find_elements_by_css_selector(secure_value_in_drop_down)
-            list_mac_addr = list()
-            for o in option_dropdown[:-1]:
-                list_mac_addr.append(o.find_element_by_css_selector(mac_addr_text_cls))
-            for m in list_mac_addr:
-                if m.text != mac_address:
-                    m.click()
-                    break
-
-            reserved_ip_block.find_element_by_css_selector(btn_save).click()
-            time.sleep(0.2)
-            error_msg = len(reserved_ip_block.find_elements_by_css_selector(custom_error_cls)) != 0
-
-            list_actual = [error_msg]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+            list_actual3 = [error_msg]
+            list_expected3 = [exp_mac_address_exists]
+            check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Check Error message: IP address same Lan IP')
+            self.list_steps.append(
+                f'[Pass] 4. Check Add a new Reserved IP same MAC address: Check error msg. . '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Check Error message: MAC address same Lan IP. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            nw_add_reserved_ip(driver, MAC_6, IP_6)
+            time.sleep(1)
+            reserved_ip_block.find_element_by_css_selector(btn_save).click()
+            time.sleep(2)
+            error_msg_existed= len(reserved_ip_block.find_elements_by_css_selector(custom_error_cls)) > 0
+
+            time.sleep(3)
+
+            # Get info of first row
+            second_row = reserved_ip_block.find_elements_by_css_selector(rows)[1]
+            mac_address2 = second_row.find_element_by_css_selector(mac_desc_cls).text
+            mac_address2 = mac_address2.splitlines()[1]
+            ip_addr2 = second_row.find_element_by_css_selector(ip_address_cls).text
+
+            list_actual5 = [error_msg_existed, mac_address2, ip_addr2]
+            list_expected5 = [return_true, MAC_6, IP_6]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Check Error msg displayed, Check Mac same as input, Check IP same as input. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check Error message: IP address same Lan IP. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 5. Check Error msg displayed, Check Mac same as input, Check IP same as input. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
-            list_step_fail.append('3. Assertion wong.')
-        self.assertListEqual(list_step_fail, [])
+            list_step_fail.append('5. Assertion wong.')
 
+        self.assertListEqual(list_step_fail, [])
+    # OK F
     def test_26_Verify_Max_entry_Registration(self):
         self.key = 'NETWORK_26'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+
         URL_LOGIN = get_config('URL', 'url')
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(150)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        time.sleep(3)
+
+        MAC_2 = '12:12:12:12:12:12'
+        IP_2 = '192.168.1.11'
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+
             # Network Lan Tab
             goto_menu(driver, network_tab, network_lan_tab)
+
             wait_popup_disappear(driver, dialog_loading)
             reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
-            # Check Maximum number
-            add_text = reserved_ip_block.find_element_by_css_selector(add_class).text
-            add_text_spl = add_text.split('/')[1].split(')')[0]
-            list_actual = [add_text_spl]
-            list_expected = [exp_reserved_maximum_rules]
-            check = assert_list(list_actual, list_expected)
+
+            nw_add_reserved_ip(driver, MAC_2, IP_2)
+
+            reserved_ip_block.find_element_by_css_selector(btn_save).click()
+            time.sleep(0.2)
+            reserved_ip_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.2)
+
+            # Get info of first row
+            first_row = reserved_ip_block.find_elements_by_css_selector(rows)[0]
+            mac_address = first_row.find_element_by_css_selector(mac_desc_cls).text
+            mac_address = mac_address.splitlines()[1]
+            ip_addr = first_row.find_element_by_css_selector(ip_address_cls).text
+
+            list_actual1 = [mac_address, ip_addr]
+            list_expected1 = [MAC_2, IP_2]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Check maximum rules in Reserved IP address.')
+            self.list_steps.append(
+                f'[Pass] 1, 2. Check Add Reserved IP successfully. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Check Add Reserved IP successfully. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong.')
+
+        try:
+            # Add 32 items
+            for i in range(12, 43):
+                mac = f'12:12:12:12:12:{str(i+1)}'
+                ip = f'192.168.1.{str(i)}'
+                nw_add_reserved_ip(driver, mac, ip)
+                reserved_ip_block.find_element_by_css_selector(btn_save).click()
+                time.sleep(0.2)
+
+            check_add_disabled = reserved_ip_block.find_element_by_css_selector(add_class).get_attribute('disabled') == 'true'
+
+            reserved_ip_block.find_element_by_css_selector(add_class).click()
+            check_add_to_edit = len(reserved_ip_block.find_elements_by_css_selector(edit_mode)) == 0
+
+            list_actual1 = [check_add_disabled, check_add_to_edit]
+            list_expected1 = [return_true]*2
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Add 32 reserved IP. Check ADD button disabled. Click add -> Check edit form not display. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 1. Check maximum rules in Reserved IP address.. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 3. Add 32 reserved IP. Check ADD button disabled. Click add -> Check edit form not display. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
-            list_step_fail.append('1. Assertion wong.')
-            self.assertListEqual(list_step_fail, [])
+            list_step_fail.append('3. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
 
     def test_27_Verify_update_Reserved_IP_address_follow_changing_Lan_IP(self):
         self.key = 'NETWORK_27'
@@ -1985,58 +1801,66 @@ class NETWORK(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+
         URL_LOGIN = get_config('URL', 'url')
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(150)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        time.sleep(3)
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         URL_PING_CHECK = '172.16.1.1'
         URL_B = 'http://172.16.1.1'
         EXPECTED_B_IP_ADDR = '172.16.1.10'
+        MAC_2 = '88:88:88:88:88:88'
+        IP_2 = '192.168.1.10'
+
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+
             # Network Lan Tab
             goto_menu(driver, network_tab, network_lan_tab)
+
             wait_popup_disappear(driver, dialog_loading)
             reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
-            # Check exist rule
-            if len(reserved_ip_block.find_elements_by_css_selector(rows)):
-                for r in reserved_ip_block.find_elements_by_css_selector(rows):
-                    r.find_element_by_css_selector(delete_cls).click()
-                    time.sleep(0.5)
-                    driver.find_element_by_css_selector(btn_ok).click()
-                    wait_popup_disappear(driver, dialog_loading)
-                    driver.find_element_by_css_selector(btn_ok).click()
 
-            reserved_ip_block.find_element_by_css_selector(add_class).click()
-            edit_field = reserved_ip_block.find_element_by_css_selector(edit_mode)
-
-            ip_addr_value = edit_field.find_element_by_css_selector(wol_mac_addr)
-            ActionChains(driver).move_to_element(ip_addr_value).click().perform()
-            time.sleep(0.5)
-            reserved_ip_block.find_elements_by_css_selector(secure_value_in_drop_down)[0].click()
-            time.sleep(0.5)
+            nw_add_reserved_ip(driver, MAC_2, IP_2)
 
             reserved_ip_block.find_element_by_css_selector(btn_save).click()
-            time.sleep(0.5)
+            time.sleep(0.2)
             reserved_ip_block.find_element_by_css_selector(apply).click()
-            time.sleep(0.5)
             wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(0.5)
-            check_add_ok = len(reserved_ip_block.find_elements_by_css_selector(rows)) == 1
-            list_actual = [check_add_ok]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+            time.sleep(0.2)
+
+            # Get info of first row
+            first_row = reserved_ip_block.find_elements_by_css_selector(rows)[0]
+            mac_address = first_row.find_element_by_css_selector(mac_desc_cls).text
+            mac_address = mac_address.splitlines()[1]
+            ip_addr = first_row.find_element_by_css_selector(ip_address_cls).text
+
+            list_actual1 = [mac_address, ip_addr]
+            list_expected1 = [MAC_2, IP_2]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Check add Reserved IP successfully')
+            self.list_steps.append(
+                f'[Pass] 1, 2. Check Add Reserved IP successfully. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1. Check add Reserved IP successfully. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 1, 2. Check Add Reserved IP successfully. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append('1. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2060,20 +1884,16 @@ class NETWORK(unittest.TestCase):
             time.sleep(0.2)
             driver.find_element_by_css_selector(btn_ok).click()
             # wait_popup_disappear(driver, dialog_loading)
-            time.sleep(10)
+            # wait_popup_disappear(driver, dialog_loading)
+            time.sleep(120)
             # wait_popup_disappear(driver, dialog_loading)
             wait_DUT_activated(URL_PING_CHECK)
+            time.sleep(10)
             # wait_ping(URL_B)
             # driver.get(URL_B)
             save_config(config_path, 'URL', 'url', URL_B)
-
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_B + homepage)
-                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(5)
+            grand_login(driver)
 
             goto_menu(driver, network_tab, network_lan_tab)
             wait_popup_disappear(driver, dialog_loading)
@@ -2089,27 +1909,6 @@ class NETWORK(unittest.TestCase):
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 2,3. Change LAN IP to 172.16.1.1: Check update successfully')
             self.list_steps.append('[END TC]')
-            lan_block = driver.find_element_by_css_selector(network_lan_card)
-            # Settings
-            lan_fields = lan_block.find_elements_by_css_selector(wrap_input)
-            lan_label = lan_block.find_elements_by_css_selector(label_name_in_2g)
-            for l, f in zip(lan_label, lan_fields):
-                if l.text == 'IP Address':
-                    f.find_element_by_css_selector(option_select).click()
-                    time.sleep(0.5)
-                    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
-                    for o in ls_option:
-                        # Type C
-                        if o.text == '192':
-                            o.click()
-                            break
-                    break
-            lan_block.find_element_by_css_selector(submit_btn).click()
-            time.sleep(0.2)
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(5)
-            wait_DUT_activated(URL_PING_CHECK)
-            save_config(config_path, 'URL', 'url', 'http://192.168.1.1')
         except:
             self.list_steps.append(
                 f'[Fail] 2,3. Change LAN IP to 172.16.1.1: Check update successfully. '
@@ -2117,199 +1916,25 @@ class NETWORK(unittest.TestCase):
             self.list_steps.append('[END TC]')
             list_step_fail.append('2,3. Assertion wong.')
 
+        URL_LOGIN = get_config('URL', 'url')
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(150)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        time.sleep(3)
+
         self.assertListEqual(list_step_fail, [])
 
-    # def test_28_Verify_Reserved_IP_address_when_changing_of_DHCP_range(self):
-    #     self.key = 'NETWORK_28'
-    #     driver = self.driver
-    #     self.def_name = get_func_name()
-    #     list_step_fail = []
-    #     self.list_steps = []
-    #     URL_LOGIN = get_config('URL', 'url')
-    #     LAN_IP_ADDRESS = '192.168.1.1'
-    #     LAN_IP_ADDRESS_SPLIT = LAN_IP_ADDRESS.split('.')
-    #     START_IP_ADDRESS = '192.168.1.2'
-    #     START_IP_ADDRESS_SPLIT = START_IP_ADDRESS.split('.')
-    #     END_IP_ADDRESS = '192.168.1.100'
-    #     END_IP_ADDRESS_SPLIT = END_IP_ADDRESS.split('.')
-    #     TEST_IP_ADDRESS = '192.168.1.200'
-    #     TEST_IP_ADDRESS_SPLIT = TEST_IP_ADDRESS.split('.')
-    #     TEST_IP_ADDRESS_2 = '192.168.1.90'
-    #     TEST_IP_ADDRESS_2_SPLIT = TEST_IP_ADDRESS_2.split('.')
-    #     try:
-    #         login(driver)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(1)
-    #         # Goto Homepage
-    #         if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-    #             driver.get(URL_LOGIN + homepage)
-    #             wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(1)
-    #         # Network Lan Tab
-    #         goto_menu(driver, network_tab, network_lan_tab)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         # Lan block
-    #         lan_block = driver.find_element_by_css_selector(network_lan_card)
-    #         # Settings
-    #         lan_fields = lan_block.find_elements_by_css_selector(wrap_input)
-    #         lan_label = lan_block.find_elements_by_css_selector(label_name_in_2g)
-    #         for l, f in zip(lan_label, lan_fields):
-    #             if l.text == 'IP Address':
-    #                 ip_addr_fields = f.find_elements_by_css_selector(input_not_disabled)
-    #                 for f, v in zip(ip_addr_fields, LAN_IP_ADDRESS_SPLIT[2:]):
-    #                     ActionChains(driver).move_to_element(f).click().key_down(Keys.CONTROL).send_keys(
-    #                         'a').key_up(Keys.CONTROL).send_keys(v).perform()
-    #             elif l.text == 'Start IP Address':
-    #                 ip_addr_fields = f.find_elements_by_css_selector(input_not_disabled)
-    #                 for f, v in zip(ip_addr_fields, START_IP_ADDRESS_SPLIT[3:]):
-    #                     ActionChains(driver).move_to_element(f).click().key_down(Keys.CONTROL).send_keys(
-    #                         'a').key_up(Keys.CONTROL).send_keys(v).perform()
-    #             elif l.text == 'End IP Address':
-    #                 ip_addr_fields = f.find_elements_by_css_selector(input_not_disabled)
-    #                 for f, v in zip(ip_addr_fields, END_IP_ADDRESS_SPLIT[3:]):
-    #                     ActionChains(driver).move_to_element(f).click().key_down(Keys.CONTROL).send_keys(
-    #                         'a').key_up(Keys.CONTROL).send_keys(v).perform()
-    #
-    #         lan_block.find_element_by_css_selector(submit_btn).click()
-    #         time.sleep(0.2)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         self.list_steps.append('Create Precondition Success')
-    #     except:
-    #         self.list_steps.append('Create Precondition Wrong')
-    #
-    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #     try:
-    #         reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
-    #         # Check exist rule
-    #         if len(reserved_ip_block.find_elements_by_css_selector(rows)):
-    #             for r in reserved_ip_block.find_elements_by_css_selector(rows):
-    #                 r.find_element_by_css_selector(delete_cls).click()
-    #                 time.sleep(0.5)
-    #                 driver.find_element_by_css_selector(btn_ok).click()
-    #                 wait_popup_disappear(driver, dialog_loading)
-    #                 driver.find_element_by_css_selector(btn_ok).click()
-    #
-    #         reserved_ip_block.find_element_by_css_selector(add_class).click()
-    #         edit_field = reserved_ip_block.find_element_by_css_selector(edit_mode)
-    #         mac_addr = edit_field.find_element_by_css_selector(wol_mac_addr)
-    #         ActionChains(driver).move_to_element(mac_addr).click().perform()
-    #         time.sleep(0.5)
-    #         reserved_ip_block.find_elements_by_css_selector(secure_value_in_drop_down)[0].click()
-    #         time.sleep(0.5)
-    #
-    #         ip_addr = edit_field.find_element_by_css_selector(ip_address_cls)
-    #         ip_addr_input = ip_addr.find_elements_by_css_selector(input_not_disabled)
-    #         for f, v in zip(ip_addr_input, TEST_IP_ADDRESS_SPLIT[3:]):
-    #             ActionChains(driver).move_to_element(f).click().key_down(Keys.CONTROL).send_keys(
-    #                 'a').key_up(Keys.CONTROL).send_keys(v).perform()
-    #
-    #         # Click Save
-    #         reserved_ip_block.find_element_by_css_selector(btn_save).click()
-    #         time.sleep(0.2)
-    #         error_msg = driver.find_element_by_css_selector(custom_error_cls).text
-    #
-    #         list_actual = [error_msg]
-    #         list_expected = [exp_out_of_start_end_ip]
-    #         check = assert_list(list_actual, list_expected)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append('[Pass] 1. Check Error message out of between start end IP')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 1. Check Error message out of between start end IP. '
-    #             f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-    #         list_step_fail.append('1. Assertion wong.')
-    #
-    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #     try:
-    #         ip_addr = edit_field.find_element_by_css_selector(ip_address_cls)
-    #         ip_addr_input = ip_addr.find_elements_by_css_selector(input_not_disabled)
-    #         for f, v in zip(ip_addr_input, TEST_IP_ADDRESS_2_SPLIT[3:]):
-    #             ActionChains(driver).move_to_element(f).click().key_down(Keys.CONTROL).send_keys(
-    #                 'a').key_up(Keys.CONTROL).send_keys(v).perform()
-    #
-    #         # Click Save
-    #         reserved_ip_block.find_element_by_css_selector(btn_save).click()
-    #
-    #
-    #
-    #         lan_block = driver.find_element_by_css_selector(network_lan_card)
-    #         # Settings
-    #         lan_fields = lan_block.find_elements_by_css_selector(wrap_input)
-    #         lan_label = lan_block.find_elements_by_css_selector(label_name_in_2g)
-    #         for l, f in zip(lan_label, lan_fields):
-    #             if l.text == 'IP Address':
-    #                 f.find_element_by_css_selector(option_select).click()
-    #                 time.sleep(0.5)
-    #                 ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
-    #                 for o in ls_option:
-    #                     # Type C
-    #                     if o.text == '172':
-    #                         o.click()
-    #                         break
-    #                 break
-    #         lan_block.find_element_by_css_selector(submit_btn).click()
-    #         time.sleep(0.2)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         # wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(10)
-    #         # wait_popup_disappear(driver, dialog_loading)
-    #         wait_DUT_activated(URL_PING_CHECK)
-    #         # wait_ping(URL_B)
-    #         # driver.get(URL_B)
-    #         save_config(config_path, 'URL', 'url', URL_B)
-    #
-    #         login(driver)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(1)
-    #         # Goto Homepage
-    #         if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-    #             driver.get(URL_B + homepage)
-    #             wait_popup_disappear(driver, dialog_loading)
-    #
-    #         goto_menu(driver, network_tab, network_lan_tab)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
-    #
-    #         # Get info of first row
-    #         first_row = reserved_ip_block.find_elements_by_css_selector(rows)[0]
-    #         ip_addr = first_row.find_element_by_css_selector(ip_address_cls).text
-    #
-    #         list_actual = [ip_addr]
-    #         list_expected = [EXPECTED_B_IP_ADDR]
-    #         check = assert_list(list_actual, list_expected)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append('[Pass] 2,3. Change LAN IP to 172.16.1.1: Check update successfully')
-    #         self.list_steps.append('[END TC]')
-    #         lan_block = driver.find_element_by_css_selector(network_lan_card)
-    #         # Settings
-    #         lan_fields = lan_block.find_elements_by_css_selector(wrap_input)
-    #         lan_label = lan_block.find_elements_by_css_selector(label_name_in_2g)
-    #         for l, f in zip(lan_label, lan_fields):
-    #             if l.text == 'IP Address':
-    #                 f.find_element_by_css_selector(option_select).click()
-    #                 time.sleep(0.5)
-    #                 ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
-    #                 for o in ls_option:
-    #                     # Type C
-    #                     if o.text == '192':
-    #                         o.click()
-    #                         break
-    #                 break
-    #         lan_block.find_element_by_css_selector(submit_btn).click()
-    #         time.sleep(0.2)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         time.sleep(5)
-    #         wait_DUT_activated(URL_PING_CHECK)
-    #         save_config(config_path, 'URL', 'url', 'http://192.168.1.1')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 2,3. Change LAN IP to 172.16.1.1: Check update successfully. '
-    #             f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-    #         self.list_steps.append('[END TC]')
-    #         list_step_fail.append('2,3. Assertion wong.')
-    #
-    #     self.assertListEqual(list_step_fail, [])
+
 if __name__ == '__main__':
     unittest.main()

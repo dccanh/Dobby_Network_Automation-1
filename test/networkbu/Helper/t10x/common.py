@@ -952,3 +952,26 @@ def wireless_change_choose_option(driver, element_option, VALUE_OPTION):
         if o.get_attribute('option-value') == VALUE_OPTION:
             o.click()
             break
+
+
+def nw_add_reserved_ip(driver, mac_add_value, ip_value):
+    reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
+    # Click Add
+    reserved_ip_block.find_element_by_css_selector(add_class).click()
+    edit_field = reserved_ip_block.find_element_by_css_selector(edit_mode)
+
+    ip_addr_value = edit_field.find_element_by_css_selector(wol_mac_addr)
+    ActionChains(driver).move_to_element(ip_addr_value).click().perform()
+    time.sleep(0.5)
+
+    reserved_ip_block.find_elements_by_css_selector(secure_value_in_drop_down)[-1].click()
+    time.sleep(0.5)
+
+    fill_mac_addr = edit_field.find_element_by_css_selector(wol_mac_addr)
+    ActionChains(driver).click(fill_mac_addr).send_keys(mac_add_value).perform()
+
+    ip_reserve_input = edit_field.find_element_by_css_selector(ele_reserve_ip_addr_input)
+    ActionChains(driver).click(ip_reserve_input).send_keys(Keys.BACK_SPACE * 3).perform()
+    time.sleep(1)
+    IP_VALUE2 = ip_value.split('.')[-1]
+    ActionChains(driver).click(ip_reserve_input).send_keys(IP_VALUE2).perform()

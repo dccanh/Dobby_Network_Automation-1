@@ -99,6 +99,7 @@ page_network = '.view-wrap.network'
 network_lan_card = '.network-lan-card'
 network_reserved_ip_card = '.ip-reserved-card'
 ele_wan_block = '.wan-card'
+ele_reserve_ip_addr_input = '.ip-address input'
 # ~~~~~~~~~~~~~~~~~ WIRELESS
 fields_in_2g = '.left .wrap-form'
 label_name_in_2g = '.wrap-label>.input-label'
