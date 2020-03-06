@@ -15,6 +15,8 @@ class WIRELESS(unittest.TestCase):
         try:
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             self.driver = webdriver.Chrome(driver_path)  # open chrome
             self.driver.maximize_window()
             self.time_stamp = datetime.now()
@@ -24,10 +26,14 @@ class WIRELESS(unittest.TestCase):
 
     def tearDown(self):
         try:
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
         except:
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             # Connect by wifi if internet is down to handle exception for PPPoE
             os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
             time.sleep(1)
@@ -277,10 +283,8 @@ class WIRELESS(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(10)
-        # # # Factory reset
-        URL_LOGIN = get_config('URL', 'url')
+
+        # Factory reset
         URL_PING_CHECK = '192.168.1.1'
         # # Factory reset
         URL_LOGIN = get_config('URL', 'url')
@@ -470,9 +474,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(5)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_2g = len(driver.find_elements_by_css_selector(google_img)) >= 0
 
             # 5G Connect wifi
@@ -489,11 +494,11 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(10)
+            time.sleep(15)
 
             list_actual5 = [check_2g, check_5g]
             list_expected5 = [return_true]*2
@@ -517,9 +522,8 @@ class WIRELESS(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(10)
-        # # Factory reset
+
+        # Factory reset
         URL_LOGIN = get_config('URL', 'url')
         URL_PING_CHECK = '192.168.1.1'
         filename = '1'
@@ -693,7 +697,10 @@ class WIRELESS(unittest.TestCase):
 
 
             time.sleep(3)
-            write_data_to_xml(default_wifi_2g_path, new_name=exp_ssid_2g_default_val, new_pw=PASSWORD_4[:63], new_secure='WPA2PSK')
+            write_data_to_xml(default_wifi_2g_path,
+                              new_name=exp_ssid_2g_default_val,
+                              new_pw=PASSWORD_4[:63],
+                              new_secure='WPA2PSK')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{exp_ssid_2g_default_val}"')
             # Connect Default 2GHz
@@ -703,9 +710,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(5)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_2g = len(driver.find_elements_by_css_selector(google_img)) >= 0
 
             # 5G Connect wifi
@@ -722,15 +730,15 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(10)
+            time.sleep(15)
 
             list_actual = [check_2g, check_5g]
             list_expected = [return_true]*2
-            os.system('netsh wlan disconnect')
+            # os.system('netsh wlan disconnect')
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 5. Connect to Google using of  2G/5G wifi. '
@@ -746,15 +754,14 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('5. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK F
     def test_08_Primary_Network_Verification_of_WEP64_setting(self):
         self.key = 'WIRELESS_08'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(10)
+
         # # Factory reset
         URL_LOGIN = get_config('URL', 'url')
         URL_PING_CHECK = '192.168.1.1'
@@ -959,6 +966,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{exp_ssid_2g_default_val}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -967,8 +975,9 @@ class WIRELESS(unittest.TestCase):
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             # Google
+            time.sleep(5)
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
 
             # 5G Connect wifi
@@ -981,6 +990,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{exp_ssid_5g_default_val}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -989,7 +999,7 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
@@ -1012,15 +1022,7 @@ class WIRELESS(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(2)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
-            time.sleep(3)
-            check_ota_auto_update(driver)
+            grand_login(driver)
 
             time.sleep(1)
             # Enable Dual WAN
@@ -1189,7 +1191,7 @@ class WIRELESS(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~ 5
         try:
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-
+            time.sleep(5)
             write_data_to_xml(default_wifi_2g_path,
                               new_name=exp_ssid_2g_default_val,
                               new_pw=expected_pw.upper(),
@@ -1198,6 +1200,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{exp_ssid_2g_default_val}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -1220,6 +1223,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{exp_ssid_5g_default_val}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -1228,7 +1232,7 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
@@ -1259,9 +1263,8 @@ class WIRELESS(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(10)
-        # # Factory reset
+
+        # Factory reset
         URL_LOGIN = get_config('URL', 'url')
         URL_PING_CHECK = '192.168.1.1'
         filename = '1'
@@ -1333,7 +1336,6 @@ class WIRELESS(unittest.TestCase):
                 Keys.CONTROL).send_keys(PASSWORD_3).perform()
 
             error_msg_2g = block_2g.find_element_by_css_selector(password_error_msg).text
-
 
             # Default Pw
             block_5g = driver.find_element_by_css_selector(right)
@@ -1465,6 +1467,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{exp_ssid_2g_default_val}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -1472,9 +1475,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(10)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
 
             # 5G Connect wifi
@@ -1487,6 +1491,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{exp_ssid_5g_default_val}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -1495,11 +1500,11 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(10)
+            time.sleep(15)
 
             list_actual5 = [check_2g, check_5g]
             list_expected5 = [return_true]*2
@@ -1518,16 +1523,7 @@ class WIRELESS(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(2)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
-            time.sleep(3)
-            check_ota_auto_update(driver)
-
+            grand_login(driver)
             time.sleep(1)
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
@@ -1571,7 +1567,6 @@ class WIRELESS(unittest.TestCase):
                 Keys.CONTROL).send_keys(PASSWORD_3).perform()
 
             error_msg_2g_hex = block_2g.find_element_by_css_selector(password_error_msg).text
-
 
             # Default Pw
             block_5g = driver.find_element_by_css_selector(right)
@@ -1694,25 +1689,25 @@ class WIRELESS(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~ 9
         try:
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-
+            time.sleep(5)
             write_data_to_xml(default_wifi_2g_path,
                               new_name=exp_ssid_2g_default_val,
                               new_pw=expected_pw.upper(),
                               new_secure='open',
                               new_encryption=SECURITY_TYPE,
                               new_key_type='networkKey')
-            time.sleep(3)
+            time.sleep(5)
             os.system(f'netsh wlan delete profile name="{exp_ssid_2g_default_val}"')
+            time.sleep(5)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
             os.system(f'netsh wlan connect ssid="{exp_ssid_2g_default_val}" name="{exp_ssid_2g_default_val}"')
-            time.sleep(10)
-
+            time.sleep(15)
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
 
             # 5G Connect wifi
@@ -1723,21 +1718,22 @@ class WIRELESS(unittest.TestCase):
                               new_secure='open',
                               new_encryption=SECURITY_TYPE,
                               new_key_type='networkKey')
-            time.sleep(3)
+            time.sleep(5)
             os.system(f'netsh wlan delete profile name="{exp_ssid_5g_default_val}"')
+            time.sleep(5)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
             os.system(f'netsh wlan connect ssid="{exp_ssid_5g_default_val}" name="{exp_ssid_5g_default_val}"')
-            time.sleep(10)
+            time.sleep(15)
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(10)
+            time.sleep(15)
 
             list_actual9 = [check_2g, check_5g]
             list_expected9 = [return_true]*2
@@ -1764,8 +1760,7 @@ class WIRELESS(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(10)
+
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
         URL_PING_CHECK = '192.168.1.1'
@@ -1909,11 +1904,12 @@ class WIRELESS(unittest.TestCase):
 
         try:
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-
+            time.sleep(5)
             write_data_to_xml(wifi_default_file_path,
                               new_name=name_with_mac_2g)
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{name_with_mac_2g}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
             time.sleep(5)
@@ -1922,7 +1918,7 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
 
             # 5G Connect wifi
@@ -1931,6 +1927,7 @@ class WIRELESS(unittest.TestCase):
                               new_name=name_with_mac_5g)
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{name_with_mac_5g}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
             time.sleep(5)
@@ -1939,11 +1936,11 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(10)
+            time.sleep(15)
 
             list_actual5 = [check_2g, check_5g]
             list_expected5 = [return_true] * 2
@@ -1963,7 +1960,7 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('5. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_11_Verification_of_WebUI_Access_Operation(self):
         self.key = 'WIRELESS_11'
         driver = self.driver
@@ -1971,13 +1968,13 @@ class WIRELESS(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        # # Factory reset
+        # Factory reset
         URL_LOGIN = get_config('URL', 'url')
         URL_PING_CHECK = '192.168.1.1'
         filename = '1'
         command = 'factorycfg.sh -a'
         run_cmd(command, filename=filename)
-        time.sleep(100)
+        time.sleep(150)
         wait_DUT_activated(URL_LOGIN)
         wait_ping(URL_PING_CHECK)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1990,14 +1987,7 @@ class WIRELESS(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                time.sleep(2)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
@@ -2014,20 +2004,20 @@ class WIRELESS(unittest.TestCase):
             web_access_5g = block_5g.find_elements_by_css_selector(select)[1]
             check_web_access_5g = web_access_5g.find_element_by_css_selector(input).is_selected()
 
-            pw_eye_2g = block_2g.find_element_by_css_selector(password_eye)
-            act = ActionChains(driver)
-            act.click_and_hold(pw_eye_2g)
-            pw_2g = block_2g.find_element_by_css_selector(input_pw).get_attribute('value')
-            act.release(pw_eye_2g)
-            act.perform()
-
-            # 5G Pw
-            pw_eye_5g = block_5g.find_element_by_css_selector(password_eye)
-            act_5g = ActionChains(driver)
-            act_5g.click_and_hold(pw_eye_5g)
-            pw_5g = block_5g.find_element_by_css_selector(input_pw).get_attribute('value')
-            act_5g.release(pw_eye_5g)
-            act_5g.perform()
+            # pw_eye_2g = block_2g.find_element_by_css_selector(password_eye)
+            # act = ActionChains(driver)
+            # act.click_and_hold(pw_eye_2g)
+            # pw_2g = block_2g.find_element_by_css_selector(input_pw).get_attribute('value')
+            # act.release(pw_eye_2g)
+            # act.perform()
+            #
+            # # 5G Pw
+            # pw_eye_5g = block_5g.find_element_by_css_selector(password_eye)
+            # act_5g = ActionChains(driver)
+            # act_5g.click_and_hold(pw_eye_5g)
+            # pw_5g = block_5g.find_element_by_css_selector(input_pw).get_attribute('value')
+            # act_5g.release(pw_eye_5g)
+            # act_5g.perform()
 
             list_actual = [check_web_access_2g, check_web_access_5g]
             list_expected = [return_true]*2
@@ -2067,18 +2057,39 @@ class WIRELESS(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
 
             # Connect 2G > Access login page
-            change_nw_profile(wifi_2g_path, 'Password', pw_2g)
-            connect_wifi_from_xml(wifi_2g_path)
-            time.sleep(1)
+            # change_nw_profile(wifi_2g_path, 'Password', pw_2g)
+            # connect_wifi_from_xml(wifi_2g_path)
+            write_data_to_xml(wifi_default_file_path,
+                              new_name=exp_ssid_2g_default_val)
+            time.sleep(3)
+            os.system(f'netsh wlan delete profile name="{exp_ssid_2g_default_val}"')
+            time.sleep(3)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(5)
+            os.system(f'netsh wlan connect ssid="{exp_ssid_2g_default_val}" name="{exp_ssid_2g_default_val}"')
+
+            time.sleep(15)
             driver.get(URL_LOGIN)
             wait_popup_disappear(driver, dialog_loading)
             check_2g = len(driver.find_elements_by_css_selector(lg_page)) != 0
             time.sleep(3)
 
             # Connect 5G > Access login page
-            change_nw_profile(wifi_5g_path, 'Password', pw_5g)
-            connect_wifi_from_xml(wifi_5g_path)
+            # change_nw_profile(wifi_5g_path, 'Password', pw_5g)
+            # connect_wifi_from_xml(wifi_5g_path)
             time.sleep(3)
+            write_data_to_xml(wifi_default_file_path,
+                              new_name=exp_ssid_5g_default_val)
+            time.sleep(3)
+            os.system(f'netsh wlan delete profile name="{exp_ssid_5g_default_val}"')
+            time.sleep(3)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(5)
+            os.system(f'netsh wlan connect ssid="{exp_ssid_5g_default_val}" name="{exp_ssid_5g_default_val}"')
+
+            time.sleep(15)
             driver.get(URL_LOGIN)
             time.sleep(2)
             wait_popup_disappear(driver, dialog_loading)
@@ -2100,16 +2111,10 @@ class WIRELESS(unittest.TestCase):
         try:
             # Disconnect Wifi to enable LAN
             os.system('netsh wlan disconnect')
-            time.sleep(1)
+            time.sleep(3)
             # Login
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                time.sleep(2)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
+
             time.sleep(1)
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
@@ -2150,18 +2155,40 @@ class WIRELESS(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
 
             # Connect 2G > Access login page
-            change_nw_profile(wifi_2g_path, 'Password', pw_2g)
-            connect_wifi_from_xml(wifi_2g_path)
-            time.sleep(1)
+            # change_nw_profile(wifi_2g_path, 'Password', pw_2g)
+            # connect_wifi_from_xml(wifi_2g_path)
+            write_data_to_xml(wifi_default_file_path,
+                              new_name=exp_ssid_2g_default_val)
+            time.sleep(3)
+            os.system(f'netsh wlan delete profile name="{exp_ssid_2g_default_val}"')
+            time.sleep(3)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(5)
+            os.system(f'netsh wlan connect ssid="{exp_ssid_2g_default_val}" name="{exp_ssid_2g_default_val}"')
+
+            time.sleep(15)
             driver.get(URL_LOGIN)
             time.sleep(3)
             check_2g = len(driver.find_elements_by_css_selector(lg_page)) == 0
             time.sleep(3)
 
             # Connect 5G > Access login page
-            change_nw_profile(wifi_5g_path, 'Password', pw_5g)
-            connect_wifi_from_xml(wifi_5g_path)
-            time.sleep(1)
+            # change_nw_profile(wifi_5g_path, 'Password', pw_5g)
+            # connect_wifi_from_xml(wifi_5g_path)
+            # 5G Connect wifi
+            time.sleep(3)
+            write_data_to_xml(wifi_default_file_path,
+                              new_name=exp_ssid_5g_default_val)
+            time.sleep(3)
+            os.system(f'netsh wlan delete profile name="{exp_ssid_5g_default_val}"')
+            time.sleep(3)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(5)
+            os.system(f'netsh wlan connect ssid="{exp_ssid_5g_default_val}" name="{exp_ssid_5g_default_val}"')
+            time.sleep(15)
+
             driver.get(URL_LOGIN)
             time.sleep(3)
             check_5g = len(driver.find_elements_by_css_selector(lg_page)) == 0
@@ -2182,16 +2209,13 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('4. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_15_Guest_Network_Multi_SSID_operation_check(self):
         self.key = 'WIRELESS_15'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(10)
         # Factory reset
 
         URL_LOGIN = get_config('URL', 'url')
@@ -2263,6 +2287,7 @@ class WIRELESS(unittest.TestCase):
             row_2g = block_2g.find_elements_by_css_selector(rows)
 
             os.system(f'netsh wlan delete profile name="{random_guest_nw}"')
+            time.sleep(3)
 
             for r in row_2g:
                 if r.find_element_by_css_selector(ele_wl_nw_name_ssid).text == random_guest_nw:
@@ -2275,6 +2300,7 @@ class WIRELESS(unittest.TestCase):
             if guest_security == 'None':
                 write_data_to_none_secure_xml(wifi_none_secure_path, new_name=random_guest_nw)
                 os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
+                time.sleep(5)
             elif guest_security == 'WPA2/WPA-PSK':
                 guest_encryption = wl_2g_block.find_element_by_css_selector(encryption_value_field).text
                 guest_pw = wireless_check_pw_eye(driver, wl_2g_block)
@@ -2285,6 +2311,7 @@ class WIRELESS(unittest.TestCase):
                                   new_encryption=guest_encryption,
                                   new_key_type='passPhrase')
                 os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+                time.sleep(5)
 
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
@@ -2295,7 +2322,7 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
 
             # Enable
@@ -2368,7 +2395,7 @@ class WIRELESS(unittest.TestCase):
             row_5g = block_5g.find_elements_by_css_selector(rows)
 
             os.system(f'netsh wlan delete profile name="{random_guest_nw}"')
-
+            time.sleep(3)
             for r in row_5g:
                 if r.find_element_by_css_selector(ele_wl_nw_name_ssid).text == random_guest_nw:
                     r.find_element_by_css_selector(edit_cls).click()
@@ -2380,6 +2407,7 @@ class WIRELESS(unittest.TestCase):
             if guest_security == 'None':
                 write_data_to_none_secure_xml(wifi_none_secure_path, new_name=random_guest_nw)
                 os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
+                time.sleep(5)
             elif guest_security == 'WPA2/WPA-PSK':
                 guest_encryption = wl_5g_block.find_element_by_css_selector(encryption_value_field).text
                 guest_pw = wireless_check_pw_eye(driver, wl_5g_block)
@@ -2390,6 +2418,7 @@ class WIRELESS(unittest.TestCase):
                                   new_encryption=guest_encryption,
                                   new_key_type='passPhrase')
                 os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+                time.sleep(5)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(5)
@@ -2399,7 +2428,7 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
 
             # Enable
@@ -2412,7 +2441,7 @@ class WIRELESS(unittest.TestCase):
             list_expected5 = [return_true]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] Re-do: 3. Connect to Google using of  5G GUEST NW wifi. '
+            self.list_steps.append( '[Pass] Re-do: 3. Connect to Google using of  5G GUEST NW wifi. '
                                    f'Actual: {str(list_actual5)}. '
                                    f'Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
@@ -2425,7 +2454,7 @@ class WIRELESS(unittest.TestCase):
             self.list_steps.append('[END TC]')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_16_Check_SSID_setting(self):
         self.key = 'WIRELESS_16'
         driver = self.driver
@@ -2434,20 +2463,29 @@ class WIRELESS(unittest.TestCase):
         self.list_steps = []
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
-        SSID_TEST = '123!@ abcd #^&*()+_-={}[]|456:789.?`$%\;'
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(150)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account1.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+
+        SSID_TEST = '123!@ abcd #^*()+_-={}[]|456:789.?`$%\;'
         SSID_2G_DEFAULT_START = 'HUMAX_Guest_2G!_'
         SSID_5G_DEFAULT_START = 'HUMAX_Guest_5G!_'
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                time.sleep(2)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
+
             time.sleep(1)
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_guestnetwork_tab)
@@ -2476,18 +2514,21 @@ class WIRELESS(unittest.TestCase):
                     changed_ssid_2g_value = f.find_element_by_css_selector(input).get_attribute('value')
                     break
             check_default_ssid_2g_value = default_ssid_2g_value.startswith(SSID_2G_DEFAULT_START)
-            list_actual = [check_default_ssid_2g_value, changed_ssid_2g_value]
-            list_expected = [return_true, SSID_TEST[:32]]
-            check = assert_list(list_actual, list_expected)
+
+            list_actual1 = [check_default_ssid_2g_value, changed_ssid_2g_value]
+            list_expected1 = [return_true, SSID_TEST[:32]]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Check Default SSID and Changed SSID of 2G. ')
+                f'[Pass] 1,2. Check Default SSID and Changed SSID of 2G. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1,2. Check Default SSID and Changed SSID of 2G. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append(
                 '1,2. Assertion wong.')
+
         try:
             # 5G
             block_5g = driver.find_element_by_css_selector(guest_network_block)
@@ -2514,42 +2555,53 @@ class WIRELESS(unittest.TestCase):
                     changed_ssid_5g_value = f.find_element_by_css_selector(input).get_attribute('value')
                     break
             check_default_ssid_5g_value = default_ssid_5g_value.startswith(SSID_5G_DEFAULT_START)
-            list_actual = [check_default_ssid_5g_value, changed_ssid_5g_value]
-            list_expected = [return_true, SSID_TEST[:32]]
-            check = assert_list(list_actual, list_expected)
+
+            list_actual2 = [check_default_ssid_5g_value, changed_ssid_5g_value]
+            list_expected2 = [return_true, SSID_TEST[:32]]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Check Default SSID and Changed SSID of 5G. ')
+                f'[Pass] 3. Check Default SSID and Changed SSID of 5G. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Check Default SSID and Changed SSID of 5G. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '3. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_17_Verification_of_Guest_Network_Duplicate_SSID_Registration(self):
         self.key = 'WIRELESS_17'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+
         URL_LOGIN = get_config('URL', 'url')
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(150)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account1.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                time.sleep(2)
-                wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_guestnetwork_tab)
             wait_popup_disappear(driver, dialog_loading)
@@ -2597,16 +2649,18 @@ class WIRELESS(unittest.TestCase):
             # Click OK
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.5)
-            list_actual = [error_msg_2g]
-            list_expected = [exp_dialog_add_same_ssid]
-            check = assert_list(list_actual, list_expected)
+
+            list_actual1 = [error_msg_2g]
+            list_expected1 = [exp_dialog_add_same_ssid]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Check Add same SSID of 2G. ')
+                f'[Pass] 1,2. Check Add message same SSID of 2G. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1,2. Check Add same SSID of 2G. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append(
                 '1,2. Assertion wong.')
 
@@ -2656,23 +2710,25 @@ class WIRELESS(unittest.TestCase):
 
             error_msg_5g = driver.find_element_by_css_selector(err_dialog_msg_cls).text
             time.sleep(0.5)
-            list_actual = [error_msg_5g]
-            list_expected = [exp_dialog_add_same_ssid]
-            check = assert_list(list_actual, list_expected)
+
+            list_actual2 = [error_msg_5g]
+            list_expected2 = [exp_dialog_add_same_ssid]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Check Add same SSID of 5G. ')
+                f'[Pass] 3. Check Add message same SSID of 5G. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check Add same SSID of 5G. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Fail] 3. Check Add message same SSID of 5G. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '3. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK F
     def test_19_Verification_of_setting_WPA2_PSK_Password(self):
         self.key = 'WIRELESS_19'
         driver = self.driver
@@ -2683,17 +2739,10 @@ class WIRELESS(unittest.TestCase):
         GOOGLE_URL = 'http://google.com'
         SECURITY_TYPE = 'WPA2-PSK'
         PASSWORD_SHORT_STR = '123$%'
-        PASSWORD_LONG_STR = '123!@ abcd #^&*()+_-={}[]|456:789.?`$%<>,/123!@ abcd #^&*()+_-={}[]|456:789.?`$%<>,/'
+        PASSWORD_LONG_STR = '123!@ abcd #^*()+_-={}[]|456:789.?`$%,/123!@ abcd #^*()+_-={}[]|456:789.?`$%,/'
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                time.sleep(2)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_guestnetwork_tab)
@@ -2703,7 +2752,6 @@ class WIRELESS(unittest.TestCase):
             # Click Add
             block_2g.find_element_by_css_selector(add_class).click()
             time.sleep(0.5)
-
 
             # Check Default Value
             edit_2g_block = driver.find_element_by_css_selector(wl_primary_card)
@@ -2756,18 +2804,20 @@ class WIRELESS(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(0.5)
 
-            list_actual = [pw_default_2g, error_msg_2g, new_pw_2g]
-            list_expected = [exp_wl_default_pw, exp_password_error_msg, PASSWORD_LONG_STR[:63]]
-            check = assert_list(list_actual, list_expected)
+            list_actual1 = [pw_default_2g, error_msg_2g, new_pw_2g]
+            list_expected1 = [exp_wl_default_pw, exp_password_error_msg, PASSWORD_LONG_STR[:63]]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Change security type: Check Default Password and Message too short 2G. ')
+                f'[Pass] 1,2. Change security type: Check Default Password and Message too short 2G. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1,2. Change security type: Check Default Password and Message too short 2G. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append(
                 '1,2. Assertion wong.')
+
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # 5G
@@ -2828,81 +2878,95 @@ class WIRELESS(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(0.5)
 
-            list_actual = [pw_default_5g, error_msg_5g, new_pw_5g]
-            list_expected = [exp_wl_default_pw, exp_password_error_msg, PASSWORD_LONG_STR[:63]]
-            check = assert_list(list_actual, list_expected)
+            list_actual2 = [pw_default_5g, error_msg_5g, new_pw_5g]
+            list_expected2 = [exp_wl_default_pw, exp_password_error_msg, PASSWORD_LONG_STR[:63]]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3, 4. Change security type: Check Default Password and Message too short of 5G. ')
+                f'[Pass] 3, 4. Change security type: Check Default Password and Message too short of 5G. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3, 4. Change security type: Check Default Password and Message too short of 5G. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             list_step_fail.append(
                 '3, 4. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~ 5
         try:
-            # Write to wifi xml file
-            change_nw_profile(wifi_2g_path, 'Ssid', default_ssid_2g_value)
-            change_nw_profile(wifi_2g_path, 'Password', new_pw_2g)
-            change_nw_profile(wifi_2g_path, 'Security', 'WPA2PSK')
 
-            change_nw_profile(wifi_5g_path, 'Ssid', default_ssid_5g_value)
-            change_nw_profile(wifi_5g_path, 'Password', new_pw_5g)
-            change_nw_profile(wifi_5g_path, 'Security', 'WPA2PSK')
-            # 2G Connect wifi
-            connect_wifi_from_xml(wifi_2g_path)
-            time.sleep(2)
+            write_data_to_xml(wifi_default_file_path,
+                              new_name=default_ssid_2g_value,
+                              new_pw=new_pw_2g,
+                              new_secure='WPA2PSK')
+            time.sleep(3)
+            os.system(f'netsh wlan delete profile name="{default_ssid_2g_value}"')
+            time.sleep(3)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(5)
+            os.system(f'netsh wlan connect ssid="{default_ssid_2g_value}" name="{default_ssid_2g_value}"')
+            time.sleep(10)
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
-            check_2g = len(driver.find_elements_by_css_selector(google_img)) != 0
+            time.sleep(10)
+            check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
 
             # 5G Connect wifi
-            connect_wifi_from_xml(wifi_5g_path)
-            time.sleep(2)
+            write_data_to_xml(wifi_default_file_path,
+                              new_name=default_ssid_5g_value,
+                              new_pw=new_pw_5g,
+                              new_secure='WPA2PSK')
+            time.sleep(3)
+            os.system(f'netsh wlan delete profile name="{default_ssid_5g_value}"')
+            time.sleep(3)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(5)
+            os.system(f'netsh wlan connect ssid="{default_ssid_5g_value}" name="{default_ssid_5g_value}"')
+            time.sleep(10)
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
-            check_5g = len(driver.find_elements_by_css_selector(google_img)) != 0
+            time.sleep(10)
+            check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
             os.system('netsh wlan disconnect')
-            list_actual = [check_2g, check_5g]
-            list_expected = [return_true] * 2
-            check = assert_list(list_actual, list_expected)
+            time.sleep(3)
+
+            list_actual3 = [check_2g, check_5g]
+            list_expected3 = [return_true] * 2
+            check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 5. Connect to Google using of  2G/5G wifi ')
+            self.list_steps.append(f'[Pass] 5. Connect to Google using of  2G/5G wifi. '
+                                   f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 5. Connect to Google using of  2G/5G wifi. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong.')
-        self.assertListEqual(list_step_fail, [])
 
+        self.assertListEqual(list_step_fail, [])
+    # OK F
     def test_20_Verification_of_setting_WPA_WPA2_PSK_Password(self):
         self.key = 'WIRELESS_20'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        os.system('netsh wlan disconnect')
+
         URL_LOGIN = get_config('URL', 'url')
         GOOGLE_URL = 'http://google.com'
         SECURITY_TYPE = 'WPA2/WPA-PSK'
         PASSWORD_SHORT_STR = '123$%'
-        PASSWORD_LONG_STR = '123!@ abcd #^&*()+_-={}[]|456:789.?`$%<>,/123!@ abcd #^&*()+_-={}[]|456:789.?`$%<>,/'
+        PASSWORD_LONG_STR = '123!@ abcd #^*()+_-={}[]|456:789.?`$%,/123!@ abcd #^*()+_-={}[]|456:789.?`$%,/'
+
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
             time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(URL_LOGIN + homepage)
-                time.sleep(2)
-                wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_guestnetwork_tab)
             wait_popup_disappear(driver, dialog_loading)
@@ -2962,18 +3026,20 @@ class WIRELESS(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(0.5)
 
-            list_actual = [pw_default_2g, error_msg_2g, new_pw_2g]
-            list_expected = [exp_wl_default_pw, exp_password_error_msg, PASSWORD_LONG_STR[:63]]
-            check = assert_list(list_actual, list_expected)
+            list_actual1 = [pw_default_2g, error_msg_2g, new_pw_2g]
+            list_expected1 = [exp_wl_default_pw, exp_password_error_msg, PASSWORD_LONG_STR[:63]]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Change security type: Check Default Password and Message too short 2G. ')
+                f'[Pass] 1,2. Change security type: Check Default Password and Message too short 2G. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1,2. Change security type: Check Default Password and Message too short 2G. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append(
                 '1,2. Assertion wong.')
+
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # 5G
@@ -3034,59 +3100,76 @@ class WIRELESS(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(0.5)
 
-            list_actual = [pw_default_5g, error_msg_5g, new_pw_5g]
-            list_expected = [exp_wl_default_pw, exp_password_error_msg, PASSWORD_LONG_STR[:63]]
-            check = assert_list(list_actual, list_expected)
+            list_actual2 = [pw_default_5g, error_msg_5g, new_pw_5g]
+            list_expected2 = [exp_wl_default_pw, exp_password_error_msg, PASSWORD_LONG_STR[:63]]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3, 4. Change security type: Check Default Password and Message too short of 5G. ')
+                f'[Pass] 3, 4. Change security type: Check Default Password and Message too short of 5G. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3, 4. Change security type: Check Default Password and Message too short of 5G. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             list_step_fail.append(
                 '3, 4. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~ 5
         try:
             # Write to wifi xml file
-            change_nw_profile(wifi_2g_path, 'Ssid', default_ssid_2g_value)
-            change_nw_profile(wifi_2g_path, 'Password', new_pw_2g)
-            change_nw_profile(wifi_2g_path, 'Security', 'WPA2PSK')
-
-            change_nw_profile(wifi_5g_path, 'Ssid', default_ssid_5g_value)
-            change_nw_profile(wifi_5g_path, 'Password', new_pw_5g)
-            change_nw_profile(wifi_5g_path, 'Security', 'WPA2PSK')
-            # 2G Connect wifi
-            connect_wifi_from_xml(wifi_2g_path)
-            time.sleep(2)
+            write_data_to_xml(wifi_default_file_path,
+                              new_name=default_ssid_2g_value,
+                              new_pw=new_pw_2g,
+                              new_secure='WPA2PSK')
+            time.sleep(3)
+            os.system(f'netsh wlan delete profile name="{default_ssid_2g_value}"')
+            time.sleep(3)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(5)
+            os.system(f'netsh wlan connect ssid="{default_ssid_2g_value}" name="{default_ssid_2g_value}"')
+            time.sleep(10)
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
-            check_2g = len(driver.find_elements_by_css_selector(google_img)) != 0
+            time.sleep(10)
+            check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
 
             # 5G Connect wifi
-            connect_wifi_from_xml(wifi_5g_path)
-            time.sleep(2)
+            write_data_to_xml(wifi_default_file_path,
+                              new_name=default_ssid_5g_value,
+                              new_pw=new_pw_5g,
+                              new_secure='WPA2PSK')
+            time.sleep(3)
+            os.system(f'netsh wlan delete profile name="{default_ssid_5g_value}"')
+            time.sleep(3)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(5)
+            os.system(f'netsh wlan connect ssid="{default_ssid_5g_value}" name="{default_ssid_5g_value}"')
+            time.sleep(10)
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
-            check_5g = len(driver.find_elements_by_css_selector(google_img)) != 0
+            time.sleep(10)
+            check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
             os.system('netsh wlan disconnect')
-            list_actual = [check_2g, check_5g]
-            list_expected = [return_true] * 2
-            check = assert_list(list_actual, list_expected)
+
+            list_actual3 = [check_2g, check_5g]
+            list_expected3 = [return_true] * 2
+            check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 5. Connect to Google using of  2G/5G wifi ')
+            self.list_steps.append(
+                f'[Pass] 5. Connect to Google using of  2G/5G wifi. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 5. Connect to Google using of  2G/5G wifi. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong.')
-        self.assertListEqual(list_step_fail, [])
 
+        self.assertListEqual(list_step_fail, [])
+    # OK
     def test_23_Guest_Network_Verification_of_WEP64_setting(self):
         self.key = 'WIRELESS_23'
         driver = self.driver
@@ -3094,9 +3177,7 @@ class WIRELESS(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(10)
-        # Factory reset
+
         URL_LOGIN = get_config('URL', 'url')
         NEW_PASSWORD = 'abc123'
         filename = '1'
@@ -3122,6 +3203,7 @@ class WIRELESS(unittest.TestCase):
         PASSWORD_3 = '123'
         PASSWORD_4 = '123@!12'
         PASSWORD_5 = '@!a1b2c3d4e5@!'
+
         try:
             grand_login(driver)
             # Enable Dual WAN
@@ -3271,7 +3353,6 @@ class WIRELESS(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(2)
-
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             block_5g = driver.find_elements_by_css_selector(wl_primary_card)[0]
@@ -3317,6 +3398,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{wl_2g_ssid}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -3324,9 +3406,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(10)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(3)
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
 
             # 5G Connect wifi
@@ -3339,6 +3422,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{wl_5g_ssid}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -3347,7 +3431,7 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
@@ -3358,7 +3442,6 @@ class WIRELESS(unittest.TestCase):
 
             list_actual5 = [check_2g, check_5g]
             list_expected5 = [return_true] * 2
-
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 5. Connect to Google using of  2G/5G wifi. '
@@ -3563,6 +3646,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{wl_2g_ssid}"')
+            time.sleep(5)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -3570,9 +3654,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(10)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_2g_hex = len(driver.find_elements_by_css_selector(google_img)) > 0
 
             # 5G Connect wifi
@@ -3585,6 +3670,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{wl_5g_ssid}"')
+            time.sleep(5)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -3593,7 +3679,7 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_5g_hex = len(driver.find_elements_by_css_selector(google_img)) > 0
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
@@ -3604,7 +3690,6 @@ class WIRELESS(unittest.TestCase):
 
             list_actual9 = [check_2g_hex, check_5g_hex]
             list_expected9 = [return_true] * 2
-
             check = assert_list(list_actual9, list_expected9)
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 9. Connect to Google using of  2G/5G wifi. '
@@ -3620,7 +3705,7 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('9. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
+    # OK
     def test_24_Guest_Network_Verification_of_WEP128_setting(self):
         self.key = 'WIRELESS_24'
         driver = self.driver
@@ -3628,8 +3713,7 @@ class WIRELESS(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(10)
+
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
         NEW_PASSWORD = 'abc123'
@@ -3656,6 +3740,7 @@ class WIRELESS(unittest.TestCase):
         PASSWORD_3 = '123'
         PASSWORD_4 = '123!@aA123@!aA1'
         PASSWORD_5 = '1234567890aaaaaAAAAA123aaabbb'
+
         try:
             grand_login(driver)
             # Enable Dual WAN
@@ -3851,6 +3936,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{wl_2g_ssid}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -3860,7 +3946,7 @@ class WIRELESS(unittest.TestCase):
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
 
             # 5G Connect wifi
@@ -3873,6 +3959,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{wl_5g_ssid}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -3881,7 +3968,7 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
@@ -4087,7 +4174,6 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('8. Assertion wong.')
 
         try:
-
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Push to xml file
             write_data_to_xml(default_wifi_2g_path,
                               new_name=wl_2g_ssid,
@@ -4097,6 +4183,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{wl_2g_ssid}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -4106,7 +4193,7 @@ class WIRELESS(unittest.TestCase):
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_2g_hex = len(driver.find_elements_by_css_selector(google_img)) > 0
 
             # 5G Connect wifi
@@ -4119,6 +4206,7 @@ class WIRELESS(unittest.TestCase):
                               new_key_type='networkKey')
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{wl_5g_ssid}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
             time.sleep(5)
@@ -4127,7 +4215,7 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_5g_hex = len(driver.find_elements_by_css_selector(google_img)) > 0
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
@@ -4154,8 +4242,7 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('9. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-
-    # Buoc 5 Sai o connect vs 5G
+    # OK
     def test_25_Verification_of_Hide_SSID_action(self):
         self.key = 'WIRELESS_25'
         driver = self.driver
@@ -4163,25 +4250,24 @@ class WIRELESS(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        # time.sleep(10)
-        # # Factory reset
-        # URL_LOGIN = get_config('URL', 'url')
-        # NEW_PASSWORD = 'abc123'
-        # filename = '1'
-        # commmand = 'factorycfg.sh -a'
-        # run_cmd(commmand, filename=filename)
-        # # Wait 5 mins for factory
-        # time.sleep(150)
-        # wait_DUT_activated(URL_LOGIN)
-        # wait_ping('192.168.1.1')
-        #
-        # filename_2 = 'account1.txt'
-        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        # run_cmd(commmand_2, filename_2)
-        # time.sleep(3)
-        # # Get account information from web server and write to config.txt
-        # user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+
+        # Factory reset
+        URL_LOGIN = get_config('URL', 'url')
+        NEW_PASSWORD = 'abc123'
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(150)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account1.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         GOOGLE_URL = 'http://google.com'
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -4305,6 +4391,7 @@ class WIRELESS(unittest.TestCase):
 
 
             os.system(f'netsh wlan delete profile name="{wl_2g_ssid}"')
+            time.sleep(3)
             os.system(f'netsh wlan delete profile name="{wl_5g_ssid}"')
             time.sleep(3)
 
@@ -4328,9 +4415,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(10)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(3)
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
 
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
@@ -4358,11 +4446,11 @@ class WIRELESS(unittest.TestCase):
 
             # Google
             driver.get(GOOGLE_URL)
-            time.sleep(3)
+            time.sleep(10)
             check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(10)
+            time.sleep(15)
             os.system('netsh wlan disconnect')
             time.sleep(1)
 
@@ -4390,27 +4478,8 @@ class WIRELESS(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-        time.sleep(10)
         os.system('netsh wlan disconnect')
         time.sleep(1)
-        # Factory reset
-        # URL_LOGIN = get_config('URL', 'url')
-        # URL_PING_CHECK = '192.168.1.1'
-        # filename = '1'
-        # command = 'factorycfg.sh -a'
-        # run_cmd(command, filename=filename)
-        # time.sleep(150)
-        # wait_DUT_activated(URL_LOGIN)
-        # wait_ping(URL_PING_CHECK)
-        # # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # filename_2 = 'account.txt'
-        # command_2 = 'capitest get Device.Users.User.2. leaf'
-        # run_cmd(command_2, filename_2)
-        # time.sleep(3)
-        # # Get account information from web server and write to config.txt
-        # get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         # Get mac
         URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
@@ -4425,7 +4494,6 @@ class WIRELESS(unittest.TestCase):
             grand_login(driver)
 
             goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
-
             # 2G
             block_2g = driver.find_element_by_css_selector(left)
             # Hide SSID
@@ -4454,7 +4522,6 @@ class WIRELESS(unittest.TestCase):
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
             check_hide_ssid_2g = hide_ssid_2g.find_element_by_css_selector(input).is_selected()
-
 
             # 5G
             block_5g = driver.find_element_by_css_selector(right)
@@ -4485,13 +4552,13 @@ class WIRELESS(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             check_hide_ssid_5g = hide_ssid_5g.find_element_by_css_selector(input).is_selected()
 
-
             list_actual = [dialog_title_2g, dialog_title_5g, check_hide_ssid_2g, check_hide_ssid_5g]
             list_expected = [exp_dialog_hide_ssid_title] * 2 + [return_true] * 2
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3.Check Enable Hide SSID of 2G/5G: Check popup title, enable hide ssid. ')
+                f'[Pass] 3.Check Enable Hide SSID of 2G/5G: Check popup title, enable hide ssid. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Check Enable Hide SSID of 2G/5G: Check popup title, enable hide ssid. '
@@ -4500,7 +4567,6 @@ class WIRELESS(unittest.TestCase):
 
 
         try:
-
             goto_menu(driver, wireless_tab, wireless_wps_tab)
             time.sleep(2)
             wps_form_text = driver.find_element_by_css_selector(ele_wl_wps_inform).text
@@ -4510,18 +4576,20 @@ class WIRELESS(unittest.TestCase):
 
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 5.Go to WPS: Check red message in WPS. '
+            self.list_steps.append('[Pass] 5. Go to WPS: Check red message in WPS. '
                                    f'Actual: {str(list_actual5)}. '
                                    f'Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 5. 5.Go to WPS: Check red message in WPS. '
+                f'[Fail] 5. Go to WPS: Check red message in WPS. '
                 f'Actual: {str(list_actual5)}. '
                 f'Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
+
+
 if __name__ == '__main__':
     unittest.main()
