@@ -79,10 +79,10 @@ class MEDIASHARE(unittest.TestCase):
         fake = Faker()
         try:
             grand_login(driver)
-            time.sleep(2)
+            time.sleep(5)
             # Goto media share USB
             goto_menu(driver, media_share_tab, media_share_usb_tab)
-            time.sleep(1)
+            time.sleep(3)
             wait_popup_disappear(driver, dialog_loading)
 
             # Network block

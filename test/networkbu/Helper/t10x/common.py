@@ -316,6 +316,7 @@ def get_url_ipconfig(ipconfig_field='Default Gateway'):
 def goto_menu(driver, parent_tab, child_tab):
     ActionChains(driver).move_to_element(driver.find_element_by_css_selector(parent_tab)).click().perform()
     time.sleep(1)
+    wait_popup_disappear(driver, dialog_loading)
     if child_tab != 0:
         driver.find_element_by_css_selector(child_tab).click()
         time.sleep(0.5)
