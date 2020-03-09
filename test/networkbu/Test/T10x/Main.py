@@ -1279,11 +1279,12 @@ class MAIN(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         URL_LOGIN = get_config('URL', 'url')
-        login(driver)
-        wait_popup_disappear(driver, dialog_loading)
-        if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-            handle_winzard_welcome(driver)
-            wait_popup_disappear(driver, dialog_loading)
+        try:
+            grand_login(driver)
+            self.list_steps.append('[Pass] Login successfully')
+        except:
+            self.list_steps.append('[Fail] Login fail')
+
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Wait 20 mins
@@ -1296,9 +1297,10 @@ class MAIN(unittest.TestCase):
 
             # Click ok
             driver.find_element_by_css_selector(btn_ok).click()
-
+            time.sleep(3)
             # Home is display
             check_home = driver.find_element_by_css_selector(home_view_wrap).is_displayed()
+
             list_actual1 = [msg_time_out, check_home]
             list_expected1 = [exp_time_out_msg, return_true]
             check = assert_list(list_actual1, list_expected1)
@@ -1314,15 +1316,12 @@ class MAIN(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                handle_winzard_welcome(driver)
-                wait_popup_disappear(driver, dialog_loading)
+            grand_login(driver)
 
             sleep_time = 20 * 60
             # Click cancel
             check_login_page = driver.find_element_by_css_selector(lg_page).is_displayed()
+
             list_actual2 = [check_login_page]
             list_expected2 = [return_true]
             check = assert_list(list_actual2, list_expected2)

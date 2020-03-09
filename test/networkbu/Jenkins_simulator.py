@@ -81,7 +81,7 @@ convert_module = {
 root = Tk()
 root.title(f"Canh______Ciel______{VERSION_ENVIRONMENT}")
 root.iconbitmap(icon_path)
-titleLabel = Label(root, text="HUMAX T10X AUTOMATION", anchor='center', font=40)
+titleLabel = Label(root, text="HUMAX T10X AUTOMATION MANAGEMENT", anchor='center', font=40)
 titleLabel.pack()
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 labelFile1 = Label(root, text="Stage:")
@@ -137,14 +137,18 @@ check0 = Checkbutton(root, text=moduleChoices[0], variable=Module0).place(x=140 
 check1 = Checkbutton(root, text=moduleChoices[1], variable=Module1).place(x=140 + 1 * 100, y=270)
 check2 = Checkbutton(root, text=moduleChoices[2], variable=Module2).place(x=140 + 2 * 100, y=270)
 check3 = Checkbutton(root, text=moduleChoices[3], variable=Module3).place(x=140 + 0 * 100, y=270 + 30)
-check4 = Checkbutton(root, text=moduleChoices[4], variable=Module4).place(x=140 + 1 * 100, y=270 + 30)
+check4 = Checkbutton(root, text=moduleChoices[4], variable=Module4, state='disabled').place(x=140 + 1 * 100, y=270 + 30)
 check5 = Checkbutton(root, text=moduleChoices[5], variable=Module5).place(x=140 + 2 * 100, y=270 + 30)
 check6 = Checkbutton(root, text=moduleChoices[6], variable=Module6).place(x=140 + 0 * 100, y=270 + 60)
 check7 = Checkbutton(root, text=moduleChoices[7], variable=Module7).place(x=140 + 1 * 100, y=270 + 60)
 check8 = Checkbutton(root, text=moduleChoices[8], variable=Module8).place(x=140 + 2 * 100, y=270 + 60)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# notiLabel = Label(root, text="")
-# notiLabel.place(x=170, y=400)
+
+def check_all_module():
+    if cusModuleAll.get():
+        for m in [Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]:
+            m.set(True)
+
 linkLabel = Label(root, text="")
 
 labelFile6 = Label(root, text="Individual TC:")
@@ -165,6 +169,8 @@ loopBox.place(x=140, y=480, width=50)
 
 
 def _advanceBtn():
+    check_all_module()
+
     global now_x, now_y
     now_x = root.winfo_x()
     now_y = root.winfo_y()
@@ -172,7 +178,6 @@ def _advanceBtn():
         root.geometry(f"520x560+{str(now_x)}+{str(now_y)}")
     else:
         root.geometry(f"520x440+{str(now_x)}+{str(now_y)}")
-
 
     global MakeReport
     MakeReport = BooleanVar()
@@ -224,7 +229,6 @@ def detect_run_testcase():
                     print(f'cd Test/T10x &&  python {convert_module[module]}')
                     os.system(f'cd Test/T10x &&  python {convert_module[module]}')
 
-
         print('cd Test/T10x && python After_test.py')
         os.system('cd Test/T10x && python After_test.py')
     else:
@@ -232,6 +236,8 @@ def detect_run_testcase():
 
 
 def _runBtn():
+    check_all_module()
+
     save_config(config_path, 'GENERAL', 'stage', stage1.get())
     save_config(config_path, 'GENERAL', 'version', version2.get())
     save_config(config_path, 'GENERAL', 'serial_number', number3.get())
@@ -241,7 +247,7 @@ def _runBtn():
 
     if 'ALL' in list_choiced or moduleChoices == list_choiced:
         list_choiced = ['ALL']
-    # global list_choiced_inform
+    # global list_chosen_inform
     list_choiced_inform = ';'.join(list_choiced)
 
     if lstc_box.get() != '':
@@ -250,7 +256,7 @@ def _runBtn():
         save_config(config_path, 'GENERAL', 'module', list_choiced_inform)
 
     if warning():
-        # notiLabel.configure(text=f'__- Ready to execute module -__', anchor="center")
+
         linkLabel.configure(text='< << <<< <<<< <<<<<Go to report page>>>>> >>>> >>> >> >', fg='blue', anchor="center")
         linkLabel.pack()
         linkLabel.place(x=140, y=410)
@@ -374,6 +380,8 @@ def warning():
 #     window.mainloop()
 
 def _manualBtn():
+    check_all_module()
+
     manualButton.configure(state='disable')
     load_database_tc(MAIN)
     load_database_tc(HOME)
@@ -394,14 +402,9 @@ def _manualBtn():
     window.resizable(0, 0)
     window.title("Ciel pick test case")
 
-
-
-
-
     frame = Frame(window, relief=RAISED, borderwidth=12)
     frame.pack(fill=BOTH, expand=True)
 
-    # window.pack(fill=BOTH, expand=True)
 
     def _addColor():
         selected = listBox.curselection()
@@ -456,7 +459,7 @@ def _manualBtn():
 
     source_in_individual_data = lstc_box.get()
     print(source_in_individual_data)
-    # # Remove data in Individual box
+    # Remove data in Individual box
     if source_in_individual_data != '':
         # Up old tc to receive box
         source_in_receive_data = source_in_individual_data.split(';')
@@ -472,7 +475,7 @@ def _manualBtn():
     source_tc_send.set(list_value)
 
     listBox = Listbox(frame, listvariable=source_tc_send, selectmode=MULTIPLE)
-    listBox.place(x=0, y=0, width=450, height=480)
+    listBox.place(x=0, y=0, width=450, height=490)
 
     copyButton = Button(frame, text=">>>", command=_addColor)
     copyButton.place(x=465, y=130)
@@ -483,16 +486,13 @@ def _manualBtn():
     source_tc_receive = StringVar()
     source_tc_receive.set(source_in_receive_data)
 
-    receipBox = Listbox(frame, listvariable=source_tc_receive, selectmode=MULTIPLE, width=54, height=20)
-    # receipBox.place(x=530, y=0, width=450, height=490)
+    receipBox = Listbox(frame, listvariable=source_tc_receive, selectmode=MULTIPLE, width=73, height=20)
     receipBox.pack(fill=BOTH, side=RIGHT, padx=0)
-    # receipBox.grid(sticky=W+E)
 
     cancelBtn = Button(window, text="Cancel", width=15, command=_cancelBtn)
     cancelBtn.pack(side=RIGHT, anchor='center', padx=5, pady=5)
     OKBtn = Button(window, text="Save", width=15, command=_okBtn)
     OKBtn.pack(side=RIGHT, anchor='center', padx=5, pady=5)
-
 
     def on_closing():
         # Destroy window and enable Manual button
@@ -501,7 +501,6 @@ def _manualBtn():
     window.protocol("WM_DELETE_WINDOW", on_closing)
 
     window.mainloop()
-
 
 
 def _abortBtn():

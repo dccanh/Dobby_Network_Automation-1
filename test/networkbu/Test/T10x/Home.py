@@ -1503,11 +1503,14 @@ class HOME(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
         try:
             grand_login(driver)
             time.sleep(3)
+            self.list_steps.append('[Pass] Login successfully')
+        except:
+            self.list_steps.append('[Fail] Login fail')
 
+        try:
             # CLick USB Image
             driver.find_element_by_css_selector(home_img_usb_connection).click()
             time.sleep(2)

@@ -9,7 +9,7 @@ from Helper.t10x.common import *
 from selenium import webdriver
 from faker import Faker
 
-
+save_config(config_path, 'URL', 'url', 'http://192.168.1.1')
 class SECURITY(unittest.TestCase):
     def setUp(self):
         try:

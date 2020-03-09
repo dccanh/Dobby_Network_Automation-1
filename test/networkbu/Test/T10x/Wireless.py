@@ -146,172 +146,172 @@ class WIRELESS(unittest.TestCase):
         self.assertListEqual(list_step_fail, [])
 
     # Can setup Radius
-    def test_03_Verification_of_Security_Settings(self):
-        self.key = 'WIRELESS_03'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-
-        URL_LOGIN = get_config('URL', 'url')
-        GOOGLE_URL = 'http://google.com'
-
-        VALID_PASSWORD = '0123456789'
-
-        try:
-            grand_login(driver)
-            time.sleep(2)
-            # Enable Dual WAN
-            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
-            time.sleep(1)
-            block_2g = driver.find_element_by_css_selector(left)
-            # Default Pw
-            block_5g = driver.find_element_by_css_selector(right)
-            self.list_steps.append(
-                '[Pass] 1,2. Goto Primary network \n')
-        except:
-            self.list_steps.append(
-                f'[Fail] 1,2. Goto Primary network. ')
-            list_step_fail.append(
-                '1,2. Assertion wong.')
-
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
-        try:
-            SECURITY_TYPE = 'NONE'
-            # 2G Change security
-            setting_wireless_security(block_2g, SECURITY_TYPE)
-            block_2g.find_element_by_css_selector(apply).click()
-            wait_popup_disappear(driver, dialog_loading)
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(1)
-
-            wl_2g_ssid = wireless_get_default_ssid(driver, 'Network Name(SSID)')
-            os.system(f'netsh wlan delete profile name="{wl_2g_ssid}"')
-            write_data_to_none_secure_xml(wifi_none_secure_path, new_name=wl_2g_ssid)
-            os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
-            time.sleep(5)
-            os.system(f'netsh wlan connect ssid="{wl_2g_ssid}" name="{wl_2g_ssid}"')
-            time.sleep(10)
-
-            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-            time.sleep(5)
-
-            # Google
-            driver.get(GOOGLE_URL)
-            time.sleep(10)
-            check_2g_none = len(driver.find_elements_by_css_selector(google_img)) > 0
-
-            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-            time.sleep(5)
-            # 5G Change security
-            setting_wireless_security(block_5g, SECURITY_TYPE)
-            block_5g.find_element_by_css_selector(apply).click()
-            wait_popup_disappear(driver, dialog_loading)
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(1)
-
-            wl_5g_ssid = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
-            os.system(f'netsh wlan delete profile name="{wl_5g_ssid}"')
-            write_data_to_none_secure_xml(wifi_none_secure_path, new_name=wl_5g_ssid)
-            os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
-            time.sleep(5)
-            os.system(f'netsh wlan connect ssid="{wl_5g_ssid}" name="{wl_5g_ssid}"')
-            time.sleep(10)
-
-            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-            time.sleep(5)
-
-            # Google
-            driver.get(GOOGLE_URL)
-            time.sleep(10)
-            check_2g_none = len(driver.find_elements_by_css_selector(google_img)) > 0
-
-
-
-
-
-            list_actual = []
-            list_expected = []
-            check = assert_list(list_actual, list_expected)
-            self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3,4. Change Security is NONE check access Google')
-        except:
-            self.list_steps.append(
-                f'[Fail] 3,4. Change Security is NONE check access Google'
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-            list_step_fail.append('3. Assertion wong.')
-
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
-        try:
-            SECURITY_TYPE = 'WPA2-PSK'
-            # 2G Change security
-            setting_wireless_security(block_2g, SECURITY_TYPE)
-
-            # Change password
-            pw_2g = block_2g.find_element_by_css_selector(input_pw)
-            ActionChains(driver).move_to_element(pw_2g).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                Keys.CONTROL).send_keys(VALID_PASSWORD).perform()
-
-            # Apply
-            apply(driver, block_2g)
-
-            # 5G Change security
-            setting_wireless_security(block_5g, SECURITY_TYPE)
-            # Change password
-            pw_5g = block_5g.find_element_by_css_selector(input_pw)
-            ActionChains(driver).move_to_element(pw_5g).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                Keys.CONTROL).send_keys(VALID_PASSWORD).perform()
-
-            # Apply
-            apply(driver, block_2g)
-
-            list_actual = []
-            list_expected = []
-            check = assert_list(list_actual, list_expected)
-            self.assertTrue(check["result"])
-            self.list_steps.append(f'[Pass] 5,6. Change Security is {SECURITY_TYPE} check access Google ')
-        except:
-            self.list_steps.append(
-                f'[Fail] 5,6. Change Security is {SECURITY_TYPE} check access Google . '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-            list_step_fail.append('5,6. Assertion wong.')
-
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 7
-        try:
-            SECURITY_TYPE = 'WPA2/WPA-PSK'
-            # 2G Change security
-            setting_wireless_security(block_2g, SECURITY_TYPE)
-
-            # Change password
-            pw_2g = block_2g.find_element_by_css_selector(input_pw)
-            ActionChains(driver).move_to_element(pw_2g).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                Keys.CONTROL).send_keys(VALID_PASSWORD).perform()
-
-            # Apply
-            apply(driver, block_2g)
-
-            # 5G Change security
-            setting_wireless_security(block_5g, SECURITY_TYPE)
-            # Change password
-            pw_5g = block_5g.find_element_by_css_selector(input_pw)
-            ActionChains(driver).move_to_element(pw_5g).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                Keys.CONTROL).send_keys(VALID_PASSWORD).perform()
-
-            # Apply
-            apply(driver, block_2g)
-
-            list_actual = []
-            list_expected = [ ]
-            check = assert_list(list_actual, list_expected)
-            self.assertTrue(check["result"])
-            self.list_steps.append(f'[Pass] 5,6. Change Security is {SECURITY_TYPE} check access Google ')
-        except:
-            self.list_steps.append(
-                f'[Fail] 5,6. Change Security is {SECURITY_TYPE} check access Google . '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-            list_step_fail.append('5,6. Assertion wong.')
-
-        self.assertListEqual(list_step_fail, [])
+    # def test_03_Verification_of_Security_Settings(self):
+    #     self.key = 'WIRELESS_03'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #
+    #     URL_LOGIN = get_config('URL', 'url')
+    #     GOOGLE_URL = 'http://google.com'
+    #
+    #     VALID_PASSWORD = '0123456789'
+    #
+    #     try:
+    #         grand_login(driver)
+    #         time.sleep(2)
+    #         # Enable Dual WAN
+    #         goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+    #         time.sleep(1)
+    #         block_2g = driver.find_element_by_css_selector(left)
+    #         # Default Pw
+    #         block_5g = driver.find_element_by_css_selector(right)
+    #         self.list_steps.append(
+    #             '[Pass] 1,2. Goto Primary network \n')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 1,2. Goto Primary network. ')
+    #         list_step_fail.append(
+    #             '1,2. Assertion wong.')
+    #
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
+    #     try:
+    #         SECURITY_TYPE = 'NONE'
+    #         # 2G Change security
+    #         setting_wireless_security(block_2g, SECURITY_TYPE)
+    #         block_2g.find_element_by_css_selector(apply).click()
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(1)
+    #
+    #         wl_2g_ssid = wireless_get_default_ssid(driver, 'Network Name(SSID)')
+    #         os.system(f'netsh wlan delete profile name="{wl_2g_ssid}"')
+    #         write_data_to_none_secure_xml(wifi_none_secure_path, new_name=wl_2g_ssid)
+    #         os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
+    #         time.sleep(5)
+    #         os.system(f'netsh wlan connect ssid="{wl_2g_ssid}" name="{wl_2g_ssid}"')
+    #         time.sleep(10)
+    #
+    #         os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+    #         time.sleep(5)
+    #
+    #         # Google
+    #         driver.get(GOOGLE_URL)
+    #         time.sleep(10)
+    #         check_2g_none = len(driver.find_elements_by_css_selector(google_img)) > 0
+    #
+    #         os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+    #         time.sleep(5)
+    #         # 5G Change security
+    #         setting_wireless_security(block_5g, SECURITY_TYPE)
+    #         block_5g.find_element_by_css_selector(apply).click()
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(1)
+    #
+    #         wl_5g_ssid = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
+    #         os.system(f'netsh wlan delete profile name="{wl_5g_ssid}"')
+    #         write_data_to_none_secure_xml(wifi_none_secure_path, new_name=wl_5g_ssid)
+    #         os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
+    #         time.sleep(5)
+    #         os.system(f'netsh wlan connect ssid="{wl_5g_ssid}" name="{wl_5g_ssid}"')
+    #         time.sleep(10)
+    #
+    #         os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+    #         time.sleep(5)
+    #
+    #         # Google
+    #         driver.get(GOOGLE_URL)
+    #         time.sleep(10)
+    #         check_2g_none = len(driver.find_elements_by_css_selector(google_img)) > 0
+    #
+    #
+    #
+    #
+    #
+    #         list_actual = []
+    #         list_expected = []
+    #         check = assert_list(list_actual, list_expected)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 3,4. Change Security is NONE check access Google')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 3,4. Change Security is NONE check access Google'
+    #             f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+    #         list_step_fail.append('3. Assertion wong.')
+    #
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
+    #     try:
+    #         SECURITY_TYPE = 'WPA2-PSK'
+    #         # 2G Change security
+    #         setting_wireless_security(block_2g, SECURITY_TYPE)
+    #
+    #         # Change password
+    #         pw_2g = block_2g.find_element_by_css_selector(input_pw)
+    #         ActionChains(driver).move_to_element(pw_2g).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+    #             Keys.CONTROL).send_keys(VALID_PASSWORD).perform()
+    #
+    #         # Apply
+    #         apply(driver, block_2g)
+    #
+    #         # 5G Change security
+    #         setting_wireless_security(block_5g, SECURITY_TYPE)
+    #         # Change password
+    #         pw_5g = block_5g.find_element_by_css_selector(input_pw)
+    #         ActionChains(driver).move_to_element(pw_5g).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+    #             Keys.CONTROL).send_keys(VALID_PASSWORD).perform()
+    #
+    #         # Apply
+    #         apply(driver, block_2g)
+    #
+    #         list_actual = []
+    #         list_expected = []
+    #         check = assert_list(list_actual, list_expected)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(f'[Pass] 5,6. Change Security is {SECURITY_TYPE} check access Google ')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 5,6. Change Security is {SECURITY_TYPE} check access Google . '
+    #             f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+    #         list_step_fail.append('5,6. Assertion wong.')
+    #
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 7
+    #     try:
+    #         SECURITY_TYPE = 'WPA2/WPA-PSK'
+    #         # 2G Change security
+    #         setting_wireless_security(block_2g, SECURITY_TYPE)
+    #
+    #         # Change password
+    #         pw_2g = block_2g.find_element_by_css_selector(input_pw)
+    #         ActionChains(driver).move_to_element(pw_2g).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+    #             Keys.CONTROL).send_keys(VALID_PASSWORD).perform()
+    #
+    #         # Apply
+    #         apply(driver, block_2g)
+    #
+    #         # 5G Change security
+    #         setting_wireless_security(block_5g, SECURITY_TYPE)
+    #         # Change password
+    #         pw_5g = block_5g.find_element_by_css_selector(input_pw)
+    #         ActionChains(driver).move_to_element(pw_5g).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+    #             Keys.CONTROL).send_keys(VALID_PASSWORD).perform()
+    #
+    #         # Apply
+    #         apply(driver, block_2g)
+    #
+    #         list_actual = []
+    #         list_expected = [ ]
+    #         check = assert_list(list_actual, list_expected)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(f'[Pass] 5,6. Change Security is {SECURITY_TYPE} check access Google ')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 5,6. Change Security is {SECURITY_TYPE} check access Google . '
+    #             f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+    #         list_step_fail.append('5,6. Assertion wong.')
+    #
+    #     self.assertListEqual(list_step_fail, [])
     # OK F
     def test_04_Verification_of_the_setting_WPA2_PSK_Password(self):
         self.key = 'WIRELESS_04'
