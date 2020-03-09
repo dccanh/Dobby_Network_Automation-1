@@ -332,7 +332,7 @@ class MEDIASHARE(unittest.TestCase):
 
         try:
             grand_login(driver)
-
+            time.sleep(5)
             # Goto media share USB
             goto_menu(driver, media_share_tab, media_share_usb_tab)
             wait_popup_disappear(driver, dialog_loading)
@@ -348,7 +348,7 @@ class MEDIASHARE(unittest.TestCase):
             network_table = network_block.find_elements_by_css_selector(tbody)
             # Get first row> Click edit
             network_table[0].find_element_by_css_selector(action_edit).click()
-
+            time.sleep(0.5)
             # Edit mode
             edit_field = network_block.find_element_by_css_selector(edit_mode)
 
@@ -374,7 +374,7 @@ class MEDIASHARE(unittest.TestCase):
                     break
             # OK
             driver.find_element_by_css_selector(btn_ok).click()
-
+            time.sleep(2)
             # Permission
             per_write = edit_field.find_element_by_css_selector(permission_write_check_box_first_row)
             permission_status_before = per_write.is_selected()
@@ -384,14 +384,14 @@ class MEDIASHARE(unittest.TestCase):
                 driver.find_element_by_css_selector(permission_write_check_box_radio_first_row).click()
             # Save
             driver.find_element_by_css_selector(btn_save).click()
-
+            time.sleep(2)
             # Apply
             driver.find_element_by_css_selector(apply).click()
             time.sleep(1)
             wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            time.sleep(5)
             # Get value
             desc_check = network_table[0].find_element_by_css_selector(description).text
             path_check = network_table[0].find_element_by_css_selector(path).text.split('/')[-1]
@@ -417,7 +417,7 @@ class MEDIASHARE(unittest.TestCase):
         try:
             # Get first row> Click delete
             network_table[0].find_element_by_css_selector(action_delete).click()
-            time.sleep(0.2)
+            time.sleep(2)
 
             # OK
             driver.find_element_by_css_selector(btn_ok).click()
@@ -731,22 +731,23 @@ class MEDIASHARE(unittest.TestCase):
 
             # Goto media share USB
             goto_menu(driver, media_share_tab, media_share_usb_tab)
+            time.sleep(2)
             wait_popup_disappear(driver, dialog_loading)
             # Network block
             account_setting_block = driver.find_element_by_css_selector(account_setting_card)
 
             # Click Add 1
             account_setting_block.find_element_by_css_selector(add_class).click()
-            time.sleep(0.2)
+            time.sleep(2)
 
             # Edit mode
             edit_field = account_setting_block.find_element_by_css_selector(edit_mode)
             time.sleep(1)
             id_field = edit_field.find_element_by_css_selector(id_cls)
             id_value = id_field.find_element_by_css_selector(input)
-            ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+            ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL+'a').key_up(
                 Keys.CONTROL).send_keys(TEST_STRING).perform()
-            time.sleep(1)
+            time.sleep(2)
             password_field = edit_field.find_element_by_css_selector(password_cls)
             password_value = password_field.find_element_by_css_selector(input)
             ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
@@ -762,12 +763,12 @@ class MEDIASHARE(unittest.TestCase):
             ls_account = account_setting_block.find_elements_by_css_selector(rows)
             verify_just_created_rows = ls_account[-1]
             id_account = verify_just_created_rows.find_element_by_css_selector(id_cls).text
-
+            time.sleep(3)
             pw_eye = verify_just_created_rows.find_element_by_css_selector(password_eye)
             act = ActionChains(driver)
             act.click_and_hold(pw_eye)
-            time.sleep(1)
-            pw_account = verify_just_created_rows.find_element_by_css_selector(input_pw).get_attribute('value')
+            time.sleep(2)
+            pw_account = verify_just_created_rows.find_elements_by_css_selector(input_pw)[-1].get_attribute('value')
             time.sleep(1)
             act.release(pw_eye)
             act.perform()
@@ -1181,6 +1182,7 @@ class MEDIASHARE(unittest.TestCase):
             for l, v in zip(input_label, input_value):
                 if l.text == 'Account':
                     v.find_element_by_css_selector(input).click()
+                    time.sleep(1)
                     ls_account_drop = v.find_elements_by_css_selector(secure_value_in_drop_down)
                     time.sleep(0.5)
                     for o in ls_account_drop:
@@ -1189,6 +1191,7 @@ class MEDIASHARE(unittest.TestCase):
                             break
                 if l.text == 'Network Folder':
                     v.find_element_by_css_selector(input).click()
+                    time.sleep(1)
                     ls_folder = v.find_elements_by_css_selector(secure_value_in_drop_down)
                     time.sleep(0.5)
                     choice = random.choice(ls_folder)
@@ -1220,6 +1223,7 @@ class MEDIASHARE(unittest.TestCase):
                     v.find_element_by_css_selector(input).send_keys(fake.name())
                 if l.text == 'Account':
                     v.find_element_by_css_selector(input).click()
+                    time.sleep(1)
                     ls_account_drop = v.find_elements_by_css_selector(secure_value_in_drop_down)
                     time.sleep(0.5)
                     for o in ls_account_drop:
@@ -1228,11 +1232,13 @@ class MEDIASHARE(unittest.TestCase):
                             break
                 if l.text == 'Network Folder':
                     v.find_element_by_css_selector(input).click()
+                    time.sleep(1)
                     ls_folder = v.find_elements_by_css_selector(secure_value_in_drop_down)
                     time.sleep(0.5)
                     choice = random.choice(ls_folder)
                     time.sleep(0.5)
                     choice.click()
+                    time.sleep(0.5)
                     break
             # Apply
             server_samba.find_element_by_css_selector(apply).click()
@@ -1267,8 +1273,13 @@ class MEDIASHARE(unittest.TestCase):
                 time.sleep(1)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(1)
-
+            else:
+                driver.find_element_by_css_selector(btn_cancel).click()
+                time.sleep(1)
             # Click Delete
+            ls_account = account_setting_block.find_elements_by_css_selector(rows)
+            random_account = random.choice(ls_account)
+            time.sleep(1)
             random_account.find_element_by_css_selector(delete_cls).click()
             time.sleep(0.5)
 
