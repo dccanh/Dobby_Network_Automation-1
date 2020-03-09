@@ -24,7 +24,7 @@ import threading
 METHOD = 'GET'
 USER = get_config('ACCOUNT', 'user')
 PW = get_config('ACCOUNT', 'password')
-token = get_token(USER, PW)
+# token = get_token(USER, PW)
 URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
 
 URL_5g = 'http://192.168.1.1/api/v1/wifi/1/ssid/0'
@@ -36,6 +36,8 @@ PING_TIMES = 60
 class NON_FUNCTION(unittest.TestCase):
     def setUp(self):
         try:
+            os.system('netsh wlan disconnect')
+            time.sleep(3)
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
@@ -228,14 +230,16 @@ class NON_FUNCTION(unittest.TestCase):
             write_data_to_xml(wifi_default_file_path, new_name=new_2g_wf_name)
             time.sleep(3)
             os.system(f'netsh wlan delete profile name="{new_2g_wf_name}"')
+            time.sleep(3)
             # Connect Default 2GHz
             os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
             time.sleep(5)
 
             os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
-            time.sleep(5)
+            time.sleep(10)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(3)
         except:
             self.list_steps.append('[FAIL] Precondition connect 2G Wifi Fail')
 
@@ -380,7 +384,7 @@ class NON_FUNCTION(unittest.TestCase):
             time.sleep(5)
 
             os.system(f'netsh wlan connect ssid="{new_5g_wf_name}" name="{new_5g_wf_name}"')
-            time.sleep(6)
+            time.sleep(10)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(4)

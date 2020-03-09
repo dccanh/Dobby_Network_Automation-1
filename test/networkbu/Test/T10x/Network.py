@@ -1921,7 +1921,7 @@ class NETWORK(unittest.TestCase):
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
         # Wait 5 mins for factory
-        time.sleep(150)
+        time.sleep(250)
         wait_DUT_activated(URL_LOGIN)
         wait_ping('192.168.1.1')
 
@@ -1931,7 +1931,8 @@ class NETWORK(unittest.TestCase):
         time.sleep(3)
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        time.sleep(3)
+        time.sleep(10)
+        save_config(config_path, 'URL', 'url', 'http://192.168.1.1')
 
         self.assertListEqual(list_step_fail, [])
 
