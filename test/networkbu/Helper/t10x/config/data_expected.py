@@ -55,6 +55,7 @@ exp_change_pw_msg = 'Change the login password for security.\nFor the default ro
 exp_current_pw_error_msg = 'Password is not correct'
 exp_retype_new_pw_error_msg = 'Password does not match'
 exp_internet_setup_guide = 'You can manually configure your internet settings.\nIf you do not know the Internet connection type, please contact your ISP'
+exp_internet_setup_error_msg = 'Internet cable is unplugged. Please check your internet cable first.'
 
 # ~~~~~~~~~~~~~~~~~~~~~~~ Wireless
 exp_ssid_2g_default_val = 'We Love You So Much_2G!'

@@ -17,6 +17,7 @@ from selenium.webdriver.support.select import Select
 
 
 class MAIN(unittest.TestCase):
+
     def setUp(self):
         try:
             os.system('echo. &echo ' + self._testMethodName)
@@ -334,6 +335,8 @@ class MAIN(unittest.TestCase):
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(2)
             # Goto Login page
+            time.sleep(10)
+            wait_popup_disappear(driver, dialog_loading)
             driver.get(url)
             time.sleep(3)
 
@@ -2639,7 +2642,6 @@ class MAIN(unittest.TestCase):
                 ActionChains(driver).move_to_element(i).click().send_keys('0').perform()
                 time.sleep(0.5)
 
-
             list_actual3 = [check_internet_setup_title, check_internet_setup_guide, ls_connection_type_text]
             list_expected3 = ['Internet Setup', exp_internet_setup_guide, ['Dynamic IP', 'Static IP', 'PPPoE']]
             check = assert_list(list_actual3, list_expected3)
@@ -4912,6 +4914,514 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+    # def test_84_Verification_of_Bridge_mode_Menu_Tree(self):
+    #     self.key = 'MAIN_84'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     URL_LOGIN = get_config('URL', 'url')
+    #
+    #     try:
+    #         grand_login(driver)
+    #         time.sleep(1)
+    #
+    #         goto_menu(driver, network_tab, network_operationmode_tab)
+    #         # Click to Bridge mode
+    #         driver.find_element_by_css_selector(ele_select_bridge_mode).click()
+    #         time.sleep(0.5)
+    #         driver.find_element_by_css_selector(apply).click()
+    #
+    #
+    #         list_actual1 = []
+    #         list_expected1 = []
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             '[Pass] 1, 2. Login; Click Show at Footer; Check list Menu ordered A-Z')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 1, 2. Login; Click Show at Footer; Check list Menu ordered A-Z. '
+    #             f'Actual: {str(list_actual1)}. '
+    #             f'Expected: {str(list_expected1)}')
+    #         list_step_fail.append('1, 2. Assertion wong')
+    #
+    #     try:
+    #         # Click to first Menu item. Verify redirect page
+    #         list_items_menu_1 = driver.find_elements_by_css_selector(ele_humax_search_value_menu_1)
+    #         for i in list_items_menu_1:
+    #             if i.text == 'QoS':
+    #                 ActionChains(driver).move_to_element(i).click().perform()
+    #                 wait_popup_disappear(driver, dialog_loading)
+    #                 time.sleep(1)
+    #                 break
+    #         detect_qos = detect_current_menu(driver)
+    #
+    #         list_actual3 = [detect_qos]
+    #         list_expected3 = [('QOS', 0)]
+    #         check = assert_list(list_actual3, list_expected3)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 3. Click QoS; Check target page')
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 3. Click QoS; Check target page '
+    #             f'Actual: {str(list_actual3)}. '
+    #             f'Expected: {str(list_expected3)}')
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('3. Assertion wong')
+    #
+    #     self.assertListEqual(list_step_fail, [])
+    # OK
+    def test_52_Router_mode_Check_firmware_upgrade_when_disconnected_internet(self):
+        self.key = 'MAIN_52'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_LOGIN = get_config('URL', 'url')
+        _USER = get_config('ACCOUNT', 'user')
+        _PW = get_config('ACCOUNT', 'password')
+
+        try:
+            # Call API disconnect WAN
+            URL_DISCONNECT_WAN = URL_LOGIN + '/api/v1/network/wan/0/disconnect'
+            _METHOD = 'POST'
+            _TOKEN = get_token(_USER, _PW)
+            _BODY = ''
+            call_api(URL_DISCONNECT_WAN, _METHOD, _BODY, _TOKEN)
+            time.sleep(10)
+
+            self.list_steps.append(
+                f'[Pass] API Disconnect WAN Success. Check Status code. ')
+        except:
+            self.list_steps.append(
+                f'[Fail] Disconnect WAN Fail. Check Status code. ')
+            list_step_fail.append('0. Assertion wong')
+
+        try:
+            grand_login(driver)
+            time.sleep(1)
+
+            # System > Firmware
+            driver.find_element_by_css_selector(system_btn).click()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(ele_sys_firmware_update).click()
+            time.sleep(1)
+
+            # Check pop up firmware update display
+            check_pop_firmware_display = driver.find_element_by_css_selector(ele_check_for_update_title).text
+
+            list_actual1 = [check_pop_firmware_display]
+            list_expected1 = ['Firmware Update']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1. Login > System > Firmware. Check name of popup displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login > System > Firmware. Check name of popup displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            message = driver.find_element_by_css_selector(ele_firm_update_msg).text
+
+            list_actual2 = [message]
+            list_expected2 = ['Internet disconnected']
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2. Check Message shown in pop up firmware update. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check Message shown in pop up firmware update '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('2. Assertion wong')
+
+        try:
+            # Call API disconnect WAN
+            URL_CONNECT_WAN = URL_LOGIN + '/api/v1/network/wan/0/connect'
+            _METHOD = 'POST'
+            _TOKEN = get_token(_USER, _PW)
+            _BODY = ''
+            call_api(URL_CONNECT_WAN, _METHOD, _BODY, _TOKEN)
+            time.sleep(10)
+
+            self.list_steps.append(
+                f'[Pass] API Connect WAN Success After test. Check Status code. ')
+        except:
+            self.list_steps.append(
+                f'[Fail] Connect WAN Fail After test. Check Status code. ')
+
+        self.assertListEqual(list_step_fail, [])
+    # OK
+    def test_27_Verification_of_Internet_Setup_page(self):
+        self.key = 'MAIN_27'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        URL_LOGIN = get_config('URL', 'url')
+        URL_CONNECT_WAN = URL_LOGIN + '/api/v1/network/wan/0/connect'
+        _METHOD = 'POST'
+        _USER = get_config('ACCOUNT', 'user')
+        _PW = get_config('ACCOUNT', 'password')
+        _TOKEN = get_token(_USER, _PW)
+        _BODY = ''
+        call_api(URL_CONNECT_WAN, _METHOD, _BODY, _TOKEN)
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(150)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        time.sleep(3)
+
+        _USER = get_config('ACCOUNT', 'user')
+        _PW = get_config('ACCOUNT', 'password')
+        NEW_PASSWORD = 'abc123'
+
+        try:
+            time.sleep(1)
+            login(driver)
+            time.sleep(1)
+
+            URL_DISCONNECT_WAN = URL_LOGIN + '/api/v1/network/wan/0/disconnect'
+            _METHOD = 'POST'
+            _TOKEN = get_token(_USER, _PW)
+            _BODY = ''
+            call_api(URL_DISCONNECT_WAN, _METHOD, _BODY, _TOKEN)
+            time.sleep(10)
+
+            driver.find_element_by_css_selector(welcome_start_btn).click()
+            time.sleep(3)
+            wait_visible(driver, welcome_change_pw_fields)
+            change_pw_fields = driver.find_elements_by_css_selector(welcome_change_pw_fields)
+
+            # A list contain values: Current Password, New Password, Retype new pw
+            ls_change_pw_value = [get_config('ACCOUNT', 'password'), NEW_PASSWORD, NEW_PASSWORD]
+            for p, v in zip(change_pw_fields, ls_change_pw_value):
+                ActionChains(driver).move_to_element(p).click().send_keys(v).perform()
+                time.sleep(0.5)
+
+            # Next Change pw
+            time.sleep(3)
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+            time.sleep(5)
+
+            # Mode
+            time.sleep(3)
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+            time.sleep(5)
+            internet_setup_title = driver.find_element_by_css_selector(ele_internet_setup_title).text
+            internet_setup_error = driver.find_element_by_css_selector(ele_internet_setup_error_msg).text
+            default_connection_type = driver.find_element_by_css_selector(ele_welcome_connection_box).text
+            # check_btn_skip = driver.find_element_by_css_selector(ele_skip_btn).is_displayed()
+            check_btn_back = driver.find_element_by_css_selector(ele_back_btn).is_displayed()
+            check_btn_next = driver.find_element_by_css_selector(welcome_next_btn).is_displayed()
+
+            list_actual1 = [internet_setup_title,
+                            internet_setup_error,
+                            default_connection_type,
+                            check_btn_back,
+                            check_btn_next]
+            list_expected1 = ['Internet Setup',
+                              exp_internet_setup_error_msg,
+                              'Dynamic IP'] + [return_true]*2
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1 -> 4. Winzard > Internet setting: '
+                f'Check title, error message, Default connect type, btn Skip, Back, Next displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1 -> 4. Winzard > Internet setting: '
+                f'Check title, error message, Default connect type, btn Skip, Back, Next displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            time.sleep(3)
+            driver.find_element_by_css_selector(option_select).click()
+            time.sleep(2)
+            ls_connection_type = driver.find_elements_by_css_selector(welcome_internet_setup1_ls_option_connection_type)
+
+            # Click Static IP
+            for i in ls_connection_type:
+                if i.text == 'Static IP':
+                    i.click()
+                    break
+            time.sleep(1)
+
+            ls_label_static_ip = [i.text for i in driver.find_elements_by_css_selector(label_name_in_2g)]
+
+            list_actual2 = ls_label_static_ip
+            list_expected2 = ['Connection Type',
+                              'WAN IP Address',
+                              'Subnet Mask',
+                              'Gateway',
+                              'DNS Server 1',
+                              'DNS Server 2']
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Check Internet Setup Label of Static IP. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Check Internet Setup Label of Static IP. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('5. Assertion wong')
+
+        try:
+            time.sleep(3)
+            driver.find_element_by_css_selector(option_select).click()
+            time.sleep(2)
+            ls_connection_type = driver.find_elements_by_css_selector(welcome_internet_setup1_ls_option_connection_type)
+
+            # Click PPPoE
+            for i in ls_connection_type:
+                if i.text == 'PPPoE':
+                    i.click()
+                    break
+            time.sleep(1)
+
+            ls_label_pppoe = [i.text for i in driver.find_elements_by_css_selector(label_name_in_2g)]
+
+            list_actual3 = ls_label_pppoe
+            list_expected3 = ['Connection Type',
+                              'User Name',
+                              'Password',
+                              'Dynamic IP']
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Check Internet Setup Label of PPPoE. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Check Internet Setup Label of PPPoE. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('6. Assertion wong')
+
+        try:
+            driver.find_element_by_css_selector(option_select).click()
+            time.sleep(2)
+            ls_connection_type = driver.find_elements_by_css_selector(welcome_internet_setup1_ls_option_connection_type)
+
+            # Click PPPoE
+            for i in ls_connection_type:
+                if i.text == 'Dynamic IP':
+                    i.click()
+                    break
+            time.sleep(1)
+            while True:
+                time.sleep(2)
+                wait_visible(driver, welcome_next_btn)
+                next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+                if not next_btn.get_property('disabled'):
+                    next_btn.click()
+                time.sleep(5)
+
+                if len(driver.find_elements_by_css_selector(welcome_let_go_btn)) > 0:
+                    break
+
+            time.sleep(3)
+            driver.find_element_by_css_selector(welcome_let_go_btn).click()
+            # Write config
+            save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(2)
+            wait_visible(driver, home_view_wrap)
+            time.sleep(5)
+
+            # Call API disconnect WAN
+            URL_CONNECT_WAN = URL_LOGIN + '/api/v1/network/wan/0/connect'
+            _METHOD = 'POST'
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+            _BODY = ''
+            call_api(URL_CONNECT_WAN, _METHOD, _BODY, _TOKEN)
+            time.sleep(10)
+
+            self.list_steps.append(
+                f'[Pass] API Connect WAN Success After test. Check Status code. ')
+        except:
+            self.list_steps.append(
+                f'[Fail] Connect WAN Fail After test. Check Status code. ')
+
+        self.assertListEqual(list_step_fail, [])
+    # OK
+    def test_69_System_Verify_the_Date_Time_operation(self):
+        self.key = 'MAIN_69'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+        URL_LOGIN = get_config('URL', 'url')
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(120)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        time.sleep(3)
+        exp_time_zone = '(GMT-11:00) Apia'
+        try:
+            grand_login(driver)
+            time.sleep(1)
+
+            # Actions Systems > Change PW
+            system_button = driver.find_element_by_css_selector(system_btn)
+            ActionChains(driver).move_to_element(system_button).click().perform()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(ele_sys_date_time).click()
+            time.sleep(1)
+
+            check_popup_title = driver.find_element_by_css_selector(ele_check_for_update_title).text
+            check_popup_sub_title = driver.find_element_by_css_selector(sub_title_popup_cls).text
+
+            time_large = driver.find_element_by_css_selector(ele_time_content).text
+            try:
+                datetime.strptime(time_large, '%Y.%m.%d %H:%M:%S')
+                check_format_time = True
+            except ValueError:
+                check_format_time = False
+
+            date_time = driver.find_element_by_css_selector(ele_timezone_cls)
+            check_date_time_label = date_time.find_element_by_css_selector(label_name_in_2g).text
+
+            daylight_st = driver.find_element_by_css_selector(ele_dst_cls)
+            check_daylight_st_label = daylight_st.find_element_by_css_selector(label_name_in_2g).text
+
+            ntp = driver.find_element_by_css_selector(ele_ntp_cls)
+            check_ntp_label = ntp.find_element_by_css_selector(label_name_in_2g).text
+
+            ntp_server = driver.find_element_by_css_selector(ele_npt_server_cls)
+            check_ntp_server_label = [i.text for i in ntp_server.find_elements_by_css_selector(ele_index_cls)]
+            check_ntp_server_desc = [i.text for i in ntp_server.find_elements_by_css_selector(description)]
+
+            check_ntp_server_edit = len(ntp_server.find_elements_by_css_selector(edit_cls))
+            check_ntp_server_delete = len(ntp_server.find_elements_by_css_selector(delete_cls))
+
+            btn_add_text = ntp_server.find_element_by_css_selector(add_class).text
+            check_add_button = '+ ADD' in btn_add_text
+
+            list_actual2 = [check_popup_title, check_popup_sub_title, check_format_time,
+                            check_date_time_label, check_daylight_st_label, check_ntp_label,
+                            check_ntp_server_label, check_ntp_server_desc,
+                            check_ntp_server_edit, check_ntp_server_delete, check_add_button]
+            list_expected2 = ['Date/Time', 'You can set the date and time.', return_true,
+                              'Time Zone', 'Daylight Saving Time', 'NTP (Network Time Protocol)',
+                              ['NTP Server 1', 'NTP Server 2', 'NTP Server 3'],
+                              ['0.pool.ntp.org', '1.pool.ntp.org', '2.pool.ntp.org'],
+                              3, 3, return_true]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Check info popup: Title, Sub title, Format time, label timezone, dst, '
+                f'ntp, 3 servers, 3 desc, 3 icon edit, 3 icon delete, icon +ADD displayed. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check info popup: Title, Sub title, Format time, label timezone, dst, '
+                f'ntp, 3 servers, 3 desc, 3 icon edit, 3 icon delete, icon +ADD displayed. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('3. Assertion wong')
+
+
+        try:
+            time.sleep(1)
+            # Click to time zone
+            date_time.find_element_by_css_selector(option_select).click()
+            time.sleep(2)
+            # Choose time zone in drop down
+            ls_time_zone = date_time.find_elements_by_css_selector(secure_value_in_drop_down)
+            stt = 0
+            for index, t in enumerate(ls_time_zone):
+                ActionChains(driver).move_to_element(t).perform()
+                if t.text == exp_time_zone:
+                    t.click()
+                    break
+
+            driver.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+
+            URL_DATETIME = URL_LOGIN + '/api/v1/gateway/datetime'
+            _METHOD = 'GET'
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+            _BODY = ''
+            res_datetime = call_api(URL_DATETIME, _METHOD, _BODY, _TOKEN)
+            check_time_zone = res_datetime['timeZone']
+
+            list_actual4 = [check_time_zone]
+            list_expected4 = [index]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Check TimeZone index with API. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Check TimeZone index with API. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('4. Assertion wong')
+
+        self.assertListEqual(list_step_fail, [])
 
 if __name__ == '__main__':
     unittest.main()

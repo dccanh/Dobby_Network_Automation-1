@@ -21,6 +21,8 @@ sheet = client.open("[DOB] Report Automation")
 sheet.duplicate_sheet(source_sheet_id=2012030512, insert_sheet_index=1, new_sheet_name=sheet_name)
 
 sheet = client.open("[DOB] Report Automation").get_worksheet(0)
+
+
 # Update Start time
 sheet.update_cell(5, 7, a)
 sheet.update_cell(4, 7, stage)
@@ -29,10 +31,11 @@ sheet.update_cell(4, 7, stage)
 sheet.update_cell(13, 5, url)
 sheet.update_cell(12, 5, version)
 
-third = sheet.update_cell(54, 5, sheet.cell(55, 5).value)
-second = sheet.update_cell(55, 5, sheet.cell(56, 5).value)
-first = sheet.update_cell(56, 5, sheet.cell(57, 5).value)
-now = sheet.update_cell(57, 5, sheet_name)
+sheet_title = client.open("[DOB] Report Automation")
+third = sheet.update_cell(54, 5, sheet_title.get_worksheet(4).title)
+second = sheet.update_cell(55, 5, sheet_title.get_worksheet(3).title)
+first = sheet.update_cell(56, 5, sheet_title.get_worksheet(2).title)
+now = sheet.update_cell(57, 5, sheet_title.get_worksheet(1).title)
 
 
 # Save google sheet name

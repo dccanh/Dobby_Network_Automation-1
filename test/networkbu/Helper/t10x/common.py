@@ -668,46 +668,6 @@ def handle_winzard_welcome(driver, NEW_PASSWORD='abc123', exp_language='English'
         if len(driver.find_elements_by_css_selector(welcome_let_go_btn)) > 0:
             break
 
-
-    # # Next Operation Mode
-    # time.sleep(3)
-    # wait_visible(driver, welcome_next_btn)
-    # next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    # if not next_btn.get_property('disabled'):
-    #     next_btn.click()
-    #     time.sleep(0.5)
-    # time.sleep(3)
-    #
-    # # Next Internet Setup 1
-    # time.sleep(2)
-    # wait_visible(driver, welcome_next_btn)
-    # next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    # if not next_btn.get_property('disabled'):
-    #     next_btn.click()
-    #
-    # # Next Internet setup 2
-    # time.sleep(3)
-    # wait_visible(driver, welcome_next_btn)
-    # next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    # if not next_btn.get_property('disabled'):
-    #     next_btn.click()
-    #
-    # # Next Wireless Setup
-    # time.sleep(3)
-    # wait_visible(driver, welcome_next_btn)
-    # next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    # if not next_btn.get_property('disabled'):
-    #     next_btn.click()
-    #
-    # # Next Humax Wifi App
-    # time.sleep(3)
-    # wait_visible(driver, welcome_next_btn)
-    # next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    # if not next_btn.get_property('disabled'):
-    #     next_btn.click()
-    # time.sleep(3)
-
-    # Click Let's Go
     time.sleep(3)
     driver.find_element_by_css_selector(welcome_let_go_btn).click()
     # Write config
