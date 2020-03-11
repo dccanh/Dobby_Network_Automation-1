@@ -45,7 +45,7 @@ class NETWORK(unittest.TestCase):
             time.sleep(1)
         self.driver.quit()
 
-    def test_01_Check_Internet_Status(self):
+    def test_01_NETWORK_Check_Internet_Status(self):
         self.key = 'NETWORK_01'
         driver = self.driver
         self.def_name = get_func_name()
@@ -508,7 +508,7 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_02_Check_Dynamic_IP_Operation(self):
+    def test_02_NETWORK_Check_Dynamic_IP_Operation(self):
         self.key = 'NETWORK_02'
         driver = self.driver
         self.def_name = get_func_name()
@@ -765,7 +765,7 @@ class NETWORK(unittest.TestCase):
                 '8. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
 
-    def test_03_Check_Static_IP_Operation(self):
+    def test_03_NETWORK_Check_Static_IP_Operation(self):
         self.key = 'NETWORK_03'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1041,7 +1041,7 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_06_Check_Primary_Setting(self):
+    def test_06_NETWORK_Check_Primary_Setting(self):
         self.key = 'NETWORK_06'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1134,7 +1134,7 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_07_Check_Secondary_Setting(self):
+    def test_07_NETWORK_Check_Secondary_Setting(self):
         self.key = 'NETWORK_07'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1227,7 +1227,7 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_18_LAN_Change_Subnet_Mask(self):
+    def test_18_NETWORK_LAN_Change_Subnet_Mask(self):
         self.key = 'NETWORK_18'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1384,7 +1384,7 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK F
-    def test_21_Verify_Start_End_Ip_Address_input_value(self):
+    def test_21_NETWORK_Verify_Start_End_Ip_Address_input_value(self):
         self.key = 'NETWORK_21'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1586,7 +1586,7 @@ class NETWORK(unittest.TestCase):
                 '4. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
     # OK F
-    def test_25_Reserved_IP_Confirm_duplicate_registration_prevention(self):
+    def test_25_NETWORK_Reserved_IP_Confirm_duplicate_registration_prevention(self):
         self.key = 'NETWORK_25'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1715,7 +1715,7 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK F
-    def test_26_Verify_Max_entry_Registration(self):
+    def test_26_NETWORK_Verify_Max_entry_Registration(self):
         self.key = 'NETWORK_26'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1811,7 +1811,7 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_27_Verify_update_Reserved_IP_address_follow_changing_Lan_IP(self):
+    def test_27_NETWORK_Verify_update_Reserved_IP_address_follow_changing_Lan_IP(self):
         self.key = 'NETWORK_27'
         driver = self.driver
         self.def_name = get_func_name()

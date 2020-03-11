@@ -71,7 +71,7 @@ class NON_FUNCTION(unittest.TestCase):
             
         self.driver.quit()
 
-    def test_02_Dynamic_Wired_Ping_Aging_INTERGRATION_WITH_05(self):
+    def test_02_NON_FUNC_Dynamic_Wired_Ping_Aging_INTERGRATION_WITH_05(self):
         self.key = 'NON_FUNCTION_02'
         driver = self.driver
         self.def_name = get_func_name()
@@ -196,7 +196,7 @@ class NON_FUNCTION(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_03_Wireless_24GHz_Ping_Aging_INTERGRATION_WITH_06(self):
+    def test_03_NON_FUNC_Wireless_24GHz_Ping_Aging_INTERGRATION_WITH_06(self):
         self.key = 'NON_FUNCTION_03'
         driver = self.driver
         self.def_name = get_func_name()
@@ -343,7 +343,7 @@ class NON_FUNCTION(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_04_Wireless_5GHz_Ping_Aging_INTERGRATION_WITH_07(self):
+    def test_04_NON_FUNC_Wireless_5GHz_Ping_Aging_INTERGRATION_WITH_07(self):
         self.key = 'NON_FUNCTION_04'
         driver = self.driver
         self.def_name = get_func_name()
@@ -489,7 +489,7 @@ class NON_FUNCTION(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_08_Static_Wired_Ping_Aging(self):
+    def test_08_NON_FUNC_Static_Wired_Ping_Aging(self):
         self.key = 'NON_FUNCTION_08'
         driver = self.driver
         self.def_name = get_func_name()
@@ -642,7 +642,7 @@ class NON_FUNCTION(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_09_Static_Wireless_24GHz_Ping_Aging(self):
+    def test_09_NON_FUNC_Static_Wireless_24GHz_Ping_Aging(self):
         self.key = 'NON_FUNCTION_09'
         driver = self.driver
         self.def_name = get_func_name()
@@ -806,7 +806,7 @@ class NON_FUNCTION(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_10_Static_Wireless_5GHz_Ping_Aging(self):
+    def test_10_NON_FUNC_Static_Wireless_5GHz_Ping_Aging(self):
         self.key = 'NON_FUNCTION_10'
         driver = self.driver
         self.def_name = get_func_name()

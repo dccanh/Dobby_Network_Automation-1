@@ -46,7 +46,7 @@ class WIRELESS(unittest.TestCase):
             time.sleep(1)
         self.driver.quit()
     # OK
-    def test_02_Verification_of_the_Wifi_On_off_operation(self):
+    def test_02_WIRELESS_Verification_of_the_Wifi_On_off_operation(self):
         self.key = 'WIRELESS_02'
         driver = self.driver
         self.def_name = get_func_name()
@@ -313,7 +313,7 @@ class WIRELESS(unittest.TestCase):
     #
     #     self.assertListEqual(list_step_fail, [])
     # OK F
-    def test_04_Verification_of_the_setting_WPA2_PSK_Password(self):
+    def test_04_WIRELESS_Verification_of_the_setting_WPA2_PSK_Password(self):
         self.key = 'WIRELESS_04'
         driver = self.driver
         self.def_name = get_func_name()
@@ -552,7 +552,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_05_Verification_of_the_setting_WPA_WPA2_PSK_Password(self):
+    def test_05_WIRELESS_Verification_of_the_setting_WPA_WPA2_PSK_Password(self):
         self.key = 'WIRELESS_05'
         driver = self.driver
         self.def_name = get_func_name()
@@ -791,7 +791,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK F
-    def test_08_Primary_Network_Verification_of_WEP64_setting(self):
+    def test_08_WIRELESS_Primary_Network_Verification_of_WEP64_setting(self):
         self.key = 'WIRELESS_08'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1293,7 +1293,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_09_Primary_Network_Verification_of_WEP128_setting(self):
+    def test_09_WIRELESS_Primary_Network_Verification_of_WEP128_setting(self):
         self.key = 'WIRELESS_09'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1790,7 +1790,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_10_Verification_of_Hide_SSID_function(self):
+    def test_10_WIRELESS_Verification_of_Hide_SSID_function(self):
         self.key = 'WIRELESS_10'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1997,7 +1997,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_11_Verification_of_WebUI_Access_Operation(self):
+    def test_11_WIRELESS_Verification_of_WebUI_Access_Operation(self):
         self.key = 'WIRELESS_11'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2246,7 +2246,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_15_Guest_Network_Multi_SSID_operation_check(self):
+    def test_15_WIRELESS_Guest_Network_Multi_SSID_operation_check(self):
         self.key = 'WIRELESS_15'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2491,7 +2491,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_16_Check_SSID_setting(self):
+    def test_16_WIRELESS_Check_SSID_setting(self):
         self.key = 'WIRELESS_16'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2610,7 +2610,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_17_Verification_of_Guest_Network_Duplicate_SSID_Registration(self):
+    def test_17_WIRELESS_Verification_of_Guest_Network_Duplicate_SSID_Registration(self):
         self.key = 'WIRELESS_17'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2765,7 +2765,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK F
-    def test_19_Verification_of_setting_WPA2_PSK_Password(self):
+    def test_19_WIRELESS_Verification_of_setting_WPA2_PSK_Password(self):
         self.key = 'WIRELESS_19'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2984,7 +2984,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK F
-    def test_20_Verification_of_setting_WPA_WPA2_PSK_Password(self):
+    def test_20_WIRELESS_Verification_of_setting_WPA_WPA2_PSK_Password(self):
         self.key = 'WIRELESS_20'
         driver = self.driver
         self.def_name = get_func_name()
@@ -3206,7 +3206,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_23_Guest_Network_Verification_of_WEP64_setting(self):
+    def test_23_WIRELESS_Guest_Network_Verification_of_WEP64_setting(self):
         self.key = 'WIRELESS_23'
         driver = self.driver
         self.def_name = get_func_name()
@@ -3742,7 +3742,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_24_Guest_Network_Verification_of_WEP128_setting(self):
+    def test_24_WIRELESS_Guest_Network_Verification_of_WEP128_setting(self):
         self.key = 'WIRELESS_24'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4279,7 +4279,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_25_Verification_of_Hide_SSID_action(self):
+    def test_25_WIRELESS_Verification_of_Hide_SSID_action(self):
         self.key = 'WIRELESS_25'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4508,7 +4508,7 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_40_WPS_Verify_Hide_SSID(self):
+    def test_40_WIRELESS_WPS_Verify_Hide_SSID(self):
         self.key = 'WIRELESS_40'
         driver = self.driver
         self.def_name = get_func_name()

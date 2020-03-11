@@ -40,7 +40,7 @@ class SECURITY(unittest.TestCase):
             time.sleep(1)
         self.driver.quit()
     # OK
-    def test_01_Check_Parental_Code_setting(self):
+    def test_01_SECURITY_Check_Parental_Code_setting(self):
         self.key = 'SECURITY_01'
         driver = self.driver
         self.def_name = get_func_name()
@@ -182,7 +182,7 @@ class SECURITY(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_02_Parental_code_Change_Confirmation(self):
+    def test_02_SECURITY_Parental_code_Change_Confirmation(self):
         self.key = 'SECURITY_02'
         driver = self.driver
         self.def_name = get_func_name()
@@ -281,7 +281,7 @@ class SECURITY(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_03_Confirmation_Parental_code_Initialization(self):
+    def test_03_SECURITY_Confirmation_Parental_code_Initialization(self):
         self.key = 'SECURITY_03'
         driver = self.driver
         self.def_name = get_func_name()
@@ -444,7 +444,7 @@ class SECURITY(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_04_Parental_Control_function_On_Off_check(self):
+    def test_04_SECURITY_Parental_Control_function_On_Off_check(self):
         self.key = 'SECURITY_04'
         driver = self.driver
         self.def_name = get_func_name()

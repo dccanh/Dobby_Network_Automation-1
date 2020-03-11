@@ -45,7 +45,7 @@ class MEDIASHARE(unittest.TestCase):
             time.sleep(1)
         self.driver.quit()
     # OK
-    def test_04_Confirmation_Network_Folder_Creation(self):
+    def test_04_MS_Confirmation_Network_Folder_Creation(self):
         self.key = 'MEDIA_SHARE_04'
         driver = self.driver
         self.def_name = get_func_name()
@@ -318,7 +318,7 @@ class MEDIASHARE(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_05_Edit_Delete_Network_Folder(self):
+    def test_05_MS_Edit_Delete_Network_Folder(self):
         self.key = 'MEDIA_SHARE_05'
         driver = self.driver
         self.def_name = get_func_name()
@@ -443,7 +443,7 @@ class MEDIASHARE(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_06_Edit_Delete_Network_Folder_while_server_is_running(self):
+    def test_06_MS_Edit_Delete_Network_Folder_while_server_is_running(self):
         self.key = 'MEDIA_SHARE_06'
         driver = self.driver
         self.def_name = get_func_name()
@@ -611,7 +611,7 @@ class MEDIASHARE(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_11_Check_mesage_when_creating_server_without_network_folder_account(self):
+    def test_11_MS_Check_mesage_when_creating_server_without_network_folder_account(self):
         self.key = 'MEDIA_SHARE_11'
         driver = self.driver
         self.def_name = get_func_name()
@@ -714,7 +714,7 @@ class MEDIASHARE(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK F
-    def test_08_Create_account_for_file_sharing(self):
+    def test_08_MS_Create_account_for_file_sharing(self):
         self.key = 'MEDIA_SHARE_08'
         driver = self.driver
         self.def_name = get_func_name()
@@ -944,7 +944,7 @@ class MEDIASHARE(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK F
-    def test_09_Edit_Delete_account(self):
+    def test_09_MS_Edit_Delete_account(self):
         self.key = 'MEDIA_SHARE_09'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1071,7 +1071,7 @@ class MEDIASHARE(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_10_Edit_Delete_account_while_server_is_running(self):
+    def test_10_MS_Edit_Delete_account_while_server_is_running(self):
         self.key = 'MEDIA_SHARE_10'
         driver = self.driver
         self.def_name = get_func_name()

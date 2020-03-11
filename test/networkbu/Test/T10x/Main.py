@@ -59,7 +59,7 @@ class MAIN(unittest.TestCase):
             time.sleep(1)
         self.driver.quit()
     # OK
-    def test_04_Verify_the_Web_UI_connection_through_Gateway_IP(self):
+    def test_04_MAIN_Verify_the_Web_UI_connection_through_Gateway_IP(self):
         self.key = 'MAIN_04'
         driver = self.driver
         self.def_name = get_func_name()
@@ -180,7 +180,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_05_Verify_the_Default_setting_of_Language(self):
+    def test_05_MAIN_Verify_the_Default_setting_of_Language(self):
         self.key = 'MAIN_05'
         driver = self.driver
         self.def_name = get_func_name()
@@ -360,7 +360,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_06_Verify_the_Web_UI_connection_through_domain_address(self):
+    def test_06_MAIN_Verify_the_Web_UI_connection_through_domain_address(self):
         self.key = 'MAIN_06'
         driver = self.driver
 
@@ -455,7 +455,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('4. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_07_Verify_the_Login_page(self):
+    def test_07_MAIN_Verify_the_Login_page(self):
         self.key = 'MAIN_07'
         driver = self.driver
         self.def_name = get_func_name()
@@ -540,7 +540,7 @@ class MAIN(unittest.TestCase):
                 '4. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_08_Verify_the_Humax_Retail_CPE_Site_operation(self):
+    def test_08_MAIN_Verify_the_Humax_Retail_CPE_Site_operation(self):
         self.key = 'MAIN_08'
         driver = self.driver
         self.def_name = get_func_name()
@@ -586,7 +586,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_09_Verify_the_Login_operation(self):
+    def test_09_MAIN_Verify_the_Login_operation(self):
         self.key = 'MAIN_09'
         driver = self.driver
         self.def_name = get_func_name()
@@ -737,7 +737,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_10_Verify_the_operation_at_Login(self):
+    def test_10_MAIN_Verify_the_operation_at_Login(self):
         self.key = 'MAIN_10'
         driver = self.driver
         self.def_name = get_func_name()
@@ -942,7 +942,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_11_Verify_the_operation_at_Login_page_with_incorrect_id_pw(self):
+    def test_11_MAIN_Verify_the_operation_at_Login_page_with_incorrect_id_pw(self):
         self.key = 'MAIN_11'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1211,7 +1211,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('6. Assertion wong')
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_13_Verify_the_Log_out_operation(self):
+    def test_13_MAIN_Verify_the_Log_out_operation(self):
         self.key = 'MAIN_13'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1275,7 +1275,7 @@ class MAIN(unittest.TestCase):
 
 
 
-    def test_14_Verify_the_time_out_operation(self):
+    def test_14_MAIN_Verify_the_time_out_operation(self):
         self.key = 'MAIN_14'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1342,7 +1342,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_16_Check_Chrome_Browser_behavior(self):
+    def test_16_MAIN_Check_Chrome_Browser_behavior(self):
         self.key = 'MAIN_16'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1453,7 +1453,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_17_Check_Firefox_Browser_behavior(self):
+    def test_17_MAIN_Check_Firefox_Browser_behavior(self):
         self.key = 'MAIN_17'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1626,7 +1626,7 @@ class MAIN(unittest.TestCase):
 
 
     # OK
-    def test_20_Verify_the_Winzard_Main_page(self):
+    def test_20_MAIN_Verify_the_Winzard_Main_page(self):
         self.key = 'MAIN_20'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1733,7 +1733,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_21_Verify_the_Language_operation_on_Winzard_page(self):
+    def test_21_MAIN_Verify_the_Language_operation_on_Winzard_page(self):
         self.key = 'MAIN_21'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1813,7 +1813,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK F
-    def test_22_Change_Password_Page_Confirmation(self):
+    def test_22_MAIN_Change_Password_Page_Confirmation(self):
         self.key = 'MAIN_22'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1880,7 +1880,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_23_Check_Correct_Password_operation(self):
+    def test_23_MAIN_Check_Correct_Password_operation(self):
         self.key = 'MAIN_23'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2002,7 +2002,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK F
-    def test_24_Check_InCorrect_Password_operation(self):
+    def test_24_MAIN_Check_InCorrect_Password_operation(self):
         self.key = 'MAIN_24'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2094,7 +2094,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_25_Verify_of_Dynamic_IP_auto_detection(self):
+    def test_25_MAIN_Verify_of_Dynamic_IP_auto_detection(self):
         self.key = 'MAIN_25'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2294,7 +2294,7 @@ class MAIN(unittest.TestCase):
     #     self.assertListEqual(list_step_fail, [])
 
     # OK
-    def test_28_Verification_of_Manual_Setup_Dynamic_IP(self):
+    def test_28_MAIN_Verification_of_Manual_Setup_Dynamic_IP(self):
         self.key = 'MAIN_28'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2506,7 +2506,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_29_Verification_of_Manual_Setup_Static_IP(self):
+    def test_29_MAIN_Verification_of_Manual_Setup_Static_IP(self):
         self.key = 'MAIN_29'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2712,7 +2712,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_38_Winzard_Summary(self):
+    def test_38_MAIN_Winzard_Summary(self):
         self.key = 'MAIN_38'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2870,7 +2870,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_41_Check_Connection_icon(self):
+    def test_41_MAIN_Check_Connection_icon(self):
         self.key = 'MAIN_41'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2904,7 +2904,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_42_Wireless_24GHz_Signal_Strength_Icon_Check(self):
+    def test_42_MAIN_Wireless_24GHz_Signal_Strength_Icon_Check(self):
         self.key = 'MAIN_42'
         driver = self.driver
         self.def_name = get_func_name()
@@ -3011,7 +3011,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_43_Wireless_5GHz_Signal_Strength_Icon_Check(self):
+    def test_43_MAIN_Wireless_5GHz_Signal_Strength_Icon_Check(self):
         self.key = 'MAIN_43'
         driver = self.driver
         self.def_name = get_func_name()
@@ -3121,7 +3121,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_44_Help_Guide_Check_Help_Icon_action(self):
+    def test_44_MAIN_Help_Guide_Check_Help_Icon_action(self):
         self.key = 'MAIN_44'
         driver = self.driver
         self.def_name = get_func_name()
@@ -3174,8 +3174,8 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('2. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
-    # OK
-    def test_45_System_Language_operation_check(self):
+    # OKMAIN_
+    def test_45_MAIN_System_Language_operation_check(self):
         self.key = 'MAIN_45'
         driver = self.driver
         self.def_name = get_func_name()
@@ -3250,7 +3250,7 @@ class MAIN(unittest.TestCase):
         self.assertListEqual(list_step_fail, [])
 
 
-    def test_60_System_Change_password(self):
+    def test_60_MAIN_System_Change_password(self):
         self.key = 'MAIN_60'
         driver = self.driver
         self.def_name = get_func_name()
@@ -3489,7 +3489,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_61_Check_InValid_Password_operation(self):
+    def test_61_MAIN_Check_InValid_Password_operation(self):
         self.key = 'MAIN_61'
         driver = self.driver
         self.def_name = get_func_name()
@@ -3619,7 +3619,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_62_System_Password_Minimum_and_maximum_number_of_input(self):
+    def test_62_MAIN_System_Password_Minimum_and_maximum_number_of_input(self):
         self.key = 'MAIN_62'
         driver = self.driver
         self.def_name = get_func_name()
@@ -3710,7 +3710,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_63_Check_Backup_Operation(self):
+    def test_63_MAIN_Check_Backup_Operation(self):
         self.key = 'MAIN_63'
         driver = self.driver
         self.def_name = get_func_name()
@@ -3819,7 +3819,7 @@ class MAIN(unittest.TestCase):
 
 
 
-    def test_64_Check_Restore_Operation(self):
+    def test_64_MAIN_Check_Restore_Operation(self):
         self.key = 'MAIN_64'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4137,7 +4137,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_72_System_Verify_Winzard_popup(self):
+    def test_72_MAIN_System_Verify_Winzard_popup(self):
         self.key = 'MAIN_72'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4173,7 +4173,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_73_Verification_the_Footer_hyperlink_menu_operation(self):
+    def test_73_MAIN_Verification_the_Footer_hyperlink_menu_operation(self):
         self.key = 'MAIN_73'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4270,7 +4270,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_74_Check_Keyword_Search_Function(self):
+    def test_74_MAIN_Check_Keyword_Search_Function(self):
         self.key = 'MAIN_74'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4335,7 +4335,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_75_Verify_Hyperlink_Capabilities(self):
+    def test_75_MAIN_Verify_Hyperlink_Capabilities(self):
         self.key = 'MAIN_75'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4400,7 +4400,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_76_Verify_the_Network_hyperlink(self):
+    def test_76_MAIN_Verify_the_Network_hyperlink(self):
         self.key = 'MAIN_76'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4506,7 +4506,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_77_Verify_the_Security_hyperlink(self):
+    def test_77_MAIN_Verify_the_Security_hyperlink(self):
         self.key = 'MAIN_77'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4643,7 +4643,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_78_Verify_the_Wireless_hyperlink(self):
+    def test_78_MAIN_Verify_the_Wireless_hyperlink(self):
         self.key = 'MAIN_78'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4729,7 +4729,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_79_Verify_the_Home_hyperlink(self):
+    def test_79_MAIN_Verify_the_Home_hyperlink(self):
         self.key = 'MAIN_79'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4791,7 +4791,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_80_Verify_the_Media_Share_hyperlink(self):
+    def test_80_MAIN_Verify_the_Media_Share_hyperlink(self):
         self.key = 'MAIN_80'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4852,7 +4852,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_81_Verify_the_QoS_hyperlink(self):
+    def test_81_MAIN_Verify_the_QoS_hyperlink(self):
         self.key = 'MAIN_81'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4974,7 +4974,7 @@ class MAIN(unittest.TestCase):
     #
     #     self.assertListEqual(list_step_fail, [])
     # OK
-    def test_52_Router_mode_Check_firmware_upgrade_when_disconnected_internet(self):
+    def test_52_MAIN_Router_mode_Check_firmware_upgrade_when_disconnected_internet(self):
         self.key = 'MAIN_52'
         driver = self.driver
         self.def_name = get_func_name()
@@ -5065,7 +5065,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_27_Verification_of_Internet_Setup_page(self):
+    def test_27_MAIN_Verification_of_Internet_Setup_page(self):
         self.key = 'MAIN_27'
         driver = self.driver
         self.def_name = get_func_name()
@@ -5288,7 +5288,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_69_System_Verify_the_Date_Time_operation(self):
+    def test_69_MAIN_System_Verify_the_Date_Time_operation(self):
         self.key = 'MAIN_69'
         driver = self.driver
         self.def_name = get_func_name()
@@ -5420,7 +5420,6 @@ class MAIN(unittest.TestCase):
                 f'Expected: {str(list_expected4)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong')
-
         self.assertListEqual(list_step_fail, [])
 
 if __name__ == '__main__':

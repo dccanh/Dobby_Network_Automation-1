@@ -13,16 +13,43 @@ from Test.T10x.MediaShare import *
 from Test.T10x.Non_Function import *
 import threading
 import signal
+import glob
 
 try:
     import keyboard
 except ModuleNotFoundError:
     os.system('pip install keyboard')
     import keyboard
+try:
+    import serial
+except ModuleNotFoundError:
+    os.system('pip install pyserial')
+    import keyboard
+
 config_path = './Config/t10x/config.txt'
 testcase_data_path = './Image/testcase_data.txt'
-icon_path = './Image/sun.ico'
+icon_path = './Image/logo.ico'
 VERSION_ENVIRONMENT = 'v0.1.3'
+def serial_ports():
+    if sys.platform.startswith('win'):
+        ports = ['COM%s' % (i + 1) for i in range(256)]
+    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+        # this excludes your current terminal "/dev/tty"
+        ports = glob.glob('/dev/tty[A-Za-z]*')
+    elif sys.platform.startswith('darwin'):
+        ports = glob.glob('/dev/tty.*')
+    else:
+        raise EnvironmentError('Unsupported platform')
+
+    result = []
+    for port in ports:
+        try:
+            s = serial.Serial(port)
+            s.close()
+            result.append(port)
+        except (OSError, serial.SerialException):
+            pass
+    return result
 
 
 def get_config(config_path, section, option):
@@ -79,20 +106,38 @@ convert_module = {
 }
 
 root = Tk()
-root.title(f"Canh______Ciel______{VERSION_ENVIRONMENT}")
+root.title(f"HVN NETWORK AUTOMATION TOOL")
 root.iconbitmap(icon_path)
-titleLabel = Label(root, text="HUMAX T10X AUTOMATION MANAGEMENT", anchor='center', font=40)
-titleLabel.pack()
+
+img = Image.open('./Image/humax-vector-logo.png')
+photo = ImageTk.PhotoImage(img)
+label = Label(root, image=photo)
+label.image = photo
+label.place(x=2, y=0)
+
+titleLabel = Label(root, text="HVN NETWORK AUTOMATION TOOL", font=40)
+titleLabel.place(x=140, y=0)
+
+
+
+
+
+
+
+
+
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-labelFile1 = Label(root, text="Stage:")
+labelFile1 = Label(root, text="Tester:")
 labelFile1.place(x=30, y=40)
-labelFile2 = Label(root, text="Version:")
+labelFile2 = Label(root, text="Model:")
 labelFile2.place(x=30, y=90)
 labelFile3 = Label(root, text="Serial Number:")
 labelFile3.place(x=30, y=140)
 labelFile4 = Label(root, text="Serial Port:")
 labelFile4.place(x=30, y=190)
-labelFile5 = Label(root, text="Module:")
+labelFile5 = Label(root, text="Test Suite:")
 labelFile5.place(x=30, y=240)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 cusStage1 = StringVar()
@@ -113,11 +158,20 @@ number3.pack()
 cusNumber3.set(get_config(config_path, 'GENERAL', 'serial_number'))
 number3.place(x=140, y=140, height=25, width=330)
 
+
 cusPort4 = StringVar(None)
-port4 = Entry(root, textvariable=cusPort4)
-port4.pack()
-cusPort4.set(get_config(config_path, 'CONSOLE', 'serial_port'))
-port4.place(x=140, y=190, height=25, width=330)
+# port4 = Entry(root, textvariable=cusPort4)
+# port4.pack()
+# cusPort4.set(get_config(config_path, 'CONSOLE', 'serial_port'))
+# port4.place(x=140, y=190, height=25, width=330)
+choices = serial_ports()
+cusPort4.set(choices[0])
+port4 = OptionMenu(root, cusPort4, *choices)
+port4.place(x=140, y=190, height=30, width=330)
+
+
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # moduleChoices = ['MAIN', 'HOME', 'WIRELESS', 'NETWORK', 'QOS', 'MEDIASHARE', 'SECURITY', 'ADVANCED', 'NON_FUNCTION']#
 moduleChoices = ['MAIN', 'HOME', 'WIRELESS', 'NETWORK', 'MEDIASHARE', 'SECURITY', 'ADVANCED', 'NON_FUNCTION']
@@ -174,19 +228,23 @@ loopBox.place(x=140, y=480, width=50)
 
 
 def _advanceBtn():
-    # check_all_module()
+
 
     global now_x, now_y
     now_x = root.winfo_x()
     now_y = root.winfo_y()
     if root.winfo_height() == 440:
         root.geometry(f"520x560+{str(now_x)}+{str(now_y)}")
+        advanceButton.configure(text='Less <<')
     else:
         root.geometry(f"520x440+{str(now_x)}+{str(now_y)}")
+        advanceButton.configure(text='More >>')
 
     global MakeReport
     MakeReport = BooleanVar()
-    report_val = Checkbutton(root, text='Report to new sheet', variable=MakeReport).place(x=80, y=520)
+    report_val = Checkbutton(root, text='Report to new sheet', variable=MakeReport)
+    report_val.select()
+    report_val.place(x=80, y=520)
 
     progressLabel = StringVar()
     progress = Label(root, text='Progress:')
@@ -237,7 +295,7 @@ def detect_run_testcase():
         print('cd Test/T10x && python After_test.py')
         os.system('cd Test/T10x && python After_test.py')
     else:
-        messagebox.showinfo('Ciel Says', 'Please choose your modules to run first.')
+        messagebox.showinfo('Notice', 'Please choose your modules to run first.')
 
 
 def _runBtn():
@@ -262,9 +320,9 @@ def _runBtn():
 
     if warning():
 
-        linkLabel.configure(text='< << <<< <<<< <<<<<Go to report page>>>>> >>>> >>> >> >', fg='blue', anchor="center")
+        linkLabel.configure(text='< << Click here to go to report page >> >', fg='blue', anchor="center")
         linkLabel.pack()
-        linkLabel.place(x=140, y=410)
+        linkLabel.place(x=180, y=410)
         linkLabel.bind("<Button-1>", lambda e: callback("https://sum.vn/Rx5Zy"))
 
         for i in range(int(loopBox.get())):
@@ -280,109 +338,7 @@ def warning():
     return messagebox.askyesno('Confirm', f'Are you sure to run?')
 
 
-# def _manualBtn():
-#     # root.disable()
-#     load_database_tc(MAIN)
-#     load_database_tc(HOME)
-#     load_database_tc(NETWORK)
-#     load_database_tc(WIRELESS)
-#     load_database_tc(SECURITY)
-#     load_database_tc(ADVANCED)
-#     load_database_tc(MEDIASHARE)
-#
-#     list_module_chosen = find_chosen_module()
-#
-#     config = configparser.RawConfigParser()
-#     config.read(testcase_data_path)
-#
-#     window = Toplevel(root)
-#     window.geometry("985x550+300+300")
-#     window.title("Ciel pick test case")
-#     def _addColor():
-#         selected = listBox.curselection()
-#         origin_list = listBox.get(0, listBox.size())
-#         list_append = [origin_list[i] for i in selected]
-#         for item in list_append:
-#             receipBox.insert(END, [item])
-#         while len(selected) > 0:
-#             listBox.delete(selected[0])
-#             selected = listBox.curselection()
-#
-#     def _deleteColor():
-#         selected = receipBox.curselection()
-#         origin_list2 = receipBox.get(0, receipBox.size())
-#         list_append = [origin_list2[i] for i in selected]
-#         for item in list_append:
-#             listBox.insert(END, [item])
-#         while len(selected) > 0:
-#             receipBox.delete(selected[0])
-#             selected = receipBox.curselection()
-#
-#     def warning2():
-#         return messagebox.showinfo('Ciel Says', 'Your choices save successfully')
-#
-#     def _okBtn():
-#         individual_tc = list()
-#         for i in receipBox.get(0, receipBox.size()):
-#             if isinstance(i, tuple):
-#                 individual_tc.append(i[0])
-#             else:
-#                 individual_tc.append(i)
-#
-#         individual_tc_string = ';'.join(individual_tc)
-#         # window.grab_set()
-#         if warning2():
-#
-#             ls_tc.set(individual_tc_string)
-#             window.destroy()
-#         # window.grab_release()
-#
-#     list_value = list()
-#     if list_module_chosen != ['ALL']:
-#         for m in list_module_chosen:
-#             list_value += ([i[1] for i in config.items(m)])
-#     else:
-#         for m in moduleChoices:
-#             list_value += ([i[1] for i in config.items(m)])
-#
-#     source_in_individual_data = lstc_box.get()
-#     print(source_in_individual_data)
-#     # # Remove data in Individual box
-#     if source_in_individual_data != '':
-#         # Up old tc to receive box
-#         source_in_receive_data = source_in_individual_data.split(';')
-#         # Remove old tc to Send box
-#         for i in source_in_receive_data:
-#             if i in list_value:
-#                 list_value.remove(i)
-#     else:
-#         source_in_receive_data = []
-#
-#     list_value = ' '.join(list_value)
-#     source_tc_send = StringVar()
-#     source_tc_send.set(list_value)
-#
-#     listBox = Listbox(window, listvariable=source_tc_send, selectmode=MULTIPLE)
-#     listBox.place(x=0, y=0, width=450, height=490)
-#
-#     copyButton = Button(window, text=">>>", command=_addColor)
-#     copyButton.place(x=465, y=130)
-#
-#     deleteButton = Button(window, text="<<<", command=_deleteColor)
-#     deleteButton.place(x=465, y=170)
-#
-#     source_tc_receive = StringVar()
-#     source_tc_receive.set(source_in_receive_data)
-#
-#     receipBox = Listbox(window, listvariable=source_tc_receive, selectmode=MULTIPLE, width=20, height=10)
-#     receipBox.place(x=530, y=0, width=450, height=490)
-#
-#     OKBtn = Button(window, text="Save", width=15, command=_okBtn)
-#     OKBtn.pack(side=BOTTOM, anchor='center', padx=10, pady=5)
-#     # OKBtn = Button(window, text="Cancel")
-#     # OKBtn.pack(side=RIGHT, anchor='center', padx=15, pady=5)
-#
-#     window.mainloop()
+
 
 def _manualBtn():
 
@@ -404,7 +360,8 @@ def _manualBtn():
     window = Toplevel(root)
     window.geometry(f"985x550+{str(now_x)}+{now_y}")
     window.resizable(0, 0)
-    window.title("Ciel pick test case")
+    window.title("Pick testcases")
+    window.iconbitmap(icon_path)
 
     frame = Frame(window, relief=RAISED, borderwidth=12)
     frame.pack(fill=BOTH, expand=True)
@@ -432,7 +389,7 @@ def _manualBtn():
 
     def warning2():
         OKBtn.configure(state='disable')
-        return messagebox.showinfo('Ciel Says', 'Your choices save successfully')
+        return messagebox.showinfo('Notice', 'Your choices save successfully')
 
     def _okBtn():
         individual_tc = list()
@@ -527,12 +484,12 @@ def abort():
     # exit_Btn()
 
 
-exitButton = Button(root, text="Exit", command=exit_Btn, height=1, width=10, borderwidth=4)
-exitButton.place(x=170, y=370)
+# exitButton = Button(root, text="Exit", command=exit_Btn, height=1, width=10, borderwidth=4)
+# exitButton.place(x=170, y=370)
 mergeButton = Button(root, text="Run", command=run, height=1, width=10, borderwidth=4)
-mergeButton.place(x=280, y=370)
-advanceButton = Button(root, text="Advance", command=_advanceBtn, height=1, width=10, borderwidth=4)
-advanceButton.place(x=390, y=370)
+mergeButton.place(x=250, y=370)
+advanceButton = Button(root, text="More >>", command=_advanceBtn, height=1, width=10, borderwidth=4)
+advanceButton.place(x=360, y=370)
 manualButton = Button(root, text="Manual", command=_manualBtn, height=1, width=10, borderwidth=4)
 manualButton.place(x=250, y=470)
 abortButton = Button(root, text="Abort", command=abort, height=1, width=10, borderwidth=4)
@@ -543,7 +500,7 @@ abortButton.place(x=360, y=470)
 def show_guideline():
     guide_text = '''
     This is the User manual of HUMAX T10X AUTOMATION desktop application.
-    After each official release ver will be plus +1
+    <Content of guide line>
     '''
     messagebox.showinfo(title='Application Manual', message=guide_text)
 
@@ -556,7 +513,7 @@ def guide_ver_0_1_1():
             + Link testcases created to app store file
             + Create basic functions
         '''
-    messagebox.showinfo(title='Release ver 0.1.1', message=guide_text)
+    messagebox.showinfo(title='Release ver T10.1.1', message=guide_text)
 
 
 def guide_ver_0_1_2():
@@ -566,7 +523,7 @@ def guide_ver_0_1_2():
             + Update functions of Application
             + Add more testcases
         '''
-    messagebox.showinfo(title='Release ver 0.1.2', message=guide_text)
+    messagebox.showinfo(title='Release ver T10.1.2', message=guide_text)
 
 
 def guide_ver_0_1_3():
@@ -579,8 +536,26 @@ def guide_ver_0_1_3():
             + Improve code of test cases.
             + Prepare show demo in 13/03/2020.
         '''
-    messagebox.showinfo(title='Release ver 0.1.3', message=guide_text)
+    messagebox.showinfo(title='Release ver T10.1.3', message=guide_text)
 
+
+def guide_ver_0_2_1():
+    guide_text = '''
+        Release date: Mar 11,2020.
+        
+        Content App:
+           + Change app's icon.
+           + Add HUMAX logo.
+           + Disabled QoS module.
+           + Change label: Tester, Module, Test Suite, More >>, Less <<, Goto report.
+           + Remove Edit button.
+           + Change type of Serial port.
+        
+        Content Scripts:
+            + Add module name in testcase name.
+            + Integration test and fixed bugs.
+        '''
+    messagebox.showinfo(title='Release ver T10.2.1', message=guide_text)
 
 menu = Menu(root)
 root.config(menu=menu)
@@ -590,9 +565,10 @@ about.add_command(label='Guideline', command=show_guideline)
 menu.add_cascade(label='About', menu=about)
 
 release = Menu(menu)
-release.add_command(label='v0.1.1', command=guide_ver_0_1_1)
-release.add_command(label='v0.1.2', command=guide_ver_0_1_2)
-release.add_command(label='v0.1.3', command=guide_ver_0_1_3)
+release.add_command(label='T10.1.1', command=guide_ver_0_1_1)
+release.add_command(label='T10.1.2', command=guide_ver_0_1_2)
+release.add_command(label='T10.1.3', command=guide_ver_0_1_3)
+release.add_command(label='T10.2.1', command=guide_ver_0_2_1)
 menu.add_cascade(label='Release', menu=release)
 
 # =======================================================================================

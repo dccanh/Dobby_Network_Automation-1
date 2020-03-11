@@ -45,7 +45,7 @@ class HOME(unittest.TestCase):
             time.sleep(1)
         self.driver.quit()
     # OK
-    def test_01_Check_Internet_Image_Operation_when_Dual_WAN_is_off(self):
+    def test_01_HOME_Check_Internet_Image_Operation_when_Dual_WAN_is_off(self):
         self.key = 'HOME_01'
         driver = self.driver
         self.def_name = get_func_name()
@@ -177,7 +177,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_02_Check_Internet_Image_Operation_when_Dual_WAN_is_on(self):
+    def test_02_HOME_Check_Internet_Image_Operation_when_Dual_WAN_is_on(self):
         self.key = 'HOME_02'
         driver = self.driver
         self.def_name = get_func_name()
@@ -433,7 +433,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_03_Check_Connection_Internet_Information(self):
+    def test_03_HOME_Check_Connection_Internet_Information(self):
         self.key = 'HOME_03'
         driver = self.driver
         self.def_name = get_func_name()
@@ -510,7 +510,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_04_Verify_connection_status_according_to_WAN_connection_type_Dynamic_IP(self):
+    def test_04_HOME_Verify_connection_status_according_to_WAN_connection_type_Dynamic_IP(self):
         self.key = 'HOME_04'
         driver = self.driver
         self.def_name = get_func_name()
@@ -658,7 +658,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_05_Verify_connection_status_according_to_WAN_connection_type_Static_IP(self):
+    def test_05_HOME_Verify_connection_status_according_to_WAN_connection_type_Static_IP(self):
         self.key = 'HOME_05'
         driver = self.driver
         self.def_name = get_func_name()
@@ -857,7 +857,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_09_Check_Router_Wireless_page(self):
+    def test_09_HOME_Check_Router_Wireless_page(self):
         self.key = 'HOME_09'
         driver = self.driver
         self.def_name = get_func_name()
@@ -939,7 +939,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_10_Check_LAN_information(self):
+    def test_10_HOME_Check_LAN_information(self):
         self.key = 'HOME_10'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1038,7 +1038,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_11_Check_the_operation_of_LAN_Table_Icon(self):
+    def test_11_HOME_Check_the_operation_of_LAN_Table_Icon(self):
         self.key = 'HOME_11'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1128,7 +1128,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_12_Check_wireless_table_information(self):
+    def test_12_HOME_Check_wireless_table_information(self):
         self.key = 'HOME_12'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1251,7 +1251,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_13_Check_Wireless_Table_Icon_operation(self):
+    def test_13_HOME_Check_Wireless_Table_Icon_operation(self):
         self.key = 'HOME_13'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1295,7 +1295,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_14_Check_Information_table_information(self):
+    def test_14_HOME_Check_Information_table_information(self):
         self.key = 'HOME_14'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1404,7 +1404,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_18_Check_USB_Image_Operation(self):
+    def test_18_HOME_Check_USB_Image_Operation(self):
         self.key = 'HOME_18'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1441,7 +1441,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_20_Check_USB_Table_information(self):
+    def test_20_HOME_Check_USB_Table_information(self):
         self.key = 'HOME_20'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1497,7 +1497,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_22_Check_the_operation_of_USB_Icon(self):
+    def test_22_HOME_Check_the_operation_of_USB_Icon(self):
         self.key = 'HOME_22'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1548,7 +1548,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_21_Check_the_Remove_Button_operation_of_USB_Table(self):
+    def test_21_HOME_Check_the_Remove_Button_operation_of_USB_Table(self):
         self.key = 'HOME_21'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1609,7 +1609,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_25_Check_the_Server_Table_information(self):
+    def test_25_HOME_Check_the_Server_Table_information(self):
         self.key = 'HOME_25 '
         driver = self.driver
         self.def_name = get_func_name()
@@ -1664,7 +1664,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_26_Check_Server_Table_Icon_operation(self):
+    def test_26_HOME_Check_Server_Table_Icon_operation(self):
         self.key = 'HOME_26'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1711,7 +1711,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_27_Check_the_Devices_Image(self):
+    def test_27_HOME_Check_the_Devices_Image(self):
         self.key = 'HOME_27'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1745,7 +1745,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_28_Check_the_Devices_Sub_Menu_Information(self):
+    def test_28_HOME_Check_the_Devices_Sub_Menu_Information(self):
         self.key = 'HOME_28'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1892,7 +1892,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_29_Check_the_Connected_Devices_Information(self):
+    def test_29_HOME_Check_the_Connected_Devices_Information(self):
         self.key = 'HOME_29'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1947,7 +1947,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK F
-    def test_30_Check_a_configuration_list_of_connected_devices_Edit(self):
+    def test_30_HOME_Check_a_configuration_list_of_connected_devices_Edit(self):
         self.key = 'HOME_30'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2095,7 +2095,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_31_Reserved_IP_registration_deletion_confirmation(self):
+    def test_31_HOME_Reserved_IP_registration_deletion_confirmation(self):
         self.key = 'HOME_31'
         driver = self.driver
         self.def_name = get_func_name()
@@ -2531,7 +2531,7 @@ class HOME(unittest.TestCase):
         self.assertListEqual(list_step_fail, [])
 
     # HOME 32 chua dc
-    def test_32_Mac_Filtering_registration_deletion_confirmation(self):
+    def test_32_HOME_Mac_Filtering_registration_deletion_confirmation(self):
         self.key = 'HOME_32'
         driver = self.driver
         self.def_name = get_func_name()
@@ -3001,7 +3001,7 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_33_Confirm_Parental_Control_information_display(self):
+    def test_33_HOME_Confirm_Parental_Control_information_display(self):
         self.key = 'HOME_33'
         driver = self.driver
         self.def_name = get_func_name()
@@ -3084,7 +3084,7 @@ class HOME(unittest.TestCase):
         self.assertListEqual(list_step_fail, [])
 
     # HOME 38. Confuse
-    def test_38_Check_Disconnect_Devices_information(self):
+    def test_38_HOME_Check_Disconnect_Devices_information(self):
         self.key = 'HOME_38'
         driver = self.driver
         self.def_name = get_func_name()

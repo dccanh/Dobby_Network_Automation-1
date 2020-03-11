@@ -28,7 +28,7 @@ class ADVANCED(unittest.TestCase):
         write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
         self.driver.quit()
     # OK F
-    def test_08_Local_Access_and_External_Access_confirmation(self):
+    def test_08_ADVANCED_Local_Access_and_External_Access_confirmation(self):
         self.key = 'ADVANCED_08'
         driver = self.driver
         self.def_name = get_func_name()
@@ -239,7 +239,7 @@ class ADVANCED(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_26_Confirm_WOL_Deletion(self):
+    def test_26_ADVANCED_Confirm_WOL_Deletion(self):
         self.key = 'ADVANCED_26'
         driver = self.driver
         self.def_name = get_func_name()
@@ -326,7 +326,7 @@ class ADVANCED(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_29_Check_message_for_exception_case_Port_Forwarding(self):
+    def test_29_ADVANCED_Check_message_for_exception_case_Port_Forwarding(self):
         self.key = 'ADVANCED_29'
         driver = self.driver
         self.def_name = get_func_name()
@@ -627,7 +627,7 @@ class ADVANCED(unittest.TestCase):
     #         list_step_fail.append('3. Assertion wong.')
     #     self.assertListEqual(list_step_fail, [])
     # OK
-    def test_31_Confirm_Port_Forwarding_Delete(self):
+    def test_31_ADVANCED_Confirm_Port_Forwarding_Delete(self):
         self.key = 'ADVANCED_31'
         driver = self.driver
         self.def_name = get_func_name()
@@ -733,7 +733,7 @@ class ADVANCED(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_35_Edit_Confirm_Delete_Port_Triggering(self):
+    def test_35_ADVANCED_Edit_Confirm_Delete_Port_Triggering(self):
         self.key = 'ADVANCED_35'
         driver = self.driver
         self.def_name = get_func_name()
@@ -855,7 +855,7 @@ class ADVANCED(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_36_Confirm_Delete_Port_Triggering(self):
+    def test_36_ADVANCED_Confirm_Delete_Port_Triggering(self):
         self.key = 'ADVANCED_36'
         driver = self.driver
         self.def_name = get_func_name()
@@ -959,7 +959,7 @@ class ADVANCED(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_47_Check_Ping_test_operation(self):
+    def test_47_ADVANCED_Check_Ping_test_operation(self):
         self.key = 'ADVANCED_47'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1047,7 +1047,7 @@ class ADVANCED(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_48_Check_Traceroute_operation(self):
+    def test_48_ADVANCED_Check_Traceroute_operation(self):
         self.key = 'ADVANCED_48'
         driver = self.driver
         self.def_name = get_func_name()
