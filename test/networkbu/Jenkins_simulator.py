@@ -109,7 +109,8 @@ root = Tk()
 root.title(f"HVN NETWORK AUTOMATION TOOL")
 root.iconbitmap(icon_path)
 
-img = Image.open('./Image/humax-vector-logo.png')
+# img = Image.open('./Image/humax-vector-logo.png')
+img = Image.open('./Image/humax-logo-02.png')
 photo = ImageTk.PhotoImage(img)
 label = Label(root, image=photo)
 label.image = photo
@@ -119,11 +120,16 @@ titleLabel = Label(root, text="HVN NETWORK AUTOMATION TOOL", font=40)
 titleLabel.place(x=140, y=0)
 
 
-
-
-
-
-
+img_down = Image.open('./Image/down-icon.png')
+photo_down = ImageTk.PhotoImage(img_down)
+img_up = Image.open('./Image/up-icon.png')
+photo_up = ImageTk.PhotoImage(img_up)
+img_run = Image.open('./Image/run.png')
+photo_run = ImageTk.PhotoImage(img_run)
+img_manual = Image.open('./Image/hand-click.png')
+photo_manual = ImageTk.PhotoImage(img_manual)
+img_abort = Image.open('./Image/abort.png')
+photo_abort = ImageTk.PhotoImage(img_abort)
 
 
 
@@ -158,18 +164,24 @@ number3.pack()
 cusNumber3.set(get_config(config_path, 'GENERAL', 'serial_number'))
 number3.place(x=140, y=140, height=25, width=330)
 
-
-cusPort4 = StringVar(None)
 # port4 = Entry(root, textvariable=cusPort4)
 # port4.pack()
 # cusPort4.set(get_config(config_path, 'CONSOLE', 'serial_port'))
 # port4.place(x=140, y=190, height=25, width=330)
+cusPort4 = StringVar(None)
 choices = serial_ports()
 cusPort4.set(choices[0])
 port4 = OptionMenu(root, cusPort4, *choices)
 port4.place(x=140, y=190, height=30, width=330)
 
-
+# choices = serial_ports()
+# choices = ['Canh', 'Ciel']
+# import tkinter.ttk as ttk
+#
+# cusPort4 = StringVar()
+# cusPort4.set(choices[0])
+# port4 = ttk.OptionMenu(root, cusPort4, *choices)
+# port4.place(x=140, y=190, height=30, width=330, bordermode="outside")
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -235,10 +247,10 @@ def _advanceBtn():
     now_y = root.winfo_y()
     if root.winfo_height() == 440:
         root.geometry(f"520x560+{str(now_x)}+{str(now_y)}")
-        advanceButton.configure(text='Less <<')
+        advanceButton.configure(text=' Less', image=photo_up)
     else:
         root.geometry(f"520x440+{str(now_x)}+{str(now_y)}")
-        advanceButton.configure(text='More >>')
+        advanceButton.configure(text=' More', image=photo_down)
 
     global MakeReport
     MakeReport = BooleanVar()
@@ -304,7 +316,7 @@ def _runBtn():
     save_config(config_path, 'GENERAL', 'stage', stage1.get())
     save_config(config_path, 'GENERAL', 'version', version2.get())
     save_config(config_path, 'GENERAL', 'serial_number', number3.get())
-    save_config(config_path, 'CONSOLE', 'serial_port', port4.get())
+    save_config(config_path, 'CONSOLE', 'serial_port', cusPort4.get())
 
     list_choiced = find_chosen_module()
 
@@ -486,13 +498,15 @@ def abort():
 
 # exitButton = Button(root, text="Exit", command=exit_Btn, height=1, width=10, borderwidth=4)
 # exitButton.place(x=170, y=370)
-mergeButton = Button(root, text="Run", command=run, height=1, width=10, borderwidth=4)
+
+
+mergeButton = Button(root, text=" Run", command=run, height=20, width=80, borderwidth=4, image=photo_run, compound=LEFT)
 mergeButton.place(x=250, y=370)
-advanceButton = Button(root, text="More >>", command=_advanceBtn, height=1, width=10, borderwidth=4)
+advanceButton = Button(root, text=" More", command=_advanceBtn, height=20, width=80, borderwidth=4, image=photo_down, compound=LEFT)
 advanceButton.place(x=360, y=370)
-manualButton = Button(root, text="Manual", command=_manualBtn, height=1, width=10, borderwidth=4)
+manualButton = Button(root, text="Manual", command=_manualBtn, height=20, width=80, borderwidth=4, image=photo_manual, compound=LEFT)
 manualButton.place(x=250, y=470)
-abortButton = Button(root, text="Abort", command=abort, height=1, width=10, borderwidth=4)
+abortButton = Button(root, text="Abort", command=abort, height=20, width=80, borderwidth=4, image=photo_abort, compound=LEFT)
 abortButton.place(x=360, y=470)
 
 
