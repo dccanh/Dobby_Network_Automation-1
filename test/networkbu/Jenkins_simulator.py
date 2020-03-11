@@ -119,7 +119,8 @@ port4.pack()
 cusPort4.set(get_config(config_path, 'CONSOLE', 'serial_port'))
 port4.place(x=140, y=190, height=25, width=330)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-moduleChoices = ['MAIN', 'HOME', 'WIRELESS', 'NETWORK', 'QOS', 'MEDIASHARE', 'SECURITY', 'ADVANCED', 'NON_FUNCTION']
+# moduleChoices = ['MAIN', 'HOME', 'WIRELESS', 'NETWORK', 'QOS', 'MEDIASHARE', 'SECURITY', 'ADVANCED', 'NON_FUNCTION']#
+moduleChoices = ['MAIN', 'HOME', 'WIRELESS', 'NETWORK', 'MEDIASHARE', 'SECURITY', 'ADVANCED', 'NON_FUNCTION']
 cusModuleAll = BooleanVar()
 check2 = Checkbutton(root, text='ALL', variable=cusModuleAll)
 check2.place(x=140, y=240)
@@ -128,7 +129,7 @@ Module0 = BooleanVar()
 Module1 = BooleanVar()
 Module2 = BooleanVar()
 Module3 = BooleanVar()
-Module4 = BooleanVar()
+# Module4 = BooleanVar()
 Module5 = BooleanVar()
 Module6 = BooleanVar()
 Module7 = BooleanVar()
@@ -137,17 +138,21 @@ check0 = Checkbutton(root, text=moduleChoices[0], variable=Module0).place(x=140 
 check1 = Checkbutton(root, text=moduleChoices[1], variable=Module1).place(x=140 + 1 * 100, y=270)
 check2 = Checkbutton(root, text=moduleChoices[2], variable=Module2).place(x=140 + 2 * 100, y=270)
 check3 = Checkbutton(root, text=moduleChoices[3], variable=Module3).place(x=140 + 0 * 100, y=270 + 30)
-check4 = Checkbutton(root, text=moduleChoices[4], variable=Module4, state='disabled').place(x=140 + 1 * 100, y=270 + 30)
-check5 = Checkbutton(root, text=moduleChoices[5], variable=Module5).place(x=140 + 2 * 100, y=270 + 30)
-check6 = Checkbutton(root, text=moduleChoices[6], variable=Module6).place(x=140 + 0 * 100, y=270 + 60)
-check7 = Checkbutton(root, text=moduleChoices[7], variable=Module7).place(x=140 + 1 * 100, y=270 + 60)
-check8 = Checkbutton(root, text=moduleChoices[8], variable=Module8).place(x=140 + 2 * 100, y=270 + 60)
+check5 = Checkbutton(root, text=moduleChoices[4], variable=Module5).place(x=140 + 2 * 100, y=270 + 30)
+check6 = Checkbutton(root, text=moduleChoices[5], variable=Module6).place(x=140 + 0 * 100, y=270 + 60)
+check7 = Checkbutton(root, text=moduleChoices[6], variable=Module7).place(x=140 + 1 * 100, y=270 + 60)
+check8 = Checkbutton(root, text=moduleChoices[7], variable=Module8).place(x=140 + 2 * 100, y=270 + 60)
+check4 = Checkbutton(root, text='QoS', state='disabled').place(x=140 + 1 * 100, y=270 + 30)# , state='disabled'
+# check5 = Checkbutton(root, text=moduleChoices[5], variable=Module5).place(x=140 + 2 * 100, y=270 + 30)
+# check6 = Checkbutton(root, text=moduleChoices[6], variable=Module6).place(x=140 + 0 * 100, y=270 + 60)
+# check7 = Checkbutton(root, text=moduleChoices[7], variable=Module7).place(x=140 + 1 * 100, y=270 + 60)
+# check8 = Checkbutton(root, text=moduleChoices[8], variable=Module8).place(x=140 + 2 * 100, y=270 + 60)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def check_all_module():
-    if cusModuleAll.get():
-        for m in [Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]:
-            m.set(True)
+# def check_all_module():
+#     if cusModuleAll.get():
+#         for m in [Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]:
+#             m.set(True)
 
 linkLabel = Label(root, text="")
 
@@ -169,7 +174,7 @@ loopBox.place(x=140, y=480, width=50)
 
 
 def _advanceBtn():
-    check_all_module()
+    # check_all_module()
 
     global now_x, now_y
     now_x = root.winfo_x()
@@ -189,7 +194,7 @@ def _advanceBtn():
 
 
 def find_chosen_module():
-    list_modules = [cusModuleAll, Module0, Module1, Module2, Module3, Module4, Module5, Module6, Module7, Module8]
+    list_modules = [cusModuleAll, Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]#, Module4
     list_choiced = list()
     for tx, va in zip(['ALL'] + moduleChoices, list_modules):
         if va.get():
@@ -236,7 +241,7 @@ def detect_run_testcase():
 
 
 def _runBtn():
-    check_all_module()
+    # check_all_module()
 
     save_config(config_path, 'GENERAL', 'stage', stage1.get())
     save_config(config_path, 'GENERAL', 'version', version2.get())
@@ -380,7 +385,6 @@ def warning():
 #     window.mainloop()
 
 def _manualBtn():
-    check_all_module()
 
     manualButton.configure(state='disable')
     load_database_tc(MAIN)
