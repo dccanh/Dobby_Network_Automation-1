@@ -38,6 +38,7 @@ class MAIN(unittest.TestCase):
             raise
 
     def tearDown(self):
+
         try:
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
             time.sleep(15)
@@ -57,6 +58,7 @@ class MAIN(unittest.TestCase):
             # Connect by LAN again
             os.system('netsh wlan disconnect')
             time.sleep(1)
+        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         self.driver.quit()
     # OK
     def test_04_MAIN_Verify_the_Web_UI_connection_through_Gateway_IP(self):

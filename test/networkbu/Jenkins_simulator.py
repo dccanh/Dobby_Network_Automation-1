@@ -13,7 +13,7 @@ from Test.T10x.MediaShare import *
 from Test.T10x.Non_Function import *
 import threading
 import signal
-import glob
+import glob, subprocess
 
 try:
     import keyboard
@@ -29,7 +29,9 @@ except ModuleNotFoundError:
 config_path = './Config/t10x/config.txt'
 testcase_data_path = './Image/testcase_data.txt'
 icon_path = './Image/logo.ico'
-VERSION_ENVIRONMENT = 'v0.1.3'
+__VERSION_ENVIRONMENT__ = 'T10.2.2'
+
+
 def serial_ports():
     if sys.platform.startswith('win'):
         ports = ['COM%s' % (i + 1) for i in range(256)]
@@ -102,15 +104,14 @@ convert_module = {
     'SECURITY': 'Security.py',
     'ADVANCED': 'Advanced.py',
     'NON_FUNCTION': 'Non_Function.py',
-    'ALL': ['Main.py', 'Home.py', 'Wireless.py', 'Network.py', 'MediaShare.py', 'Security.py', 'Advanced.py', ]
+    'ALL': ['Main.py', 'Home.py', 'Wireless.py', 'Network.py', 'MediaShare.py', 'Security.py', 'Advanced.py', 'Non_Function.py']
 }
 
 root = Tk()
 root.title(f"HVN NETWORK AUTOMATION TOOL")
 root.iconbitmap(icon_path)
 
-# img = Image.open('./Image/humax-vector-logo.png')
-img = Image.open('./Image/humax-logo-02.png')
+img = Image.open('./Image/humax-logo-01.png')
 photo = ImageTk.PhotoImage(img)
 label = Label(root, image=photo)
 label.image = photo
@@ -130,8 +131,6 @@ img_manual = Image.open('./Image/hand-click.png')
 photo_manual = ImageTk.PhotoImage(img_manual)
 img_abort = Image.open('./Image/abort.png')
 photo_abort = ImageTk.PhotoImage(img_abort)
-
-
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -164,25 +163,13 @@ number3.pack()
 cusNumber3.set(get_config(config_path, 'GENERAL', 'serial_number'))
 number3.place(x=140, y=140, height=25, width=330)
 
-# port4 = Entry(root, textvariable=cusPort4)
-# port4.pack()
-# cusPort4.set(get_config(config_path, 'CONSOLE', 'serial_port'))
-# port4.place(x=140, y=190, height=25, width=330)
+
 cusPort4 = StringVar(None)
 choices = serial_ports()
 cusPort4.set(choices[0])
 port4 = OptionMenu(root, cusPort4, *choices)
 port4.place(x=140, y=190, height=30, width=330)
-
-# choices = serial_ports()
-# choices = ['Canh', 'Ciel']
-# import tkinter.ttk as ttk
-#
-# cusPort4 = StringVar()
-# cusPort4.set(choices[0])
-# port4 = ttk.OptionMenu(root, cusPort4, *choices)
-# port4.place(x=140, y=190, height=30, width=330, bordermode="outside")
-
+port4['background']='white'
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # moduleChoices = ['MAIN', 'HOME', 'WIRELESS', 'NETWORK', 'QOS', 'MEDIASHARE', 'SECURITY', 'ADVANCED', 'NON_FUNCTION']#
@@ -304,6 +291,7 @@ def detect_run_testcase():
                     print(f'cd Test/T10x &&  python {convert_module[module]}')
                     os.system(f'cd Test/T10x &&  python {convert_module[module]}')
 
+
         print('cd Test/T10x && python After_test.py')
         os.system('cd Test/T10x && python After_test.py')
     else:
@@ -331,6 +319,8 @@ def _runBtn():
         save_config(config_path, 'GENERAL', 'module', list_choiced_inform)
 
     if warning():
+        progress = Label(root, text='')
+        progress.place(x=318, y=520)
 
         linkLabel.configure(text='< << Click here to go to report page >> >', fg='blue', anchor="center")
         linkLabel.pack()
@@ -342,8 +332,9 @@ def _runBtn():
 
             detect_run_testcase()
 
-        progress = Label(root, text=f'DONE at {str(datetime.now())}')
-        progress.place(x=318, y=520)
+        progress.configure(text=f'DONE at {str(datetime.now())}')
+        # progress = Label(root, text=f'DONE at {str(datetime.now())}')
+        # progress.place(x=318, y=520)
 
 
 def warning():
@@ -478,16 +469,21 @@ def _manualBtn():
 
 def _abortBtn():
     print('Aboart')
-    keyboard.press('ctrl+c')
-    warning = messagebox.askokcancel('Warning!', 'System must to reload after abort.')
-    if warning:
-        root.destroy()
-        os.system('_run_app.bat')
+    warning = messagebox.askokcancel('Warning!', 'This Abort function has not been implemented.')
+    # warning = messagebox.askokcancel('Warning!', 'System must to reload after abort.')
+    # if warning:
+    #     root.destroy()
+    #     os.system('taskkill /IM "pythonw.exe" /F')
+    #     os.system('taskkill /IM "cmd.exe" /F')
+    #     os.system('_run_app.bat')
+        # os.system('taskkill /IM "python.exe" /F')
+        # root.destroy()
 
 
 def run():
     threadRun = threading.Thread(target=_runBtn)
     threadRun.start()
+
 
 
 def abort():
@@ -504,9 +500,9 @@ mergeButton = Button(root, text=" Run", command=run, height=20, width=80, border
 mergeButton.place(x=250, y=370)
 advanceButton = Button(root, text=" More", command=_advanceBtn, height=20, width=80, borderwidth=4, image=photo_down, compound=LEFT)
 advanceButton.place(x=360, y=370)
-manualButton = Button(root, text="Manual", command=_manualBtn, height=20, width=80, borderwidth=4, image=photo_manual, compound=LEFT)
+manualButton = Button(root, text=" Manual", command=_manualBtn, height=20, width=80, borderwidth=4, image=photo_manual, compound=LEFT)
 manualButton.place(x=250, y=470)
-abortButton = Button(root, text="Abort", command=abort, height=20, width=80, borderwidth=4, image=photo_abort, compound=LEFT)
+abortButton = Button(root, text=" Abort", command=abort, height=20, width=80, borderwidth=4, image=photo_abort, compound=LEFT)
 abortButton.place(x=360, y=470)
 
 
@@ -514,6 +510,7 @@ abortButton.place(x=360, y=470)
 def show_guideline():
     guide_text = '''
     This is the User manual of HUMAX T10X AUTOMATION desktop application.
+    
     <Content of guide line>
     '''
     messagebox.showinfo(title='Application Manual', message=guide_text)
@@ -571,6 +568,22 @@ def guide_ver_0_2_1():
         '''
     messagebox.showinfo(title='Release ver T10.2.1', message=guide_text)
 
+
+def guide_ver_0_2_2():
+    guide_text = '''
+        Release date: Mar 12,2020.
+
+        Content App:
+           + Resize to small icon.
+           + Ignore feature ABORT.
+           + Fixed missing run Non_function when Test suite is ALL.
+           
+        Content Scripts:
+            + Add feature report to excel file.
+            
+        '''
+    messagebox.showinfo(title='Release ver T10.2.2', message=guide_text)
+
 menu = Menu(root)
 root.config(menu=menu)
 
@@ -583,7 +596,8 @@ release.add_command(label='T10.1.1', command=guide_ver_0_1_1)
 release.add_command(label='T10.1.2', command=guide_ver_0_1_2)
 release.add_command(label='T10.1.3', command=guide_ver_0_1_3)
 release.add_command(label='T10.2.1', command=guide_ver_0_2_1)
-menu.add_cascade(label='Release', menu=release)
+release.add_command(label='T10.2.2', command=guide_ver_0_2_2)
+menu.add_cascade(label='Release notes', menu=release)
 
 # =======================================================================================
 

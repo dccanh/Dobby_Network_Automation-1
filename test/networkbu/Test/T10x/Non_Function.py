@@ -68,7 +68,7 @@ class NON_FUNCTION(unittest.TestCase):
             # Connect by LAN again
             os.system('netsh wlan disconnect')
             time.sleep(1)
-            
+        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         self.driver.quit()
 
     def test_02_NON_FUNC_Dynamic_Wired_Ping_Aging_INTERGRATION_WITH_05(self):

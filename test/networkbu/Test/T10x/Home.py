@@ -11,7 +11,6 @@ from selenium import webdriver
 
 class HOME(unittest.TestCase):
     def setUp(self):
-
         try:
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
@@ -43,6 +42,7 @@ class HOME(unittest.TestCase):
             # Connect by LAN again
             os.system('netsh wlan disconnect')
             time.sleep(1)
+        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         self.driver.quit()
     # OK
     def test_01_HOME_Check_Internet_Image_Operation_when_Dual_WAN_is_off(self):

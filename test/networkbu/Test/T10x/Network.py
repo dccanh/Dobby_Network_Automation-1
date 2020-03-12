@@ -43,6 +43,7 @@ class NETWORK(unittest.TestCase):
             # Connect by LAN again
             os.system('netsh wlan disconnect')
             time.sleep(1)
+        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         self.driver.quit()
 
     def test_01_NETWORK_Check_Internet_Status(self):

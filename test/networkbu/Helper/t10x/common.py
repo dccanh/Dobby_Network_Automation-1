@@ -61,6 +61,48 @@ def next_available_row(sheet):
     return str(len(str_list) + 1)
 
 
+def write_to_excel(key, list_steps, func_name, duration, time_stamp=0):
+    import openpyxl
+    ls = subprocess.check_output('tasklist')
+    if b'EXCEL.EXE' in ls:
+        os.system("taskkill /f /im EXCEL.EXE")
+
+    excel_file = report_offline_path
+    wb = openpyxl.load_workbook(excel_file)
+    # wb.active = 2
+    ws = wb.active
+
+    for i in range(2, ws.max_row + 2):
+        if ws.cell(i, 1).value is None:
+            ws.cell(row=i, column=1).value = key
+            ws.cell(row=i, column=2).value = func_name
+            # Fill result
+            if '[FAIL]' in str(list_steps):
+                ws.cell(row=i, column=3).value = 'FAIL'
+            else:
+                if '[END TC]' not in list_steps:
+                    ws.cell(row=i, column=3).value = 'FAIL'
+                    list_steps.append('Can not execute next step ...')
+                else:
+                    ws.cell(row=i, column=3).value = 'PASS'
+
+            # Fill duration
+            ws.cell(row=i, column=4).value = duration
+            # Fill step
+            steps = ''
+            for j in list_steps:
+                steps = steps + (str(j) + '\n')
+            ws.cell(row=i, column=5).value = steps
+
+            ws.cell(row=i, column=6).value = time_stamp
+            ws.cell(row=1, column=5).value = get_config('REPORT', 'sheet_name')
+            # Save file
+            wb.save(excel_file)
+            break
+
+
+
+
 def write_ggsheet(key, list_steps, func_name, duration, time_stamp=0):
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
     creds = ServiceAccountCredentials.from_json_keyfile_name(gg_credential_path, scope)

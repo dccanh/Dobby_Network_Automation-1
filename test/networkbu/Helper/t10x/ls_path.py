@@ -39,4 +39,4 @@ default_wifi_2g_path = os.path.join(files_path, "Wi-Fi-We Love You So Much_2G!.x
 wifi_default_file_path = os.path.join(files_path, "wifi_default_file.xml")
 wifi_none_secure_path = os.path.join(files_path, "wifi_none_secure.xml")
 
-
+report_offline_path = os.path.join(root_dir, "Report", "T10X", "T10x_report_automation.xlsx")

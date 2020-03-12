@@ -1,2 +1,2 @@
-python Jenkins_simulator.py
+pythonw Jenkins_simulator.py
 

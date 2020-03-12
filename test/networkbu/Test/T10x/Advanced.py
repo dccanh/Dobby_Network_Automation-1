@@ -15,17 +15,35 @@ class ADVANCED(unittest.TestCase):
         try:
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
             self.driver = webdriver.Chrome(driver_path)  # open chrome
             self.driver.maximize_window()
-            self.time_stamp = datetime.now()
         except:
             self.tearDown()
             raise
 
     def tearDown(self):
-        end_time = datetime.now()
-        duration = str((end_time - self.start_time))
-        write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
+        try:
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
+            end_time = datetime.now()
+            duration = str((end_time - self.start_time))
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        except:
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
+            # Connect by wifi if internet is down to handle exception for PPPoE
+            os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
+            time.sleep(1)
+            end_time = datetime.now()
+            duration = str((end_time - self.start_time))
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+            time.sleep(5)
+            # Connect by LAN again
+            os.system('netsh wlan disconnect')
+            time.sleep(1)
+        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         self.driver.quit()
     # OK F
     def test_08_ADVANCED_Local_Access_and_External_Access_confirmation(self):

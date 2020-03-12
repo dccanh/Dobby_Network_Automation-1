@@ -44,6 +44,7 @@ class WIRELESS(unittest.TestCase):
             # Connect by LAN again
             os.system('netsh wlan disconnect')
             time.sleep(1)
+        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         self.driver.quit()
     # OK
     def test_02_WIRELESS_Verification_of_the_Wifi_On_off_operation(self):
