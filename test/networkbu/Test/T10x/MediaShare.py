@@ -15,8 +15,7 @@ class MEDIASHARE(unittest.TestCase):
         try:
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
+            check_enable_ethernet()
             self.driver = webdriver.Chrome(driver_path)  # open chrome
             self.driver.maximize_window()
         except:
@@ -24,15 +23,12 @@ class MEDIASHARE(unittest.TestCase):
             raise
 
     def tearDown(self):
+        check_enable_ethernet()
         try:
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         except:
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
             # Connect by wifi if internet is down to handle exception for PPPoE
             os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
             time.sleep(1)
@@ -69,14 +65,19 @@ class MEDIASHARE(unittest.TestCase):
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
         time.sleep(3)
-
-        URL_LOGIN = get_config('URL', 'url')
-        DESCRIPTION_3 = '123!@ abcd #^&*'
-        DESCRIPTION_4 = '123!@ abcd'
-        PATH_FILE_1 = 'network_file_1'
-        PATH_FILE_2 = 'network_file_2'
-        LS_PATH_FILE = ['network_file_3', 'network_file_4', 'network_file_5',
-                        'network_file_6', 'network_file_7', 'network_file_8']
+        # ========================================================================
+        DESCRIPTION_3 = get_config('MEDIA_SHARE', 'ms04_desc_3', input_data_path)
+        DESCRIPTION_4 = get_config('MEDIA_SHARE', 'ms04_desc_4', input_data_path)
+        PATH_FILE_1 = get_config('MEDIA_SHARE', 'ms04_file_1', input_data_path)
+        PATH_FILE_2 = get_config('MEDIA_SHARE', 'ms04_file_2', input_data_path)
+        LS_PATH_FILE = [
+            get_config('MEDIA_SHARE', 'ms04_file_3', input_data_path),
+            get_config('MEDIA_SHARE', 'ms04_file_4', input_data_path),
+            get_config('MEDIA_SHARE', 'ms04_file_5', input_data_path),
+            get_config('MEDIA_SHARE', 'ms04_file_6', input_data_path),
+            get_config('MEDIA_SHARE', 'ms04_file_7', input_data_path),
+            get_config('MEDIA_SHARE', 'ms04_file_8', input_data_path)
+        ]
         fake = Faker()
         try:
             grand_login(driver)
@@ -325,10 +326,8 @@ class MEDIASHARE(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
-        # # Factory reset
-        URL_LOGIN = get_config('URL', 'url')
-        PATH_FILE_9 = 'network_file_9'
+        # ===================================================================
+        PATH_FILE_9 = get_config('MEDIA_SHARE', 'ms04_file_9', input_data_path)
         fake = Faker()
 
         try:
@@ -451,8 +450,6 @@ class MEDIASHARE(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        # # Factory reset
-        URL_LOGIN = get_config('URL', 'url')
         ACCOUNT_FTP = 'Anonymous'
         SERVER_FTP = "FTP"
 
@@ -722,8 +719,7 @@ class MEDIASHARE(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        URL_LOGIN = get_config('URL', 'url')
-        TEST_STRING = '123 abc DEF 000222 !@##$&* ():><??+=a,.'
+        TEST_STRING = get_config('MEDIA_SHARE', 'ms08_test_string', input_data_path)
         KEY_WORDS = ['admin', 'Admin', 'root', 'Anonymous']
 
         try:
@@ -951,7 +947,7 @@ class MEDIASHARE(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        URL_LOGIN = get_config('URL', 'url')
+
         TEST_STRING = str(random.randint(10, 100))
         TEST_STRING_EDIT = str(random.randint(1, 10))
 
@@ -1081,8 +1077,9 @@ class MEDIASHARE(unittest.TestCase):
         URL_LOGIN = get_config('URL', 'url')
         TEST_STRING = str(random.randint(10, 100))
         TEST_STRING_EDIT = str(random.randint(1, 10))
-        DESCRIPTION_3 = '123!@ abcd #^&*'
-        PATH_FILE_1 = 'network_file_1'
+
+        DESCRIPTION_3 =  get_config('MEDIA_SHARE', 'ms10_desc_3', input_data_path)
+        PATH_FILE_1 = get_config('MEDIA_SHARE', 'ms04_file_1', input_data_path)
         fake = Faker()
         # Pre-pare precondition
         try:

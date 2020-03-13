@@ -15,14 +15,15 @@ class SECURITY(unittest.TestCase):
         try:
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
+            check_enable_ethernet()
             self.driver = webdriver.Chrome(driver_path)  # open chrome
             self.driver.maximize_window()
-            self.time_stamp = datetime.now()
         except:
             self.tearDown()
             raise
 
     def tearDown(self):
+        check_enable_ethernet()
         try:
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
@@ -47,7 +48,6 @@ class SECURITY(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
         URL_PING_CHECK = '192.168.1.1'
@@ -91,17 +91,17 @@ class SECURITY(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             save_config(config_path, 'SECURITY', 'parental_code', PARENTAL_CODE_KEY)
 
-            list_actual = ls_parental_name
-            list_expected = exp_ls_parental_label
-            check = assert_list(list_actual, list_expected)
+            list_actual1 = ls_parental_name
+            list_expected1 = exp_ls_parental_label
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 '[Pass] 1,2,3. Check Parental pop up labels. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1,2,3. Check Parental pop up labels. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append(
                 '1,2,3. Assertion wong.')
 
@@ -118,19 +118,20 @@ class SECURITY(unittest.TestCase):
             parental_code_btn = parental_code.find_element_by_css_selector(select)
             parental_code_btn.click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
 
             pop_up_title = driver.find_element_by_css_selector(parental_popup_title).text
 
-            list_actual = [pop_up_title]
-            list_expected = [exp_parental_pop_up_title]
-            check = assert_list(list_actual, list_expected)
+            list_actual2 = [pop_up_title]
+            list_expected2 = [exp_parental_pop_up_title]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 4. Refresh Parental control: Check title pop up. '
-                                   f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
                 f'[Fail] 4. Refresh Parental control: Check title pop up. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             list_step_fail.append('4. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
@@ -142,19 +143,20 @@ class SECURITY(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
 
             error_msg = driver.find_element_by_css_selector(error_text).text
 
-            list_actual = [error_msg]
-            list_expected = [exp_parental_error_msg]
-            check = assert_list(list_actual, list_expected)
+            list_actual3 = [error_msg]
+            list_expected3 = [exp_parental_error_msg]
+            check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 5. Input wrong parental code: Check error message. '
-                                   f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                                   f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
         except:
             self.list_steps.append(
                 f'[Fail] 5. Input wrong parental code: Check error mesage. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             list_step_fail.append('5. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
@@ -166,18 +168,20 @@ class SECURITY(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
             check_page_security = len(driver.find_elements_by_css_selector(security_page)) != 0
-            list_actual = [check_page_security]
-            list_expected = [return_true]
-            check = assert_list(list_actual, list_expected)
+
+            list_actual4 = [check_page_security]
+            list_expected4 = [return_true]
+            check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 6. Input valid code. Check page Security displayed. '
-                                   f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                                   f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 6. Input valid code. Check page Security displayed. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('6. Assertion wong.')
 
@@ -189,7 +193,6 @@ class SECURITY(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        URL_LOGIN = get_config('URL', 'url')
         PARENTAL_CODE_KEY = get_config('SECURITY', 'parental_code')
         PARENTAL_NEW_CODE_KEY = str(random.randint(1000, 9999))
         try:
@@ -266,17 +269,18 @@ class SECURITY(unittest.TestCase):
 
             check_pop_up_disable = len(driver.find_elements_by_css_selector(dialog_content)) == 0
 
-            list_actual = [check_page_security, check_pop_up_disable]
-            list_expected = [return_true, return_true]
-            check = assert_list(list_actual, list_expected)
+            list_actual2 = [check_page_security, check_pop_up_disable]
+            list_expected2 = [return_true, return_true]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Change Parental code: Check Security page displayed. ')
+            self.list_steps.append(
+                f'[Pass] 4. Change Parental code: Check Security page displayed. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
-
         except:
             self.list_steps.append(
                 f'[Fail] 4. Change Parental code: Check Security page displayed. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
 
@@ -451,13 +455,12 @@ class SECURITY(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        URL_LOGIN = get_config('URL', 'url')
+        # ===============================================================
         PARENTAL_CODE_KEY = get_config('SECURITY', 'parental_code')
-
-        SOCIAL_NW = 'Social Network'
-        USER_DEFINE = 'User Define'
-        FACEBOOK = 'facebook'
-        GOOGLE = 'google.com'
+        SOCIAL_NW = get_config('SECURITY', 'security4_social_nw', input_data_path)
+        USER_DEFINE = get_config('SECURITY', 'security4_user_define', input_data_path)
+        FACEBOOK = get_config('SECURITY', 'security4_facebook', input_data_path)
+        GOOGLE = get_config('SECURITY', 'security4_google', input_data_path)
         try:
             grand_login(driver)
 

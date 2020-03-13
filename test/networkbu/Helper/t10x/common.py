@@ -39,13 +39,13 @@ def save_config(config_path, section, option, value):
 
 
 
-def get_config(section, option):
-    if not os.path.exists(config_path):
+def get_config(section, option, config_dir=config_path):
+    if not os.path.exists(config_dir):
         print("The config file not exist. Exit!!!")
         return
 
     config = configparser.RawConfigParser()
-    config.read(config_path)
+    config.read(config_dir)
 
     if config.has_option(str(section).upper(), option):
         return config.get(str(section).upper(), option)
@@ -77,7 +77,7 @@ def write_to_excel(key, list_steps, func_name, duration, time_stamp=0):
             ws.cell(row=i, column=1).value = key
             ws.cell(row=i, column=2).value = func_name
             # Fill result
-            if '[FAIL]' in str(list_steps):
+            if '[Fail]' in str(list_steps):
                 ws.cell(row=i, column=3).value = 'FAIL'
             else:
                 if '[END TC]' not in list_steps:
@@ -979,3 +979,11 @@ def nw_add_reserved_ip(driver, mac_add_value, ip_value):
     time.sleep(1)
     IP_VALUE2 = ip_value.split('.')[-1]
     ActionChains(driver).click(ip_reserve_input).send_keys(IP_VALUE2).perform()
+
+
+def check_enable_ethernet():
+    import subprocess
+    interface = subprocess.check_output('ipconfig', shell=True)
+    if 'Ethernet adapter Ethernet:' not in interface.decode('utf8'):
+        os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+        time.sleep(13)

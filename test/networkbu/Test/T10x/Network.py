@@ -14,31 +14,26 @@ class NETWORK(unittest.TestCase):
         try:
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
+            check_enable_ethernet()
             self.driver = webdriver.Chrome(driver_path)  # open chrome
             self.driver.maximize_window()
-            self.time_stamp = datetime.now()
         except:
             self.tearDown()
             raise
 
     def tearDown(self):
+        check_enable_ethernet()
         try:
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         except:
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
             # Connect by wifi if internet is down to handle exception for PPPoE
             os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
             time.sleep(1)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
             time.sleep(5)
             # Connect by LAN again
             os.system('netsh wlan disconnect')
@@ -73,7 +68,6 @@ class NETWORK(unittest.TestCase):
         USER_LOGIN = get_config('ACCOUNT', 'user')
         PW_LOGIN = get_config('ACCOUNT', 'password')
         URL_API = URL_LOGIN + '/api/v1/network/wan/0'
-        URL_PING_CHECK = 'google.com'
         METHOD = 'GET'
         BODY = None
         VALUE_DNS1 = '1'
@@ -214,17 +208,17 @@ class NETWORK(unittest.TestCase):
             if res_wan_primary['ipv4']['dnsServer2'] == '':
                 _expected[-1] = '0.0.0.0'
 
-            list_actual = [_actual]
-            list_expected = [_expected]
-            check = assert_list(list_actual, list_expected)
+            list_actual2 = [_actual]
+            list_expected2 = [_expected]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 '[Pass] 3. Check information changed: Dynamic IP. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Check information changed: Dynamic IP. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             list_step_fail.append(
                 '3. Assertion wong.')
 
@@ -301,20 +295,20 @@ class NETWORK(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
                 time.sleep(5)
 
-                list_actual = [_check_apply]
-                list_expected = [return_true]
-                check = assert_list(list_actual, list_expected)
+                list_actual3 = [_check_apply]
+                list_expected3 = [return_true]
+                check = assert_list(list_actual3, list_expected3)
             else:
                 check = assert_list([return_true], [return_true])
 
             self.assertTrue(check["result"])
             self.list_steps.append(
                 '[Pass] 4. Goto Network>Internet: Change values of Internet Settings: Static IP. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
         except:
             self.list_steps.append(
                 f'[Fail] 4. Goto Network>Internet: Change values of Internet Settings: Static IP '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             list_step_fail.append(
                 '4. Assertion wong.')
 
@@ -363,17 +357,17 @@ class NETWORK(unittest.TestCase):
             if res_wan_primary['ipv4']['dnsServer2'] == '':
                 _expected[-1] = '0.0.0.0'
 
-            list_actual = [_actual]
-            list_expected = [_expected]
-            check = assert_list(list_actual, list_expected)
+            list_actual4 = [_actual]
+            list_expected4 = [_expected]
+            check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 '[Pass] 5. Check information changed: Static IP. ' 
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
         except:
             self.list_steps.append(
                 f'[Fail] 5. Check information changed: Static IP. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
             list_step_fail.append(
                 '5. Assertion wong.')
 
@@ -432,18 +426,18 @@ class NETWORK(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
                 time.sleep(5)
 
-                list_actual = [_check_apply]
-                list_expected = [return_true]
-                check = assert_list(list_actual, list_expected)
+                list_actual5 = [_check_apply]
+                list_expected5 = [return_true]
+                check = assert_list(list_actual5, list_expected5)
 
             self.assertTrue(check["result"])
             self.list_steps.append(
                 '[Pass] 6. Goto Network>Internet: Change values of Internet Settings: PPPoE '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
         except:
             self.list_steps.append(
                 f'[Fail] 6. Goto Network>Internet: Change values of Internet Settings: PPPoE . '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
             list_step_fail.append(
                 '6. Assertion wong.')
 
@@ -492,18 +486,18 @@ class NETWORK(unittest.TestCase):
                 _expected[-1] = '0.0.0.0'
             time.sleep(5)
 
-            list_actual = [_actual]
-            list_expected = [_expected]
-            check = assert_list(list_actual, list_expected)
+            list_actual6 = [_actual]
+            list_expected6 = [_expected]
+            check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 '[Pass] 7. Check information changed: PPPoE. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 7. Check information changed: PPPoE. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('7. Assertion wong.')
 
@@ -515,23 +509,6 @@ class NETWORK(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        URL_LOGIN = url_login = get_config('URL', 'url')
-        # filename = '1'
-        # commmand = 'factorycfg.sh -a'
-        # run_cmd(commmand, filename=filename)
-        # # Wait 5 mins for factory
-        # time.sleep(150)
-        # wait_DUT_activated(url_login)
-        # wait_ping('192.168.1.1')
-        #
-        # filename_2 = 'account.txt'
-        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        # run_cmd(commmand_2, filename_2)
-        # time.sleep(3)
-        # # Get account information from web server and write to config.txt
-        # user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
-        # time.sleep(3)
-
 
         URL_LOGIN = get_config('URL', 'url')
         USER_LOGIN = get_config('ACCOUNT', 'user')
@@ -540,9 +517,6 @@ class NETWORK(unittest.TestCase):
         URL_PING_CHECK = 'google.com'
         METHOD = 'GET'
         BODY = None
-        VALUE_DNS1 = '1.1.1.1'
-        VALUE_DNS2 = '8.8.8.8'
-        # Handle API
 
         try:
             grand_login(driver)
@@ -866,7 +840,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Delete DNS server info: Check text This field is required\n')
+                '[Pass] 1,2,3. Delete DNS server info: Check text This field is required. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1,2,3. Delete DNS server info: Check text This field is required. '
@@ -926,7 +901,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 4,5. Disbaled DNS. Apply>Cancel: Check Page NW kept\n')
+                '[Pass] 4,5. Disbaled DNS. Apply>Cancel: Check Page NW kept. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 4,5. Disbaled DNS. Apply>Cancel: Check Page NW kept. '
@@ -1012,7 +988,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 7. Check Information of WAN IP\n')
+                '[Pass] 7. Check Information of WAN IP. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 7. Check Information of WAN IP. '
@@ -1030,7 +1007,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 8. Ping to Google successfully\n')
+                '[Pass] 8. Ping to Google successfully. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1048,8 +1026,6 @@ class NETWORK(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
-        URL_LOGIN = get_config('URL', 'url')
 
         try:
             grand_login(driver)
@@ -1123,7 +1099,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Verify relate between Primary to Secondary WAN\n')
+                '[Pass] 1,2,3. Verify relate between Primary to Secondary WAN. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1141,8 +1118,6 @@ class NETWORK(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
-        URL_LOGIN = get_config('URL', 'url')
 
         try:
             grand_login(driver)
@@ -1216,7 +1191,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Verify relate between Secondary to Primary WAN\n')
+                '[Pass] 1,2,3. Verify relate between Secondary to Primary WAN. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1234,8 +1210,6 @@ class NETWORK(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
-        URL_LOGIN = get_config('URL', 'url')
 
         try:
             grand_login(driver)
@@ -1269,7 +1243,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1. Check Subnet Mask value when Ip Address is class C\n')
+                '[Pass] 1. Check Subnet Mask value when Ip Address is class C. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1. Check Subnet Mask value when Ip Address is class C. '
@@ -1313,7 +1288,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2,3. Check Subnet Mask value when Ip Address is class B and verify en Start/End Ip <16 bits\n')
+                '[Pass] 2,3. Check Subnet Mask value when Ip Address is class B and verify en Start/End Ip <16 bits. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 2,3. Check Subnet Mask value when Ip Address is class B and verify en Start/End Ip <16 bits. '
@@ -1373,7 +1349,9 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 4,5,6. Check Subnet Mask value when Ip Address is class A and verify en Start/End Ip <16, 24 bits\n')
+                '[Pass] 4,5,6. Check Subnet Mask value when Ip Address is class A and verify en Start/End Ip <16, 24 bits. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1391,7 +1369,7 @@ class NETWORK(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        URL_LOGIN = get_config('URL', 'url')
+
         LAN_IP_ADDRESS = '192.168.1.10'
         LAN_IP_ADDRESS_SPLIT = LAN_IP_ADDRESS.split('.')
 
@@ -1457,7 +1435,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1. Set start IP Address < End IP Address: Check Error Message\n')
+                '[Pass] 1. Set start IP Address < End IP Address: Check Error Message. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1. Set start IP Address < End IP Address: Check Error Message. '
@@ -1496,7 +1475,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2. Set start IP Address, End IP Address Small: Check Error Message\n')
+                '[Pass] 2. Set start IP Address, End IP Address Small: Check Error Message. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 2. Set start IP Address, End IP Address Small: Check Error Message. '
@@ -1533,7 +1513,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Set start IP Address, End IP Address Same as Lan IP Address: Check Error Message\n')
+                '[Pass] 3. Set start IP Address, End IP Address Same as Lan IP Address: Check Error Message. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Set start IP Address, End IP Address Same as Lan IP Address: Check Error Message. '
@@ -1576,7 +1557,8 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 4. Set start IP Address, End IP Address Same as Lan IP Address: Check Error Message\n')
+                '[Pass] 4. Set start IP Address, End IP Address Same as Lan IP Address: Check Error Message. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1594,12 +1576,12 @@ class NETWORK(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        MAC_2 = '22:22:22:22:22:22'
-        IP_2  = '192.168.1.16'
-        MAC_4 = '44:44:44:44:44:44'
-        IP_4 = '192.168.1.16'
-        MAC_6 = '66:66:66:66:66:66'
-        IP_6 = '192.168.1.1'
+        MAC_2 = get_config('NETWORK', 'nw25_mac2', input_data_path)
+        IP_2 = get_config('NETWORK', 'nw25_ip2', input_data_path)
+        MAC_4 = get_config('NETWORK', 'nw25_mac4', input_data_path)
+        IP_4 = get_config('NETWORK', 'nw25_ip4', input_data_path)
+        MAC_6 = get_config('NETWORK', 'nw25_mac6', input_data_path)
+        IP_6 = get_config('NETWORK', 'nw25_ip6', input_data_path)
         try:
             grand_login(driver)
             time.sleep(1)
@@ -1739,9 +1721,9 @@ class NETWORK(unittest.TestCase):
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
         time.sleep(3)
-
-        MAC_2 = '12:12:12:12:12:12'
-        IP_2 = '192.168.1.11'
+        # =========================================================
+        MAC_2 = get_config('NETWORK', 'nw26_mac2', input_data_path)
+        IP_2 = get_config('NETWORK', 'nw26_ip2', input_data_path)
 
         try:
             grand_login(driver)
@@ -1839,8 +1821,8 @@ class NETWORK(unittest.TestCase):
         URL_PING_CHECK = '172.16.1.1'
         URL_B = 'http://172.16.1.1'
         EXPECTED_B_IP_ADDR = '172.16.1.10'
-        MAC_2 = '88:88:88:88:88:88'
-        IP_2 = '192.168.1.10'
+        MAC_2 = get_config('NETWORK', 'nw27_mac2', input_data_path)
+        IP_2 = get_config('NETWORK', 'nw27_mac2', input_data_path)
 
         try:
             grand_login(driver)

@@ -30,7 +30,7 @@ URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
 URL_5g = 'http://192.168.1.1/api/v1/wifi/1/ssid/0'
 
 
-PING_TIMES = 60
+PING_TIMES = int(get_config('NON_FUNCTION', 'nf_ping_time', input_data_path))
 
 
 class NON_FUNCTION(unittest.TestCase):
@@ -40,8 +40,7 @@ class NON_FUNCTION(unittest.TestCase):
             time.sleep(3)
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
+            check_enable_ethernet()
             self.driver = webdriver.Chrome(driver_path)
             self.driver.maximize_window()
         except:
@@ -49,15 +48,12 @@ class NON_FUNCTION(unittest.TestCase):
             raise
 
     def tearDown(self):
+        check_enable_ethernet()
         try:
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         except:
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
             # Connect by wifi if internet is down to handle exception for PPPoE
             os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
             time.sleep(1)
@@ -79,7 +75,6 @@ class NON_FUNCTION(unittest.TestCase):
         self.list_steps = []
 
         URL_LOGIN = get_config('URL', 'url')
-        NEW_PASSWORD = 'abc123'
         filename = '1'
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
@@ -94,11 +89,10 @@ class NON_FUNCTION(unittest.TestCase):
         time.sleep(3)
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-
-        PING_ADDRESS = '8.8.8.8'
-        # PING_TIMES = 43200
-        PING_YOUTUBE = 'youtube.com'
-        YOUTUBE_URL = 'https://www.youtube.com/watch?v=e6iGJIYUroo'
+        # =============================================================================
+        PING_ADDRESS = get_config('NON_FUNCTION', 'nf_ping_address', input_data_path)
+        PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
+        YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
         try:
             def thread_ping():
                 global ping_result
@@ -204,11 +198,6 @@ class NON_FUNCTION(unittest.TestCase):
         self.list_steps = []
 
         URL_LOGIN = get_config('URL', 'url')
-        PING_ADDRESS = '8.8.8.8'
-        # PING_TIMES = 43200
-        PING_YOUTUBE = 'youtube.com'
-        YOUTUBE_URL = 'https://www.youtube.com/watch?v=e6iGJIYUroo'
-        NEW_PASSWORD = 'abc123'
         filename = '1'
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
@@ -223,6 +212,10 @@ class NON_FUNCTION(unittest.TestCase):
         time.sleep(3)
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        # =============================================================================
+        PING_ADDRESS = get_config('NON_FUNCTION', 'nf_ping_address', input_data_path)
+        PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
+        YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
 
         try:
             new_2g_wf_name = api_change_wifi_setting(URL_2g)
@@ -351,11 +344,6 @@ class NON_FUNCTION(unittest.TestCase):
         self.list_steps = []
 
         URL_LOGIN = get_config('URL', 'url')
-        PING_ADDRESS = '8.8.8.8'
-        # PING_TIMES = 43200
-        PING_YOUTUBE = 'youtube.com'
-        YOUTUBE_URL = 'https://www.youtube.com/watch?v=e6iGJIYUroo'
-        NEW_PASSWORD = 'abc123'
         filename = '1'
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
@@ -370,6 +358,10 @@ class NON_FUNCTION(unittest.TestCase):
         time.sleep(3)
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        # =============================================================================
+        PING_ADDRESS = get_config('NON_FUNCTION', 'nf02_ping_address', input_data_path)
+        PING_YOUTUBE = get_config('NON_FUNCTION', 'nf02_ping_youtube', input_data_path)
+        YOUTUBE_URL = get_config('NON_FUNCTION', 'nf02_youtube_url', input_data_path)
 
         try:
             time.sleep(5)
@@ -497,11 +489,6 @@ class NON_FUNCTION(unittest.TestCase):
         self.list_steps = []
 
         URL_LOGIN = get_config('URL', 'url')
-        PING_ADDRESS = '8.8.8.8'
-        # PING_TIMES = 43200
-        PING_YOUTUBE = 'youtube.com'
-        YOUTUBE_URL = 'https://www.youtube.com/watch?v=e6iGJIYUroo'
-        NEW_PASSWORD = 'abc123'
         filename = '1'
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
@@ -516,6 +503,9 @@ class NON_FUNCTION(unittest.TestCase):
         time.sleep(3)
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        # =============================================================================
+        PING_ADDRESS = get_config('NON_FUNCTION', 'nf02_ping_address', input_data_path)
+        NEW_PASSWORD = get_config('COMMON', 'new_pw', input_data_path)
 
         try:
             login(driver)
@@ -650,11 +640,6 @@ class NON_FUNCTION(unittest.TestCase):
         self.list_steps = []
 
         URL_LOGIN = get_config('URL', 'url')
-        PING_ADDRESS = '8.8.8.8'
-        # PING_TIMES = 43200
-        PING_YOUTUBE = 'youtube.com'
-        YOUTUBE_URL = 'https://www.youtube.com/watch?v=e6iGJIYUroo'
-        NEW_PASSWORD = 'abc123'
         filename = '1'
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
@@ -669,7 +654,9 @@ class NON_FUNCTION(unittest.TestCase):
         time.sleep(3)
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-
+        # ====================================================================
+        PING_ADDRESS = get_config('NON_FUNCTION', 'nf02_ping_address', input_data_path)
+        NEW_PASSWORD = get_config('COMMON', 'new_pw', input_data_path)
         try:
             login(driver)
             wait_popup_disappear(driver, dialog_loading)
@@ -814,11 +801,6 @@ class NON_FUNCTION(unittest.TestCase):
         self.list_steps = []
 
         URL_LOGIN = get_config('URL', 'url')
-        PING_ADDRESS = '8.8.8.8'
-        # PING_TIMES = 43200
-        PING_YOUTUBE = 'youtube.com'
-        YOUTUBE_URL = 'https://www.youtube.com/watch?v=e6iGJIYUroo'
-        NEW_PASSWORD = 'abc123'
         filename = '1'
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
@@ -833,7 +815,9 @@ class NON_FUNCTION(unittest.TestCase):
         time.sleep(3)
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-
+        # ==========================================================================
+        PING_ADDRESS = get_config('NON_FUNCTION', 'nf02_ping_address', input_data_path)
+        NEW_PASSWORD = get_config('COMMON', 'new_pw', input_data_path)
         try:
             login(driver)
             wait_popup_disappear(driver, dialog_loading)

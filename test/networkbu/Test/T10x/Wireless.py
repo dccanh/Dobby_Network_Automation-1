@@ -15,31 +15,26 @@ class WIRELESS(unittest.TestCase):
         try:
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
+            check_enable_ethernet()
             self.driver = webdriver.Chrome(driver_path)  # open chrome
             self.driver.maximize_window()
-            self.time_stamp = datetime.now()
         except:
             self.tearDown()
             raise
 
     def tearDown(self):
+        check_enable_ethernet()
         try:
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         except:
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
             # Connect by wifi if internet is down to handle exception for PPPoE
             os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
             time.sleep(1)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
             time.sleep(5)
             # Connect by LAN again
             os.system('netsh wlan disconnect')
@@ -70,8 +65,8 @@ class WIRELESS(unittest.TestCase):
         time.sleep(3)
         # Get account information from web server and write to config.txt
         get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        SSID_NAME = '123! @ # ^  * ( ) + _ - = { } [ ] | 456:789 . ? ` $ % \ ;  , /'
+        # ===================================================================
+        SSID_NAME = get_config('WIRELESS', 'wl02_ssid_name', input_data_path)
 
         try:
             grand_login(driver)
@@ -322,8 +317,6 @@ class WIRELESS(unittest.TestCase):
         self.list_steps = []
 
         # Factory reset
-        URL_PING_CHECK = '192.168.1.1'
-        # # Factory reset
         URL_LOGIN = get_config('URL', 'url')
         URL_PING_CHECK = '192.168.1.1'
         filename = '1'
@@ -340,10 +333,10 @@ class WIRELESS(unittest.TestCase):
         # Get account information from web server and write to config.txt
         get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        GOOGLE_URL = 'http://google.com'
-        SECURITY_TYPE = 'WPA2-PSK'
-        PASSWORD_3 = '12345'
-        PASSWORD_4 = '123!@ abcd #^*()+_-={}[]|456:789.?`$%\;,/123!@ abcd #^*()+_-={}[]|456:789.?`$%\,/'
+        GOOGLE_URL = get_config('WIRELESS', 'wl04_google_url', input_data_path)
+        SECURITY_TYPE = get_config('WIRELESS', 'wl04_security_type', input_data_path)
+        PASSWORD_3 = get_config('WIRELESS', 'wl04_pw_3', input_data_path)
+        PASSWORD_4 = get_config('WIRELESS', 'wl04_pw_4', input_data_path)
 
         try:
             grand_login(driver)
@@ -577,10 +570,10 @@ class WIRELESS(unittest.TestCase):
         # Get account information from web server and write to config.txt
         get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        GOOGLE_URL = 'http://google.com'
-        SECURITY_TYPE = 'WPA2/WPA-PSK'
-        PASSWORD_3 = '12345'
-        PASSWORD_4 = '123!@ abcd #^*()+_-={}[]|456:789.?`$%\;,/123!@ abcd #^*()+_-={}[]|456:789.?`$%\;,/'
+        GOOGLE_URL = get_config('WIRELESS', 'wl05_google_url', input_data_path)
+        SECURITY_TYPE = get_config('WIRELESS', 'wl05_security_type', input_data_path)
+        PASSWORD_3 = get_config('WIRELESS', 'wl05_pw_3', input_data_path)
+        PASSWORD_4 = get_config('WIRELESS', 'wl05_pw_4', input_data_path)
         try:
             grand_login(driver)
 
@@ -815,15 +808,15 @@ class WIRELESS(unittest.TestCase):
         time.sleep(3)
         # Get account information from web server and write to config.txt
         get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        GOOGLE_URL = 'http://google.com'
-        SECURITY_TYPE = 'WEP'
-        ENCRYPTION_TYPE = 'WEP64'
-        KEY_TYPE = 'Character String'
-        KEY_TYPE_2 = 'Hexadecimal'
-        PASSWORD_3 = '123'
-        PASSWORD_4 = '123@!12'
-        PASSWORD_5 = '@!a1b2c3d4e5@!'
+        # ======================================================================
+        GOOGLE_URL = get_config('WIRELESS', 'wl08_google_url', input_data_path)
+        SECURITY_TYPE = get_config('WIRELESS', 'wl08_security_type', input_data_path)
+        ENCRYPTION_TYPE = get_config('WIRELESS', 'wl08_encryption_type', input_data_path)
+        KEY_TYPE = get_config('WIRELESS', 'wl08_key_type', input_data_path)
+        KEY_TYPE_2 = get_config('WIRELESS', 'wl08_key_type_2', input_data_path)
+        PASSWORD_3 = get_config('WIRELESS', 'wl08_pw_3', input_data_path)
+        PASSWORD_4 = get_config('WIRELESS', 'wl08_pw_4', input_data_path)
+        PASSWORD_5 = get_config('WIRELESS', 'wl08_pw_5', input_data_path)
 
         try:
             grand_login(driver)
@@ -1317,15 +1310,15 @@ class WIRELESS(unittest.TestCase):
         time.sleep(3)
         # Get account information from web server and write to config.txt
         get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        GOOGLE_URL = 'http://google.com'
-        SECURITY_TYPE = 'WEP'
-        ENCRYPTION_TYPE = 'WEP128'
-        KEY_TYPE = 'Character String'
-        KEY_TYPE_2 = 'Hexadecimal'
-        PASSWORD_3 = '123'
-        PASSWORD_4 = '123!@aA123@!aA1'
-        PASSWORD_5 = '1234567890aaaaaAAAAA123aaabbb'
+        # ======================================================================
+        GOOGLE_URL = get_config('WIRELESS', 'wl07_google_url', input_data_path)
+        SECURITY_TYPE = get_config('WIRELESS', 'wl07_security_type', input_data_path)
+        ENCRYPTION_TYPE = get_config('WIRELESS', 'wl07_encryption_type', input_data_path)
+        KEY_TYPE = get_config('WIRELESS', 'wl07_key_type', input_data_path)
+        KEY_TYPE_2 = get_config('WIRELESS', 'wl07_key_type_2', input_data_path)
+        PASSWORD_3 = get_config('WIRELESS', 'wl07_pw_3', input_data_path)
+        PASSWORD_4 = get_config('WIRELESS', 'wl07_pw_4', input_data_path)
+        PASSWORD_5 = get_config('WIRELESS', 'wl07_pw_5', input_data_path)
 
         try:
             grand_login(driver)
@@ -2061,7 +2054,8 @@ class WIRELESS(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Check Default Web UI Access of 2G/5G. ')
+                '[Pass] 1,2. Check Default Web UI Access of 2G/5G. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1,2. Check Enable Web UI Access of 2G/5G. '
@@ -2137,7 +2131,8 @@ class WIRELESS(unittest.TestCase):
             list_expected = [return_true]*2
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Check Enable Web UI Access of 2G/5G: Check Access web UI successfully. ')
+            self.list_steps.append('[Pass] 3. Check Enable Web UI Access of 2G/5G: Check Access web UI successfully. '
+                                   f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Check Enable Web UI Access of 2G/5G: Check Access web UI successfully.. '
@@ -2236,7 +2231,8 @@ class WIRELESS(unittest.TestCase):
             list_expected = [return_true]*2
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Check Disable Web UI Access of 2G/5G: Check Access web UI fail')
+            self.list_steps.append('[Pass] 4. Check Disable Web UI Access of 2G/5G: Check Access web UI fail. '
+                                   f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -2514,8 +2510,8 @@ class WIRELESS(unittest.TestCase):
         time.sleep(3)
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-
-        SSID_TEST = '123!@ abcd #^*()+_-={}[]|456:789.?`$%\;'
+        # ======================================================================
+        SSID_TEST = get_config('WIRELESS', 'wl16_ssid_test', input_data_path)
         SSID_2G_DEFAULT_START = 'HUMAX_Guest_2G!_'
         SSID_5G_DEFAULT_START = 'HUMAX_Guest_5G!_'
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2772,11 +2768,11 @@ class WIRELESS(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        URL_LOGIN = get_config('URL', 'url')
-        GOOGLE_URL = 'http://google.com'
-        SECURITY_TYPE = 'WPA2-PSK'
-        PASSWORD_SHORT_STR = '123$%'
-        PASSWORD_LONG_STR = '123!@ abcd #^*()+_-={}[]|456:789.?`$%,/123!@ abcd #^*()+_-={}[]|456:789.?`$%,/'
+        # ==========================================================================
+        GOOGLE_URL = get_config('WIRELESS', 'wl19_google_url', input_data_path)
+        SECURITY_TYPE = get_config('WIRELESS', 'wl19_security_type', input_data_path)
+        PASSWORD_SHORT_STR = get_config('WIRELESS', 'wl19_pw_short', input_data_path)
+        PASSWORD_LONG_STR = get_config('WIRELESS', 'wl19_pw_long', input_data_path)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             grand_login(driver)
@@ -2993,12 +2989,11 @@ class WIRELESS(unittest.TestCase):
         self.list_steps = []
         os.system('netsh wlan disconnect')
 
-        URL_LOGIN = get_config('URL', 'url')
-        GOOGLE_URL = 'http://google.com'
-        SECURITY_TYPE = 'WPA2/WPA-PSK'
-        PASSWORD_SHORT_STR = '123$%'
-        PASSWORD_LONG_STR = '123!@ abcd #^*()+_-={}[]|456:789.?`$%,/123!@ abcd #^*()+_-={}[]|456:789.?`$%,/'
-
+        # ==========================================================================
+        GOOGLE_URL = get_config('WIRELESS', 'wl20_google_url', input_data_path)
+        SECURITY_TYPE = get_config('WIRELESS', 'wl20_security_type', input_data_path)
+        PASSWORD_SHORT_STR = get_config('WIRELESS', 'wl20_pw_short', input_data_path)
+        PASSWORD_LONG_STR = get_config('WIRELESS', 'wl20_pw_long', input_data_path)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             grand_login(driver)
@@ -3216,7 +3211,6 @@ class WIRELESS(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         URL_LOGIN = get_config('URL', 'url')
-        NEW_PASSWORD = 'abc123'
         filename = '1'
         commmand = 'factorycfg.sh -a'
         run_cmd(commmand, filename=filename)
@@ -3231,15 +3225,15 @@ class WIRELESS(unittest.TestCase):
         time.sleep(3)
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        GOOGLE_URL = 'http://google.com'
-        SECURITY_TYPE = 'WEP'
-        ENCRYPTION_TYPE = 'WEP64'
-        KEY_TYPE = 'Character String'
-        KEY_TYPE_2 = 'Hexadecimal'
-        PASSWORD_3 = '123'
-        PASSWORD_4 = '123@!12'
-        PASSWORD_5 = '@!a1b2c3d4e5@!'
+        # ======================================================================
+        GOOGLE_URL = get_config('WIRELESS', 'wl23_google_url', input_data_path)
+        SECURITY_TYPE = get_config('WIRELESS', 'wl23_security_type', input_data_path)
+        ENCRYPTION_TYPE = get_config('WIRELESS', 'wl23_encryption_type', input_data_path)
+        KEY_TYPE = get_config('WIRELESS', 'wl23_key_type', input_data_path)
+        KEY_TYPE_2 = get_config('WIRELESS', 'wl23_key_type_2', input_data_path)
+        PASSWORD_3 = get_config('WIRELESS', 'wl23_pw_3', input_data_path)
+        PASSWORD_4 = get_config('WIRELESS', 'wl23_pw_4', input_data_path)
+        PASSWORD_5 = get_config('WIRELESS', 'wl23_pw_5', input_data_path)
 
         try:
             grand_login(driver)
@@ -3768,16 +3762,15 @@ class WIRELESS(unittest.TestCase):
         time.sleep(3)
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        GOOGLE_URL = 'http://google.com'
-        SECURITY_TYPE = 'WEP'
-        ENCRYPTION_TYPE = 'WEP128'
-        KEY_TYPE = 'Character String'
-        KEY_TYPE_2 = 'Hexadecimal'
-        PASSWORD_3 = '123'
-        PASSWORD_4 = '123!@aA123@!aA1'
-        PASSWORD_5 = '1234567890aaaaaAAAAA123aaabbb'
-
+        # ======================================================================
+        GOOGLE_URL = get_config('WIRELESS', 'wl24_google_url', input_data_path)
+        SECURITY_TYPE = get_config('WIRELESS', 'wl24_security_type', input_data_path)
+        ENCRYPTION_TYPE = get_config('WIRELESS', 'wl24_encryption_type', input_data_path)
+        KEY_TYPE = get_config('WIRELESS', 'wl24_key_type', input_data_path)
+        KEY_TYPE_2 = get_config('WIRELESS', 'wl24_key_type_2', input_data_path)
+        PASSWORD_3 = get_config('WIRELESS', 'wl24_pw_3', input_data_path)
+        PASSWORD_4 = get_config('WIRELESS', 'wl24_pw_4', input_data_path)
+        PASSWORD_5 = get_config('WIRELESS', 'wl24_pw_5', input_data_path)
         try:
             grand_login(driver)
             # Enable Dual WAN

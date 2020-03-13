@@ -15,8 +15,7 @@ class ADVANCED(unittest.TestCase):
         try:
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
+            check_enable_ethernet()
             self.driver = webdriver.Chrome(driver_path)  # open chrome
             self.driver.maximize_window()
         except:
@@ -24,15 +23,12 @@ class ADVANCED(unittest.TestCase):
             raise
 
     def tearDown(self):
+        check_enable_ethernet()
         try:
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         except:
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
             # Connect by wifi if internet is down to handle exception for PPPoE
             os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
             time.sleep(1)
@@ -263,9 +259,8 @@ class ADVANCED(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
-        URL_LOGIN = get_config('URL', 'url')
-        MAC_VALUE = ['12', '34', '56', '78', 'AB', 'CD']
+        MAC = get_config('ADVANCED', 'advanced26_mac', input_data_path)
+        MAC_VALUE = MAC.split(':')
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             grand_login(driver)
@@ -1111,16 +1106,16 @@ class ADVANCED(unittest.TestCase):
             result = f"traceroute to {PING_TARGET} ({PING_TARGET}), {trace_max} hops max, 38 byte packets\n\n"
             result += f" 1  dearmyrouter.net "
 
-            list_actual2 = [assert_result]
-            list_expected2 = [result]
-            check = assert_list(list_actual2, list_expected2)
+            list_actual1 = [assert_result]
+            list_expected1 = [result]
+            check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 1. Test result format of Traceroute.'
-                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                                   f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1. Test result format of Traceroute. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append('1. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

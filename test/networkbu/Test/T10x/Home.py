@@ -14,8 +14,7 @@ class HOME(unittest.TestCase):
         try:
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
+            check_enable_ethernet()
             self.driver = webdriver.Chrome(driver_path)  # open chrome
             self.driver.maximize_window()
         except:
@@ -23,15 +22,12 @@ class HOME(unittest.TestCase):
             raise
 
     def tearDown(self):
+        check_enable_ethernet()
         try:
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         except:
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(15)
             # Connect by wifi if internet is down to handle exception for PPPoE
             os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
             time.sleep(1)
@@ -518,22 +514,6 @@ class HOME(unittest.TestCase):
         self.list_steps = []
 
         URL_LOGIN = get_config('URL', 'url')
-
-        # filename = '1'
-        # commmand = 'factorycfg.sh -a'
-        # run_cmd(commmand, filename=filename)
-        # # Wait 5 mins for factory
-        # time.sleep(150)
-        # wait_DUT_activated(URL_LOGIN)
-        # wait_ping('192.168.1.1')
-        #
-        # filename_2 = 'account.txt'
-        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        # run_cmd(commmand_2, filename_2)
-        # time.sleep(3)
-        # # Get account information from web server and write to config.txt
-        # user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-
         USER_LOGIN = get_config('ACCOUNT', 'user')
         PW_LOGIN = get_config('ACCOUNT', 'password')
         URL_API_WAN_V4 = URL_LOGIN + '/api/v1/network/wan/0'
@@ -690,8 +670,8 @@ class HOME(unittest.TestCase):
         _token = get_token(USER_LOGIN, PW_LOGIN)
         # Call API
         get_wan = call_api(URL_API_WAN_V4, METHOD, BODY, _token)['ipv4']['address']
-
-        NEW_PASSWORD = 'abc123'
+        # ==================================================
+        NEW_PASSWORD = get_config('COMMON', 'new_pw', input_data_path)
         try:
             login(driver)
             wait_popup_disappear(driver, dialog_loading)
@@ -863,14 +843,13 @@ class HOME(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        URL_LOGIN = get_config('URL', 'url')
 
         try:
             grand_login(driver)
             time.sleep(1)
 
             driver.find_element_by_css_selector(home_img_lan_connection).click()
-            time.sleep(2)
+            time.sleep(5)
 
             block_left = driver.find_element_by_css_selector(left)
             block_card = block_left.find_elements_by_css_selector(card_cls)
@@ -1044,7 +1023,6 @@ class HOME(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        URL_LOGIN = get_config('URL', 'url')
 
         try:
             grand_login(driver)
@@ -1410,8 +1388,6 @@ class HOME(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        URL_LOGIN = get_config('URL', 'url')
-
         try:
             grand_login(driver)
             time.sleep(1)
@@ -1429,7 +1405,9 @@ class HOME(unittest.TestCase):
             list_expected1 = [return_true, '2']
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Check USB Image selected, Check number of USB')
+            self.list_steps.append('[Pass] 2. Check USB Image selected, Check number of USB. '
+                                   f'Actual: {str(list_actual1)}. '
+                                   f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1447,7 +1425,6 @@ class HOME(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        URL_LOGIN = get_config('URL', 'url')
 
         try:
             grand_login(driver)
@@ -1536,7 +1513,9 @@ class HOME(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Click ||| btn; Check Display +; Click +; Check Display target USB page.')
+                '[Pass] 1,2,3. Click ||| btn; Check Display +; Click +; Check Display target USB page. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1597,7 +1576,9 @@ class HOME(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3,4,5. Check popup confirm text, popup complete text, popup disappear.')
+                '[Pass] 3,4,5. Check popup confirm text, popup complete text, popup disappear. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1646,13 +1627,14 @@ class HOME(unittest.TestCase):
                     value = w.find_element_by_css_selector(home_wan_ls_value).text
                     actual_value.append(value)
 
-
             list_actual1 = [server_title, exist_btn_fab] + actual_value
             list_expected1 = ['Server', return_true] + ['Off']*3
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Check Server title, icon fab, value fields.')
+                '[Pass] 3. Check Server title, icon fab, value fields. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1699,7 +1681,9 @@ class HOME(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Click ||| btn; Check Display +; Click +; Check Display target USB Server page.')
+                '[Pass] 3. Click ||| btn; Check Display +; Click +; Check Display target USB Server page. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1733,7 +1717,9 @@ class HOME(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Click Device icon, Check number of device.')
+                '[Pass] 3. Click Device icon, Check number of device. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -1774,7 +1760,6 @@ class HOME(unittest.TestCase):
             self.list_steps.append('[Pass] Set precondition fail: 1 wired + 1 wireless')
         except:
             self.list_steps.append('[Fail] Set precondition fail: 1 wired + 1 wireless')
-
 
         try:
             grand_login(driver)
@@ -1864,7 +1849,6 @@ class HOME(unittest.TestCase):
                 ls_expected_disconnected.append(dict_act)
 
             # +++++++++++++++++++++++++++++++++++++++++++++++++++
-
             ls_actual_disconnected = list()
             disconnected_rows = driver.find_elements_by_css_selector(ele_device_row_disconnected)
             for r in disconnected_rows:
