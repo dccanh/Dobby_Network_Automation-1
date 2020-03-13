@@ -1,0 +1,134 @@
+[COMMON]
+new_pw = abc123
+google_url = http://google.com
+youtube_url = http://youtube.com
+
+[MAIN]
+main5_set_language_1 = English
+main5_set_language_2 = Tiếng Việt
+main11_wrong_captcha = ciel
+main11_wrong_user = ciel
+main11_wrong_pw = ciel
+main23_new_pw = !@#^&*()_+-={}|[]:.?
+main24_wrong_pw = acb000
+main24_new_pw = acb123
+main24_retype_new_pw = acb321
+main37_1 = 12345678
+main60_1 = abc111
+main60_2 = abc222
+main69_exp_time_zone = (GMT-11:00) Apia
+main74_search_key = DHCP
+main64_new_pw_2 = abc321
+main64_ssid_2g_new = Precondition SSID 2G
+main64_wl_pw_2g = preondition_2g
+main62_new_pw_over = asdfghjklzxcvbnmqwertyuiop1234567890
+main62_new_pw_short = 1
+main61_wrong_pw = wrong123
+main61_new_pw = 1234abcd
+main61_retype_new_pw = abcd1234
+
+
+[SECURITY]
+security4_social_nw = 'Social Network'
+security4_user_define = 'User Define'
+security4_facebook = 'facebook'
+security4_google = 'google.com'
+
+
+[ADVANCED]
+advanced26_mac = 12:34:56:78:AB:CD
+
+[MEDIA_SHARE]
+ms04_desc_3 = 123!@ abcd #^&*
+ms04_desc_4 = 123!@ abcd
+ms04_file_1 = network_file_1
+ms04_file_2 = network_file_2
+ms04_file_3 = network_file_3
+ms04_file_4 = network_file_4
+ms04_file_5 = network_file_5
+ms04_file_6 = network_file_6
+ms04_file_7 = network_file_7
+ms04_file_8 = network_file_8
+ms04_file_9 = network_file_9
+ms08_test_string = 123 abc DEF 000222 !@##$&* ():><??+=a,.
+ms10_desc_3 = 123!@ abcd #^&*
+
+
+[NON_FUNCTION]
+nf_ping_time = 60
+nf_ping_address = 8.8.8.8
+nf_ping_youtube = youtube.com
+nf_youtube_url = https://www.youtube.com/watch?v=e6iGJIYUroo
+
+
+[NETWORK]
+nw25_mac2 = 22:22:22:22:22:22
+nw25_ip2 = 192.168.1.16
+nw25_mac4 = 44:44:44:44:44:44
+nw25_ip4 = 192.168.1.16
+nw25_mac6 = 66:66:66:66:66:66
+nw25_ip6 = 192.168.1.1
+nw26_mac2 = 12:12:12:12:12:12
+nw26_ip2 = 192.168.1.11
+nw27_mac2 = 88:88:88:88:88:88
+nw27_ip2 = 192.168.1.10
+
+
+[WIRELESS]
+wl02_ssid_name = 123! @ # ^  * ( ) + _ - = { } [ ] | 456:789 . ? ` $ % \ ;  , /
+wl04_google_url = http://google.com
+wl04_security_type = WPA2-PSK
+wl04_pw_3 = 12345
+wl04_pw_4 = 123!@ abcd #^*()+_-={}[]|456:789.?`$%\;,/123!@ abcd #^*()+_-={}[]|456:789.?`$%\,/
+wl05_google_url = http://google.com
+wl05_security_type = WPA2/WPA-PSK
+wl05_pw_3 = 12345
+wl05_pw_4 = 123!@ abcd #^*()+_-={}[]|456:789.?`$%\;,/123!@ abcd #^*()+_-={}[]|456:789.?`$%\,/
+
+wl08_google_url = http://google.com
+wl08_security_type = WEP
+wl08_encryption_type = WEP64
+wl08_key_type = Character String
+wl08_key_type_2 = Hexadecimal
+wl08_pw_3 = 123
+wl08_pw_4 = 123@!12
+wl08_pw_5 = @!a1b2c3d4e5@!
+
+wl07_google_url = http://google.com
+wl07_security_type = WEP
+wl07_encryption_type = WEP128
+wl07_key_type = Character String
+wl07_key_type_2 = Hexadecimal
+wl07_pw_3 = 123
+wl07_pw_4 = 123!@aA123@!aA1
+wl07_pw_5 = 1234567890aaaaaAAAAA123aaabbb
+
+wl16_ssid_test = 123!@ abcd #^*()+_-={}[]|456:789.?`$%\;
+
+wl19_google_url = http://google.com
+wl19_security_type = WPA2-PSK
+wl19_pw_short = 123$%
+wl19_pw_long = 123!@ abcd #^*()+_-={}[]|456:789.?`$%,/123!@ abcd #^*()+_-={}[]|456:789.?`$%,/
+
+wl20_google_url = http://google.com
+wl20_security_type = WPA2/WPA-PSK
+wl20_pw_short = 123$%
+wl20_pw_long = 123!@ abcd #^*()+_-={}[]|456:789.?`$%,/123!@ abcd #^*()+_-={}[]|456:789.?`$%20
+
+wl23_google_url = http://google.com
+wl23_security_type = WEP
+wl23_encryption_type = WEP64
+wl23_key_type = Character String
+wl23_key_type_2 = Hexadecimal
+wl23_pw_3 = 123
+wl23_pw_4 = 123@!12
+wl23_pw_5 = @!a1b2c3d4e5@!
+
+wl24_google_url = http://google.com
+wl24_security_type = WEP
+wl24_encryption_type = WEP128
+wl24_key_type = Character String
+wl24_key_type_2 = Hexadecimal
+wl24_pw_3 = 123
+wl24_pw_4 = 123!@aA123@!aA1
+wl24_pw_5 = 1234567890aaaaaAAAAA123aaabbb
