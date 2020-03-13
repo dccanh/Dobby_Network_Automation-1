@@ -76,6 +76,19 @@ def save_config(config_path, section, option, value):
         config.write(config_file)
 
 
+def delete_report_offline():
+    """
+    Delete content of Excel report file.
+    Delete before run a section.
+    """
+    import openpyxl
+    excel_file = report_offline_path
+    wb = openpyxl.load_workbook(excel_file)
+    ws = wb.active
+    ws.delete_rows(6, ws.max_row)
+    wb.save(excel_file)
+
+
 def exit_Btn():
     exit()
 
@@ -175,7 +188,7 @@ port4['background']='white'
 # moduleChoices = ['MAIN', 'HOME', 'WIRELESS', 'NETWORK', 'QOS', 'MEDIASHARE', 'SECURITY', 'ADVANCED', 'NON_FUNCTION']#
 moduleChoices = ['MAIN', 'HOME', 'WIRELESS', 'NETWORK', 'MEDIASHARE', 'SECURITY', 'ADVANCED', 'NON_FUNCTION']
 cusModuleAll = BooleanVar()
-check2 = Checkbutton(root, text='ALL', variable=cusModuleAll)
+check2 = Checkbutton(root, text='ALL', variable=cusModuleAll, command=lambda: check_all_module())
 check2.place(x=140, y=240)
 
 Module0 = BooleanVar()
@@ -187,25 +200,41 @@ Module5 = BooleanVar()
 Module6 = BooleanVar()
 Module7 = BooleanVar()
 Module8 = BooleanVar()
-check0 = Checkbutton(root, text=moduleChoices[0], variable=Module0).place(x=140 + 0 * 100, y=270)
-check1 = Checkbutton(root, text=moduleChoices[1], variable=Module1).place(x=140 + 1 * 100, y=270)
-check2 = Checkbutton(root, text=moduleChoices[2], variable=Module2).place(x=140 + 2 * 100, y=270)
-check3 = Checkbutton(root, text=moduleChoices[3], variable=Module3).place(x=140 + 0 * 100, y=270 + 30)
-check5 = Checkbutton(root, text=moduleChoices[4], variable=Module5).place(x=140 + 2 * 100, y=270 + 30)
-check6 = Checkbutton(root, text=moduleChoices[5], variable=Module6).place(x=140 + 0 * 100, y=270 + 60)
-check7 = Checkbutton(root, text=moduleChoices[6], variable=Module7).place(x=140 + 1 * 100, y=270 + 60)
-check8 = Checkbutton(root, text=moduleChoices[7], variable=Module8).place(x=140 + 2 * 100, y=270 + 60)
-check4 = Checkbutton(root, text='QoS', state='disabled').place(x=140 + 1 * 100, y=270 + 30)# , state='disabled'
-# check5 = Checkbutton(root, text=moduleChoices[5], variable=Module5).place(x=140 + 2 * 100, y=270 + 30)
-# check6 = Checkbutton(root, text=moduleChoices[6], variable=Module6).place(x=140 + 0 * 100, y=270 + 60)
-# check7 = Checkbutton(root, text=moduleChoices[7], variable=Module7).place(x=140 + 1 * 100, y=270 + 60)
-# check8 = Checkbutton(root, text=moduleChoices[8], variable=Module8).place(x=140 + 2 * 100, y=270 + 60)
+check0 = Checkbutton(root, text=moduleChoices[0], variable=Module0)
+check0.place(x=140 + 0 * 100, y=270)
+check1 = Checkbutton(root, text=moduleChoices[1], variable=Module1)
+check1.place(x=140 + 1 * 100, y=270)
+check2 = Checkbutton(root, text=moduleChoices[2], variable=Module2)
+check2.place(x=140 + 2 * 100, y=270)
+check3 = Checkbutton(root, text=moduleChoices[3], variable=Module3)
+check3.place(x=140 + 0 * 100, y=270 + 30)
+check5 = Checkbutton(root, text=moduleChoices[4], variable=Module5)
+check5.place(x=140 + 2 * 100, y=270 + 30)
+check6 = Checkbutton(root, text=moduleChoices[5], variable=Module6)
+check6.place(x=140 + 0 * 100, y=270 + 60)
+check7 = Checkbutton(root, text=moduleChoices[6], variable=Module7)
+check7.place(x=140 + 1 * 100, y=270 + 60)
+check8 = Checkbutton(root, text=moduleChoices[7], variable=Module8)
+check8.place(x=140 + 2 * 100, y=270 + 60)
+check4 = Checkbutton(root, text='QoS', state='disabled').place(x=140 + 1 * 100, y=270 + 30)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# def check_all_module():
-#     if cusModuleAll.get():
-#         for m in [Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]:
-#             m.set(True)
+def check_all_module():
+    if cusModuleAll.get():
+        for m in [Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]:
+            m.set(True)
+        for c in [check0, check1, check2, check3, check5, check6, check7, check8]:
+            c.config(state=DISABLED)
+        lstc_box.delete(0, END)
+        manualButton.configure(state=DISABLED)
+
+    else:
+        for m in [Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]:
+            m.set(False)
+        for c in [check0, check1, check2, check3, check5, check6, check7, check8]:
+            c.config(state=NORMAL)
+        manualButton.configure(state=NORMAL)
+
 
 linkLabel = Label(root, text="")
 
@@ -299,7 +328,6 @@ def detect_run_testcase():
 
 
 def _runBtn():
-    # check_all_module()
 
     save_config(config_path, 'GENERAL', 'stage', stage1.get())
     save_config(config_path, 'GENERAL', 'version', version2.get())
@@ -319,6 +347,8 @@ def _runBtn():
         save_config(config_path, 'GENERAL', 'module', list_choiced_inform)
 
     if warning():
+        delete_report_offline()
+
         progress = Label(root, text='')
         progress.place(x=318, y=520)
 
@@ -418,6 +448,7 @@ def _manualBtn():
         for m in list_module_chosen:
             list_value += ([i[1] for i in config.items(m)])
     else:
+        print(moduleChoices)
         for m in moduleChoices:
             list_value += ([i[1] for i in config.items(m)])
 
@@ -584,6 +615,21 @@ def guide_ver_0_2_2():
         '''
     messagebox.showinfo(title='Release ver T10.2.2', message=guide_text)
 
+
+def guide_ver_0_2_3():
+    guide_text = '''
+        Release date: Mar 13,2020.
+
+        Content App:
+           + Delete old value in Excel file.
+           + Change ALL module logic: Disable all others  module, Clear Individual TC, Disabled Manual button.
+                       
+        Content Scripts:
+            + Optimize run time.
+
+        '''
+    messagebox.showinfo(title='Release ver T10.2.3', message=guide_text)
+
 menu = Menu(root)
 root.config(menu=menu)
 
@@ -597,6 +643,7 @@ release.add_command(label='T10.1.2', command=guide_ver_0_1_2)
 release.add_command(label='T10.1.3', command=guide_ver_0_1_3)
 release.add_command(label='T10.2.1', command=guide_ver_0_2_1)
 release.add_command(label='T10.2.2', command=guide_ver_0_2_2)
+release.add_command(label='T10.2.3', command=guide_ver_0_2_3)
 menu.add_cascade(label='Release notes', menu=release)
 
 # =======================================================================================
