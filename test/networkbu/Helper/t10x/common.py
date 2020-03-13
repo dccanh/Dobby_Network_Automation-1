@@ -721,16 +721,26 @@ def handle_winzard_welcome(driver, NEW_PASSWORD='abc123', exp_language='English'
     time.sleep(5)
 
 
+# def ping_to_address(PING_ADDRESS, PING_TIMES=4):
+#     import pingparsing
+#     ping_parser = pingparsing.PingParsing()
+#     transmitter = pingparsing.PingTransmitter()
+#     transmitter.destination = PING_ADDRESS
+#     transmitter.count = PING_TIMES
+#     result = transmitter.ping()
+#     json_str = json.dumps(ping_parser.parse(result).as_dict(), indent=4)
+#     str_to_json = json.loads(json_str)
+#     return str_to_json
 def ping_to_address(PING_ADDRESS, PING_TIMES=4):
-    import pingparsing
-    ping_parser = pingparsing.PingParsing()
-    transmitter = pingparsing.PingTransmitter()
-    transmitter.destination = PING_ADDRESS
-    transmitter.count = PING_TIMES
-    result = transmitter.ping()
-    json_str = json.dumps(ping_parser.parse(result).as_dict(), indent=4)
-    str_to_json = json.loads(json_str)
-    return str_to_json
+    import subprocess
+    result = subprocess.check_output(f'ping {str(PING_ADDRESS)} -n {str(PING_TIMES)}', shell=True)
+
+    for r in result.splitlines():
+        if r.decode('utf8').strip().startswith('Packets:'):
+            result_row = r.decode('utf8').strip()
+            packets_loss_rate = result_row.split('(')[1].split('%')[0]
+            break
+    return {"packets_loss_rate": packets_loss_rate}
 
 
 def network_interface_action(interface='Ethernet', action='enable'):
@@ -987,3 +997,5 @@ def check_enable_ethernet():
     if 'Ethernet adapter Ethernet:' not in interface.decode('utf8'):
         os.system(f'python {nw_interface_path} -i Ethernet -a enable')
         time.sleep(13)
+        os.system(f'netsh wlan disconnect')
+        time.sleep(2)
