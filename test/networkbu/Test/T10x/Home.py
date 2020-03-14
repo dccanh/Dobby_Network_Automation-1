@@ -1029,14 +1029,18 @@ class HOME(unittest.TestCase):
             time.sleep(1)
 
             driver.find_element_by_css_selector(home_img_lan_connection).click()
-            time.sleep(2)
-
+            time.sleep(1)
+            if len(driver.find_elements_by_css_selector(home_icon_fab)) == 0:
+                driver.find_element_by_css_selector(home_img_connection).click()
+                time.sleep(1)
+                driver.find_element_by_css_selector(home_img_lan_connection).click()
+            time.sleep(1)
             card_tabs = driver.find_elements_by_css_selector(card_tabs_cls)
             for t in card_tabs:
                 if t.text == 'IPv4':
                     t.click()
-                    time.sleep(1)
-
+                    break
+            time.sleep(1)
             # Click to icon fab
             driver.find_elements_by_css_selector(home_icon_fab)[0].click()
             # Btn more fab is displayed
@@ -1068,14 +1072,18 @@ class HOME(unittest.TestCase):
             goto_menu(driver, ele_home_tab, 0)
             time.sleep(1)
             driver.find_element_by_css_selector(home_img_lan_connection).click()
-            time.sleep(2)
-
+            time.sleep(1)
+            if len(driver.find_elements_by_css_selector(home_icon_fab)) == 0:
+                driver.find_element_by_css_selector(home_img_connection).click()
+                time.sleep(1)
+                driver.find_element_by_css_selector(home_img_lan_connection).click()
+                time.sleep(1)
             card_tabs = driver.find_elements_by_css_selector(card_tabs_cls)
             for t in card_tabs:
                 if t.text == 'IPv6':
                     t.click()
-                    time.sleep(1)
-
+                    break
+            time.sleep(1)
             # Click to icon fab
             driver.find_elements_by_css_selector(home_icon_fab)[0].click()
             # Btn more fab is displayed
@@ -1941,18 +1949,6 @@ class HOME(unittest.TestCase):
         current_pw = get_config('ACCOUNT', 'password')
 
         try:
-            time.sleep(5)
-            os.system(f'netsh wlan disconnect')
-            time.sleep(5)
-
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(10)
-            self.list_steps.append('[Pass] Precondition Successfully.')
-        except:
-            self.list_steps.append('[Fail] Precondition Fail')
-            list_step_fail.append('Assertion wong.')
-
-        try:
             grand_login(driver)
 
             # CLick Device Image
@@ -2018,7 +2014,7 @@ class HOME(unittest.TestCase):
         try:
             time.sleep(5)
             new_2g_wf_name = api_change_wifi_setting(URL_2g)
-            time.sleep(3)
+            time.sleep(10)
             write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name, new_pw=current_pw)
             time.sleep(3)
 
@@ -2040,7 +2036,7 @@ class HOME(unittest.TestCase):
             time.sleep(5)
             # Re-Load
             driver.refresh()
-            time.sleep(10)
+            time.sleep(7)
             check_ota_auto_update(driver)
             time.sleep(2)
             # Click Edit

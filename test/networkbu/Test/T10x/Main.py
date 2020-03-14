@@ -313,6 +313,7 @@ class MAIN(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~ Change Language and verify
         try:
+            wait_ping('192.168.1.1')
             # Goto Homepage
             grand_login(driver)
             time.sleep(1)
@@ -1860,14 +1861,14 @@ class MAIN(unittest.TestCase):
             self.assertTrue(check["result"])
             self.list_steps.append(
                 '[Pass] 2. Check title Change PW, message, Default Login ID, list Label, list placeholder. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 2. Check title Change PW, message , Default Login ID, list Label, list placeholder'
-               f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+               f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('2. Assertion wong')
 

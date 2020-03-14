@@ -329,7 +329,8 @@ class MEDIASHARE(unittest.TestCase):
         # ===================================================================
         PATH_FILE_9 = get_config('MEDIA_SHARE', 'ms04_file_9', input_data_path)
         fake = Faker()
-
+        DESCRIPTION_4 = get_config('MEDIA_SHARE', 'ms04_desc_4', input_data_path)
+        PATH_FILE_1 = get_config('MEDIA_SHARE', 'ms04_file_1', input_data_path)
         try:
             grand_login(driver)
             time.sleep(5)
@@ -341,7 +342,40 @@ class MEDIASHARE(unittest.TestCase):
             # Before delete
             network_table = network_block.find_elements_by_css_selector(tbody)
             if len(network_table) == 0:
-                before_delete = 0
+                network_block.find_element_by_css_selector(add_class).click()
+                # Edit mode
+                edit_field = network_block.find_element_by_css_selector(edit_mode)
+
+                # Description
+                description_field = edit_field.find_element_by_css_selector(description)
+                description_field.find_element_by_css_selector(input).send_keys(DESCRIPTION_4)
+
+                # Folder path
+                path_field = edit_field.find_element_by_css_selector(path)
+                path_field.find_element_by_css_selector(input).click()
+                time.sleep(0.5)
+                # Choose path
+                driver.find_element_by_css_selector(tree_icon).click()
+                time.sleep(0.2)
+
+                ls_path_lv1 = driver.find_elements_by_css_selector(path_name_lv1)
+                for o in ls_path_lv1:
+                    if o.text == PATH_FILE_1:
+                        ActionChains(driver).move_to_element(o).click().perform()
+                        break
+                # OK
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_save).click()
+                time.sleep(1)
+                driver.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                before_delete = 1
+
             else:
                 before_delete = len(network_block.find_elements_by_css_selector(tbody))
             # Ke thua tu Media share 04
@@ -396,8 +430,8 @@ class MEDIASHARE(unittest.TestCase):
             desc_check = network_table[0].find_element_by_css_selector(description).text
             path_check = network_table[0].find_element_by_css_selector(path).text.split('/')[-1]
             time.sleep(0.5)
-            per_write_first_row = network_table[0].find_element_by_css_selector(permission_write_check_box_first_row)
-            per_write_first_row_check = per_write_first_row.is_selected()
+            per_write_first_row_check = len(network_table[0].find_elements_by_css_selector(permission_write_check_box_first_row)) > 0
+
 
             list_actual1 = [desc_check, path_check, permission_status_before]
             list_expected1 = [fake_name, PATH_FILE_9, not(per_write_first_row_check)]
