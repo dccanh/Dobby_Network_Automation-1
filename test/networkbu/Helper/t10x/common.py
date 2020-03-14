@@ -740,7 +740,7 @@ def ping_to_address(PING_ADDRESS, PING_TIMES=4):
             result_row = r.decode('utf8').strip()
             packets_loss_rate = result_row.split('(')[1].split('%')[0]
             break
-    return {"packets_loss_rate": packets_loss_rate}
+    return {"packet_loss_rate": float(packets_loss_rate)}
 
 
 def network_interface_action(interface='Ethernet', action='enable'):
@@ -822,7 +822,7 @@ def write_data_to_xml(xml_path, new_name='',
 
             rows_hex = [i.strip() for i in data.splitlines() if i.strip().startswith('<hex>')][0]
             old = rows_hex.split('<hex>')[1].split('</hex>')[0]
-            data = data.replace(old, new_name.encode('utf-8').hex())
+            data = data.replace(old, new_name.encode('utf-8').hex().upper())
 
         if new_pw != '':
             rows_hex = [i.strip() for i in data.splitlines() if i.strip().startswith('<keyMaterial>')][0]

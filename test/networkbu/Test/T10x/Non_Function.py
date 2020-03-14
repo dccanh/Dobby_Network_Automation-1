@@ -94,33 +94,35 @@ class NON_FUNCTION(unittest.TestCase):
         PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
         YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
         try:
+            ping_result = 0.0
+
             def thread_ping():
                 global ping_result
-                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)
+                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
 
+            count_interrupt = 0
             def thread_youtube():
                 global count_interrupt, live_time
-                count_interrupt = 0
-                ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
-                if ping_result['packet_loss_rate'] != 100.0:
-                    time.sleep(2)
-                    driver.get(YOUTUBE_URL)
-                    time.sleep(5)
+                # ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
+                # if ping_result['packet_loss_rate'] != 100.0:
+                time.sleep(2)
+                driver.get(YOUTUBE_URL)
+                time.sleep(5)
 
+                video_form = len(driver.find_elements_by_css_selector(ele_playing))
+
+                count_video = 0
+                while video_form == 0:
+                    time.sleep(1)
                     video_form = len(driver.find_elements_by_css_selector(ele_playing))
-
-                    count_video = 0
-                    while video_form == 0:
-                        time.sleep(1)
-                        video_form = len(driver.find_elements_by_css_selector(ele_playing))
-                        # print(count_video)
-                        count_video += 1
-                        if count_video >= 30:
-                            live_time = 0
-                            break
-                    time.sleep(3)
-                    live_time = 0
-                    while live_time <= PING_TIMES:
+                    # print(count_video)
+                    count_video += 1
+                    if count_video >= 30:
+                        live_time = 0
+                        break
+                time.sleep(3)
+                live_time = 0
+                while live_time <= PING_TIMES:
                         buff_time = len(driver.find_elements_by_css_selector(ele_buffering))
                         time.sleep(1)
                         live_time += 1
@@ -167,13 +169,13 @@ class NON_FUNCTION(unittest.TestCase):
                                    f'{str(live_time)} live times', '[END TC]']
                 write_ggsheet(key, test_steps_fail, name, duration, self.start_time)
 
-            list_actual1 = [ping_result['packet_loss_rate'] <= 1.0]
+            list_actual1 = [ping_result <= 1.0]
             list_expected1 = [return_true]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
-                f'Loss rate {ping_result["packet_loss_rate"]} '
+                f'Loss rate {str(ping_result)} '
                 f'on {str(PING_TIMES)} seconds. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
@@ -181,7 +183,7 @@ class NON_FUNCTION(unittest.TestCase):
         except:
             self.list_steps.append(
                 f'[Fail] 1, 2. Check Ping {PING_ADDRESS}'
-                f'Loss rate {ping_result["packet_loss_rate"]}'
+                f'Loss rate {str(ping_result)}'
                 f' on {str(PING_TIMES)} seconds.'
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
@@ -237,39 +239,41 @@ class NON_FUNCTION(unittest.TestCase):
             self.list_steps.append('[FAIL] Precondition connect 2G Wifi Fail')
 
         try:
+            ping_result = 0.0
+
             def thread_ping():
                 global ping_result
-                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)
+                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
 
+            count_interrupt = 0
             def thread_youtube():
                 global count_interrupt, live_time
-                count_interrupt = 0
-                ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
-                if ping_result['packet_loss_rate'] != 100.0:
-                    time.sleep(2)
-                    driver.get(YOUTUBE_URL)
-                    time.sleep(5)
+                # ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
+                # if ping_result['packet_loss_rate'] != 100.0:
+                time.sleep(2)
+                driver.get(YOUTUBE_URL)
+                time.sleep(5)
 
+                video_form = len(driver.find_elements_by_css_selector(ele_playing))
+
+                count_video = 0
+                while video_form == 0:
+                    time.sleep(1)
                     video_form = len(driver.find_elements_by_css_selector(ele_playing))
-
-                    count_video = 0
-                    while video_form == 0:
-                        time.sleep(1)
-                        video_form = len(driver.find_elements_by_css_selector(ele_playing))
-                        # print(count_video)
-                        count_video += 1
-                        if count_video >= 30:
-                            live_time = 0
-                            break
-                    time.sleep(3)
-                    live_time = 0
-                    while live_time <= PING_TIMES:
-                        buff_time = len(driver.find_elements_by_css_selector(ele_buffering))
-                        time.sleep(1)
-                        live_time += 1
-                        print('Live time ' + str(live_time))
-                        if buff_time == 1:
-                            count_interrupt += 1
+                    # print(count_video)
+                    count_video += 1
+                    if count_video >= 30:
+                        live_time = 0
+                        break
+                time.sleep(3)
+                live_time = 0
+                while live_time <= PING_TIMES:
+                    buff_time = len(driver.find_elements_by_css_selector(ele_buffering))
+                    time.sleep(1)
+                    live_time += 1
+                    print('Live time ' + str(live_time))
+                    if buff_time == 1:
+                        count_interrupt += 1
 
             thread1 = threading.Thread(target=thread_ping)
             thread2 = threading.Thread(target=thread_youtube)
@@ -315,20 +319,20 @@ class NON_FUNCTION(unittest.TestCase):
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
             time.sleep(15)
 
-            list_actual1 = [ping_result['packet_loss_rate'] <= 1.0]
+            list_actual1 = [ping_result <= 1.0]
             list_expected1 = [return_true]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
-                f'Loss rate {str(ping_result["packet_loss_rate"])} on {str(PING_TIMES)} seconds. '
+                f'Loss rate {str(ping_result)} on {str(PING_TIMES)} seconds. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; '
-                f'Loss rate {str(ping_result["packet_loss_rate"])} on {str(PING_TIMES)} seconds. '
+                f'Loss rate {str(ping_result)} on {str(PING_TIMES)} seconds. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
@@ -359,12 +363,11 @@ class NON_FUNCTION(unittest.TestCase):
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
         # =============================================================================
-        PING_ADDRESS = get_config('NON_FUNCTION', 'nf02_ping_address', input_data_path)
-        PING_YOUTUBE = get_config('NON_FUNCTION', 'nf02_ping_youtube', input_data_path)
-        YOUTUBE_URL = get_config('NON_FUNCTION', 'nf02_youtube_url', input_data_path)
+        PING_ADDRESS = get_config('NON_FUNCTION', 'nf_ping_address', input_data_path)
+        PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
+        YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
 
         try:
-            time.sleep(5)
             new_5g_wf_name = api_change_wifi_setting(URL_5g)
             time.sleep(10)
             write_data_to_xml(wifi_default_file_path, new_name=new_5g_wf_name)
@@ -384,33 +387,34 @@ class NON_FUNCTION(unittest.TestCase):
             self.list_steps.append('[FAIL] Precondition connect 5G Wifi Fail')
 
         try:
+            ping_result = 0.0
             def thread_ping():
                 global ping_result
-                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)
+                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
 
+            count_interrupt = 0
             def thread_youtube():
                 global count_interrupt, live_time
-                count_interrupt = 0
-                ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
-                if ping_result['packet_loss_rate'] != 100.0:
-                    time.sleep(2)
-                    driver.get(YOUTUBE_URL)
-                    time.sleep(5)
+                # ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
+                # if ping_result['packet_loss_rate'] != 100.0:
+                time.sleep(2)
+                driver.get(YOUTUBE_URL)
+                time.sleep(5)
 
+                video_form = len(driver.find_elements_by_css_selector(ele_playing))
+
+                count_video = 0
+                while video_form == 0:
+                    time.sleep(1)
                     video_form = len(driver.find_elements_by_css_selector(ele_playing))
-
-                    count_video = 0
-                    while video_form == 0:
-                        time.sleep(1)
-                        video_form = len(driver.find_elements_by_css_selector(ele_playing))
-                        # print(count_video)
-                        count_video += 1
-                        if count_video >= 30:
-                            live_time = 0
-                            break
-                    time.sleep(3)
-                    live_time = 0
-                    while live_time <= PING_TIMES:
+                    # print(count_video)
+                    count_video += 1
+                    if count_video >= 30:
+                        live_time = 0
+                        break
+                time.sleep(3)
+                live_time = 0
+                while live_time <= PING_TIMES:
                         buff_time = len(driver.find_elements_by_css_selector(ele_buffering))
                         time.sleep(1)
                         live_time += 1
@@ -458,13 +462,14 @@ class NON_FUNCTION(unittest.TestCase):
                                    f'{str(live_time)} live times', '[END TC]']
                 write_ggsheet(key, test_steps_fail, name, duration, self.start_time)
 
-            list_actual1 = [ping_result['packet_loss_rate'] <= 1.0]
+            actual_check_ping = ping_result <= 1.0
+            list_actual1 = [actual_check_ping]
             list_expected1 = [return_true]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
-                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'Loss rate: {str(ping_result)} '
                 f'on {str(PING_TIMES)} seconds. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
@@ -472,7 +477,7 @@ class NON_FUNCTION(unittest.TestCase):
         except:
             self.list_steps.append(
                 f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; '
-                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'Loss rate: {str(ping_result)} '
                 f'on {str(PING_TIMES)} seconds'
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
@@ -504,7 +509,7 @@ class NON_FUNCTION(unittest.TestCase):
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
         # =============================================================================
-        PING_ADDRESS = get_config('NON_FUNCTION', 'nf02_ping_address', input_data_path)
+        PING_ADDRESS = get_config('NON_FUNCTION', 'nf_ping_address', input_data_path)
         NEW_PASSWORD = get_config('COMMON', 'new_pw', input_data_path)
 
         try:
@@ -595,9 +600,11 @@ class NON_FUNCTION(unittest.TestCase):
             self.list_steps.append('[Fail] Precondition connect 5G Wifi Fail')
 
         try:
+            ping_result = 0.0
+
             def thread_ping():
                 global ping_result
-                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)
+                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
             thread1 = threading.Thread(target=thread_ping)
             thread1.start()
 
@@ -609,13 +616,13 @@ class NON_FUNCTION(unittest.TestCase):
 
             time.sleep(2)
 
-            list_actual1 = [ping_result['packet_loss_rate'] <= 1.0]
+            list_actual1 = [ping_result <= 1.0]
             list_expected1 = [return_true]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
-                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'Loss rate: {str(ping_result)} '
                 f'on {str(PING_TIMES)} seconds. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
@@ -623,7 +630,7 @@ class NON_FUNCTION(unittest.TestCase):
         except:
             self.list_steps.append(
                 f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; '
-                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'Loss rate: {str(ping_result)} '
                 f'on {str(PING_TIMES)} seconds. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
@@ -655,7 +662,7 @@ class NON_FUNCTION(unittest.TestCase):
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
         # ====================================================================
-        PING_ADDRESS = get_config('NON_FUNCTION', 'nf02_ping_address', input_data_path)
+        PING_ADDRESS = get_config('NON_FUNCTION', 'nf_ping_address', input_data_path)
         NEW_PASSWORD = get_config('COMMON', 'new_pw', input_data_path)
         try:
             login(driver)
@@ -756,9 +763,11 @@ class NON_FUNCTION(unittest.TestCase):
             self.list_steps.append('[Fail] Precondition connect 2G Wifi Fail')
 
         try:
+            ping_result = 0.0
+
             def thread_ping():
                 global ping_result
-                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)
+                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
             thread1 = threading.Thread(target=thread_ping)
             thread1.start()
 
@@ -770,13 +779,13 @@ class NON_FUNCTION(unittest.TestCase):
 
             time.sleep(2)
 
-            list_actual1 = [ping_result['packet_loss_rate'] <= 1.0]
+            list_actual1 = [ping_result <= 1.0]
             list_expected1 = [return_true]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
-                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'Loss rate: {str(ping_result)} '
                 f'on {str(PING_TIMES)} seconds. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
@@ -784,7 +793,7 @@ class NON_FUNCTION(unittest.TestCase):
         except:
             self.list_steps.append(
                 f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; '
-                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'Loss rate: {str(ping_result)} '
                 f'on {str(PING_TIMES)} seconds'
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
@@ -816,7 +825,7 @@ class NON_FUNCTION(unittest.TestCase):
         # Get account information from web server and write to config.txt
         user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
         # ==========================================================================
-        PING_ADDRESS = get_config('NON_FUNCTION', 'nf02_ping_address', input_data_path)
+        PING_ADDRESS = get_config('NON_FUNCTION', 'nf_ping_address', input_data_path)
         NEW_PASSWORD = get_config('COMMON', 'new_pw', input_data_path)
         try:
             login(driver)
@@ -917,9 +926,11 @@ class NON_FUNCTION(unittest.TestCase):
             self.list_steps.append('[Fail] Precondition connect 5G Wifi Fail')
 
         try:
+            ping_result = 0.0
+
             def thread_ping():
                 global ping_result
-                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)
+                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
 
             thread1 = threading.Thread(target=thread_ping)
             thread1.start()
@@ -932,20 +943,20 @@ class NON_FUNCTION(unittest.TestCase):
 
             time.sleep(2)
 
-            list_actual1 = [ping_result['packet_loss_rate'] <= 1.0]
+            list_actual1 = [ping_result <= 1.0]
             list_expected1 = [return_true]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
-                f'Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'Loss rate: {str(ping_result)} '
                 f'on {str(PING_TIMES)} seconds. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result["packet_loss_rate"])} '
+                f'[Fail] 1, 2. Check Ping {PING_ADDRESS}; Loss rate: {str(ping_result)} '
                 f'on {str(PING_TIMES)} seconds'
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
