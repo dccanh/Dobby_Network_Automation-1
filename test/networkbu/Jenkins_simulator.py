@@ -117,7 +117,8 @@ convert_module = {
     'SECURITY': 'Security.py',
     'ADVANCED': 'Advanced.py',
     'NON_FUNCTION': 'Non_Function.py',
-    'ALL': ['Main.py', 'Home.py', 'Wireless.py', 'Network.py', 'MediaShare.py', 'Security.py', 'Advanced.py', 'Non_Function.py']
+    'ALL': ['Main.py', 'Home.py', 'Wireless.py', 'Network.py', 'MediaShare.py', 'Security.py', 'Advanced.py',
+            'Non_Function.py']
 }
 
 root = Tk()
@@ -133,7 +134,6 @@ label.place(x=2, y=0)
 titleLabel = Label(root, text="HVN NETWORK AUTOMATION TOOL", font=40)
 titleLabel.place(x=140, y=0)
 
-
 img_down = Image.open('./Image/down-icon.png')
 photo_down = ImageTk.PhotoImage(img_down)
 img_up = Image.open('./Image/up-icon.png')
@@ -144,7 +144,6 @@ img_manual = Image.open('./Image/hand-click.png')
 photo_manual = ImageTk.PhotoImage(img_manual)
 img_abort = Image.open('./Image/abort.png')
 photo_abort = ImageTk.PhotoImage(img_abort)
-
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 labelFile1 = Label(root, text="Tester:")
@@ -176,16 +175,13 @@ number3.pack()
 cusNumber3.set(get_config(config_path, 'GENERAL', 'serial_number'))
 number3.place(x=140, y=140, height=25, width=330)
 
-
 cusPort4 = StringVar(None)
 choices = serial_ports()
 cusPort4.set(choices[0])
 port4 = OptionMenu(root, cusPort4, *choices)
 port4.place(x=140, y=190, height=30, width=330)
-port4['background']='white'
+port4['background'] = 'white'
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# moduleChoices = ['MAIN', 'HOME', 'WIRELESS', 'NETWORK', 'QOS', 'MEDIASHARE', 'SECURITY', 'ADVANCED', 'NON_FUNCTION']#
 moduleChoices = ['MAIN', 'HOME', 'WIRELESS', 'NETWORK', 'MEDIASHARE', 'SECURITY', 'ADVANCED', 'NON_FUNCTION']
 cusModuleAll = BooleanVar()
 check2 = Checkbutton(root, text='ALL', variable=cusModuleAll, command=lambda: check_all_module())
@@ -219,22 +215,6 @@ check8.place(x=140 + 2 * 100, y=270 + 60)
 check4 = Checkbutton(root, text='QoS', state='disabled').place(x=140 + 1 * 100, y=270 + 30)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def check_all_module():
-    if cusModuleAll.get():
-        for m in [Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]:
-            m.set(True)
-        for c in [check0, check1, check2, check3, check5, check6, check7, check8]:
-            c.config(state=DISABLED)
-        lstc_box.delete(0, END)
-        manualButton.configure(state=DISABLED)
-
-    else:
-        for m in [Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]:
-            m.set(False)
-        for c in [check0, check1, check2, check3, check5, check6, check7, check8]:
-            c.config(state=NORMAL)
-        manualButton.configure(state=NORMAL)
-
 
 linkLabel = Label(root, text="")
 
@@ -254,9 +234,17 @@ loopBox = Spinbox(root, from_=1, to_=10)
 loopBox.pack()
 loopBox.place(x=140, y=480, width=50)
 
+MakeReport = BooleanVar()
+report_val = Checkbutton(root, text='Report to new sheet', variable=MakeReport)
+report_val.select()
+report_val.place(x=80, y=520)
+
+progress = Label(root, text='Progress:')
+progress.place(x=250, y=520)
+
 
 def _advanceBtn():
-
+    global MakeReport
 
     global now_x, now_y
     now_x = root.winfo_x()
@@ -268,19 +256,26 @@ def _advanceBtn():
         root.geometry(f"520x440+{str(now_x)}+{str(now_y)}")
         advanceButton.configure(text=' More', image=photo_down)
 
-    global MakeReport
-    MakeReport = BooleanVar()
-    report_val = Checkbutton(root, text='Report to new sheet', variable=MakeReport)
-    report_val.select()
-    report_val.place(x=80, y=520)
 
-    progressLabel = StringVar()
-    progress = Label(root, text='Progress:')
-    progress.place(x=250, y=520)
+def check_all_module():
+    if cusModuleAll.get():
+        for m in [Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]:
+            m.set(True)
+        for c in [check0, check1, check2, check3, check5, check6, check7, check8]:
+            c.config(state=DISABLED)
+        lstc_box.delete(0, END)
+        manualButton.configure(state=DISABLED)
+
+    else:
+        for m in [Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]:
+            m.set(False)
+        for c in [check0, check1, check2, check3, check5, check6, check7, check8]:
+            c.config(state=NORMAL)
+        manualButton.configure(state=NORMAL)
 
 
 def find_chosen_module():
-    list_modules = [cusModuleAll, Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]#, Module4
+    list_modules = [cusModuleAll, Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]  # , Module4
     list_choiced = list()
     for tx, va in zip(['ALL'] + moduleChoices, list_modules):
         if va.get():
@@ -298,7 +293,6 @@ def detect_run_testcase():
             print('cd Test/T10x && python Before_test.py')
             # os.system('TIMEOUT /T 20')
             os.system('cd Test/T10x && python Before_test.py')
-
 
         config_data = configparser.RawConfigParser()
         config_data.read(testcase_data_path)
@@ -320,7 +314,6 @@ def detect_run_testcase():
                     print(f'cd Test/T10x &&  python {convert_module[module]}')
                     os.system(f'cd Test/T10x &&  python {convert_module[module]}')
 
-
         print('cd Test/T10x && python After_test.py')
         os.system('cd Test/T10x && python After_test.py')
     else:
@@ -328,7 +321,6 @@ def detect_run_testcase():
 
 
 def _runBtn():
-
     save_config(config_path, 'GENERAL', 'stage', stage1.get())
     save_config(config_path, 'GENERAL', 'version', version2.get())
     save_config(config_path, 'GENERAL', 'serial_number', number3.get())
@@ -371,10 +363,7 @@ def warning():
     return messagebox.askyesno('Confirm', f'Are you sure to run?')
 
 
-
-
 def _manualBtn():
-
     manualButton.configure(state='disable')
     load_database_tc(MAIN)
     load_database_tc(HOME)
@@ -398,7 +387,6 @@ def _manualBtn():
 
     frame = Frame(window, relief=RAISED, borderwidth=12)
     frame.pack(fill=BOTH, expand=True)
-
 
     def _addColor():
         selected = listBox.curselection()
@@ -493,6 +481,7 @@ def _manualBtn():
         # Destroy window and enable Manual button
         manualButton.configure(state='normal')
         window.destroy()
+
     window.protocol("WM_DELETE_WINDOW", on_closing)
 
     window.mainloop()
@@ -507,14 +496,13 @@ def _abortBtn():
     #     os.system('taskkill /IM "pythonw.exe" /F')
     #     os.system('taskkill /IM "cmd.exe" /F')
     #     os.system('_run_app.bat')
-        # os.system('taskkill /IM "python.exe" /F')
-        # root.destroy()
+    # os.system('taskkill /IM "python.exe" /F')
+    # root.destroy()
 
 
 def run():
     threadRun = threading.Thread(target=_runBtn)
     threadRun.start()
-
 
 
 def abort():
@@ -523,17 +511,16 @@ def abort():
     # exit_Btn()
 
 
-# exitButton = Button(root, text="Exit", command=exit_Btn, height=1, width=10, borderwidth=4)
-# exitButton.place(x=170, y=370)
-
-
 mergeButton = Button(root, text=" Run", command=run, height=20, width=80, borderwidth=4, image=photo_run, compound=LEFT)
 mergeButton.place(x=250, y=370)
-advanceButton = Button(root, text=" More", command=_advanceBtn, height=20, width=80, borderwidth=4, image=photo_down, compound=LEFT)
+advanceButton = Button(root, text=" More", command=_advanceBtn, height=20, width=80, borderwidth=4, image=photo_down,
+                       compound=LEFT)
 advanceButton.place(x=360, y=370)
-manualButton = Button(root, text=" Manual", command=_manualBtn, height=20, width=80, borderwidth=4, image=photo_manual, compound=LEFT)
+manualButton = Button(root, text=" Manual", command=_manualBtn, height=20, width=80, borderwidth=4, image=photo_manual,
+                      compound=LEFT)
 manualButton.place(x=250, y=470)
-abortButton = Button(root, text=" Abort", command=abort, height=20, width=80, borderwidth=4, image=photo_abort, compound=LEFT)
+abortButton = Button(root, text=" Abort", command=abort, height=20, width=80, borderwidth=4, image=photo_abort,
+                     compound=LEFT)
 abortButton.place(x=360, y=470)
 
 
@@ -541,7 +528,7 @@ abortButton.place(x=360, y=470)
 def show_guideline():
     guide_text = '''
     This is the User manual of HUMAX T10X AUTOMATION desktop application.
-    
+
     <Content of guide line>
     '''
     messagebox.showinfo(title='Application Manual', message=guide_text)
@@ -584,7 +571,7 @@ def guide_ver_0_1_3():
 def guide_ver_0_2_1():
     guide_text = '''
         Release date: Mar 11,2020.
-        
+
         Content App:
            + Change app's icon.
            + Add HUMAX logo.
@@ -592,7 +579,7 @@ def guide_ver_0_2_1():
            + Change label: Tester, Module, Test Suite, More >>, Less <<, Goto report.
            + Remove Edit button.
            + Change type of Serial port.
-        
+
         Content Scripts:
             + Add module name in testcase name.
             + Integration test and fixed bugs.
@@ -608,10 +595,10 @@ def guide_ver_0_2_2():
            + Resize to small icon.
            + Ignore feature ABORT.
            + Fixed missing run Non_function when Test suite is ALL.
-           
+
         Content Scripts:
             + Add feature report to excel file.
-            
+
         '''
     messagebox.showinfo(title='Release ver T10.2.2', message=guide_text)
 
@@ -623,12 +610,13 @@ def guide_ver_0_2_3():
         Content App:
            + Delete old value in Excel file.
            + Change ALL module logic: Disable all others  module, Clear Individual TC, Disabled Manual button.
-                       
+
         Content Scripts:
             + Optimize run time.
 
         '''
     messagebox.showinfo(title='Release ver T10.2.3', message=guide_text)
+
 
 menu = Menu(root)
 root.config(menu=menu)

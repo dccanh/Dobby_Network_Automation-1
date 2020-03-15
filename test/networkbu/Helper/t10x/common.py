@@ -666,10 +666,10 @@ def handle_winzard_welcome(driver, NEW_PASSWORD='abc123', exp_language='English'
         if t.text == exp_language:
             t.click()
             break
-    time.sleep(3)
+    time.sleep(1)
     # Click to time zone
     driver.find_element_by_css_selector(welcome_time_zone).click()
-    time.sleep(3)
+    time.sleep(1)
 
     # Choose time zone in drop down: Vn zone GMT +7
     ls_time_zone = driver.find_elements_by_css_selector(welcome_list_time_zone)
@@ -679,7 +679,7 @@ def handle_winzard_welcome(driver, NEW_PASSWORD='abc123', exp_language='English'
             t.click()
             break
 
-    time.sleep(3)
+    time.sleep(1)
     # Click start btn
     driver.find_element_by_css_selector(welcome_start_btn).click()
     time.sleep(3)
@@ -693,20 +693,20 @@ def handle_winzard_welcome(driver, NEW_PASSWORD='abc123', exp_language='English'
         time.sleep(0.5)
 
     # Next Change pw
-    time.sleep(3)
+    time.sleep(1)
     wait_visible(driver, welcome_next_btn)
     next_btn = driver.find_element_by_css_selector(welcome_next_btn)
     if not next_btn.get_property('disabled'):
         next_btn.click()
-    time.sleep(5)
+    time.sleep(3)
 
     while True:
-        time.sleep(2)
+        time.sleep(1)
         wait_visible(driver, welcome_next_btn)
         next_btn = driver.find_element_by_css_selector(welcome_next_btn)
         if not next_btn.get_property('disabled'):
             next_btn.click()
-        time.sleep(5)
+        time.sleep(3)
 
         if len(driver.find_elements_by_css_selector(welcome_let_go_btn)) > 0:
             break
@@ -718,7 +718,7 @@ def handle_winzard_welcome(driver, NEW_PASSWORD='abc123', exp_language='English'
     wait_popup_disappear(driver, dialog_loading)
     time.sleep(2)
     wait_visible(driver, home_view_wrap)
-    time.sleep(5)
+    time.sleep(3)
 
 
 # def ping_to_address(PING_ADDRESS, PING_TIMES=4):

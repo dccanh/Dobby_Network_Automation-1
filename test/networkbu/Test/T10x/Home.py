@@ -1503,31 +1503,38 @@ class HOME(unittest.TestCase):
             # Check USB block components
             usb_card = driver.find_elements_by_css_selector(ele_usb_card)[0]
 
-            # Click to Remove
-            usb_card.find_element_by_css_selector(home_icon_fab).click()
-            # Btn more fab is displayed
-            time.sleep(1)
-            more_fab = usb_card.find_element_by_css_selector(home_icon_more_fab).is_displayed()
-
-            # Click to icon more fab
-            driver.find_element_by_css_selector(home_icon_more_fab).click()
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(3)
+            # Click to =
+            icon_fab_displayed = False
+            icon_more_fab_displayed = False
+            if len(usb_card.find_elements_by_css_selector(home_icon_fab)) > 0:
+                usb_card.find_element_by_css_selector(home_icon_fab).click()
+                icon_fab_displayed = True
+                # Btn more fab is displayed
+                time.sleep(1)
+                if len(usb_card.find_elements_by_css_selector(home_icon_more_fab)) > 0:
+                    # more_fab = usb_card.find_element_by_css_selector(home_icon_more_fab).is_displayed()
+                    icon_more_fab_displayed = True
+                    # Click to icon more fab
+                    driver.find_element_by_css_selector(home_icon_more_fab).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(1)
 
             current_tab = detect_current_menu(driver)
 
-            list_actual1 = [more_fab, current_tab]
-            list_expected1 = [return_true, ('MEDIA SHARE', 'USB')]
+            list_actual1 = [icon_fab_displayed, icon_more_fab_displayed, current_tab]
+            list_expected1 = [return_true, return_true, ('MEDIA SHARE', 'USB')]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Click ||| btn; Check Display +; Click +; Check Display target USB page. '
+                '[Pass] 1,2,3. Click and check display icon ||| btn; Click and check display icon +; '
+                'Check Display target USB page. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail]1,2,3. Click ||| btn; Check Display +; Click +; Check Display target USB page. '
+                f'[Fail] 1,2,3. Click and check display icon ||| btn; Click and check display icon +; '
+                f'Check Display target USB page. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')

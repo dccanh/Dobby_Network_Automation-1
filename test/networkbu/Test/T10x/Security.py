@@ -27,14 +27,14 @@ class SECURITY(unittest.TestCase):
         try:
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         except:
             # Connect by wifi if internet is down to handle exception for PPPoE
             os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
             time.sleep(1)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.time_stamp)
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
             time.sleep(5)
             # Connect by LAN again
             os.system('netsh wlan disconnect')
