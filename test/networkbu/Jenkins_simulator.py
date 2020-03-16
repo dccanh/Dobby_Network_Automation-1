@@ -347,7 +347,7 @@ def _runBtn():
         linkLabel.configure(text='< << Click here to go to report page >> >', fg='blue', anchor="center")
         linkLabel.pack()
         linkLabel.place(x=180, y=410)
-        linkLabel.bind("<Button-1>", lambda e: callback("https://sum.vn/Rx5Zy"))
+        linkLabel.bind("<Button-1>", lambda e: callback("https://docs.google.com/spreadsheets/d/1kliw4-QTK4g3iz8fpbiyo-62L1dZZa5mCRTTMkBaLu4/edit?pli=1#gid=0"))
 
         for i in range(int(loopBox.get())):
             print(f'\n**************\n_- Run times {str(i + 1)} -_\n')
