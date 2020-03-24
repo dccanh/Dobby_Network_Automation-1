@@ -715,9 +715,9 @@ def handle_winzard_welcome(driver, NEW_PASSWORD='abc123', exp_language='English'
     # Write config
     save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD)
     wait_popup_disappear(driver, dialog_loading)
-    time.sleep(2)
+    time.sleep(1)
     wait_visible(driver, home_view_wrap)
-    time.sleep(3)
+
 
 
 def ping_to_address(PING_ADDRESS, PING_TIMES=4):

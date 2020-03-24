@@ -13,6 +13,7 @@ main23_new_pw = !@#^&*()_+-={}|[]:.?
 main24_wrong_pw = acb000
 main24_new_pw = acb123
 main24_retype_new_pw = acb321
+main25_new_pw = abc000
 main35_new_pw = abc321
 main36_ssid_wifi_4 = (!@#^&*()+_-={}[]|:.?~`$%\;'"<>,/)
 main36_ssid_wifi_5_1 =     123

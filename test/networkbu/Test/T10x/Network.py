@@ -1025,8 +1025,147 @@ class NETWORK(unittest.TestCase):
                 '8. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
+
+    def test_05_NETWORK_Dual_WAN_Enable_Disable(self):
+        self.key = 'NETWORK_05'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+        try:
+            grand_login(driver)
+            # Enable Dual WAN
+            goto_menu(driver, network_tab, network_internet_tab)
+            # Title
+            nw_title_page = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual = [nw_title_page]
+            list_expected = ['Network > Internet']
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1, 2. Login and Check title of Network Internet. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2.Login and Check title of Network Internet. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('1, 2. Assertion wong.')
+
+        try:
+            _check_dual_selected = driver.find_element_by_css_selector(dual_wan_input)
+            if not _check_dual_selected.is_selected():
+                driver.find_element_by_css_selector(dual_wan_button).click()
+
+            dual_wan_block = driver.find_element_by_css_selector(dual_wan_block_ele)
+            # Apply
+            dual_wan_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+
+            dual_wan_block = driver.find_element_by_css_selector(dual_wan_block_ele)
+            # Settings
+            dual_wan_labels = dual_wan_block.find_elements_by_css_selector(label_name_in_2g)
+            dual_wan_fields = dual_wan_block.find_elements_by_css_selector(wrap_input)
+            for l, f in zip(dual_wan_labels, dual_wan_fields):
+                if l.text == 'Dual WAN':
+                    default_dual_wan = f.find_element_by_css_selector(input).is_selected()
+                    continue
+
+                if l.text == 'Primary WAN':
+                    default_primary_wan = f.find_element_by_css_selector(ele_data_placeholder).text
+                    f.click()
+                    time.sleep(0.5)
+                    ls_option = f.find_elements_by_css_selector(active_drop_down_values)
+                    total_value_primary = [o.text for o in ls_option]
+                    f.click()
+                    time.sleep(0.5)
+                    continue
+
+                if l.text == 'Secondary WAN':
+                    default_secondary_wan = f.find_element_by_css_selector(ele_data_placeholder).text
+                    f.click()
+                    time.sleep(0.5)
+                    ls_option = f.find_elements_by_css_selector(active_drop_down_values)
+                    total_value_secondary = [o.text for o in ls_option]
+                    f.click()
+                    time.sleep(0.5)
+                    continue
+
+                if l.text == 'Dual WAN Type':
+                    default_dual_wan_type = f.find_element_by_css_selector(ele_data_placeholder).text
+                    f.click()
+                    time.sleep(0.5)
+                    ls_option = f.find_elements_by_css_selector(active_drop_down_values)
+                    total_value_dual_wan_type = [o.text for o in ls_option]
+                    f.click()
+                    time.sleep(0.5)
+                    break
+
+            list_actual3 = [default_dual_wan,
+                           default_primary_wan, total_value_primary,
+                           default_secondary_wan, total_value_secondary,
+                           default_dual_wan_type, total_value_dual_wan_type]
+            list_expected3 = [return_true,
+                             'Ethernet', ['Ethernet', 'USB Broadband', 'Android Tethering'],
+                             'USB Broadband', ['Ethernet', 'USB Broadband', 'Android Tethering'],
+                             'Fail Over', ['Load Balance', 'Fail Over']]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Enable Dual WAN then click Apply. Check Default Dual WAN enabled, '
+                f'Default Primary WAN value and list options,'
+                f'Default Secondary WAN value and list options'
+                f'Default Dual WAN Type value and list options. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Enable Dual WAN then click Apply. Check Default Dual WAN enabled, '
+                f'Default Primary WAN value and list options, '
+                f'Default Secondary WAN value and list options, '
+                f'Default Dual WAN Type value and list options. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        try:
+            _check_dual_selected = driver.find_element_by_css_selector(dual_wan_input)
+            if _check_dual_selected.is_selected():
+                driver.find_element_by_css_selector(dual_wan_button).click()
+
+            dual_wan_block = driver.find_element_by_css_selector(dual_wan_block_ele)
+            # Apply
+            dual_wan_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+
+            dual_wan_block = driver.find_element_by_css_selector(dual_wan_block_ele)
+            # Settings
+            dual_wan_labels = dual_wan_block.find_elements_by_css_selector(label_name_in_2g)
+            dual_wan_fields = dual_wan_block.find_elements_by_css_selector(wrap_input)
+            for l, f in zip(dual_wan_labels, dual_wan_fields):
+                if l.text == 'Dual WAN':
+                    default_dual_wan_2 = f.find_element_by_css_selector(input).is_selected()
+                    break
+
+            list_actual4 = [default_dual_wan_2]
+            list_expected4 = [return_false]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4 Disable Dual WAN then click Apply. Check Dual WAN disabled. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Disable Dual WAN then click Apply. Check Dual WAN disabled. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('4. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
     # OK
-    def test_06_NETWORK_Check_Primary_Setting(self):
+    def test_06_NETWORK_Dual_WAN_Check_Primary_Setting(self):
         self.key = 'NETWORK_06'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1035,11 +1174,25 @@ class NETWORK(unittest.TestCase):
 
         try:
             grand_login(driver)
-            time.sleep(1)
-
             # Enable Dual WAN
             goto_menu(driver, network_tab, network_internet_tab)
+            # Title
+            nw_title_page = driver.find_element_by_css_selector(ele_title_page).text
 
+            list_actual = [nw_title_page]
+            list_expected = ['Network > Internet']
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1, 2. Login and Check title of Network Internet. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2.Login and Check title of Network Internet. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('1, 2. Assertion wong.')
+
+        try:
             _check_dual_selected = driver.find_element_by_css_selector(dual_wan_input)
             if not _check_dual_selected.is_selected():
                 driver.find_element_by_css_selector(dual_wan_button).click()
@@ -1118,7 +1271,7 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_07_NETWORK_Check_Secondary_Setting(self):
+    def test_07_NETWORK_Dual_WAN_Check_Secondary_Setting(self):
         self.key = 'NETWORK_07'
         driver = self.driver
         self.def_name = get_func_name()
@@ -1366,6 +1519,134 @@ class NETWORK(unittest.TestCase):
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '4,5,6. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_20_NETWORK_Change_IP_assignment_range(self):
+        self.key = 'NETWORK_20'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+        try:
+            grand_login(driver)
+            # Enable Dual WAN
+            goto_menu(driver, network_tab, network_lan_tab)
+            # Title
+            nw_title_page = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual = [nw_title_page]
+            list_expected = ['Network > LAN']
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1. Login and Check title of Network > LAN. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login and Check title of Network > LAN. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('1. Assertion wong.')
+
+        try:
+            lan_block = driver.find_element_by_css_selector(network_lan_card)
+            # Verify LAN block information
+            labels = lan_block.find_elements_by_css_selector(label_name_in_2g)
+            values = lan_block.find_elements_by_css_selector(ele_dtim_textbox_cls)
+            for l, v in zip(labels, values):
+                if l.text == 'Start IP Address':
+                    start_ip_modify = v.find_element_by_css_selector(ele_wl_ssid_value_field)
+                    for j in range(2):
+                        start_ip_modify.clear()
+                        start_ip_modify.send_keys('5')
+
+                if l.text == 'End IP Address':
+                    end_ip_modify = v.find_element_by_css_selector(ele_wl_ssid_value_field)
+                    for j in range(2):
+                        end_ip_modify.clear()
+                        end_ip_modify.send_keys('37')
+                    break
+
+            # Click Apply
+            if len(lan_block.find_elements_by_css_selector(ele_btn_close)) > 0:
+                if lan_block.find_element_by_css_selector(ele_btn_close).is_displayed():
+                    lan_block.find_element_by_css_selector(ele_btn_close).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(1)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    time.sleep(0.5)
+
+            lan_block = driver.find_element_by_css_selector(network_lan_card)
+            # Verify LAN block information
+            labels = lan_block.find_elements_by_css_selector(label_name_in_2g)
+            values = lan_block.find_elements_by_css_selector(ele_dtim_textbox_cls)
+            for l, v in zip(labels, values):
+                if l.text == 'Start IP Address':
+                    _123 = v.find_element_by_css_selector(ele_lan_ip_first_start_end_ip).text
+                    _4_value = v.find_element_by_css_selector(ele_wl_ssid_value_field).get_attribute('value')
+                    new_start_ip_address = _123 + _4_value
+                    new_start_ip_address = new_start_ip_address.replace(' ', '')
+                    continue
+
+                if l.text == 'End IP Address':
+                    _123 = v.find_element_by_css_selector(ele_lan_ip_first_start_end_ip).text
+                    _4_value = v.find_element_by_css_selector(ele_wl_ssid_value_field).get_attribute('value')
+                    new_end_ip_address = _123 + _4_value
+                    new_end_ip_address = new_end_ip_address.replace(' ', '')
+                    break
+
+            list_actual2 = [new_start_ip_address, new_end_ip_address]
+            list_expected2 = ['192.168.1.5', '192.168.1.37']
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2. Change Start IP and End IP. Check apply successfully. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Change Start IP and End IP. Check apply successfully. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            list_step_fail.append('2. Assertion wong.')
+
+        try:
+            # Release
+            subprocess.check_output('ipconfig/release', shell=True)
+            time.sleep(2)
+            # Renew
+            subprocess.check_output('ipconfig/renew', shell=True)
+            time.sleep(8)
+            # All
+            config_all = subprocess.check_output('ipconfig/all', shell=True)
+            time.sleep(2)
+
+            ethernet = config_all.decode('utf8').split('Ethernet adapter Ethernet:')[1]
+            for i in ethernet.splitlines():
+                if i.strip().startswith('IPv4 Address'):
+                    ipv4_address = i.split(': ')[1].split('(Preferred)')[0]
+                    break
+            ip_value = int(ipv4_address.split('.')[-1])
+            start_value = int(new_start_ip_address.split('.')[-1])
+            end_value = int(new_end_ip_address.split('.')[-1])
+
+            check = start_value <= ip_value <= end_value
+
+            list_actual3 = [check]
+            list_expected3 = [return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Command: ipconfig/release > ipconfig/renew > ipconfig/all: {ipv4_address} - '
+                f'Check IPv4 between range Start IP and End IP. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Command: ipconfig/release > ipconfig/renew > ipconfig/all: {ipv4_address} - '
+                f'Check IPv4 between range Start IP and End IP. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
     # OK F

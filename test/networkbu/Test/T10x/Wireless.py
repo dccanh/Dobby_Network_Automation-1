@@ -117,7 +117,7 @@ class WIRELESS(unittest.TestCase):
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(5)
+            time.sleep(2)
 
             ssid_2g = block_2g.find_elements_by_css_selector(input)[0]
             ssid_2g_name = ssid_2g.get_attribute('value')
@@ -6187,25 +6187,14 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    # def test_77_WIRELESS_Advanced_Wireless_5G_Restore(self):
-    #     self.key = 'WIRELESS_77'
+    # def test_76_WIRELESS_Advanced_Wireless_5G_Scan_AP(self):
+    #     self.key = 'WIRELESS_76'
     #     driver = self.driver
     #     self.def_name = get_func_name()
     #     list_step_fail = []
     #     self.list_steps = []
     #     # =================================================
-    #     CHANNEL = '40'
-    #     WIRELESS_MODE = '802.11a+n'
-    #     BANDWIDTH = '20 Mhz'
-    #     CHECK_SHORT_GUARD = False
-    #     CHECK_WMM = False
-    #     CHECK_BEAMFORMING = True
-    #     CHECK_MU_MIMO = True
-    #     OUTPUT_POWER = 'Medium'
-    #     BEACON = '50'
-    #     DTIM = '3'
-    #
-    #     _URL_API = get_config('URL', 'url') + '/api/v1/wifi/1/radio'
+    #     _URL_API = get_config('URL', 'url') + '/api/v1/wifi/1/scanResult'
     #     _BODY = ''
     #     _METHOD = 'GET'
     #     _USER = get_config('ACCOUNT', 'user')
@@ -6231,180 +6220,406 @@ class WIRELESS(unittest.TestCase):
     #         list_step_fail.append('1, 2. Assertion wong.')
     #
     #     try:
-    #         # 2G
+    #         # 5G
     #         block_5g = driver.find_element_by_css_selector(right)
     #         # Action
-    #         labels = block_5g.find_elements_by_css_selector(label_name_in_2g)
-    #         values = block_5g.find_elements_by_css_selector(wrap_input)
-    #         for l, v in zip(labels, values):
-    #             if l.text == 'Channel':
-    #                 choose_specific_value_from_dropdown(block_5g, ele_channel_field, CHANNEL)
+    #         block_5g.find_element_by_css_selector(ele_button_scan).click()
+    #         wait_popup_disappear(driver, icon_loading)
     #
-    #             if l.text == 'Wireless Mode':
-    #                 choose_specific_value_from_dropdown(block_5g, ele_wireless_mode_filed, WIRELESS_MODE)
+    #         popup = driver.find_element_by_css_selector(dialog_content)
+    #         # Check UI
+    #         popup_title = popup.find_element_by_css_selector(ele_scan_title).text
+    #         popup_refresh_button = len(popup.find_elements_by_css_selector(ele_btn_refresh)) > 0
     #
-    #             if l.text == 'Bandwidth':
-    #                 choose_specific_value_from_dropdown(block_5g, ele_bandwidth_field, BANDWIDTH)
+    #         # Click to button List
+    #         popup.find_element_by_css_selector(ele_button_list).click()
+    #         time.sleep(0.5)
+    #         check_list_wf = len(popup.find_elements_by_css_selector(ele_wifi_table)) > 0
     #
-    #             if l.text == 'Short Guard Interval':
-    #                 choose_specific_radio_box(block_5g, l.text, check=CHECK_SHORT_GUARD)
+    #         # CLick button Chart
+    #         popup.find_element_by_css_selector(ele_button_chart).click()
+    #         time.sleep(0.5)
+    #         check_chart_wf = len(popup.find_elements_by_css_selector(ele_wifi_chart_5g)) > 0
     #
-    #             if l.text == 'WMM':
-    #                 choose_specific_radio_box(block_5g, l.text, check=CHECK_WMM)
+    #         # Check Close button
+    #         check_btn_close_display = popup.find_element_by_css_selector(ele_btn_close).text
     #
-    #             if l.text == 'Beamforming':
-    #                 choose_specific_radio_box(block_5g, l.text, check=CHECK_BEAMFORMING)
+    #         list_actual2 = [popup_title, popup_refresh_button, check_list_wf, check_chart_wf, check_btn_close_display]
+    #         list_expected2 = ['Nearby Wireless Access Points (5GHz)', return_true, return_true, return_true, 'Close']
+    #         check = assert_list(list_actual2, list_expected2)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 3.0 Check popup scan components: Title, Refresh, List table, Chart table, Close button. '
+    #             f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 3.0 Check popup scan components: Title, Refresh, List table, Chart table, Close button. '
+    #             f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+    #         list_step_fail.append('3.0 Assertion wong.')
     #
-    #             if l.text == 'MU-MIMO':
-    #                 choose_specific_value_from_dropdown(block_5g, ele_output_power_filed, OUTPUT_POWER)
-    #
-    #             if l.text == 'Beacon Interval':
-    #                 for i in range(2):
-    #                     ActionChains(driver).move_to_element(l).perform()
-    #                     beacon = block_5g.find_element_by_css_selector(ele_beacon_cls)
-    #                     beacon_value = beacon.find_element_by_css_selector(input)
-    #                     beacon_value.clear()
-    #                     beacon_value.send_keys(BEACON)
-    #
-    #             if l.text == 'DTIM Interval':
-    #                 for i in range(2):
-    #                     ActionChains(driver).move_to_element(l).perform()
-    #                     dtim_value = v.find_element_by_css_selector(input)
-    #                     dtim_value.clear()
-    #                     dtim_value.send_keys(DTIM)
-    #                 break
-    #
-    #         block_2g = driver.find_element_by_css_selector(left)
-    #         block_2g.find_element_by_css_selector(apply).click()
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         wait_popup_disappear(driver, dialog_loading)
-    #
-    #
+    #     try:
+    #         popup.find_element_by_css_selector(ele_button_list).click()
+    #         time.sleep(1)
+    #         # ==================================================
     #         _TOKEN = get_token(_USER, _PW)
     #         _res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
     #
-    #         api_active = _res['active']
-    #         api_channel = _res['basic']['channel']['set']
-    #         api_wl_mode = _res['basic']['wirelessMode']
-    #         api_wmm = _res['wmm']['active']
-    #         api_beamforming = _res['advanced']['beamforming']
-    #         api_output_power = _res['basic']['outputPower'].capitalize()
-    #         api_beacon = str(_res['advanced']['beaconInterval'])
-    #         api_dtim = str(_res['advanced']['dtimInterval'])
+    #         api_ssid = _res[0]['ssid']
+    #         api_channel = _res[0]['channel']
+    #         api_rssi = _res[0]['rssi']
+    #         api_security = _res[0]['security']
+    #         api_mac_address = _res[0]['macAddress']
+    #         # ==================================================
+    #         list_rows = driver.find_elements_by_css_selector(row_table)
+    #         for r in list_rows[1:]:
+    #             get_row_mac = r.find_element_by_css_selector('td:last-child').text
+    #             if get_row_mac == api_mac_address:
+    #                 get_nw_name = r.find_element_by_css_selector(ele_table_nw_ssid_name).text
+    #                 get_channel = r.find_element_by_css_selector(ele_table_channel).text
+    #                 get_rssi = r.find_element_by_css_selector(ele_table_rssi).text
+    #                 get_security = r.find_element_by_css_selector(ele_table_security).text
+    #                 break
     #
-    #         list_actual3 = [api_active, api_channel, api_wl_mode, api_wmm,
-    #                         api_beamforming, api_output_power, api_beacon, api_dtim]
-    #         list_expected3 = [return_true, CHANNEL, WIRELESS_MODE, CHECK_WMM,
-    #                           CHECK_BEAMFORMING, OUTPUT_POWER, BEACON, DTIM]
+    #         list_actual3 = [api_ssid, api_channel, api_rssi, api_security, api_mac_address]
+    #         list_expected3 = [get_nw_name, get_channel, get_rssi, get_security, get_row_mac]
     #         check = assert_list(list_actual3, list_expected3)
     #         self.assertTrue(check["result"])
     #         self.list_steps.append(
-    #             f'[Pass] 3. Change 2.4 GHz: Channel, Wireless Mode, WMM, Beamforming, Output Power, Beacon, DTIM. '
-    #             f'Check change successfully with api. Check api active and above option. '
+    #             f'[Pass] 3.2 Check one of wifi scaned information with api: SSID, Channel, RSSI, Security, MAC. '
     #             f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
     #     except:
     #         self.list_steps.append(
-    #             f'[Fail] 3. Change 2.4 GHz: Channel, Wireless Mode, WMM, Beamforming, Output Power, Beacon, DTIM. '
-    #             f'Check change successfully with api. Check api active and above option. '
+    #             f'[Fail] 3.2 Check one of wifi scaned information with api: SSID, Channel, RSSI, Security, MAC. '
     #             f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
-    #         list_step_fail.append('3. Assertion wong.')
+    #         list_step_fail.append('3.2 Assertion wong.')
     #
     #     try:
-    #         block_2g = driver.find_element_by_css_selector(left)
-    #         # Click 2GHz Restore
-    #         block_2g.find_element_by_css_selector(ele_button_restore).click()
-    #         time.sleep(1)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         check_confirm_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
-    #         time.sleep(1)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(1)
+    #         # Click Graph
+    #         popup = driver.find_element_by_css_selector(dialog_content)
+    #         popup.find_element_by_css_selector(ele_btn_refresh).click()
     #
-    #         block_2g = driver.find_element_by_css_selector(left)
-    #         # Action
-    #         labels_2 = block_2g.find_elements_by_css_selector(label_name_in_2g)
-    #         values_2 = block_2g.find_elements_by_css_selector(wrap_input)
-    #         for l, v in zip(labels_2, values_2):
-    #             if l.text == 'Radio':
-    #                 default_radio = v.find_element_by_css_selector(input).is_selected()
-    #                 continue
-    #             if l.text == 'Channel':
-    #                 default_channel = v.find_element_by_css_selector(ele_channel_field).text.lower()
-    #                 continue
-    #             if l.text == 'Wireless Mode':
-    #                 default_wireless_mode = v.find_element_by_css_selector(ele_wireless_mode_filed).text.lower()
-    #                 continue
-    #             if l.text == 'Bandwidth':
-    #                 default_bandwidth = v.find_element_by_css_selector(ele_bandwidth_field).text.lower()
-    #                 continue
-    #             if l.text == 'Sideband':
-    #                 default_sideband = v.find_element_by_css_selector(ele_sideband_field).text.lower()
-    #                 continue
-    #             if l.text == '802.11n Protection':
-    #                 default_80211_protection = v.find_element_by_css_selector(input).is_selected()
-    #                 continue
-    #             if l.text == 'Short Guard Interval':
-    #                 default_short_guard_interval = v.find_element_by_css_selector(input).is_selected()
-    #                 continue
-    #             if l.text == 'WMM':
-    #                 default_wmm = v.find_element_by_css_selector(input).is_selected()
-    #                 continue
-    #             if l.text == 'Beamforming':
-    #                 default_beamforming = v.find_element_by_css_selector(input).is_selected()
-    #                 continue
-    #             if l.text == 'Output Power':
-    #                 default_output_power = v.find_element_by_css_selector(ele_output_power_filed).text.lower()
-    #                 continue
-    #             if l.text == 'Beacon Interval':
-    #                 default_beacon = v.find_element_by_css_selector(input).get_attribute('value')
-    #                 continue
-    #             if l.text == 'DTIM Interval':
-    #                 default_dtim = v.find_element_by_css_selector(input).get_attribute('value')
+    #         wait_popup_disappear(driver, icon_loading)
+    #         check_list_wf_refresh = len(popup.find_elements_by_css_selector(ele_wifi_table)) > 0
     #
-    #
-    #         _TOKEN4 = get_token(_USER, _PW)
-    #         _res4 = call_api(_URL_API, _METHOD, _BODY, _TOKEN4)
-    #
-    #         api_active_4 = _res4['active']
-    #         api_wl_mode_4 = _res4['basic']['wirelessMode']
-    #         api_bandwidth_4 = _res4['basic']['bandwidth']['set']
-    #         api_sideband_4 = _res4['basic']['sideband']
-    #         api_output_power_4 = _res4['basic']['outputPower']
-    #         api_channel_4 = _res4['basic']['channel']['set']
-    #         api_short_guard_4 = _res4['advanced']['shortGuardInterval'] == 'on'
-    #         api_beacon_4 = str(_res4['advanced']['beaconInterval'])
-    #         api_dtim_4 = str(_res4['advanced']['dtimInterval'])
-    #         api_protection_4 = _res4['advanced']['802dot11Protection']
-    #         api_beamforming_4 = _res4['advanced']['beamforming']
-    #         api_wmm_4 = _res4['wmm']['active']
-    #
-    #         list_actual4 = [check_confirm_msg, api_active_4, api_wl_mode_4, api_bandwidth_4, api_sideband_4,
-    #                         api_output_power_4, api_channel_4, api_short_guard_4, api_beacon_4,
-    #                         api_dtim_4, api_protection_4, api_beamforming_4, api_wmm_4]
-    #         list_expected4 = [exp_advance_restore_confirm_msg, default_radio, default_wireless_mode, default_bandwidth, default_sideband,
-    #                           default_output_power, default_channel, default_short_guard_interval, default_beacon,
-    #                           default_dtim, default_80211_protection, default_beamforming, default_wmm]
+    #         list_actual4 = [check_list_wf_refresh]
+    #         list_expected4 = [return_true]
     #         check = assert_list(list_actual4, list_expected4)
     #         self.assertTrue(check["result"])
     #         self.list_steps.append(
-    #             f'[Pass] 4. Click Restore. Check restore confirm message. Check API restored: '
-    #             f'API active, wireless mode, bandwidth, sideband, output power, channel, '
-    #             f'short guard, beacon, dtim, 802dot11Protection, beamforming, wmm. '
+    #             f'[Pass] 4. Click Refresh button. Table list displayed.  '
     #             f'Actual: {str(list_actual4)}. '
     #             f'Expected: {str(list_expected4)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 4. Click Refresh button. Table list displayed.. '
+    #             f'Actual: {str(list_actual4)}. '
+    #             f'Expected: {str(list_expected4)}')
+    #         list_step_fail.append('4. Assertion wong.')
+    #
+    #     try:
+    #         popup = driver.find_element_by_css_selector(dialog_content)
+    #
+    #         popup.find_element_by_css_selector(ele_button_chart).click()
+    #         time.sleep(1)
+    #         check_chart_wf = len(popup.find_elements_by_css_selector(ele_wifi_chart)) > 0
+    #
+    #         list_actual5 = [check_chart_wf]
+    #         list_expected5 = [return_true]
+    #         check = assert_list(list_actual5, list_expected5)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 5. Click Chart button. Check Graph chart displayed. '
+    #             f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 5. Click Chart button. Check Graph chart displayed. '
+    #             f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+    #         list_step_fail.append('5 Assertion wong.')
+    #
+    #     try:
+    #         # Click Refresh
+    #         popup.find_element_by_css_selector(ele_btn_refresh).click()
+    #         time.sleep(1)
+    #         wait_popup_disappear(driver, icon_loading)
+    #
+    #         check_chart_wf_refresh = len(popup.find_elements_by_css_selector(ele_wifi_chart)) > 0
+    #
+    #         list_actual6 = [check_chart_wf_refresh]
+    #         list_expected6 = [return_true]
+    #         check = assert_list(list_actual6, list_expected6)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 6. Click Refresh button. Table Graph Chart displayed.  '
+    #              f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 6. Click Refresh button.Table Graph Chart displayed. '
+    #             f'Actual: {str(list_actual6)}. '
+    #             f'Expected: {str(list_expected6)}')
+    #         list_step_fail.append('6. Assertion wong.')
+    #
+    #     try:
+    #         # Click Close
+    #         popup.find_element_by_css_selector(ele_btn_close).click()
+    #         time.sleep(1)
+    #         popup_scan = len(driver.find_elements_by_css_selector(dialog_content)) == 0
+    #         page_title_text = driver.find_element_by_css_selector(ele_title_page).text
+    #
+    #         list_actual7 = [popup_scan, page_title_text]
+    #         list_expected7 = [return_true, 'Advanced > Wireless']
+    #         check = assert_list(list_actual7, list_expected7)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 7. Click Close button. Check popup disappear, Page Advanced > Wireless display.  '
+    #             f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
     #         self.list_steps.append('[END TC]')
     #     except:
     #         self.list_steps.append(
-    #             f'[Fail] 4. Click Restore. Check restore confirm message. Check API restored: '
-    #             f'API active, wireless mode, bandwidth, sideband, output power, channel, '
-    #             f'short guard, beacon, dtim, 802dot11Protection, beamforming, wmm. '
-    #             f'Actual: {str(list_actual4)}. '
-    #             f'Expected: {str(list_expected4)}')
+    #             f'[Fail] 7. Click Close button. Check popup disappear, Page Advanced > Wireless display. '
+    #             f'Actual: {str(list_actual7)}. '
+    #             f'Expected: {str(list_expected7)}')
     #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('7. Assertion wong.')
     #
-    #         list_step_fail.append('4. Assertion wong.')
     #     self.assertListEqual(list_step_fail, [])
+
+    def test_77_WIRELESS_Advanced_Wireless_5G_Restore(self):
+        self.key = 'WIRELESS_77'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # =================================================
+        CHANNEL = '40'
+        WIRELESS_MODE = '802.11a+n'
+        BANDWIDTH = '20 Mhz'
+        CHECK_SHORT_GUARD = False
+        CHECK_WMM = False
+        CHECK_BEAMFORMING = True
+        CHECK_MU_MIMO = True
+        OUTPUT_POWER = 'Medium'
+        BEACON = '50'
+        DTIM = '3'
+
+        _URL_API = get_config('URL', 'url') + '/api/v1/wifi/1/radio'
+        _BODY = ''
+        _METHOD = 'GET'
+        _USER = get_config('ACCOUNT', 'user')
+        _PW = get_config('ACCOUNT', 'password')
+        try:
+            grand_login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            goto_menu(driver, advanced_tab, advanced_wireless_tab)
+
+            page_title_text = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual = [page_title_text]
+            list_expected = ['Advanced > Wireless']
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('1, 2. Assertion wong.')
+
+        try:
+            # 2G
+            block_5g = driver.find_element_by_css_selector(right)
+            # Action
+            labels = block_5g.find_elements_by_css_selector(label_name_in_2g)
+            values = block_5g.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Channel':
+                    choose_specific_value_from_dropdown(block_5g, ele_channel_field, CHANNEL)
+
+                if l.text == 'Wireless Mode':
+                    choose_specific_value_from_dropdown(block_5g, ele_wireless_mode_filed, WIRELESS_MODE)
+
+                if l.text == 'Bandwidth':
+                    choose_specific_value_from_dropdown(block_5g, ele_bandwidth_field, BANDWIDTH)
+
+                if l.text == 'Short Guard Interval':
+                    choose_specific_radio_box(block_5g, l.text, check=CHECK_SHORT_GUARD)
+
+                if l.text == 'WMM':
+                    choose_specific_radio_box(block_5g, l.text, check=CHECK_WMM)
+
+                if l.text == 'Beamforming':
+                    choose_specific_radio_box(block_5g, l.text, check=CHECK_BEAMFORMING)
+
+                if l.text == 'MU-MIMO':
+                    choose_specific_radio_box(block_5g, l.text, check=CHECK_MU_MIMO)
+
+                if l.text == 'Output Power':
+                    choose_specific_value_from_dropdown(block_5g, ele_output_power_filed, OUTPUT_POWER)
+
+                if l.text == 'Beacon Interval':
+                    for i in range(2):
+                        ActionChains(driver).move_to_element(l).perform()
+                        beacon = block_5g.find_element_by_css_selector(ele_beacon_cls)
+                        beacon_value = beacon.find_element_by_css_selector(input)
+                        beacon_value.clear()
+                        beacon_value.send_keys(BEACON)
+
+                if l.text == 'DTIM Interval':
+                    for i in range(2):
+                        ActionChains(driver).move_to_element(l).perform()
+                        dtim_value = v.find_element_by_css_selector(input)
+                        dtim_value.clear()
+                        dtim_value.send_keys(DTIM)
+                    break
+
+            block_5g = driver.find_element_by_css_selector(right)
+            block_5g.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+
+
+            _TOKEN = get_token(_USER, _PW)
+            _res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+
+            api_active = _res['active']
+            api_channel = _res['basic']['channel']['set']
+            api_wl_mode = _res['basic']['wirelessMode']
+            api_wmm = _res['wmm']['active']
+            api_beamforming = _res['advanced']['beamforming']
+            api_mumimo = _res['advanced']['mumimo']
+            api_output_power = _res['basic']['outputPower'].capitalize()
+            api_beacon = str(_res['advanced']['beaconInterval'])
+            api_dtim = str(_res['advanced']['dtimInterval'])
+
+            list_actual3 = [api_active, api_channel, api_wl_mode, api_wmm,
+                            api_beamforming, api_mumimo, api_output_power, api_beacon, api_dtim]
+            list_expected3 = [return_true, CHANNEL, WIRELESS_MODE, CHECK_WMM,
+                              CHECK_BEAMFORMING, CHECK_MU_MIMO, OUTPUT_POWER, BEACON, DTIM]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Change 5 GHz: '
+                f'Radio active, Channel, Wireless Mode, WMM, Beamforming, MU-MIMO, Output Power, Beacon, DTIM. '
+                f'Check change successfully with api. Check api active and above option. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Change 5 GHz: '
+                f'Radio active, Channel, Wireless Mode, WMM, Beamforming, MU-MIMO, Output Power, Beacon, DTIM. '
+                f'Check change successfully with api. Check api active and above option. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        try:
+            block_5g = driver.find_element_by_css_selector(right)
+            # Click 2GHz Restore
+            block_5g.find_element_by_css_selector(ele_button_restore).click()
+            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            check_confirm_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+
+            list_actual4 = [check_confirm_msg]
+            list_expected4 = [exp_advance_restore_confirm_msg]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Click Restore. Check restore confirm message. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Click Restore. Check restore confirm message. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        try:
+            block_5g = driver.find_element_by_css_selector(right)
+            # Action
+            labels_2 = block_5g.find_elements_by_css_selector(label_name_in_2g)
+            values_2 = block_5g.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels_2, values_2):
+                if l.text == 'Radio':
+                    default_radio = v.find_element_by_css_selector(input).is_selected()
+                    continue
+                if l.text == 'Channel':
+                    default_channel = v.find_element_by_css_selector(ele_channel_field).text.lower()
+                    continue
+                if l.text == 'Wireless Mode':
+                    default_wireless_mode = v.find_element_by_css_selector(ele_wireless_mode_filed).text.lower()
+                    continue
+                if l.text == 'Bandwidth':
+                    default_bandwidth = v.find_element_by_css_selector(ele_bandwidth_field).text.lower()
+                    continue
+                if l.text == 'Short Guard Interval':
+                    default_short_guard_interval = v.find_element_by_css_selector(input).is_selected()
+                    continue
+                if l.text == 'WMM':
+                    default_wmm = v.find_element_by_css_selector(input).is_selected()
+                    continue
+                if l.text == 'Beamforming':
+                    default_beamforming = v.find_element_by_css_selector(input).is_selected()
+                    continue
+                if l.text == 'MU-MIMO':
+                    default_mumimo = v.find_element_by_css_selector(input).is_selected()
+                    continue
+                if l.text == 'Output Power':
+                    default_output_power = v.find_element_by_css_selector(ele_output_power_filed).text.lower()
+                    continue
+                if l.text == 'Beacon Interval':
+                    default_beacon = v.find_element_by_css_selector(input).get_attribute('value')
+                    continue
+                if l.text == 'DTIM Interval':
+                    default_dtim = v.find_element_by_css_selector(input).get_attribute('value')
+
+
+            _TOKEN4 = get_token(_USER, _PW)
+            _res4 = call_api(_URL_API, _METHOD, _BODY, _TOKEN4)
+
+            api_active_4 = _res4['active']
+            api_wl_mode_4 = _res4['basic']['wirelessMode']
+            api_bandwidth_4 = _res4['basic']['bandwidth']['set']
+            api_output_power_4 = _res4['basic']['outputPower']
+            api_channel_4 = _res4['basic']['channel']['set']
+            api_short_guard_4 = _res4['advanced']['shortGuardInterval'] == 'on'
+            api_beacon_4 = str(_res4['advanced']['beaconInterval'])
+            api_dtim_4 = str(_res4['advanced']['dtimInterval'])
+            api_beamforming_4 = _res4['advanced']['beamforming']
+            api_mumimo_4 = _res4['advanced']['mumimo']
+            api_wmm_4 = _res4['wmm']['active']
+
+            list_actual5 = [api_active_4, api_wl_mode_4, api_bandwidth_4,
+                            api_output_power_4, api_channel_4, api_short_guard_4, api_beacon_4,
+                            api_dtim_4, api_beamforming_4, api_mumimo_4, api_wmm_4]
+            list_expected5 = [default_radio, default_wireless_mode, default_bandwidth,
+                              default_output_power, default_channel, default_short_guard_interval, default_beacon,
+                              default_dtim, default_beamforming, default_mumimo, default_wmm]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4.2 Click Restore result. Check API restored: '
+                f'API active, wireless mode, bandwidth, output power, channel, '
+                f'short guard, beacon, dtim, beamforming, MU-MIMO, wmm. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4.2 Click Restore result. Check API restored: '
+                f'API active, wireless mode, bandwidth, output power, channel, '
+                f'short guard, beacon, dtim, beamforming, MU-MIMO, wmm. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+
+            list_step_fail.append('4.2 Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
 if __name__ == '__main__':
     unittest.main()
