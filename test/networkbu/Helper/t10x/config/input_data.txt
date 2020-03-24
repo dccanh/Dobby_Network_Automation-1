@@ -13,6 +13,14 @@ main23_new_pw = !@#^&*()_+-={}|[]:.?
 main24_wrong_pw = acb000
 main24_new_pw = acb123
 main24_retype_new_pw = acb321
+main35_new_pw = abc321
+main36_ssid_wifi_4 = (!@#^&*()+_-={}[]|:.?~`$%\;'"<>,/)
+main36_ssid_wifi_5_1 =     123
+main36_ssid_wifi_5_3 = abc123!@#$1234567890123456789012
+main36_password_4 = abc000
+main36_password_5_1 = abc111
+main36_password_5_2 = abc222
+main36_password_5_3 = abc333
 main37_1 = 12345678
 main60_1 = abc111
 main60_2 = abc222
@@ -72,6 +80,9 @@ nw26_mac2 = 12:12:12:12:12:12
 nw26_ip2 = 192.168.1.11
 nw27_mac2 = 88:88:88:88:88:88
 nw27_ip2 = 192.168.1.10
+nw_28_step3_mac = 12:12:12:12:12:12
+nw28_step3_ip_address = 192.168.1.200
+nw28_step4_ip_address = 192.168.1.90
 
 
 [WIRELESS]
@@ -132,3 +143,5 @@ wl24_key_type_2 = Hexadecimal
 wl24_pw_3 = 123
 wl24_pw_4 = 123!@aA123@!aA1
 wl24_pw_5 = 1234567890aaaaaAAAAA123aaabbb
+
+wl36_pw = 123@!12

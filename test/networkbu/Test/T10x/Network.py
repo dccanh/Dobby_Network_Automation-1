@@ -1941,6 +1941,284 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+    def test_28_NETWORK_Verify_Reserved_IP_address_when_changing_of_DHCP_range(self):
+        self.key = 'NETWORK_28'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
 
+        URL_LOGIN = get_config('URL', 'url')
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(150)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        time.sleep(3)
+        # ======================================================================
+        IP_ADDRESS_MAC = get_config('NETWORK', 'nw_28_step3_mac', input_data_path)
+        IP_ADDRESS_MORE_END_IP = get_config('NETWORK', 'nw28_step3_ip_address', input_data_path)
+        IP_ADDRESS_LESS_END_IP = get_config('NETWORK', 'nw28_step4_ip_address', input_data_path)
+        # ======================================================================
+        try:
+            grand_login(driver)
+
+            # Network Lan Tab
+            goto_menu(driver, network_tab, network_lan_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            title_text = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual1 = [title_text]
+            list_expected1 = ['Network > LAN']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Check Network LAN title display. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Check Network LAN title display. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong.')
+
+        try:
+            lan_block = driver.find_element_by_css_selector(network_lan_card)
+            # Verify LAN block information
+            labels = lan_block.find_elements_by_css_selector(label_name_in_2g)
+            values = lan_block.find_elements_by_css_selector(ele_dtim_textbox_cls)
+            for l, v in zip(labels, values):
+                if l.text == 'IP Address':
+                    _1 = v.find_element_by_css_selector(key_type_value_field).text
+                    _234_ele = v.find_elements_by_css_selector(ele_wl_ssid_value_field)
+                    _234_value = [i.get_attribute('value') for i in _234_ele]
+                    current_ip_address = '.'.join([_1] + _234_value)
+                    if not current_ip_address == '192.168.1.1':
+                        # 192
+                        v.find_element_by_css_selector(option_select).click()
+                        time.sleep(0.5)
+                        ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+                        for o in ls_option:
+                            # Type C
+                            if o.text == '192':
+                                o.click()
+                                break
+                        # .1.1
+                        _1_1 = v.find_elements_by_css_selector(ele_lan_ip_input_not_disabled)
+                        for i in _1_1:
+                            for j in range(2):
+                                i.clear()
+                                i.send_keys('1')
+
+                if l.text == 'Start IP Address':
+                    _123 = v.find_element_by_css_selector(ele_lan_ip_first_start_end_ip).text
+                    _4_value = v.find_element_by_css_selector(ele_wl_ssid_value_field).get_attribute('value')
+                    current_start_ip_address = _123 + _4_value
+                    if not current_start_ip_address == '192.168.1.2':
+                        start_ip_modify = v.find_element_by_css_selector(ele_wl_ssid_value_field)
+                        for j in range(2):
+                            start_ip_modify.clear()
+                            start_ip_modify.send_keys('2')
+
+                if l.text == 'End IP Address':
+                    _123 = v.find_element_by_css_selector(ele_lan_ip_first_start_end_ip).text
+                    _4_value = v.find_element_by_css_selector(ele_wl_ssid_value_field).get_attribute('value')
+                    current_end_ip_address = _123 + _4_value
+                    if not current_end_ip_address == '192.168.1.100':
+                        end_ip_modify = v.find_element_by_css_selector(ele_wl_ssid_value_field)
+                        for j in range(2):
+                            end_ip_modify.clear()
+                            end_ip_modify.send_keys('100')
+                    break
+
+            # Click Apply
+            if len(lan_block.find_elements_by_css_selector(ele_btn_close)) > 0:
+                lan_block.find_element_by_css_selector(ele_btn_close).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+
+            # Handle API
+            _URL_API = get_config('URL', 'url') + '/api/v1/network/lan'
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+            _METHOD = 'GET'
+            _BODY = ''
+            _res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+
+            _api_ip_address = _res['ipv4']['ipAddress']
+            _api_subnet_mask = _res['ipv4']['subnet']
+            _api_dhcp_active = _res['ipv4']['dhcp']['active']
+            _api_start_ip_address = _res['ipv4']['dhcp']['startIP']
+            _api_end_ip_address = _res['ipv4']['dhcp']['endIP']
+            _api_lease_time = _res['ipv4']['dhcp']['leaseTime']
+
+            lan_block = driver.find_element_by_css_selector(network_lan_card)
+            # Verify LAN block information
+            labels = lan_block.find_elements_by_css_selector(label_name_in_2g)
+            values = lan_block.find_elements_by_css_selector(ele_dtim_textbox_cls)
+            for l, v in zip(labels, values):
+                if l.text == 'IP Address':
+                    _1 = v.find_element_by_css_selector(key_type_value_field).text
+                    _234_ele = v.find_elements_by_css_selector(ele_wl_ssid_value_field)
+                    _234_value = [i.get_attribute('value') for i in _234_ele]
+                    new_ip_address = '.'.join([_1] + _234_value)
+
+                if l.text == 'Subnet Mask':
+                    new_subnet = v.text
+
+                if l.text == 'DHCP Server':
+                    new_dhcp_server = v.find_element_by_css_selector(input).is_enabled()
+
+                if l.text == 'Start IP Address':
+                    _123 = v.find_element_by_css_selector(ele_lan_ip_first_start_end_ip).text
+                    _4_value = v.find_element_by_css_selector(ele_wl_ssid_value_field).get_attribute('value')
+                    new_start_ip_address = _123 + _4_value
+                    new_start_ip_address = new_start_ip_address.replace(' ', '')
+
+                if l.text == 'End IP Address':
+                    _123 = v.find_element_by_css_selector(ele_lan_ip_first_start_end_ip).text
+                    _4_value = v.find_element_by_css_selector(ele_wl_ssid_value_field).get_attribute('value')
+                    new_end_ip_address = _123 + _4_value
+                    new_end_ip_address = new_end_ip_address.replace(' ', '')
+
+                if l.text == 'Lease Time':
+                    # Lease time by Minutes
+                    new_lease_time = v.find_element_by_css_selector(input).get_attribute('value')
+                    new_lease_time_to_second = int(new_lease_time) * 60
+                    break
+
+            list_actual2 = [new_ip_address, new_subnet, new_dhcp_server,
+                            new_start_ip_address, new_end_ip_address, new_lease_time_to_second]
+            list_expected2 = [_api_ip_address, _api_subnet_mask, _api_dhcp_active,
+                              _api_start_ip_address, _api_end_ip_address, _api_lease_time]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2. Change information. Check result between web and api: '
+                f'Ip address, Subnet, DHCP, Start IP, End IP, Lease time convert to second. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Change information. Check result between web and api: '
+                f'Ip address, Subnet, DHCP, Start IP, End IP, Lease time convert to second. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            list_step_fail.append('2. Assertion wong.')
+
+        try:
+            reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
+            nw_add_reserved_ip(driver, IP_ADDRESS_MAC, IP_ADDRESS_MORE_END_IP)
+
+            time.sleep(0.2)
+            # Check Error message display and button Save Dimmed
+            error_msg_display = len(reserved_ip_block.find_elements_by_css_selector(custom_error_cls)) > 0
+            button_save_dimmed = not reserved_ip_block.find_element_by_css_selector(btn_save).is_enabled()
+
+            list_actual3 = [error_msg_display, button_save_dimmed]
+            list_expected3 = [return_true] * 2
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 3. Change IP address out of range. Check Error message display and button Save dimmed. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Change IP address out of range. Check Error message display and button Save dimmed. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        try:
+            # Click Cancel
+            reserved_ip_block.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(1)
+
+            reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
+            nw_add_reserved_ip(driver, IP_ADDRESS_MAC, IP_ADDRESS_LESS_END_IP)
+            reserved_ip_block.find_element_by_css_selector(btn_save).click()
+
+            time.sleep(0.2)
+            reserved_ip_block.find_element_by_css_selector(apply).click()
+            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+
+            # Get info of first row
+            first_row = reserved_ip_block.find_elements_by_css_selector(rows)[0]
+            mac_address = first_row.find_element_by_css_selector(mac_desc_cls).text
+            mac_address = mac_address.splitlines()[1]
+            ip_addr = first_row.find_element_by_css_selector(ip_address_cls).text
+
+            list_actual4 = [mac_address, ip_addr]
+            list_expected4 = [IP_ADDRESS_MAC, IP_ADDRESS_LESS_END_IP]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 4. Add a reserved IP in range. Check Add successfully. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Add a reserved IP in range. Check Add successfully. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        try:
+            # Change END IP Address Less than reserved IP
+            lan_block = driver.find_element_by_css_selector(network_lan_card)
+            # Verify LAN block information
+            labels = lan_block.find_elements_by_css_selector(label_name_in_2g)
+            values = lan_block.find_elements_by_css_selector(ele_dtim_textbox_cls)
+            for l, v in zip(labels, values):
+                if l.text == 'End IP Address':
+                    end_ip_modify = v.find_element_by_css_selector(ele_wl_ssid_value_field)
+                    for j in range(2):
+                        end_ip_modify.clear()
+                        end_ip_modify.send_keys('80')
+                    break
+
+            # Click Apply
+            if len(lan_block.find_elements_by_css_selector(ele_btn_close)) > 0:
+                lan_block.find_element_by_css_selector(ele_btn_close).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+
+            # Verify
+            lan_block = driver.find_element_by_css_selector(network_lan_card)
+            # Verify LAN block information
+            labels = lan_block.find_elements_by_css_selector(label_name_in_2g)
+            values = lan_block.find_elements_by_css_selector(ele_dtim_textbox_cls)
+            for l, v in zip(labels, values):
+                if l.text == 'End IP Address':
+                    _123 = v.find_element_by_css_selector(ele_lan_ip_first_start_end_ip).text
+                    _4_value = v.find_element_by_css_selector(ele_wl_ssid_value_field).get_attribute('value')
+                    change_end_ip_address = _123 + _4_value
+                    change_end_ip_address = change_end_ip_address.replace(' ', '')
+                    break
+            time.sleep(2)
+
+            list_actual5 = [change_end_ip_address]
+            list_expected5 = ['192.168.1.80']
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 5. Change End IP address less than IP of Reserved IP address. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Change End IP address less than IP of Reserved IP address. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('5. Assertion wong.')
+        self.assertListEqual(list_step_fail, [])
 if __name__ == '__main__':
     unittest.main()

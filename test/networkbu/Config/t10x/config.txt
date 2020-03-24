@@ -5,18 +5,25 @@ sub_url = http://dearmyrouter.net
 [ACCOUNT]
 password = abc123
 user = admin
+default_pw = 0001
 
 [GENERAL]
 serial_number = 0001
-stage = Phase1
-version = v2
+stage = Ciel_Monday
+version = T10x
 model = HUMAX T10X
 wifi_ssid_2g = We Love You So Much_2G!
 wifi_ssid_5g = We Love You So Much_5G!
 wifi_pw = 1234567890aaaaaAAAAA123aaa
-module = test_27_Check_the_Devices_Image
+module = ALL
 
 [CONSOLE]
 serial_port = COM1
 baud_rate = 115200
+
+[SECURITY]
+parental_code = 4883
+
+[REPORT]
+sheet_name = Ciel_Monday_T10x_2020-03-23 18:48:07
 

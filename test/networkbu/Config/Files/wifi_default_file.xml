@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
-	<name>wifi_4C_D0_8A_26_6A_DB</name>
+	<name>wifi_4C_D0_8A_26_6A_DC</name>
 	<SSIDConfig>
 		<SSID>
-			<hex>776966695f34435f44305f38415f32365f36415f4442</hex>
-			<name>wifi_4C_D0_8A_26_6A_DB</name>
+			<hex>776966695F34435F44305F38415F32365F36415F4443</hex>
+			<name>wifi_4C_D0_8A_26_6A_DC</name>
 		</SSID>
 	</SSIDConfig>
 	<connectionType>ESS</connectionType>

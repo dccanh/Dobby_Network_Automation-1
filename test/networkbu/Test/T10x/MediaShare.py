@@ -41,6 +41,64 @@ class MEDIASHARE(unittest.TestCase):
             time.sleep(1)
         write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         self.driver.quit()
+
+    def test_02_MS_Check_USB_connection(self):
+        self.key = 'MEDIA_SHARE_02'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # ========================================================================
+        URL_API = get_config('URL', 'url') + '/api/v1/mediashare/usb'
+        _METHOD = 'GET'
+        _USER = get_config('ACCOUNT', 'user')
+        _PW = get_config('ACCOUNT', 'password')
+        _BODY = ''
+        try:
+            grand_login(driver)
+            time.sleep(5)
+            # Goto media share USB
+            goto_menu(driver, media_share_tab, media_share_usb_tab)
+            time.sleep(3)
+            wait_popup_disappear(driver, dialog_loading)
+
+            usb_title_text = driver.find_element_by_css_selector(ele_usb_title).text
+            usb_sub_title_text = driver.find_element_by_css_selector(ele_sub_title).text
+            list_usb_block_title = [i.text for i in driver.find_elements_by_css_selector(ele_usb_mediashare_block_title)]
+
+            ls_row = driver.find_elements_by_css_selector(rows)
+            web_list_usb = list()
+            for row in ls_row:
+                id = row.find_element_by_css_selector(ele_index_cls).text
+                name = row.find_element_by_css_selector(name_cls).text
+                dict_usb = {'id': int(id), "name": name}
+                web_list_usb.append(dict_usb)
+            # API
+            _TOKEN = get_token(_USER, _PW)
+            _res = call_api(URL_API, _METHOD, _BODY, _TOKEN)
+
+            api_list_usb = list()
+            for u in _res['usbs']:
+                dict_usb = {'id': u['id'], "name": u['name']}
+                api_list_usb.append(dict_usb)
+
+            list_actual3 = [usb_title_text, usb_sub_title_text, list_usb_block_title, web_list_usb]
+            list_expected3 = ['Media Share > USB', exp_subtitle_ms_usb,
+                              ['Connected USB', 'Network Folder', 'Account Settings'], api_list_usb]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 3. Check title, subtitle, list block title, api of return of id and name. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check title, subtitle, list block title, api of return of id and name. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
     # OK
     def test_04_MS_Confirmation_Network_Folder_Creation(self):
         self.key = 'MEDIA_SHARE_04'

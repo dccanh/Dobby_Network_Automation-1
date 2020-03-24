@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
-	<name>wifi_4C_D0_8A_26_6A_DB</name>
+	<name>We Love You So Much_5G!</name>
 	<SSIDConfig>
 		<SSID>
-			<hex>776966695f34435f44305f38415f32365f36415f4442</hex>
-			<name>wifi_4C_D0_8A_26_6A_DB</name>
+			<hex>5765204C6F766520596F7520536F204D7563685F354721</hex>
+			<name>We Love You So Much_5G!</name>
 		</SSID>
 	</SSIDConfig>
 	<connectionType>ESS</connectionType>
@@ -12,14 +12,14 @@
 	<MSM>
 		<security>
 			<authEncryption>
-				<authentication>WPA2PSK</authentication>
-				<encryption>AES</encryption>
+				<authentication>open</authentication>
+				<encryption>WEP</encryption>
 				<useOneX>false</useOneX>
 			</authEncryption>
 			<sharedKey>
-				<keyType>passPhrase</keyType>
+				<keyType>networkKey</keyType>
 				<protected>false</protected>
-				<keyMaterial>humax_0001</keyMaterial>
+				<keyMaterial>1234567890AAAAAAAAAA123AAA</keyMaterial>
 			</sharedKey>
 		</security>
 	</MSM>

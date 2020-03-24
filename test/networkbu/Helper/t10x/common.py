@@ -342,7 +342,6 @@ def grand_login(driver):
     if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
         handle_winzard_welcome(driver)
         wait_popup_disappear(driver, dialog_loading)
-    time.sleep(3)
     check_ota_auto_update(driver)
     time.sleep(1)
 
@@ -721,16 +720,6 @@ def handle_winzard_welcome(driver, NEW_PASSWORD='abc123', exp_language='English'
     time.sleep(3)
 
 
-# def ping_to_address(PING_ADDRESS, PING_TIMES=4):
-#     import pingparsing
-#     ping_parser = pingparsing.PingParsing()
-#     transmitter = pingparsing.PingTransmitter()
-#     transmitter.destination = PING_ADDRESS
-#     transmitter.count = PING_TIMES
-#     result = transmitter.ping()
-#     json_str = json.dumps(ping_parser.parse(result).as_dict(), indent=4)
-#     str_to_json = json.loads(json_str)
-#     return str_to_json
 def ping_to_address(PING_ADDRESS, PING_TIMES=4):
     import subprocess
     result = subprocess.check_output(f'ping {str(PING_ADDRESS)} -n {str(PING_TIMES)}', shell=True)
@@ -954,10 +943,12 @@ def wireless_check_pw_eye(driver, block, change_pw=False, new_pw='00000000'):
 
 
 def wireless_change_choose_option(driver, element_option, VALUE_OPTION):
-    # Ap dung cho:
-    # Security
-    # Encryption
-    # Key Type
+    """
+        Ap dung cho:
+            Security
+            Encryption
+            Key Type
+    """
     action_wl = driver.find_element_by_css_selector(element_option)
     action_wl.click()
     ls_options = action_wl.find_elements_by_css_selector(secure_value_in_drop_down)
@@ -997,5 +988,70 @@ def check_enable_ethernet():
     if 'Ethernet adapter Ethernet:' not in interface.decode('utf8'):
         os.system(f'python {nw_interface_path} -i Ethernet -a enable')
         time.sleep(13)
-        os.system(f'netsh wlan disconnect')
-        time.sleep(2)
+    os.system(f'netsh wlan disconnect')
+    time.sleep(2)
+
+
+def goto_system(driver, element_option):
+    driver.find_element_by_css_selector(system_btn).click()
+    time.sleep(0.2)
+    driver.find_element_by_css_selector(element_option).click()
+    time.sleep(1)
+
+
+def choose_specific_value_from_dropdown(driver, dropdown_box_element, specific_value):
+    driver.find_element_by_css_selector(dropdown_box_element).click()
+    time.sleep(0.5)
+    _options = driver.find_elements_by_css_selector(secure_value_in_drop_down)
+    for o in _options:
+        if o.text == specific_value:
+            o.click()
+            break
+
+
+def choose_specific_radio_box(driver, LABEL, check=True):
+    labels = driver.find_elements_by_css_selector(label_name_in_2g)
+    values = driver.find_elements_by_css_selector(wrap_input)
+    for l, v in zip(labels, values):
+        if l.text.upper() == LABEL.upper():
+            current_radio_status = v.find_element_by_css_selector(input)
+            if check:
+                if not current_radio_status.is_selected():
+                    v.find_element_by_css_selector(select).click()
+            else:
+                if current_radio_status.is_selected():
+                    v.find_element_by_css_selector(select).click()
+            break
+
+
+def connect_wifi(wifi_ssid, password):
+    import os
+    try:
+        import pywifi
+    except:
+        os.system('pip install pywifi')
+        import pywifi
+    from pywifi import const
+    os.system('netsh wlan disconnect')
+    wifi = pywifi.PyWiFi()
+    iface = wifi.interfaces()[0]
+    iface.disconnect()
+    time.sleep(1)
+
+    profile = pywifi.Profile()
+    profile.ssid = wifi_ssid
+    profile.auth = const.AUTH_ALG_OPEN
+    profile.akm.append(const.AKM_TYPE_WPA2PSK)
+    profile.cipher = const.CIPHER_TYPE_CCMP
+    profile.key = password
+
+    iface.remove_all_network_profiles()
+    tmp_profile = iface.add_network_profile(profile)
+    iface.connect(tmp_profile)
+    time.sleep(8)
+
+
+def current_connected_wifi():
+    import subprocess
+    ifaces = subprocess.check_output('netsh wlan show interfaces')
+    return ifaces.decode('utf8').split('Profile                :')[1].split('Hosted')[0].strip()
