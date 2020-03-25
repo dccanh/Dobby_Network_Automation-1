@@ -39,6 +39,9 @@ exp_tooltip_img = 'http://quantum.humaxdigital.com/'
 exp_quantum_url = 'quantum.humaxdigital.com'
 exp_wrong_captcha = 'Incorrect security code'
 exp_wrong_id_pw = 'Router login ID or password is not correct.'
+exp_wizard_wl_desc = 'You can change the password setting between 8 and 63 characters(letters, numbers and special characters). The default security type is WPA/WPA2-PSK(AES). If you want to change the security type, go to Wireless > Primarny Network after completing the wizard.'
+exp_wizard_skip_confirm = 'If you exit the wizard, it may cause abnormal operation. We recommend you fully complete the wizard process. Are you sure to exit the wizard?'
+exp_wizard_enter_ssid = 'Enter the network name(SSID)'
 # ~~~~~~~~~~~~~~~~~~~~~~~ Welcome
 exp_time_zone = '(GMT+07:00) Bangkok, Ho Chi Minh, Phnom Penh, Vientiane'
 exp_language = 'English'
@@ -67,6 +70,7 @@ exp_dialog_add_same_ssid = 'The Network Name(SSID) already exists. Enter another
 exp_wl_default_pw = '00000000'
 exp_short_pw_error_msg = "That's too short."
 exp_wps_red_message = "If both Hide SSIDs on both wireless networks are set to on, WPS is disabled."
+exp_wps_error_msg = 'The WPS button works only when Security is None, WPA2-PSK, WPA2 / WPA-PSK. Please check the security type of 2.4GHz and 5GHz'
 
 # ~~~~~~~~~~~~~~~~~~~~~~ Media share
 exp_nw_folder_exist = 'The same network folder exists.'
@@ -79,6 +83,7 @@ exp_account_not_available = 'This ID is not available.'
 exp_delete_account_when_server_running = 'The server is running under the account. If you delete this item, the related server will no longer work. Continue?'
 exp_server_account_warning = 'Create an account first. Go to Account Setting.'
 exp_server_folder_warning = 'Create a network folder first. Go to Network Folder Setting.'
+exp_subtitle_ms_usb = 'You can see the information on the connected USB device or safely remove it.'
 # ~~~~~~~~~~~~~~~~~~~~~ Security
 exp_ls_parental_label = ['New Parental Code', 'Retype New Parental Code']
 exp_parental_pop_up_title = 'Enter the Parental Code.'
@@ -107,13 +112,13 @@ exp_warning_local_port_same_external = 'The number of Local Ports must be the sa
 exp_add_local_external_port_exist = 'This Local Port/External Port already exists.'
 exp_none_text = ''
 exp_error_msg_ip_same_lan_ip = 'Enter another IP address. Cannot same as the LAN IP address.'
-
+exp_advance_restore_confirm_msg = 'Do you want to restore to default wireless settings?'
 # ~~~~~~~~~~~~~~~~~~~~ System
 # exp_backup_file_name = 'Setting_HUMAX T10X.bin'
 exp_backup_file_name = f'Setting_{get_config("GENERAL", "model")}.bin'
 exp_backup_confirm_msg = 'Do you want to back up the current setting file?'
 exp_restore_confirm_msg = 'Do you want to restore to the selected file? Restart the system to apply the changes.'
-
+exp_sub_title_update_firmware = 'You can update the firmware. It may take several minutes, and the system may restart when the firmware update is complete.'
 
 
 # ~~~~~~~~~~~~~~~~~~~~ HOME
@@ -121,3 +126,9 @@ exp_confirm_msg_add_resserve_ip = 'Do you want to reserve IP Address?'
 exp_confirm_msg_delete_resserve_ip = 'Do you want to delete this item?'
 
 exp_confirm_msg_add_mac_filtering = 'Do you want to add this MAC Address to MAC Filtering List?'
+expected_firmware_40012 = '4.00.12'
+expected_firmware_30012 = '3.00.12'
+expected_firmware_30005 = '3.00.05'
+expected_firmware_40011 = '4.00.11'
+exp_msg_invalid_file_firmware = 'Invalid file to update. Check the update file'
+exp_msg_update_fail_file_firmware = 'Update has failed due to unknown error'

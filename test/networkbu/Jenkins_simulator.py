@@ -14,7 +14,7 @@ from Test.T10x.Non_Function import *
 import threading
 import signal
 import glob, subprocess
-
+os.chdir(root_dir)
 try:
     import keyboard
 except ModuleNotFoundError:
@@ -29,7 +29,6 @@ except ModuleNotFoundError:
 config_path = './Config/t10x/config.txt'
 testcase_data_path = './Image/testcase_data.txt'
 icon_path = './Image/logo.ico'
-__VERSION_ENVIRONMENT__ = 'T10.2.2'
 
 
 def serial_ports():
@@ -131,20 +130,21 @@ label = Label(root, image=photo)
 label.image = photo
 label.place(x=2, y=0)
 
-titleLabel = Label(root, text="HVN NETWORK AUTOMATION TOOL", font=40)
+titleLabel = Label(root, text="HVN NETWORK AUTOMATION TOOL", font="Verdana 13")
 titleLabel.place(x=140, y=0)
 
 img_down = Image.open('./Image/down-icon.png')
 photo_down = ImageTk.PhotoImage(img_down)
 img_up = Image.open('./Image/up-icon.png')
 photo_up = ImageTk.PhotoImage(img_up)
-img_run = Image.open('./Image/run.png')
+img_run = Image.open('./Image/run2.png')
 photo_run = ImageTk.PhotoImage(img_run)
-img_manual = Image.open('./Image/hand-click.png')
+img_manual = Image.open('./Image/hand-click2.png')
 photo_manual = ImageTk.PhotoImage(img_manual)
-img_abort = Image.open('./Image/abort.png')
+img_abort = Image.open('./Image/abort2.png')
 photo_abort = ImageTk.PhotoImage(img_abort)
-
+img_playing = Image.open('./Image/playing.png')
+photo_playing = ImageTk.PhotoImage(img_playing)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 labelFile1 = Label(root, text="Tester:")
 labelFile1.place(x=30, y=40)
@@ -221,9 +221,22 @@ linkLabel = Label(root, text="")
 labelFile6 = Label(root, text="Individual TC:")
 labelFile6.place(x=30, y=440)
 ls_tc = StringVar()
-lstc_box = Entry(root, textvariable=ls_tc)
+lstc_box = Entry(root, textvariable=ls_tc, state=DISABLED)
 lstc_box.pack()
 lstc_box.place(x=140, y=440, height=25, width=330)
+
+def cls():
+    lstc_box.configure(state=NORMAL)
+    lstc_box.delete(0, END)
+    lstc_box.configure(state=DISABLED)
+
+img_clear = Image.open('./Image/clear_btn.png')
+photo_cls = ImageTk.PhotoImage(img_clear)
+label = Label(root, image=photo_cls)
+label.image = photo_cls
+label.place(x=450, y=443)
+label.bind("<Button-1>", lambda e: cls())
+
 
 # ~~~~~~~~~~~~~~~
 loopLabel = Label(root, text="Loop times:")
@@ -349,12 +362,18 @@ def _runBtn():
         linkLabel.place(x=180, y=410)
         linkLabel.bind("<Button-1>", lambda e: callback("https://docs.google.com/spreadsheets/d/1kliw4-QTK4g3iz8fpbiyo-62L1dZZa5mCRTTMkBaLu4/edit?pli=1#gid=0"))
 
+        mergeButton.configure(text=' Playing', image=photo_playing, state=DISABLED)
+
         for i in range(int(loopBox.get())):
             print(f'\n**************\n_- Run times {str(i + 1)} -_\n')
 
             detect_run_testcase()
+        time = datetime.now()
+        time_str = time.strftime('%d %b, %Y %H:%M:%S')
+        progress.configure(text=f'DONE: {time_str}')
+        manualButton.configure(state=NORMAL)
+        mergeButton.configure(text=' Run', image=photo_run, state=NORMAL)
 
-        progress.configure(text=f'DONE at {str(datetime.now())}')
         # progress = Label(root, text=f'DONE at {str(datetime.now())}')
         # progress.place(x=318, y=520)
 
@@ -375,116 +394,121 @@ def _manualBtn():
     load_database_tc(NON_FUNCTION)
 
     list_module_chosen = find_chosen_module()
+    if not len(list_module_chosen):
+        messagebox.showwarning('Warning', 'You have to choose test suite first!')
+        manualButton.configure(state=NORMAL)
+    else:
 
-    config = configparser.RawConfigParser()
-    config.read(testcase_data_path)
+        config = configparser.RawConfigParser()
+        config.read(testcase_data_path)
+        now_x = root.winfo_x()
+        now_y = root.winfo_y()
+        window = Toplevel(root)
+        window.geometry(f"985x550+{str(now_x)}+{now_y}")
+        window.resizable(0, 0)
+        window.title("Pick testcases")
+        window.iconbitmap(icon_path)
 
-    window = Toplevel(root)
-    window.geometry(f"985x550+{str(now_x)}+{now_y}")
-    window.resizable(0, 0)
-    window.title("Pick testcases")
-    window.iconbitmap(icon_path)
+        frame = Frame(window, relief=RAISED, borderwidth=12)
+        frame.pack(fill=BOTH, expand=True)
 
-    frame = Frame(window, relief=RAISED, borderwidth=12)
-    frame.pack(fill=BOTH, expand=True)
-
-    def _addColor():
-        selected = listBox.curselection()
-        origin_list = listBox.get(0, listBox.size())
-        list_append = [origin_list[i] for i in selected]
-        for item in list_append:
-            receipBox.insert(END, [item])
-        while len(selected) > 0:
-            listBox.delete(selected[0])
+        def _addColor():
             selected = listBox.curselection()
+            origin_list = listBox.get(0, listBox.size())
+            list_append = [origin_list[i] for i in selected]
+            for item in list_append:
+                receipBox.insert(END, [item])
+            while len(selected) > 0:
+                listBox.delete(selected[0])
+                selected = listBox.curselection()
 
-    def _deleteColor():
-        selected = receipBox.curselection()
-        origin_list2 = receipBox.get(0, receipBox.size())
-        list_append = [origin_list2[i] for i in selected]
-        for item in list_append:
-            listBox.insert(END, [item])
-        while len(selected) > 0:
-            receipBox.delete(selected[0])
+        def _deleteColor():
             selected = receipBox.curselection()
+            origin_list2 = receipBox.get(0, receipBox.size())
+            list_append = [origin_list2[i] for i in selected]
+            for item in list_append:
+                listBox.insert(END, [item])
+            while len(selected) > 0:
+                receipBox.delete(selected[0])
+                selected = receipBox.curselection()
 
-    def warning2():
-        OKBtn.configure(state='disable')
-        return messagebox.showinfo('Notice', 'Your choices save successfully')
+        def warning2():
+            OKBtn.configure(state='disable')
+            return messagebox.showinfo('Notice', 'Your choices save successfully')
 
-    def _okBtn():
-        individual_tc = list()
-        for i in receipBox.get(0, receipBox.size()):
-            if isinstance(i, tuple):
-                individual_tc.append(i[0])
-            else:
-                individual_tc.append(i)
+        def _okBtn():
+            individual_tc = list()
+            for i in receipBox.get(0, receipBox.size()):
+                if isinstance(i, tuple):
+                    individual_tc.append(i[0])
+                else:
+                    individual_tc.append(i)
 
-        individual_tc_string = ';'.join(individual_tc)
+            individual_tc_string = ';'.join(individual_tc)
 
-        if warning2():
-            ls_tc.set(individual_tc_string)
+            if warning2():
+                ls_tc.set(individual_tc_string)
+                window.destroy()
+                manualButton.configure(state='normal')
+
+        def _cancelBtn():
             window.destroy()
             manualButton.configure(state='normal')
 
-    def _cancelBtn():
-        window.destroy()
-        manualButton.configure(state='normal')
+        list_value = list()
+        if list_module_chosen != ['ALL']:
+            for m in list_module_chosen:
+                list_value += ([i[1] for i in config.items(m)])
+        else:
+            print(moduleChoices)
+            for m in moduleChoices:
+                list_value += ([i[1] for i in config.items(m)])
 
-    list_value = list()
-    if list_module_chosen != ['ALL']:
-        for m in list_module_chosen:
-            list_value += ([i[1] for i in config.items(m)])
-    else:
-        print(moduleChoices)
-        for m in moduleChoices:
-            list_value += ([i[1] for i in config.items(m)])
+        source_in_individual_data = lstc_box.get()
+        print(source_in_individual_data)
+        # Remove data in Individual box
+        if source_in_individual_data != '':
+            # Up old tc to receive box
+            source_in_receive_data = source_in_individual_data.split(';')
+            # Remove old tc to Send box
+            for i in source_in_receive_data:
+                if i in list_value:
+                    list_value.remove(i)
+        else:
+            source_in_receive_data = []
 
-    source_in_individual_data = lstc_box.get()
-    print(source_in_individual_data)
-    # Remove data in Individual box
-    if source_in_individual_data != '':
-        # Up old tc to receive box
-        source_in_receive_data = source_in_individual_data.split(';')
-        # Remove old tc to Send box
-        for i in source_in_receive_data:
-            if i in list_value:
-                list_value.remove(i)
-    else:
-        source_in_receive_data = []
+        list_value = ' '.join(list_value)
+        source_tc_send = StringVar()
+        source_tc_send.set(list_value)
 
-    list_value = ' '.join(list_value)
-    source_tc_send = StringVar()
-    source_tc_send.set(list_value)
+        listBox = Listbox(frame, listvariable=source_tc_send, selectmode=MULTIPLE)
+        listBox.place(x=0, y=0, width=450, height=490)
 
-    listBox = Listbox(frame, listvariable=source_tc_send, selectmode=MULTIPLE)
-    listBox.place(x=0, y=0, width=450, height=490)
+        copyButton = Button(frame, text=">>>", command=_addColor)
+        copyButton.place(x=465, y=130)
 
-    copyButton = Button(frame, text=">>>", command=_addColor)
-    copyButton.place(x=465, y=130)
+        deleteButton = Button(frame, text="<<<", command=_deleteColor)
+        deleteButton.place(x=465, y=170)
 
-    deleteButton = Button(frame, text="<<<", command=_deleteColor)
-    deleteButton.place(x=465, y=170)
+        source_tc_receive = StringVar()
+        source_tc_receive.set(source_in_receive_data)
 
-    source_tc_receive = StringVar()
-    source_tc_receive.set(source_in_receive_data)
+        receipBox = Listbox(frame, listvariable=source_tc_receive, selectmode=MULTIPLE, width=73, height=20)
+        receipBox.pack(fill=BOTH, side=RIGHT, padx=0)
 
-    receipBox = Listbox(frame, listvariable=source_tc_receive, selectmode=MULTIPLE, width=73, height=20)
-    receipBox.pack(fill=BOTH, side=RIGHT, padx=0)
+        cancelBtn = Button(window, text="Cancel", width=15, command=_cancelBtn)
+        cancelBtn.pack(side=RIGHT, anchor='center', padx=5, pady=5)
+        OKBtn = Button(window, text="Save", width=15, command=_okBtn)
+        OKBtn.pack(side=RIGHT, anchor='center', padx=5, pady=5)
 
-    cancelBtn = Button(window, text="Cancel", width=15, command=_cancelBtn)
-    cancelBtn.pack(side=RIGHT, anchor='center', padx=5, pady=5)
-    OKBtn = Button(window, text="Save", width=15, command=_okBtn)
-    OKBtn.pack(side=RIGHT, anchor='center', padx=5, pady=5)
+        def on_closing():
+            # Destroy window and enable Manual button
+            manualButton.configure(state='normal')
+            window.destroy()
 
-    def on_closing():
-        # Destroy window and enable Manual button
-        manualButton.configure(state='normal')
-        window.destroy()
+        window.protocol("WM_DELETE_WINDOW", on_closing)
 
-    window.protocol("WM_DELETE_WINDOW", on_closing)
-
-    window.mainloop()
+        window.mainloop()
 
 
 def _abortBtn():
@@ -524,6 +548,10 @@ abortButton = Button(root, text=" Abort", command=abort, height=20, width=80, bo
 abortButton.place(x=360, y=470)
 
 
+__VERSION_ENVIRONMENT__ = 'T10.2.3'
+
+statusbar = Label(root, text=' '.join(['ver', __VERSION_ENVIRONMENT__]), bd=1, anchor=W, font="Verdana 6")
+statusbar.pack(side=BOTTOM, fill=X)
 # =======================================================================================
 def show_guideline():
     guide_text = '''

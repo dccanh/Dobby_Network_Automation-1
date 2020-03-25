@@ -253,12 +253,12 @@ class SECURITY(unittest.TestCase):
             parental_code_btn = parental_code.find_element_by_css_selector(select)
             parental_code_btn.click()
             wait_popup_disappear(driver, dialog_loading)
-
+            time.sleep(1)
             # Input valid
             parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
             #  New
             ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_NEW_CODE_KEY).perform()
-            time.sleep(0.5)
+            time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
@@ -422,11 +422,11 @@ class SECURITY(unittest.TestCase):
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
-            parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
-            ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
-            time.sleep(0.5)
-            driver.find_element_by_css_selector(btn_ok).click()
-            wait_popup_disappear(driver, dialog_loading)
+            # parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+            # ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+            # time.sleep(0.5)
+            # driver.find_element_by_css_selector(btn_ok).click()
+            # wait_popup_disappear(driver, dialog_loading)
 
             check_page_security = driver.find_element_by_css_selector(security_page).is_displayed()
             time.sleep(3)
@@ -506,6 +506,7 @@ class SECURITY(unittest.TestCase):
             for f in ls_service:
                 if f.text == SOCIAL_NW:
                     f.click()
+                    break
 
             ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
             for s in ls_service_sub:

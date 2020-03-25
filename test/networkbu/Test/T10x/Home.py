@@ -1929,20 +1929,20 @@ class HOME(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2. Check Connected Devices, [Refresh], Local Network, '
+                '[Pass] 1, 2, 3. Check Connected Devices, [Refresh], Local Network, '
                 'Device name, Interface, MAC Address, IP Address, Edit icon are displayed .'
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2.Check Connected Devices, [Refresh], Local Network, '
+                f'[Fail] 1, 2, 3.Check Connected Devices, [Refresh], Local Network, '
                 'Device name, Interface, MAC Address, IP Address, Edit icon are displayed . '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
 
-            list_step_fail.append('2. Assertion wong.')
+            list_step_fail.append('1, 2, 3. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
     # OK F
@@ -1975,15 +1975,15 @@ class HOME(unittest.TestCase):
             list_expected1 = ['Connected Devices', num_devices]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Check default tab in Devices, number of devices.'
+            self.list_steps.append('[Pass] 1, 2. Check default tab in Devices, number of devices.'
                                    f'Actual: {str(list_actual1)}. '
                                    f'Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Check default tab in Devices, number of devices. '
+                f'[Fail] 1, 2. Check default tab in Devices, number of devices. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
-            list_step_fail.append('2. Assertion wong.')
+            list_step_fail.append('1, 2. Assertion wong.')
 
         try:
             # Click Edit
@@ -2034,10 +2034,10 @@ class HOME(unittest.TestCase):
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(1)
-            self.list_steps.append('4. [Pass] Connect wifi Successfully.')
+            self.list_steps.append('[Pass] 3.2 Connect wifi Successfully.')
         except:
-            self.list_steps.append('4. [Fail] Connect wifi Fail')
-            list_step_fail.append('4. Assertion wong.')
+            self.list_steps.append('[Fail] 3.2 Connect wifi Fail')
+            list_step_fail.append('3.2 Assertion wong.')
 
         try:
             time.sleep(5)
@@ -2068,17 +2068,17 @@ class HOME(unittest.TestCase):
             list_expected5 = ['pc', return_true, return_true, return_true, expected_ls_label]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 5. Check default tab in Devices, number of devices.'
+            self.list_steps.append('[Pass] 4. Check default tab in Devices, number of devices.'
                                    f'Actual: {str(list_actual5)}. '
                                    f'Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 5. Check default tab in Devices, number of devices. '
+                f'[Fail] 4. Check default tab in Devices, number of devices. '
                 f'Actual: {str(list_actual5)}. '
                 f'Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
-            list_step_fail.append('5. Assertion wong.')
+            list_step_fail.append('4. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
     # OK
@@ -2184,14 +2184,12 @@ class HOME(unittest.TestCase):
                                    'Click add again -> Click OK -> Check add icon change to delete icon'
                                    f'Actual: {str(list_actual3)}. '
                                    f'Expected: {str(list_expected3)}')
-            self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
                 'Click add again -> Click OK -> Check add icon change to delete icon'
                 f'Actual: {str(list_actual3)}. '
                 f'Expected: {str(list_expected3)}')
-            self.list_steps.append('[END TC]')
             list_step_fail.append('3. Assertion wong.')
 
         # Verify reserved IP in Network Lan
@@ -2315,9 +2313,9 @@ class HOME(unittest.TestCase):
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(1)
-            self.list_steps.append('8.0 [Pass] Connect wifi Successfully.')
+            self.list_steps.append('[Pass] 8.0 Connect wifi Successfully.')
         except:
-            self.list_steps.append('8.0 [Fail] Connect wifi Fail')
+            self.list_steps.append('[Fail] 8.0 Connect wifi Fail')
             list_step_fail.append('8.0 Assertion wong.')
 
         try:
@@ -2339,18 +2337,18 @@ class HOME(unittest.TestCase):
 
             check_dialog_display = len(driver.find_elements_by_css_selector(dialog_content)) > 0
 
-            list_actual1 = [check_dialog_display]
-            list_expected1 = [return_true]
-            check = assert_list(list_actual1, list_expected1)
+            list_actual8 = [check_dialog_display]
+            list_expected8 = [return_true]
+            check = assert_list(list_actual8, list_expected8)
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 8.1. Click Edit; Check popup display.'
-                                   f'Actual: {str(list_actual1)}. '
-                                   f'Expected: {str(list_expected1)}')
+                                   f'Actual: {str(list_actual8)}. '
+                                   f'Expected: {str(list_expected8)}')
         except:
             self.list_steps.append(
                 f'[Fail] 8.1. Click Edit; Check popup display. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                f'Actual: {str(list_actual8)}. '
+                f'Expected: {str(list_expected8)}')
             list_step_fail.append('8.1. Assertion wong.')
 
         try:
@@ -2396,22 +2394,20 @@ class HOME(unittest.TestCase):
                     break
             check_delete_icon = check_delete_icon == 'icon delete'
 
-            list_actual3 = [check_confirm_msg, check_confirm_pop_disappear, check_delete_icon]
-            list_expected3 = [exp_confirm_msg_add_resserve_ip, return_true, return_true]
-            check = assert_list(list_actual3, list_expected3)
+            list_actual9 = [check_confirm_msg, check_confirm_pop_disappear, check_delete_icon]
+            list_expected9 = [exp_confirm_msg_add_resserve_ip, return_true, return_true]
+            check = assert_list(list_actual9, list_expected9)
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 8.2. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
                                    'Click add again -> Click OK -> Check add icon change to delete icon'
-                                   f'Actual: {str(list_actual3)}. '
-                                   f'Expected: {str(list_expected3)}')
-            self.list_steps.append('[END TC]')
+                                   f'Actual: {str(list_actual9)}. '
+                                   f'Expected: {str(list_expected9)}')
         except:
             self.list_steps.append(
                 f'[Fail] 8.2. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
                 'Click add again -> Click OK -> Check add icon change to delete icon'
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
-            self.list_steps.append('[END TC]')
+                f'Actual: {str(list_actual9)}. '
+                f'Expected: {str(list_expected9)}')
             list_step_fail.append('8.2. Assertion wong.')
 
         try:
@@ -2435,18 +2431,18 @@ class HOME(unittest.TestCase):
                         if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
                             check_add_in_lan = True
 
-            list_actual4 = [check_add_in_lan]
-            list_expected4 = [return_true]
-            check = assert_list(list_actual4, list_expected4)
+            list_actual10 = [check_add_in_lan]
+            list_expected10 = [return_true]
+            check = assert_list(list_actual10, list_expected10)
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 8.3. Add reserved IP -> Check add successfully in Network Lan'
-                                   f'Actual: {str(list_actual4)}. '
-                                   f'Expected: {str(list_expected4)}')
+                                   f'Actual: {str(list_actual10)}. '
+                                   f'Expected: {str(list_expected10)}')
         except:
             self.list_steps.append(
                 f'[Fail] 8.3 reserved IP -> Check add successfully in Network Lan'
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                f'Actual: {str(list_actual10)}. '
+                f'Expected: {str(list_expected10)}')
             list_step_fail.append('8.3. Assertion wong.')
 
         try:
@@ -2499,19 +2495,19 @@ class HOME(unittest.TestCase):
                         if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
                             check_add_in_lan = False
 
-            list_actual5 = [check_confirm_delete_msg, check_add_in_lan]
-            list_expected5 = [exp_confirm_msg_delete_resserve_ip, return_true]
-            check = assert_list(list_actual5, list_expected5)
+            list_actual11 = [check_confirm_delete_msg, check_add_in_lan]
+            list_expected11 = [exp_confirm_msg_delete_resserve_ip, return_true]
+            check = assert_list(list_actual11, list_expected11)
             self.assertTrue(check["result"])
             self.list_steps.append('[Pass] 8.4. Delete reserved IP -> Check Delete successfully in Network Lan'
-                                   f'Actual: {str(list_actual5)}. '
-                                   f'Expected: {str(list_expected5)}')
+                                   f'Actual: {str(list_actual11)}. '
+                                   f'Expected: {str(list_expected11)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 8.4. Delete reserved IP -> Check Delete successfully in Network Lan'
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                f'Actual: {str(list_actual11)}. '
+                f'Expected: {str(list_expected11)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('8.4. Assertion wong.')
 
