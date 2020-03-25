@@ -137,13 +137,14 @@ img_down = Image.open('./Image/down-icon.png')
 photo_down = ImageTk.PhotoImage(img_down)
 img_up = Image.open('./Image/up-icon.png')
 photo_up = ImageTk.PhotoImage(img_up)
-img_run = Image.open('./Image/run.png')
+img_run = Image.open('./Image/run2.png')
 photo_run = ImageTk.PhotoImage(img_run)
-img_manual = Image.open('./Image/hand-click.png')
+img_manual = Image.open('./Image/hand-click2.png')
 photo_manual = ImageTk.PhotoImage(img_manual)
-img_abort = Image.open('./Image/abort.png')
+img_abort = Image.open('./Image/abort2.png')
 photo_abort = ImageTk.PhotoImage(img_abort)
-
+img_playing = Image.open('./Image/playing.png')
+photo_playing = ImageTk.PhotoImage(img_playing)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 labelFile1 = Label(root, text="Tester:")
 labelFile1.place(x=30, y=40)
@@ -361,6 +362,8 @@ def _runBtn():
         linkLabel.place(x=180, y=410)
         linkLabel.bind("<Button-1>", lambda e: callback("https://docs.google.com/spreadsheets/d/1kliw4-QTK4g3iz8fpbiyo-62L1dZZa5mCRTTMkBaLu4/edit?pli=1#gid=0"))
 
+        mergeButton.configure(text=' Playing', image=photo_playing, state=DISABLED)
+
         for i in range(int(loopBox.get())):
             print(f'\n**************\n_- Run times {str(i + 1)} -_\n')
 
@@ -368,6 +371,9 @@ def _runBtn():
         time = datetime.now()
         time_str = time.strftime('%d %b, %Y %H:%M:%S')
         progress.configure(text=f'DONE: {time_str}')
+        manualButton.configure(state=NORMAL)
+        mergeButton.configure(text=' Run', image=photo_run, state=NORMAL)
+
         # progress = Label(root, text=f'DONE at {str(datetime.now())}')
         # progress.place(x=318, y=520)
 

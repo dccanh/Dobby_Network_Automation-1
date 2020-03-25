@@ -5117,26 +5117,21 @@ class MAIN(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        url_login = get_config('URL', 'url')
-        NEW_PASSWORD = '1234abcd'
-        NEW_PASSWORD_RETYPE = 'abcd1234'
-        WRONG_PASSWORD = 'wrong123'
-
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(120)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
-        time.sleep(3)
+        # url_login = get_config('URL', 'url')
+        # filename = '1'
+        # commmand = 'factorycfg.sh -a'
+        # run_cmd(commmand, filename=filename)
+        # # Wait 5 mins for factory
+        # time.sleep(120)
+        # wait_DUT_activated(url_login)
+        # wait_ping('192.168.1.1')
+        # filename_2 = 'account.txt'
+        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        # run_cmd(commmand_2, filename_2)
+        # time.sleep(3)
+        # # Get account information from web server and write to config.txt
+        # get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        # time.sleep(3)
         # =======================================================
         NEW_PASSWORD = get_config('MAIN', 'main61_new_pw', input_data_path)
         NEW_PASSWORD_RETYPE = get_config('MAIN', 'main61_retype_new_pw', input_data_path)
@@ -5172,36 +5167,39 @@ class MAIN(unittest.TestCase):
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2. Let empty Current password and new password, Check Warning Message. '
+                f'[Pass] 1, 2. Login. Let empty Current password and new password, Check Warning Message. '
                 f'Actual: {str(list_actual2)}. '
                 f'Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Let empty Current password and new password, Check Warning Message. '
+                f'[Fail] 1, 2. Login. Let empty Current password and new password, Check Warning Message. '
                 f'Actual: {str(list_actual2)}. '
                 f'Expected: {str(list_expected2)}')
-            list_step_fail.append('2. Assertion wong')
+            list_step_fail.append('1, 2. Assertion wong')
 
         try:
-            ls_pw_box = driver.find_elements_by_css_selector(' '.join([dialog_content, password_input_cls]))
+            time.sleep(1)
+            ls_pw_box_2 = driver.find_elements_by_css_selector(' '.join([dialog_content, password_input_cls]))
+
+            time.sleep(1)
             # Current pw
-            ActionChains(driver).move_to_element(ls_pw_box[0]).click().send_keys(WRONG_PASSWORD).perform()
-            time.sleep(0.2)
+            ActionChains(driver).move_to_element(ls_pw_box_2[0].find_element_by_css_selector(input)).click().send_keys(WRONG_PASSWORD).perform()
+            time.sleep(1)
             # New pw
-            ActionChains(driver).move_to_element(ls_pw_box[1]).click().send_keys(NEW_PASSWORD).perform()
-            time.sleep(0.2)
+            ActionChains(driver).move_to_element(ls_pw_box_2[1].find_element_by_css_selector(input)).click().send_keys(NEW_PASSWORD).perform()
+            time.sleep(1)
             # Retype new pw
-            ActionChains(driver).move_to_element(ls_pw_box[2]).click().send_keys(NEW_PASSWORD).perform()
+            ActionChains(driver).move_to_element(ls_pw_box_2[2].find_element_by_css_selector(input)).click().send_keys(NEW_PASSWORD).perform()
             time.sleep(0.2)
             # CLick to other place
             driver.find_element_by_css_selector(apply).click()
-            time.sleep(0.2)
+            time.sleep(2)
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             # Check error messages
-            ls_error_msg_current_pw = ls_pw_box[0].find_elements_by_css_selector(error_message)[1].text
+            ls_error_msg_current_pw_ = ls_pw_box_2[0].find_elements_by_css_selector(error_message)[1].text
 
-            list_actual3 = [ls_error_msg_current_pw]
+            list_actual3 = [ls_error_msg_current_pw_]
             list_expected3 = ['Password is not correct.']
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
@@ -5217,22 +5215,25 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('3. Assertion wong')
 
         try:
+            time.sleep(2)
             ls_pw_box = driver.find_elements_by_css_selector(' '.join([dialog_content, password_input_cls]))
             # New pw
             ls_pw_box[1].find_element_by_css_selector(input).clear()
-            ActionChains(driver).move_to_element(ls_pw_box[1]).click().send_keys(NEW_PASSWORD).perform()
             time.sleep(0.2)
+            ActionChains(driver).move_to_element(ls_pw_box[1].find_element_by_css_selector(input)).click().send_keys(NEW_PASSWORD).perform()
+            time.sleep(1)
             # Retype new pw
             ls_pw_box[2].find_element_by_css_selector(input).clear()
-            ActionChains(driver).move_to_element(ls_pw_box[2]).click().send_keys(NEW_PASSWORD_RETYPE).perform()
+            time.sleep(0.2)
+            ActionChains(driver).move_to_element(ls_pw_box[2].find_element_by_css_selector(input)).click().send_keys(NEW_PASSWORD_RETYPE).perform()
             time.sleep(0.2)
             # CLick to other place
             driver.find_element_by_css_selector(ele_check_for_update_title).click()
             time.sleep(1)
             # Check error messages
-            ls_error_msg_new_pw_retype = ls_pw_box[2].find_element_by_css_selector(error_message).text
+            ls_error_msg_new_pw_retype_ = ls_pw_box[2].find_element_by_css_selector(error_message).text
 
-            list_actual4 = [ls_error_msg_new_pw_retype]
+            list_actual4 = [ls_error_msg_new_pw_retype_]
             list_expected4 = ['Password does not match.']
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])

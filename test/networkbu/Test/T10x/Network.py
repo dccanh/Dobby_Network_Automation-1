@@ -326,7 +326,7 @@ class NETWORK(unittest.TestCase):
             driver.find_element_by_css_selector(home_img_connection).click()
             time.sleep(1)
 
-            primary = driver.find_element_by_css_selector(left)
+            primary = driver.find_elements_by_css_selector(card_cls)[0]
             ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
             dict_wan = {}
             for w in ls_wan_field:
@@ -456,7 +456,7 @@ class NETWORK(unittest.TestCase):
             driver.find_element_by_css_selector(home_img_connection).click()
             time.sleep(1)
 
-            primary = driver.find_element_by_css_selector(left)
+            primary = driver.find_elements_by_css_selector(card_cls)[0]
             ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
             dict_wan = {}
             for w in ls_wan_field:
