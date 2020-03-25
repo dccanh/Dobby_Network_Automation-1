@@ -160,19 +160,19 @@ labelFile5.place(x=30, y=240)
 cusStage1 = StringVar()
 stage1 = Entry(root, textvariable=cusStage1)
 stage1.pack()
-cusStage1.set(get_config(config_path, 'GENERAL', 'stage'))
+# cusStage1.set(get_config(config_path, 'GENERAL', 'stage'))
 stage1.place(x=140, y=40, height=25, width=330)
 
 cusVersion2 = StringVar(None)
 version2 = Entry(root, textvariable=cusVersion2)
 version2.pack()
-cusVersion2.set(get_config(config_path, 'GENERAL', 'version'))
+# cusVersion2.set(get_config(config_path, 'GENERAL', 'version'))
 version2.place(x=140, y=90, height=25, width=330)
 
 cusNumber3 = StringVar()
 number3 = Entry(root, textvariable=cusNumber3)
 number3.pack()
-cusNumber3.set(get_config(config_path, 'GENERAL', 'serial_number'))
+# cusNumber3.set(get_config(config_path, 'GENERAL', 'serial_number'))
 number3.place(x=140, y=140, height=25, width=330)
 
 cusPort4 = StringVar(None)
@@ -432,9 +432,9 @@ def _manualBtn():
                 receipBox.delete(selected[0])
                 selected = receipBox.curselection()
 
-        def warning2():
+        def warning2(number_chosen_tc):
             OKBtn.configure(state='disable')
-            return messagebox.showinfo('Notice', 'Your choices save successfully')
+            return messagebox.showinfo('Notice', f'Save {str(number_chosen_tc)} choices successfully')
 
         def _okBtn():
             individual_tc = list()
@@ -446,7 +446,7 @@ def _manualBtn():
 
             individual_tc_string = ';'.join(individual_tc)
 
-            if warning2():
+            if warning2(len(individual_tc)):
                 ls_tc.set(individual_tc_string)
                 window.destroy()
                 manualButton.configure(state='normal')
