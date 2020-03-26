@@ -273,6 +273,31 @@ def get_result_command_from_server(url_ip, filename='1'):
     driver2.quit()
     return {'userName': username, 'passWord': password}
 
+def get_result_command_from_server_api(url_ip, _name='1'):
+    url = url_ip + '/' + _name
+    _res = requests.get(url)
+    if _res.status_code != 200:
+        url_login = get_config('URL', 'url')
+        filename_2 = 'account2.txt'
+        command_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(command_2, filename_2)
+        time.sleep(5)
+        url = url_login + '/' + filename_2
+        _res = requests.get(url)
+
+    get_all_text = _res.text
+    print(get_all_text)
+    command_result = '{' + get_all_text.split('@@@ PRINT OBJLIST START @@@')[1].split(' @@@@@@ PRINT OBJLIST END @@@@@@')[0]
+    fit_result = command_result.split('},\n\t },\n }')[0]+'}}}'
+
+    info = json.loads(fit_result)
+    username = info['Device.Users.User.2']['Username']['paramValue']
+    password = info['Device.Users.User.2']['Password']['paramValue']
+
+    save_config(config_path, 'ACCOUNT', 'user', username)
+    save_config(config_path, 'ACCOUNT', 'password', password)
+    return {'userName': username, 'passWord': password}
+
 
 def login(driver):
     url_login = get_config('URL', 'url')
@@ -1054,4 +1079,26 @@ def connect_wifi(wifi_ssid, password):
 def current_connected_wifi():
     import subprocess
     ifaces = subprocess.check_output('netsh wlan show interfaces')
-    return ifaces.decode('utf8').split('Profile                :')[1].split('Hosted')[0].strip()
+    if 'Profile' in ifaces.decode('utf8'):
+        return ifaces.decode('utf8').split('Profile                :')[1].split('Hosted')[0].strip()
+    return 'WiFi is not connected'
+
+
+def factory_dut():
+    url_login = get_config('URL', 'url')
+    filename_1 = '1'
+    command = 'factorycfg.sh -a'
+    run_cmd(command, filename_1)
+    # Wait 5 mins for factory
+    time.sleep(150)
+    wait_DUT_activated(url_login)
+    wait_ping('192.168.1.1')
+    time.sleep(3)
+    filename_2 = 'account2.txt'
+    command_2 = 'capitest get Device.Users.User.2. leaf'
+    run_cmd(command_2, filename_2)
+    time.sleep(5)
+    url = url_login + '/' + filename_2
+    _res = requests.get(url)
+    # Get account information from web server and write to config.txt
+    get_result_command_from_server_api(url_login, filename_2)

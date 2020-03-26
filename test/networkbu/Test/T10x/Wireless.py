@@ -4925,6 +4925,7 @@ class WIRELESS(unittest.TestCase):
             # Connect wifi
             time.sleep(1)
             connect_wifi(default_2g_ssid, default_2g_pw)
+            time.sleep(2)
             connected_wifi_name = current_connected_wifi()
 
             list_actual3 = [connected_wifi_name]
@@ -4954,12 +4955,20 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+
             time.sleep(1)
-            wait_popup_disappear(driver, dialog_loading)
+            if block_2g.find_element_by_css_selector(apply).is_displayed():
+                block_2g.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
 
             time.sleep(1)
             block_2g = driver.find_element_by_css_selector(left)
@@ -4971,15 +4980,15 @@ class WIRELESS(unittest.TestCase):
                     get_radio = v.find_element_by_css_selector(input).is_selected()
                     break
             time.sleep(1)
-            block_2g.find_element_by_css_selector(apply).click()
-            if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
-                time.sleep(1)
-                driver.find_element_by_css_selector(btn_ok).click()
-                wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
-                time.sleep(1)
-                driver.find_element_by_css_selector(btn_ok).click()
-                wait_popup_disappear(driver, dialog_loading)
+            # block_2g.find_element_by_css_selector(apply).click()
+            # if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
+            #     time.sleep(1)
+            #     driver.find_element_by_css_selector(btn_ok).click()
+            #     wait_popup_disappear(driver, dialog_loading)
+            # if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
+            #     time.sleep(1)
+            #     driver.find_element_by_css_selector(btn_ok).click()
+            #     wait_popup_disappear(driver, dialog_loading)
 
             list_actual4 = [get_radio]
             list_expected4 = [return_false]
@@ -5118,7 +5127,6 @@ class WIRELESS(unittest.TestCase):
                 f'Expected: {str(list_expected3)}')
             list_step_fail.append('3. Assertion wong.')
 
-
         try:
             # Connect 2.4GHz wifi
             block_2g.find_element_by_css_selector(apply).click()
@@ -5169,7 +5177,6 @@ class WIRELESS(unittest.TestCase):
             for l, v in zip(labels_2, values_2):
                 if l.text == 'Wireless Mode':
                     default_wireless_mode = v.find_element_by_css_selector(ele_wireless_mode_filed)
-                    default_wireless_mode_text = default_wireless_mode.text.lower()
                     # Get total supported modes
                     default_wireless_mode.click()
 
@@ -5228,7 +5235,6 @@ class WIRELESS(unittest.TestCase):
             for l, v in zip(labels_2, values_2):
                 if l.text == 'Wireless Mode':
                     default_wireless_mode = v.find_element_by_css_selector(ele_wireless_mode_filed)
-                    default_wireless_mode_text = default_wireless_mode.text.lower()
                     # Get total supported modes
                     default_wireless_mode.click()
 
@@ -5365,18 +5371,22 @@ class WIRELESS(unittest.TestCase):
             api_mac_address = _res[0]['macAddress']
             # ==================================================
             list_rows = driver.find_elements_by_css_selector(row_table)
-            for r in list_rows[1:]:
-                get_row_mac = r.find_element_by_css_selector('td:last-child').text
-                if get_row_mac == api_mac_address:
-                    get_nw_name = r.find_element_by_css_selector(ele_table_nw_ssid_name).text
-                    get_channel = r.find_element_by_css_selector(ele_table_channel).text
-                    get_rssi = r.find_element_by_css_selector(ele_table_rssi).text
-                    get_security = r.find_element_by_css_selector(ele_table_security).text
-                    break
+            if len(list_rows) > 1:
+                for r in list_rows[1:]:
+                    get_row_mac = r.find_element_by_css_selector('td:last-child').text
+                    if get_row_mac == api_mac_address:
+                        get_nw_name = r.find_element_by_css_selector(ele_table_nw_ssid_name).text
+                        get_channel = r.find_element_by_css_selector(ele_table_channel).text
+                        get_rssi = r.find_element_by_css_selector(ele_table_rssi).text
+                        get_security = r.find_element_by_css_selector(ele_table_security).text
+                        break
 
+                list_actual3 = [api_ssid, api_channel, api_rssi, api_security, api_mac_address]
+                list_expected3 = [get_nw_name, get_channel, get_rssi, get_security, get_row_mac]
+            else:
+                list_actual3 = []
+                list_expected3 = []
 
-            list_actual3 = [api_ssid, api_channel, api_rssi, api_security, api_mac_address]
-            list_expected3 = [get_nw_name, get_channel, get_rssi, get_security, get_row_mac]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -5859,12 +5869,20 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+
             time.sleep(1)
-            wait_popup_disappear(driver, dialog_loading)
+            if block_5g.find_element_by_css_selector(apply).is_displayed():
+                block_5g.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
 
             time.sleep(1)
             block_5g = driver.find_element_by_css_selector(right)
@@ -5876,15 +5894,15 @@ class WIRELESS(unittest.TestCase):
                     get_radio = v.find_element_by_css_selector(input).is_selected()
                     break
             time.sleep(1)
-            block_5g.find_element_by_css_selector(apply).click()
-            if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
-                time.sleep(1)
-                driver.find_element_by_css_selector(btn_ok).click()
-                wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
-                time.sleep(1)
-                driver.find_element_by_css_selector(btn_ok).click()
-                wait_popup_disappear(driver, dialog_loading)
+            # block_5g.find_element_by_css_selector(apply).click()
+            # if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
+            #     time.sleep(1)
+            #     driver.find_element_by_css_selector(btn_ok).click()
+            #     wait_popup_disappear(driver, dialog_loading)
+            # if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
+            #     time.sleep(1)
+            #     driver.find_element_by_css_selector(btn_ok).click()
+            #     wait_popup_disappear(driver, dialog_loading)
 
             list_actual4 = [get_radio]
             list_expected4 = [return_false]
@@ -5938,21 +5956,21 @@ class WIRELESS(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         # =====================================================================================
-        # URL_LOGIN = get_config('URL', 'url')
-        # filename = '1'
-        # commmand = 'factorycfg.sh -a'
-        # run_cmd(commmand, filename=filename)
-        # # Wait 5 mins for factory
-        # time.sleep(150)
-        # wait_DUT_activated(URL_LOGIN)
-        # wait_ping('192.168.1.1')
-        #
-        # filename_2 = 'account1.txt'
-        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        # run_cmd(commmand_2, filename_2)
-        # time.sleep(3)
-        # # Get account information from web server and write to config.txt
-        # get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        URL_LOGIN = get_config('URL', 'url')
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(150)
+        wait_DUT_activated(URL_LOGIN)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account1.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
         # =====================================================================================
         save_config(config_path, 'URL', 'url', get_config('URL', 'sub_url'))
         _URL_API = get_config('URL', 'url') + '/api/v1/wifi/1/radio'
@@ -6073,7 +6091,6 @@ class WIRELESS(unittest.TestCase):
             for l, v in zip(labels_2, values_2):
                 if l.text == 'Wireless Mode':
                     default_wireless_mode = v.find_element_by_css_selector(ele_wireless_mode_filed)
-                    default_wireless_mode_text = default_wireless_mode.text.lower()
                     # Get total supported modes
                     default_wireless_mode.click()
 
@@ -6132,7 +6149,6 @@ class WIRELESS(unittest.TestCase):
             for l, v in zip(labels_2, values_2):
                 if l.text == 'Wireless Mode':
                     default_wireless_mode = v.find_element_by_css_selector(ele_wireless_mode_filed)
-                    default_wireless_mode_text = default_wireless_mode.text.lower()
                     # Get total supported modes
                     default_wireless_mode.click()
 
@@ -6142,7 +6158,7 @@ class WIRELESS(unittest.TestCase):
                         if o.get_attribute('option-value') == '802.11a+n+ac':
                             o.click()
                     break
-            # Connect 2.4GHz wifi
+            #
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
@@ -6187,201 +6203,205 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    # def test_76_WIRELESS_Advanced_Wireless_5G_Scan_AP(self):
-    #     self.key = 'WIRELESS_76'
-    #     driver = self.driver
-    #     self.def_name = get_func_name()
-    #     list_step_fail = []
-    #     self.list_steps = []
-    #     # =================================================
-    #     _URL_API = get_config('URL', 'url') + '/api/v1/wifi/1/scanResult'
-    #     _BODY = ''
-    #     _METHOD = 'GET'
-    #     _USER = get_config('ACCOUNT', 'user')
-    #     _PW = get_config('ACCOUNT', 'password')
-    #     try:
-    #         grand_login(driver)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         goto_menu(driver, advanced_tab, advanced_wireless_tab)
-    #
-    #         page_title_text = driver.find_element_by_css_selector(ele_title_page).text
-    #
-    #         list_actual = [page_title_text]
-    #         list_expected = ['Advanced > Wireless']
-    #         check = assert_list(list_actual, list_expected)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
-    #             f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
-    #             f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-    #         list_step_fail.append('1, 2. Assertion wong.')
-    #
-    #     try:
-    #         # 5G
-    #         block_5g = driver.find_element_by_css_selector(right)
-    #         # Action
-    #         block_5g.find_element_by_css_selector(ele_button_scan).click()
-    #         wait_popup_disappear(driver, icon_loading)
-    #
-    #         popup = driver.find_element_by_css_selector(dialog_content)
-    #         # Check UI
-    #         popup_title = popup.find_element_by_css_selector(ele_scan_title).text
-    #         popup_refresh_button = len(popup.find_elements_by_css_selector(ele_btn_refresh)) > 0
-    #
-    #         # Click to button List
-    #         popup.find_element_by_css_selector(ele_button_list).click()
-    #         time.sleep(0.5)
-    #         check_list_wf = len(popup.find_elements_by_css_selector(ele_wifi_table)) > 0
-    #
-    #         # CLick button Chart
-    #         popup.find_element_by_css_selector(ele_button_chart).click()
-    #         time.sleep(0.5)
-    #         check_chart_wf = len(popup.find_elements_by_css_selector(ele_wifi_chart_5g)) > 0
-    #
-    #         # Check Close button
-    #         check_btn_close_display = popup.find_element_by_css_selector(ele_btn_close).text
-    #
-    #         list_actual2 = [popup_title, popup_refresh_button, check_list_wf, check_chart_wf, check_btn_close_display]
-    #         list_expected2 = ['Nearby Wireless Access Points (5GHz)', return_true, return_true, return_true, 'Close']
-    #         check = assert_list(list_actual2, list_expected2)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 3.0 Check popup scan components: Title, Refresh, List table, Chart table, Close button. '
-    #             f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 3.0 Check popup scan components: Title, Refresh, List table, Chart table, Close button. '
-    #             f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
-    #         list_step_fail.append('3.0 Assertion wong.')
-    #
-    #     try:
-    #         popup.find_element_by_css_selector(ele_button_list).click()
-    #         time.sleep(1)
-    #         # ==================================================
-    #         _TOKEN = get_token(_USER, _PW)
-    #         _res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
-    #
-    #         api_ssid = _res[0]['ssid']
-    #         api_channel = _res[0]['channel']
-    #         api_rssi = _res[0]['rssi']
-    #         api_security = _res[0]['security']
-    #         api_mac_address = _res[0]['macAddress']
-    #         # ==================================================
-    #         list_rows = driver.find_elements_by_css_selector(row_table)
-    #         for r in list_rows[1:]:
-    #             get_row_mac = r.find_element_by_css_selector('td:last-child').text
-    #             if get_row_mac == api_mac_address:
-    #                 get_nw_name = r.find_element_by_css_selector(ele_table_nw_ssid_name).text
-    #                 get_channel = r.find_element_by_css_selector(ele_table_channel).text
-    #                 get_rssi = r.find_element_by_css_selector(ele_table_rssi).text
-    #                 get_security = r.find_element_by_css_selector(ele_table_security).text
-    #                 break
-    #
-    #         list_actual3 = [api_ssid, api_channel, api_rssi, api_security, api_mac_address]
-    #         list_expected3 = [get_nw_name, get_channel, get_rssi, get_security, get_row_mac]
-    #         check = assert_list(list_actual3, list_expected3)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 3.2 Check one of wifi scaned information with api: SSID, Channel, RSSI, Security, MAC. '
-    #             f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 3.2 Check one of wifi scaned information with api: SSID, Channel, RSSI, Security, MAC. '
-    #             f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
-    #         list_step_fail.append('3.2 Assertion wong.')
-    #
-    #     try:
-    #         # Click Graph
-    #         popup = driver.find_element_by_css_selector(dialog_content)
-    #         popup.find_element_by_css_selector(ele_btn_refresh).click()
-    #
-    #         wait_popup_disappear(driver, icon_loading)
-    #         check_list_wf_refresh = len(popup.find_elements_by_css_selector(ele_wifi_table)) > 0
-    #
-    #         list_actual4 = [check_list_wf_refresh]
-    #         list_expected4 = [return_true]
-    #         check = assert_list(list_actual4, list_expected4)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 4. Click Refresh button. Table list displayed.  '
-    #             f'Actual: {str(list_actual4)}. '
-    #             f'Expected: {str(list_expected4)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 4. Click Refresh button. Table list displayed.. '
-    #             f'Actual: {str(list_actual4)}. '
-    #             f'Expected: {str(list_expected4)}')
-    #         list_step_fail.append('4. Assertion wong.')
-    #
-    #     try:
-    #         popup = driver.find_element_by_css_selector(dialog_content)
-    #
-    #         popup.find_element_by_css_selector(ele_button_chart).click()
-    #         time.sleep(1)
-    #         check_chart_wf = len(popup.find_elements_by_css_selector(ele_wifi_chart)) > 0
-    #
-    #         list_actual5 = [check_chart_wf]
-    #         list_expected5 = [return_true]
-    #         check = assert_list(list_actual5, list_expected5)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 5. Click Chart button. Check Graph chart displayed. '
-    #             f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 5. Click Chart button. Check Graph chart displayed. '
-    #             f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
-    #         list_step_fail.append('5 Assertion wong.')
-    #
-    #     try:
-    #         # Click Refresh
-    #         popup.find_element_by_css_selector(ele_btn_refresh).click()
-    #         time.sleep(1)
-    #         wait_popup_disappear(driver, icon_loading)
-    #
-    #         check_chart_wf_refresh = len(popup.find_elements_by_css_selector(ele_wifi_chart)) > 0
-    #
-    #         list_actual6 = [check_chart_wf_refresh]
-    #         list_expected6 = [return_true]
-    #         check = assert_list(list_actual6, list_expected6)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 6. Click Refresh button. Table Graph Chart displayed.  '
-    #              f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 6. Click Refresh button.Table Graph Chart displayed. '
-    #             f'Actual: {str(list_actual6)}. '
-    #             f'Expected: {str(list_expected6)}')
-    #         list_step_fail.append('6. Assertion wong.')
-    #
-    #     try:
-    #         # Click Close
-    #         popup.find_element_by_css_selector(ele_btn_close).click()
-    #         time.sleep(1)
-    #         popup_scan = len(driver.find_elements_by_css_selector(dialog_content)) == 0
-    #         page_title_text = driver.find_element_by_css_selector(ele_title_page).text
-    #
-    #         list_actual7 = [popup_scan, page_title_text]
-    #         list_expected7 = [return_true, 'Advanced > Wireless']
-    #         check = assert_list(list_actual7, list_expected7)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 7. Click Close button. Check popup disappear, Page Advanced > Wireless display.  '
-    #             f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
-    #         self.list_steps.append('[END TC]')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 7. Click Close button. Check popup disappear, Page Advanced > Wireless display. '
-    #             f'Actual: {str(list_actual7)}. '
-    #             f'Expected: {str(list_expected7)}')
-    #         self.list_steps.append('[END TC]')
-    #         list_step_fail.append('7. Assertion wong.')
-    #
-    #     self.assertListEqual(list_step_fail, [])
+    def test_76_WIRELESS_Advanced_Wireless_5G_Scan_AP(self):
+        self.key = 'WIRELESS_76'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # =================================================
+        _URL_API = get_config('URL', 'url') + '/api/v1/wifi/1/scanResult'
+        _BODY = ''
+        _METHOD = 'GET'
+        _USER = get_config('ACCOUNT', 'user')
+        _PW = get_config('ACCOUNT', 'password')
+        try:
+            grand_login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            goto_menu(driver, advanced_tab, advanced_wireless_tab)
+
+            page_title_text = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual = [page_title_text]
+            list_expected = ['Advanced > Wireless']
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('1, 2. Assertion wong.')
+
+        try:
+            # 5G
+            block_5g = driver.find_element_by_css_selector(right)
+            # Action
+            block_5g.find_element_by_css_selector(ele_button_scan).click()
+            wait_popup_disappear(driver, icon_loading)
+
+            popup = driver.find_element_by_css_selector(dialog_content)
+            # Check UI
+            popup_title = popup.find_element_by_css_selector(ele_scan_title).text
+            popup_refresh_button = len(popup.find_elements_by_css_selector(ele_btn_refresh)) > 0
+
+            # Click to button List
+            popup.find_element_by_css_selector(ele_button_list).click()
+            time.sleep(0.5)
+            check_list_wf = len(popup.find_elements_by_css_selector(ele_wifi_table)) > 0
+
+            # CLick button Chart
+            popup.find_element_by_css_selector(ele_button_chart).click()
+            time.sleep(0.5)
+            check_chart_wf = len(popup.find_elements_by_css_selector(ele_wifi_chart_5g)) > 0
+
+            # Check Close button
+            check_btn_close_display = popup.find_element_by_css_selector(ele_btn_close).text
+
+            list_actual2 = [popup_title, popup_refresh_button, check_list_wf, check_chart_wf, check_btn_close_display]
+            list_expected2 = ['Nearby Wireless Access Points (5GHz)', return_true, return_true, return_true, 'Close']
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3.0 Check popup scan components: Title, Refresh, List table, Chart table, Close button. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3.0 Check popup scan components: Title, Refresh, List table, Chart table, Close button. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            list_step_fail.append('3.0 Assertion wong.')
+
+        try:
+            popup.find_element_by_css_selector(ele_button_list).click()
+            time.sleep(1)
+            # ==================================================
+            _TOKEN = get_token(_USER, _PW)
+            _res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+
+            api_ssid = _res[0]['ssid']
+            api_channel = _res[0]['channel']
+            api_rssi = _res[0]['rssi']
+            api_security = _res[0]['security']
+            api_mac_address = _res[0]['macAddress']
+            # ==================================================
+            list_rows = driver.find_elements_by_css_selector(row_table)
+            if len(list_rows) > 1:
+                for r in list_rows[1:]:
+                    get_row_mac = r.find_element_by_css_selector('td:last-child').text
+                    if get_row_mac == api_mac_address:
+                        get_nw_name = r.find_element_by_css_selector(ele_table_nw_ssid_name).text
+                        get_channel = r.find_element_by_css_selector(ele_table_channel).text
+                        get_rssi = r.find_element_by_css_selector(ele_table_rssi).text
+                        get_security = r.find_element_by_css_selector(ele_table_security).text
+                        break
+
+                list_actual3 = [api_ssid, api_channel, api_rssi, api_security, api_mac_address]
+                list_expected3 = [get_nw_name, get_channel, get_rssi, get_security, get_row_mac]
+            else:
+                list_actual3 = []
+                list_expected3 = []
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3.2 Check one of wifi scaned information with api: SSID, Channel, RSSI, Security, MAC. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3.2 Check one of wifi scaned information with api: SSID, Channel, RSSI, Security, MAC. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('3.2 Assertion wong.')
+
+        try:
+            # Click Graph
+            popup = driver.find_element_by_css_selector(dialog_content)
+            popup.find_element_by_css_selector(ele_btn_refresh).click()
+
+            wait_popup_disappear(driver, icon_loading)
+            check_list_wf_refresh = len(popup.find_elements_by_css_selector(ele_wifi_table)) > 0
+
+            list_actual4 = [check_list_wf_refresh]
+            list_expected4 = [return_true]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Click Refresh button. Table list displayed.  '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Click Refresh button. Table list displayed.. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        try:
+            popup = driver.find_element_by_css_selector(dialog_content)
+
+            popup.find_element_by_css_selector(ele_button_chart).click()
+            time.sleep(1)
+            check_chart_wf = len(popup.find_elements_by_css_selector(ele_wifi_chart_5g)) > 0
+
+            list_actual5 = [check_chart_wf]
+            list_expected5 = [return_true]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Click Chart button. Check Graph chart displayed. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Click Chart button. Check Graph chart displayed. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+            list_step_fail.append('5 Assertion wong.')
+
+        try:
+            # Click Refresh
+            popup.find_element_by_css_selector(ele_btn_refresh).click()
+            time.sleep(1)
+            wait_popup_disappear(driver, icon_loading)
+
+            check_chart_wf_refresh = len(popup.find_elements_by_css_selector(ele_wifi_chart_5g)) > 0
+
+            list_actual6 = [check_chart_wf_refresh]
+            list_expected6 = [return_true]
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Click Refresh button. Table Graph Chart displayed.  '
+                 f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Click Refresh button.Table Graph Chart displayed. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            list_step_fail.append('6. Assertion wong.')
+
+        try:
+            # Click Close
+            popup.find_element_by_css_selector(ele_btn_close).click()
+            time.sleep(1)
+            popup_scan = len(driver.find_elements_by_css_selector(dialog_content)) == 0
+            page_title_text = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual7 = [popup_scan, page_title_text]
+            list_expected7 = [return_true, 'Advanced > Wireless']
+            check = assert_list(list_actual7, list_expected7)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 7. Click Close button. Check popup disappear, Page Advanced > Wireless display.  '
+                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 7. Click Close button. Check popup disappear, Page Advanced > Wireless display. '
+                f'Actual: {str(list_actual7)}. '
+                f'Expected: {str(list_expected7)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('7. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
 
     def test_77_WIRELESS_Advanced_Wireless_5G_Restore(self):
         self.key = 'WIRELESS_77'
@@ -6474,10 +6494,13 @@ class WIRELESS(unittest.TestCase):
                     break
 
             block_5g = driver.find_element_by_css_selector(right)
-            block_5g.find_element_by_css_selector(apply).click()
-            wait_popup_disappear(driver, dialog_loading)
-            driver.find_element_by_css_selector(btn_ok).click()
-            wait_popup_disappear(driver, dialog_loading)
+            if block_5g.find_element_by_css_selector(apply).is_displayed():
+                block_5g.find_element_by_css_selector(apply).click()
+                time.sleep(1)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
 
 
             _TOKEN = get_token(_USER, _PW)

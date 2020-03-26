@@ -24,8 +24,8 @@ ls = subprocess.check_output('tasklist')
 if b'SecureCRT.exe' in ls:
     os.system("taskkill /f /im SecureCRT.exe")
 
-def run_cmd(cmd, filename):
-    cmd = str("\""+ SecureCRT_file + "\"" + " /ARG \"" + cmd + "\" /ARG \"" + filename + "\" /SCRIPT \"" + script_path + "\" /SERIAL "+serial+" /BAUD "+baud_rate)
+def run_cmd(cmd, _file):
+    cmd = str("\""+ SecureCRT_file + "\"" + " /ARG \"" + cmd + "\" /ARG \"" + _file + "\" /SCRIPT \"" + script_path + "\" /SERIAL "+serial+" /BAUD "+baud_rate)
     os.popen(cmd)
 # cmd = "capitest get Device.Users.User.2. leaf"
 # run_cmd(cmd, "user.txt")

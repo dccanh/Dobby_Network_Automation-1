@@ -38,10 +38,10 @@ main61_retype_new_pw = abcd1234
 
 
 [SECURITY]
-security4_social_nw = 'Social Network'
-security4_user_define = 'User Define'
-security4_facebook = 'facebook'
-security4_google = 'google.com'
+security4_social_nw = Social Network
+security4_user_define = User Define
+security4_facebook = facebook
+security4_google = google.com
 
 
 [ADVANCED]

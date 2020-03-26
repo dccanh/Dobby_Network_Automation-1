@@ -183,193 +183,191 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('5. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-    # OK
-    # def test_05_MAIN_Verify_the_Default_setting_of_Language(self):
-    #     self.key = 'MAIN_05'
-    #     driver = self.driver
-    #     self.def_name = get_func_name()
-    #     list_step_fail = []
-    #     self.list_steps = []
-    #     url = get_config('URL', 'url')
-    #     # ======================================================
-    #     set_language_1 = get_config('MAIN', 'main5_set_language_1', input_data_path)
-    #     set_language_2 = get_config('MAIN', 'main5_set_language_2', input_data_path)
-    #
-    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #     try:
-    #         grand_login(driver)
-    #
-    #         time.sleep(3)
-    #
-    #         # System > Restart / Factory > Factory Reset > OK
-    #         driver.find_element_by_css_selector(system_btn).click()
-    #         time.sleep(0.2)
-    #         driver.find_element_by_css_selector(sys_reset).click()
-    #         time.sleep(0.2)
-    #         driver.find_element_by_css_selector(sys_pop_factory_reset).click()
-    #         time.sleep(0.2)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         # Wait until dialog loading disappear
-    #         time.sleep(1)
-    #
-    #         check_time_out = wait_popup_disappear(driver, dialog_loading)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(1)
-    #
-    #         list_actual1 = [check_time_out]
-    #         list_expected1 = [return_true]
-    #         check = assert_list(list_actual1, list_expected1)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             '[Pass] 1,2. Check Login and Restore successfully. '
-    #             f'Actual: {str(list_actual1)}. '
-    #             f'Expected: {str(list_expected1)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 1,2. Check Login and Restore fail. '
-    #             f'Actual: {str(list_actual1)}. '
-    #             f'Expected: {str(list_expected1)}')
-    #         list_step_fail.append(
-    #             '1,2. Assertion wong.')
-    #
-    #     # ~~~~~~~~~~~~~~~~~~ Change Language
-    #     try:
-    #         # Goto Homepage
-    #         grand_login(driver)
-    #         time.sleep(1)
-    #
-    #         # System > Language
-    #         driver.find_element_by_css_selector(system_btn).click()
-    #         time.sleep(0.2)
-    #         driver.find_element_by_css_selector(sys_language).click()
-    #
-    #         language_selected = driver.find_element_by_css_selector(language_selected_text)
-    #         if language_selected.text != set_language_1:
-    #             language_selected.click()
-    #             language_options = driver.find_elements_by_css_selector(list_language_option)
-    #             for o in language_options:
-    #                 if o.text == set_language_1:
-    #                     o.click()
-    #
-    #             time.sleep(1)
-    #             # Apply
-    #             driver.find_element_by_css_selector(pop_up_btn_apply).click()
-    #             time.sleep(3)
-    #             # Confirm
-    #             driver.find_element_by_css_selector(btn_ok).click()
-    #             time.sleep(2)
-    #         # Goto Login page
-    #         driver.get(url)
-    #         time.sleep(3)
-    #
-    #         welcome_text = driver.find_element_by_css_selector(lg_welcome_text).text
-    #
-    #         list_actual2 = [welcome_text]
-    #         list_expected2 = [expected_welcome_text_en]
-    #         check = assert_list(list_actual2, list_expected2)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             '[Pass] 3,4. Change language and check in login. '
-    #             f'Actual: {str(list_actual2)}. '
-    #             f'Expected: {str(list_expected2)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 3,4. Change language and check in login. '
-    #             f'Actual: {str(list_actual2)}. '
-    #             f'Expected: {str(list_expected2)}')
-    #         list_step_fail.append(
-    #             '3,4. Assertion wong.')
-    #
-    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Again
-    #     try:
-    #         grand_login(driver)
-    #         time.sleep(1)
-    #
-    #         # System > Restart / Factory > Factory Reset > OK
-    #         driver.find_element_by_css_selector(system_btn).click()
-    #         time.sleep(0.2)
-    #         driver.find_element_by_css_selector(sys_reset).click()
-    #         time.sleep(0.2)
-    #         driver.find_element_by_css_selector(sys_pop_factory_reset).click()
-    #         time.sleep(0.2)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         # Wait until dialog loading disappear
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
-    #             driver.find_element_by_css_selector(btn_ok).click()
-    #         time.sleep(3)
-    #         check_login_page = len(driver.find_elements_by_css_selector(lg_page)) > 0
-    #
-    #         list_actual3 = [check_login_page]
-    #         list_expected3 = [return_true]
-    #         check = assert_list(list_actual3, list_expected3)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             '[Pass] 5. Check Login and Restore successfully'
-    #             f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 5. Check Login and Restore fail. '
-    #             f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
-    #         list_step_fail.append(
-    #             '5. Assertion wong.')
-    #
-    #     # ~~~~~~~~~~~~~~~~~~ Change Language and verify
-    #     try:
-    #         # Goto Homepage
-    #         time.sleep(5)
-    #         grand_login(driver)
-    #         time.sleep(5)
-    #
-    #         # System > Language
-    #         driver.find_element_by_css_selector(system_btn).click()
-    #         time.sleep(0.2)
-    #         driver.find_element_by_css_selector(sys_language).click()
-    #         time.sleep(1)
-    #         language_selected = driver.find_element_by_css_selector(language_selected_text)
-    #         if language_selected.text != set_language_2:
-    #             language_selected.click()
-    #             language_options = driver.find_elements_by_css_selector(list_language_option)
-    #             for o in language_options:
-    #                 if o.text == set_language_2:
-    #                     o.click()
-    #                     break
-    #             time.sleep(3)
-    #             # Apply
-    #             driver.find_element_by_css_selector(pop_up_btn_apply).click()
-    #             time.sleep(3)
-    #             # Confirm
-    #             driver.find_element_by_css_selector(btn_ok).click()
-    #             time.sleep(2)
-    #         # Goto Login page
-    #         time.sleep(10)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         driver.get(url)
-    #         time.sleep(3)
-    #
-    #         welcome_text = driver.find_element_by_css_selector(lg_welcome_text).text
-    #
-    #         list_actual4 = [welcome_text]
-    #         list_expected4 = [expected_welcome_text_vi]
-    #         check = assert_list(list_actual4, list_expected4)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             '[Pass] 6,7. Change language and check in login. '
-    #             f'Actual: {str(list_actual4)}. '
-    #             f'Expected: {str(list_expected4)}')
-    #         self.list_steps.append('[END TC]')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 6,7. Change language and check in login. '
-    #             f'Actual: {str(list_actual4)}. '
-    #             f'Expected: {str(list_expected4)}')
-    #         self.list_steps.append('[END TC]')
-    #         list_step_fail.append(
-    #             '6,7. Assertion wong.')
-    #
-    #     self.assertListEqual(list_step_fail, [])
-    # OK
+
+    def test_05_MAIN_Verify_the_Default_setting_of_Language(self):
+        self.key = 'MAIN_05'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        url = get_config('URL', 'url')
+        # ======================================================
+        set_language_1 = get_config('MAIN', 'main5_set_language_1', input_data_path)
+        set_language_2 = get_config('MAIN', 'main5_set_language_2', input_data_path)
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            grand_login(driver)
+            time.sleep(1)
+            # System > Restart / Factory > Factory Reset > OK
+            driver.find_element_by_css_selector(system_btn).click()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(sys_reset).click()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(sys_pop_factory_reset).click()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(btn_ok).click()
+            # Wait until dialog loading disappear
+            time.sleep(1)
+
+            check_time_out = wait_popup_disappear(driver, dialog_loading)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+
+            list_actual1 = [check_time_out]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1,2. Check Login and Restore successfully. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1,2. Check Login and Restore fail. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append(
+                '1,2. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~ Change Language
+        try:
+            # Goto Homepage
+            grand_login(driver)
+            time.sleep(1)
+
+            # System > Language
+            driver.find_element_by_css_selector(system_btn).click()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(sys_language).click()
+
+            language_selected = driver.find_element_by_css_selector(language_selected_text)
+            if language_selected.text != set_language_1:
+                language_selected.click()
+                language_options = driver.find_elements_by_css_selector(list_language_option)
+                for o in language_options:
+                    if o.text == set_language_1:
+                        o.click()
+
+                time.sleep(1)
+                # Apply
+                driver.find_element_by_css_selector(pop_up_btn_apply).click()
+                time.sleep(3)
+                # Confirm
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(2)
+            # Goto Login page
+            driver.get(url)
+            time.sleep(3)
+
+            welcome_text = driver.find_element_by_css_selector(lg_welcome_text).text
+
+            list_actual2 = [welcome_text]
+            list_expected2 = [expected_welcome_text_en]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 3,4. Change language and check in login. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3,4. Change language and check in login. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append(
+                '3,4. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Again
+        try:
+            grand_login(driver)
+            time.sleep(1)
+
+            # System > Restart / Factory > Factory Reset > OK
+            driver.find_element_by_css_selector(system_btn).click()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(sys_reset).click()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(sys_pop_factory_reset).click()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(btn_ok).click()
+            # Wait until dialog loading disappear
+            wait_popup_disappear(driver, dialog_loading)
+            wait_popup_disappear(driver, dialog_loading)
+            if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
+                driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(3)
+            check_login_page = len(driver.find_elements_by_css_selector(lg_page)) > 0
+
+            list_actual3 = [check_login_page]
+            list_expected3 = [return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 5. Check Login and Restore successfully'
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Check Login and Restore fail. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append(
+                '5. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~ Change Language and verify
+        try:
+            # Goto Homepage
+            time.sleep(5)
+            grand_login(driver)
+            time.sleep(5)
+
+            # System > Language
+            driver.find_element_by_css_selector(system_btn).click()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(sys_language).click()
+            time.sleep(1)
+            language_selected = driver.find_element_by_css_selector(language_selected_text)
+            if language_selected.text != 'Tiếng Việt':
+                language_selected.click()
+                language_options = driver.find_elements_by_css_selector(list_language_option)
+                for o in language_options:
+                    if o.text == 'Tiếng Việt':
+                        o.click()
+                        break
+                time.sleep(1)
+                # Apply
+                driver.find_element_by_css_selector(pop_up_btn_apply).click()
+                time.sleep(3)
+                # Confirm
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(2)
+            # Goto Login page
+            time.sleep(10)
+            wait_popup_disappear(driver, dialog_loading)
+            driver.get(url)
+            time.sleep(3)
+
+            welcome_text = driver.find_element_by_css_selector(lg_welcome_text).text
+
+            list_actual6 = [welcome_text]
+            list_expected6 = ['CHÀO MỪNG!']
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 6,7. Change language and check in login. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6,7. Change language and check in login. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append(
+                '6,7. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
     def test_06_MAIN_Verify_the_Web_UI_connection_through_domain_address(self):
         self.key = 'MAIN_06'
         driver = self.driver
@@ -2616,6 +2614,184 @@ class MAIN(unittest.TestCase):
                 f'Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_34_MAIN_Verification_of_setting_Bridge_Mode_via_Wizard(self):
+        self.key = 'MAIN_34'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # ====================================================
+        url_login = get_config('URL', 'url')
+        factory_dut()
+
+        # ======================================================
+        GOOGLE_URL = get_config('COMMON', 'google_url', input_data_path)
+        NEW_PASSWORD = get_config('COMMON', 'new_pw', input_data_path)
+        try:
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            # Click start btn
+            driver.find_element_by_css_selector(welcome_start_btn).click()
+            wait_visible(driver, welcome_change_pw_fields)
+
+            title_page = driver.find_element_by_css_selector(lg_welcome_header).text
+
+            list_actual1 = [title_page]
+            list_expected1 = ['Change Login Password']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Click Start button. Check title page displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. Click Start button. Check title page displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            change_pw_fields = driver.find_elements_by_css_selector(welcome_change_pw_fields)
+
+            # A list contain values: Current Password, New Password, Retype new pw
+            ls_change_pw_value = [get_config('ACCOUNT', 'password'), NEW_PASSWORD, NEW_PASSWORD]
+            for p, v in zip(change_pw_fields, ls_change_pw_value):
+                ActionChains(driver).move_to_element(p).click().send_keys(v).perform()
+                time.sleep(0.5)
+            # Next Change pw
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+                wait_popup_disappear(driver, dialog_loading)
+
+            title_next_page = driver.find_element_by_css_selector(lg_welcome_header).text
+
+            list_actual2 = [title_next_page]
+            list_expected2 = ['Operation Mode']
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 2. Check title Operation Mode. '
+                                   f'Actual: {str(list_actual2)}. '
+                                   f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check title Operation Mode. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('2. Assertion wong')
+
+        try:
+            # Change Operation Mode
+            driver.find_element_by_css_selector(ele_welcome_router_box).click()
+            time.sleep(0.5)
+            list_options = driver.find_elements_by_css_selector(secure_value_in_drop_down)
+            for o in list_options:
+                if o.text == 'Bridge Mode':
+                    o.click()
+                    break
+
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+                wait_popup_disappear(driver, dialog_loading)
+
+            title_next_page_2 = driver.find_element_by_css_selector(lg_welcome_header).text
+
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+                wait_popup_disappear(driver, dialog_loading)
+
+            title_next_page_3 = driver.find_element_by_css_selector(lg_welcome_header).text
+
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+                wait_popup_disappear(driver, dialog_loading)
+
+            title_next_page_4 = driver.find_element_by_css_selector(lg_welcome_header).text
+
+            list_actual3 = [title_next_page_2, title_next_page_3, title_next_page_4]
+            list_expected3 = ['Wireless Setup', 'HUMAX Wi-Fi App', 'Summary']
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3, 4. Change Operation Mode to Bridge Mode. Check title is Wireless Mode. '
+                f'Click Next > Title Humax Wi-Fi App. '
+                f'Click Next > Title Summary. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3, 4. Change Operation Mode to Bridge Mode. Check title is Wireless Mode. '
+                f'Click Next > Title Humax Wi-Fi App. '
+                f'Click Next > Title Summary. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('3, 4. Assertion wong')
+
+        try:
+            # Click Let's Go
+            time.sleep(3)
+            driver.find_element_by_css_selector(welcome_let_go_btn).click()
+            # Write config
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD)
+
+            driver.get('http://dearmyextender.net')
+            time.sleep(5)
+            user_request = get_config('ACCOUNT', 'user')
+            pass_word = get_config('ACCOUNT', 'password')
+            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
+            time.sleep(1)
+            # Captcha
+            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+            captcha_text = get_captcha_string(captcha_src)
+            driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+
+            wait_popup_disappear(driver, dialog_loading)
+
+            check_bridge_mode = driver.find_element_by_css_selector(home_connection_mode).text
+            check_ip_assigned = driver.find_element_by_css_selector(home_conection_img_wan_ip).text != '0.0.0.0'
+
+            driver.get(GOOGLE_URL)
+            time.sleep(4)
+            check_google = len(driver.find_elements_by_css_selector(google_img)) > 0
+
+            list_actual5 = [check_bridge_mode, check_ip_assigned, check_google]
+            list_expected5 = ['Bridge Mode', return_true, return_true]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5, 6. Click Let Go. Login again. Check DUT in Bridge Mode and IP assigned (diff 0.0.0.0). '
+                f'Check access google successfully. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5, 6. Click Let Go. Login again. Check DUT in Bridge Mode and IP assigned (diff 0.0.0.0). '
+                f'Check access google successfully. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('5, 6. Assertion wong')
+        # ======================================================================================================
+        factory_dut()
 
         self.assertListEqual(list_step_fail, [])
 
@@ -5457,317 +5633,306 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+    def test_64_MAIN_Check_Restore_Operation(self):
+        self.key = 'MAIN_64'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
 
-    # def test_64_MAIN_Check_Restore_Operation(self):
-    #     self.key = 'MAIN_64'
-    #     driver = self.driver
-    #     self.def_name = get_func_name()
-    #     list_step_fail = []
-    #     self.list_steps = []
-    #
-    #     url_login = get_config('URL', 'url')
-    #     filename = '1'
-    #     commmand = 'factorycfg.sh -a'
-    #     run_cmd(commmand, filename=filename)
-    #     # Wait 5 mins for factory
-    #     time.sleep(120)
-    #     wait_DUT_activated(url_login)
-    #     wait_ping('192.168.1.1')
-    #
-    #     filename_2 = 'account.txt'
-    #     commmand_2 = 'capitest get Device.Users.User.2. leaf'
-    #     run_cmd(commmand_2, filename_2)
-    #     time.sleep(3)
-    #     # Get account information from web server and write to config.txt
-    #     user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
-    #     time.sleep(3)
-    #     # ======================================
-    #     NEW_PASSWORD_2 = get_config('MAIN', 'main64_new_pw_2', input_data_path)
-    #     SSID_2G_NEW = get_config('MAIN', 'main64_ssid_2g_new', input_data_path)
-    #     WL_PW_2G = get_config('MAIN', 'main64_wl_pw_2g', input_data_path)
-    #     try:
-    #         grand_login(driver)
-    #
-    #         # Change Settings
-    #         # Change login password
-    #         system_button = driver.find_element_by_css_selector(system_btn)
-    #         ActionChains(driver).move_to_element(system_button).click().perform()
-    #         time.sleep(0.2)
-    #         driver.find_element_by_css_selector(ele_sys_change_pw).click()
-    #         time.sleep(0.2)
-    #
-    #         change_pw(driver, NEW_PASSWORD_2)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(1)
-    #         save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD_2)
-    #         # Click ok
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         time.sleep(3)
-    #
-    #         grand_login(driver)
-    #
-    #         #  Change wireless SSID and PW of 2.4GHz
-    #         goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
-    #         time.sleep(1)
-    #         left_2g = driver.find_element_by_css_selector(left)
-    #         ssid_2g = left_2g.find_element_by_css_selector('input[placeholder="Enter the network name (SSID)"]')
-    #         ActionChains(driver).click(ssid_2g).key_down(Keys.CONTROL).send_keys('a')\
-    #             .send_keys(Keys.DELETE).key_up(Keys.CONTROL).send_keys(SSID_2G_NEW).perform()
-    #
-    #
-    #         pw_2g = left_2g.find_element_by_css_selector('input[placeholder="Enter the Password"]')
-    #         ActionChains(driver).click(pw_2g).key_down(Keys.CONTROL).send_keys('a') \
-    #             .send_keys(Keys.DELETE).key_up(Keys.CONTROL).send_keys(WL_PW_2G).perform()
-    #
-    #
-    #         left_2g.find_element_by_css_selector(apply).click()
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(1)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         time.sleep(1)
-    #
-    #         # Enable QOS
-    #         goto_menu(driver, qos_tab, 0)
-    #         time.sleep(1)
-    #         select_btn = driver.find_element_by_css_selector(select)
-    #         if not select_btn.find_element_by_css_selector(input).is_selected():
-    #             select_btn.click()
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(1)
-    #
-    #         # Change Firewall to Medium
-    #         goto_menu(driver, security_tab, security_firewall_tab)
-    #         time.sleep(1)
-    #         driver.find_element_by_css_selector(ele_firewall_medium).click()
-    #         time.sleep(1)
-    #         driver.find_element_by_css_selector(apply).click()
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         time.sleep(1)
-    #
-    #         self.list_steps.append('[Pass] Precondition Pass')
-    #     except:
-    #         self.list_steps.append('[Fail] Precondition Fail')
-    #         list_step_fail.append('Assertion wong')
-    #
-    #     try:
-    #         # Actions Systems > Backup
-    #         system_button = driver.find_element_by_css_selector(system_btn)
-    #         ActionChains(driver).move_to_element(system_button).click().perform()
-    #         time.sleep(0.5)
-    #         driver.find_element_by_css_selector(ele_sys_backup_restore).click()
-    #         time.sleep(0.5)
-    #
-    #         download_path = download_destination_path()
-    #         # Remove if file exist
-    #         backup_path = os.path.join(download_path, exp_backup_file_name)
-    #         if os.path.exists(backup_path):
-    #             os.remove(backup_path)
-    #         # Click button Backup
-    #         time.sleep(2)
-    #
-    #         popup = driver.find_element_by_css_selector(dialog_content)
-    #         btn_active = popup.find_elements_by_css_selector(btn_active_not_disabled)
-    #
-    #         for i in btn_active:
-    #             if i.text == 'Back up':
-    #                 i.click()
-    #                 break
-    #         time.sleep(2)
-    #         check_popup_confirm2 = driver.find_element_by_css_selector(confirm_dialog_msg).text
-    #         # Click OK
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(5)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #
-    #         check_exist_backup_file = os.path.exists(backup_path)
-    #
-    #         list_actual3 = [check_popup_confirm2, check_exist_backup_file]
-    #         list_expected3 = [exp_backup_confirm_msg, return_true]
-    #         check = assert_list(list_actual3, list_expected3)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 3. Click Backup; Check Message confirm and download successfully.'
-    #             f'Actual: {str(list_actual3)}. '
-    #             f'Expected: {str(list_expected3)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 3. Click Backup; Check Message confirm and download successfully. '
-    #             f'Actual: {str(list_actual3)}. '
-    #             f'Expected: {str(list_expected3)}')
-    #         list_step_fail.append('3. Assertion wong')
-    #
-    #     try:
-    #         filename = '1'
-    #         commmand = 'factorycfg.sh -a'
-    #         run_cmd(commmand, filename=filename)
-    #         # Wait 5 mins for factory
-    #         time.sleep(150)
-    #         wait_DUT_activated(url_login)
-    #         wait_ping('192.168.1.1')
-    #
-    #         filename_2 = 'account.txt'
-    #         commmand_2 = 'capitest get Device.Users.User.2. leaf'
-    #         run_cmd(commmand_2, filename_2)
-    #         time.sleep(3)
-    #         # Get account information from web server and write to config.txt
-    #         user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
-    #         time.sleep(3)
-    #         self.list_steps.append(f'[Pass] 4. Factory DUT Successfully.')
-    #     except:
-    #         self.list_steps.append(f'[Fail] 4. Factory DUT Fail.')
-    #         list_step_fail.append('4. Assertion wong')
-    #
-    #     try:
-    #         grand_login(driver)
-    #
-    #         # Actions Systems > Change PW
-    #         system_button = driver.find_element_by_css_selector(system_btn)
-    #         ActionChains(driver).move_to_element(system_button).click().perform()
-    #         time.sleep(0.2)
-    #         driver.find_element_by_css_selector(ele_sys_backup_restore).click()
-    #         time.sleep(0.2)
-    #
-    #         popup = driver.find_element_by_css_selector(dialog_content)
-    #
-    #         os.chdir(download_path)
-    #         backup_path = os.path.join(os.getcwd(), exp_backup_file_name)
-    #         popup.find_element_by_css_selector(ele_choose_firmware_file).send_keys(backup_path)
-    #         time.sleep(1)
-    #
-    #         popup = driver.find_element_by_css_selector(dialog_content)
-    #         # Click button Restore
-    #         btn_active = popup.find_elements_by_css_selector(apply)
-    #
-    #         for i in btn_active:
-    #             if i.text == 'Restore':
-    #                 i.click()
-    #                 break
-    #         time.sleep(2)
-    #         check_popup_confirm_restore1 = driver.find_element_by_css_selector(confirm_dialog_msg).text
-    #         time.sleep(1)
-    #         # Click Cancel
-    #         driver.find_element_by_css_selector(btn_cancel).click()
-    #
-    #         time.sleep(1)
-    #         check_popup_backup = len(driver.find_elements_by_css_selector(popup_header_cls)) != 0
-    #
-    #         list_actual5 = [check_popup_confirm_restore1, check_popup_backup]
-    #         list_expected5 = [exp_restore_confirm_msg, return_true]
-    #         check = assert_list(list_actual5, list_expected5)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 5. Goto Backup/Restore, Choose file, Check message, click Cancel, back to previous steps.'
-    #             f'Actual: {str(list_actual5)}. '
-    #             f'Expected: {str(list_expected5)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 5. Goto Backup/Restore, Choose file, Check message, click Cancel, back to previous steps. '
-    #             f'Actual: {str(list_actual5)}. '
-    #             f'Expected: {str(list_expected5)}')
-    #         list_step_fail.append('5. Assertion wong')
-    #
-    #     try:
-    #         popup = driver.find_element_by_css_selector(dialog_content)
-    #         #
-    #         os.chdir(download_path)
-    #         backup_path = os.path.join(os.getcwd(), exp_backup_file_name)
-    #         popup.find_element_by_css_selector(ele_choose_firmware_file).send_keys(backup_path)
-    #         time.sleep(1)
-    #         os.chdir(test_t10x_path)
-    #         popup = driver.find_element_by_css_selector(dialog_content)
-    #         # Click button Restore
-    #         btn_active = popup.find_elements_by_css_selector(btn_active_not_disabled)
-    #
-    #         for i in btn_active:
-    #             if i.text == 'Restore':
-    #                 i.click()
-    #                 break
-    #         time.sleep(2)
-    #         check_popup_confirm_restore2 = driver.find_element_by_css_selector(confirm_dialog_msg).text
-    #         time.sleep(1)
-    #         # Click OK
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #
-    #         wait_popup_disappear(driver, dialog_loading)
-    #
-    #         list_actual7 = [check_popup_confirm_restore2]
-    #         list_expected7 = [exp_restore_confirm_msg]
-    #         check = assert_list(list_actual7, list_expected7)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 7. Goto Backup/Restore, Choose file, Check message, click OK.'
-    #             f'Actual: {str(list_actual7)}. '
-    #             f'Expected: {str(list_expected7)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 7. Goto Backup/Restore, Choose file, Check message, click OK. '
-    #             f'Actual: {str(list_actual7)}. '
-    #             f'Expected: {str(list_expected7)}')
-    #         list_step_fail.append('7. Assertion wong')
-    #
-    #     try:
-    #         time.sleep(120)
-    #         wait_DUT_activated(url_login)
-    #         wait_ping('192.168.1.1')
-    #         filename_2 = 'account.txt'
-    #         commmand_2 = 'capitest get Device.Users.User.2. leaf'
-    #         run_cmd(commmand_2, filename_2)
-    #         time.sleep(3)
-    #         # Get account information from web server and write to config.txt
-    #         user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
-    #         time.sleep(3)
-    #
-    #
-    #         # Verify
-    #         grand_login(driver)
-    #
-    #         goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
-    #         time.sleep(1)
-    #         left_2g = driver.find_element_by_css_selector(left)
-    #         ssid_2g = left_2g.find_element_by_css_selector('input[placeholder="Enter the network name (SSID)"]')
-    #         ssid_2g_value = ssid_2g.get_attribute('value')
-    #
-    #         pw_eye_2g = left_2g.find_element_by_css_selector(password_eye)
-    #         act = ActionChains(driver)
-    #         act.click_and_hold(pw_eye_2g)
-    #         new_pw_2g = left_2g.find_element_by_css_selector(input_pw).get_attribute('value')
-    #         act.release(pw_eye_2g)
-    #         act.perform()
-    #         time.sleep(1)
-    #
-    #         goto_menu(driver, qos_tab, 0)
-    #         time.sleep(1)
-    #         select_btn = driver.find_element_by_css_selector(select)
-    #         verify_qos_selected = select_btn.find_element_by_css_selector(input).is_selected()
-    #         time.sleep(1)
-    #
-    #         # Check Firewall to Medium
-    #         goto_menu(driver, security_tab, security_firewall_tab)
-    #         time.sleep(1)
-    #         check_firewall = len(driver.find_element_by_css_selector(ele_firewall_lv_medium)) > 0
-    #         time.sleep(1)
-    #
-    #         list_actual8 = [ssid_2g_value, new_pw_2g, verify_qos_selected, check_firewall]
-    #         list_expected8 = [SSID_2G_NEW, WL_PW_2G, return_true, return_true]
-    #         check = assert_list(list_actual8, list_expected8)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 8. Verify restore: New wireless 2g ssid, new pw, qos is checked, firewall level is medium. '
-    #             f'Actual: {str(list_actual8)}. '
-    #             f'Expected: {str(list_expected8)}')
-    #         self.list_steps.append('[END TC]')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 8. Verify restore: New wireless 2g ssid, new pw, qos is checked, firewall level is medium.  '
-    #             f'Actual: {str(list_actual8)}. '
-    #             f'Expected: {str(list_expected8)}')
-    #         self.list_steps.append('[END TC]')
-    #         list_step_fail.append('8. Assertion wong')
-    #
-    #     self.assertListEqual(list_step_fail, [])
+        url_login = get_config('URL', 'url')
+        filename = '1'
+        commmand = 'factorycfg.sh -a'
+        run_cmd(commmand, filename=filename)
+        # Wait 5 mins for factory
+        time.sleep(120)
+        wait_DUT_activated(url_login)
+        wait_ping('192.168.1.1')
+
+        filename_2 = 'account.txt'
+        commmand_2 = 'capitest get Device.Users.User.2. leaf'
+        run_cmd(commmand_2, filename_2)
+        time.sleep(3)
+        # Get account information from web server and write to config.txt
+        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        time.sleep(3)
+        # ======================================
+        NEW_PASSWORD_2 = get_config('MAIN', 'main64_new_pw_2', input_data_path)
+        SSID_2G_NEW = get_config('MAIN', 'main64_ssid_2g_new', input_data_path)
+        WL_PW_2G = get_config('MAIN', 'main64_wl_pw_2g', input_data_path)
+        try:
+            grand_login(driver)
+
+            # Change Settings
+            # Change login password
+            system_button = driver.find_element_by_css_selector(system_btn)
+            ActionChains(driver).move_to_element(system_button).click().perform()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(ele_sys_change_pw).click()
+            time.sleep(0.2)
+
+            change_pw(driver, NEW_PASSWORD_2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD_2)
+            # Click ok
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(3)
+
+            grand_login(driver)
+
+            #  Change wireless SSID and PW of 2.4GHz
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+            left_2g = driver.find_element_by_css_selector(left)
+            ssid_2g = left_2g.find_element_by_css_selector('input[placeholder="Enter the network name (SSID)"]')
+            ActionChains(driver).click(ssid_2g).key_down(Keys.CONTROL).send_keys('a') \
+                .send_keys(Keys.DELETE).key_up(Keys.CONTROL).send_keys(SSID_2G_NEW).perform()
+
+            pw_2g = left_2g.find_element_by_css_selector('input[placeholder="Enter the Password"]')
+            ActionChains(driver).click(pw_2g).key_down(Keys.CONTROL).send_keys('a') \
+                .send_keys(Keys.DELETE).key_up(Keys.CONTROL).send_keys(WL_PW_2G).perform()
+
+            left_2g.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            # Enable QOS
+            goto_menu(driver, qos_tab, 0)
+            time.sleep(1)
+            select_btn = driver.find_element_by_css_selector(select)
+            if not select_btn.find_element_by_css_selector(input).is_selected():
+                select_btn.click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+
+            # Change Firewall to Medium
+            goto_menu(driver, security_tab, security_firewall_tab)
+            time.sleep(1)
+            driver.find_element_by_css_selector(ele_firewall_medium).click()
+            time.sleep(1)
+            driver.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            self.list_steps.append('[Pass] Precondition Pass')
+        except:
+            self.list_steps.append('[Fail] Precondition Fail')
+            list_step_fail.append('Assertion wong')
+
+        try:
+            # Actions Systems > Backup
+            system_button = driver.find_element_by_css_selector(system_btn)
+            ActionChains(driver).move_to_element(system_button).click().perform()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(ele_sys_backup_restore).click()
+            time.sleep(0.5)
+
+            download_path = download_destination_path()
+            # Remove if file exist
+            backup_path = os.path.join(download_path, exp_backup_file_name)
+            if os.path.exists(backup_path):
+                os.remove(backup_path)
+            # Click button Backup
+            time.sleep(2)
+
+            popup = driver.find_element_by_css_selector(dialog_content)
+            btn_active = popup.find_elements_by_css_selector(btn_active_not_disabled)
+
+            for i in btn_active:
+                if i.text == 'Back up':
+                    i.click()
+                    break
+            time.sleep(2)
+            check_popup_confirm2 = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            # Click OK
+            driver.find_element_by_css_selector(btn_ok).click()
+
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(5)
+            driver.find_element_by_css_selector(btn_ok).click()
+
+            check_exist_backup_file = os.path.exists(backup_path)
+
+            list_actual3 = [check_popup_confirm2, check_exist_backup_file]
+            list_expected3 = [exp_backup_confirm_msg, return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Click Backup; Check Message confirm and download successfully.'
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Click Backup; Check Message confirm and download successfully. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong')
+
+        try:
+            filename = '1'
+            commmand = 'factorycfg.sh -a'
+            run_cmd(commmand, filename=filename)
+            # Wait 5 mins for factory
+            time.sleep(150)
+            wait_DUT_activated(url_login)
+            wait_ping('192.168.1.1')
+
+            filename_2 = 'account.txt'
+            commmand_2 = 'capitest get Device.Users.User.2. leaf'
+            run_cmd(commmand_2, filename_2)
+            time.sleep(3)
+            # Get account information from web server and write to config.txt
+            user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
+            time.sleep(3)
+            self.list_steps.append(f'[Pass] 4. Factory DUT Successfully.')
+        except:
+            self.list_steps.append(f'[Fail] 4. Factory DUT Fail.')
+            list_step_fail.append('4. Assertion wong')
+
+        try:
+            grand_login(driver)
+
+            # Actions Systems > Change PW
+            system_button = driver.find_element_by_css_selector(system_btn)
+            ActionChains(driver).move_to_element(system_button).click().perform()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(ele_sys_backup_restore).click()
+            time.sleep(0.2)
+
+            popup = driver.find_element_by_css_selector(dialog_content)
+
+            os.chdir(download_path)
+            backup_path = os.path.join(os.getcwd(), exp_backup_file_name)
+            popup.find_element_by_css_selector(ele_choose_firmware_file).send_keys(backup_path)
+            time.sleep(1)
+
+            popup = driver.find_element_by_css_selector(dialog_content)
+            # Click button Restore
+            btn_active = popup.find_elements_by_css_selector(apply)
+
+            for i in btn_active:
+                if i.text == 'Restore':
+                    i.click()
+                    break
+            time.sleep(2)
+            check_popup_confirm_restore1 = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(1)
+            # Click Cancel
+            driver.find_element_by_css_selector(btn_cancel).click()
+
+            time.sleep(1)
+            check_popup_backup = len(driver.find_elements_by_css_selector(popup_header_cls)) != 0
+
+            list_actual5 = [check_popup_confirm_restore1, check_popup_backup]
+            list_expected5 = [exp_restore_confirm_msg, return_true]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Goto Backup/Restore, Choose file, Check message, click Cancel, back to previous steps.'
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Goto Backup/Restore, Choose file, Check message, click Cancel, back to previous steps. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            list_step_fail.append('5. Assertion wong')
+
+        try:
+            popup = driver.find_element_by_css_selector(dialog_content)
+            #
+            os.chdir(download_path)
+            backup_path = os.path.join(os.getcwd(), exp_backup_file_name)
+            popup.find_element_by_css_selector(ele_choose_firmware_file).send_keys(backup_path)
+            time.sleep(1)
+            os.chdir(test_t10x_path)
+            popup = driver.find_element_by_css_selector(dialog_content)
+            # Click button Restore
+            btn_active = popup.find_elements_by_css_selector(btn_active_not_disabled)
+
+            for i in btn_active:
+                if i.text == 'Restore':
+                    i.click()
+                    break
+            time.sleep(2)
+            check_popup_confirm_restore2 = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(1)
+            # Click OK
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            wait_popup_disappear(driver, dialog_loading)
+            wait_popup_disappear(driver, dialog_loading)
+
+            list_actual7 = [check_popup_confirm_restore2]
+            list_expected7 = [exp_restore_confirm_msg]
+            check = assert_list(list_actual7, list_expected7)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 7. Goto Backup/Restore, Choose file, Check message, click OK.'
+                f'Actual: {str(list_actual7)}. '
+                f'Expected: {str(list_expected7)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 7. Goto Backup/Restore, Choose file, Check message, click OK. '
+                f'Actual: {str(list_actual7)}. '
+                f'Expected: {str(list_expected7)}')
+            list_step_fail.append('7. Assertion wong')
+
+        try:
+            # time.sleep(120)
+            save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD_2)
+
+            # Verify
+            grand_login(driver)
+
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+            left_2g = driver.find_element_by_css_selector(left)
+            ssid_2g = left_2g.find_element_by_css_selector('input[placeholder="Enter the network name (SSID)"]')
+            ssid_2g_value = ssid_2g.get_attribute('value')
+
+            pw_eye_2g = left_2g.find_element_by_css_selector(password_eye)
+            act = ActionChains(driver)
+            act.click_and_hold(pw_eye_2g)
+            new_pw_2g = left_2g.find_element_by_css_selector(input_pw).get_attribute('value')
+            act.release(pw_eye_2g)
+            act.perform()
+            time.sleep(1)
+
+            goto_menu(driver, qos_tab, 0)
+            time.sleep(1)
+            select_btn = driver.find_element_by_css_selector(select)
+            verify_qos_selected = select_btn.find_element_by_css_selector(input).is_selected()
+            time.sleep(1)
+
+            # Check Firewall to Medium
+            goto_menu(driver, security_tab, security_firewall_tab)
+            time.sleep(1)
+            check_firewall = len(driver.find_elements_by_css_selector(ele_firewall_lv_medium)) > 0
+            time.sleep(1)
+
+            list_actual8 = [ssid_2g_value, new_pw_2g, verify_qos_selected, check_firewall]
+            list_expected8 = [SSID_2G_NEW, WL_PW_2G, return_true, return_true]
+            check = assert_list(list_actual8, list_expected8)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 8. Verify restore: New wireless 2g ssid, new pw, qos is checked, firewall level is medium. '
+                f'Actual: {str(list_actual8)}. '
+                f'Expected: {str(list_expected8)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8. Verify restore: New wireless 2g ssid, new pw, qos is checked, firewall level is medium.  '
+                f'Actual: {str(list_actual8)}. '
+                f'Expected: {str(list_expected8)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('8. Assertion wong')
+
+        self.assertListEqual(list_step_fail, [])
     # OK
     def test_72_MAIN_System_Verify_Wizard_popup(self):
         self.key = 'MAIN_72'

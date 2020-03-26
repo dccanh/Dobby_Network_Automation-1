@@ -234,7 +234,7 @@ img_clear = Image.open('./Image/clear_btn.png')
 photo_cls = ImageTk.PhotoImage(img_clear)
 label = Label(root, image=photo_cls)
 label.image = photo_cls
-label.place(x=450, y=443)
+label.place(x=446, y=442)
 label.bind("<Button-1>", lambda e: cls())
 
 
@@ -334,6 +334,12 @@ def detect_run_testcase():
 
 
 def _runBtn():
+    stage1.configure(state=DISABLED)
+    version2.configure(state=DISABLED)
+    number3.configure(state=DISABLED)
+
+
+
     save_config(config_path, 'GENERAL', 'stage', stage1.get())
     save_config(config_path, 'GENERAL', 'version', version2.get())
     save_config(config_path, 'GENERAL', 'serial_number', number3.get())
@@ -354,7 +360,7 @@ def _runBtn():
     if warning():
         delete_report_offline()
 
-        progress = Label(root, text='')
+        progress = Label(root)
         progress.place(x=318, y=520)
 
         linkLabel.configure(text='< << Click here to go to report page >> >', fg='blue', anchor="center")
@@ -370,12 +376,14 @@ def _runBtn():
             detect_run_testcase()
         time = datetime.now()
         time_str = time.strftime('%d %b, %Y %H:%M:%S')
-        progress.configure(text=f'DONE: {time_str}')
+        progress.configure(text=f' DONE: {time_str}')
         manualButton.configure(state=NORMAL)
         mergeButton.configure(text=' Run', image=photo_run, state=NORMAL)
 
-        # progress = Label(root, text=f'DONE at {str(datetime.now())}')
-        # progress.place(x=318, y=520)
+        stage1.configure(state=NORMAL)
+        version2.configure(state=NORMAL)
+        number3.configure(state=NORMAL)
+
 
 
 def warning():
