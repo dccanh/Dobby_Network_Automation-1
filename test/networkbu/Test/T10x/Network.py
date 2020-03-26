@@ -1258,16 +1258,16 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Verify relate between Primary to Secondary WAN. '
+                '[Pass] 3, 4, 5, 6. Enabled Dual WAN. Verify relate between Primary to Secondary WAN. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3. Verify relate between Primary to Secondary WAN. '
+                f'[Fail] 3, 4, 5, 6. Enabled Dual WAN. Verify relate between Primary to Secondary WAN. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append(
-                '1,2,3. Assertion wong.')
+                '3, 4, 5, 6. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
     # OK
@@ -1277,14 +1277,27 @@ class NETWORK(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
         try:
             grand_login(driver)
-            time.sleep(1)
-
             # Enable Dual WAN
             goto_menu(driver, network_tab, network_internet_tab)
+            # Title
+            nw_title_page = driver.find_element_by_css_selector(ele_title_page).text
 
+            list_actual = [nw_title_page]
+            list_expected = ['Network > Internet']
+            check = assert_list(list_actual, list_expected)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1, 2. Login and Check title of Network Internet. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2.Login and Check title of Network Internet. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            list_step_fail.append('1, 2. Assertion wong.')
+
+        try:
             _check_dual_selected = driver.find_element_by_css_selector(dual_wan_input)
             if not _check_dual_selected.is_selected():
                 driver.find_element_by_css_selector(dual_wan_button).click()
@@ -1350,16 +1363,16 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Verify relate between Secondary to Primary WAN. '
+                '[Pass] 3, 4, 5, 6. Enabled Dual WAN. Verify relate between Secondary to Primary WAN. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3. Verify relate between Secondary to Primary WAN. '
+                f'[Fail] 3, 4, 5, 6. Verify relate between Secondary to Primary WAN. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append(
-                '1,2,3. Assertion wong.')
+                '3, 4, 5, 6. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
     # OK
@@ -1689,7 +1702,7 @@ class NETWORK(unittest.TestCase):
                         time.sleep(0.2)
                     break
 
-            # 1 Edit Start IP address < End IP address
+            # 1 Edit Start IP address > End IP address
             START_IP_ADDRESS = '192.168.1.100'
             START_IP_ADDRESS_SPLIT = START_IP_ADDRESS.split('.')
             END_IP_ADDRESS = '192.168.1.99'
@@ -1722,11 +1735,11 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1. Set start IP Address < End IP Address: Check Error Message. '
+                '[Pass] 1. Set start IP Address more than End IP Address: Check Error Message. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1. Set start IP Address < End IP Address: Check Error Message. '
+                f'[Fail] 1. Set start IP Address more than End IP Address: Check Error Message. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             list_step_fail.append(
                 '1. Assertion wong.')
@@ -1862,7 +1875,9 @@ class NETWORK(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         MAC_2 = get_config('NETWORK', 'nw25_mac2', input_data_path)
         IP_2 = get_config('NETWORK', 'nw25_ip2', input_data_path)
         MAC_4 = get_config('NETWORK', 'nw25_mac4', input_data_path)
@@ -1957,10 +1972,10 @@ class NETWORK(unittest.TestCase):
             nw_add_reserved_ip(driver, MAC_6, IP_6)
             time.sleep(1)
             reserved_ip_block.find_element_by_css_selector(btn_save).click()
-            time.sleep(2)
+            time.sleep(1)
             error_msg_existed= len(reserved_ip_block.find_elements_by_css_selector(custom_error_cls)) > 0
 
-            time.sleep(3)
+            time.sleep(1)
 
             # Get info of first row
             second_row = reserved_ip_block.find_elements_by_css_selector(rows)[1]
@@ -2069,12 +2084,12 @@ class NETWORK(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Add 32 reserved IP. Check ADD button disabled. Click add -> Check edit form not display. '
+                f'[Pass] 3. Add 32 reserved IP. Check ADD button disabled and Click add -> Check edit form not display. '
                 f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Add 32 reserved IP. Check ADD button disabled. Click add -> Check edit form not display. '
+                f'[Fail] 3. Add 32 reserved IP. Check ADD button disabled and Click add -> Check edit form not display. '
                 f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('3. Assertion wong.')
@@ -2089,22 +2104,8 @@ class NETWORK(unittest.TestCase):
         self.list_steps = []
 
         URL_LOGIN = get_config('URL', 'url')
-        # filename = '1'
-        # commmand = 'factorycfg.sh -a'
-        # run_cmd(commmand, filename=filename)
-        # # Wait 5 mins for factory
-        # time.sleep(150)
-        # wait_DUT_activated(URL_LOGIN)
-        # wait_ping('192.168.1.1')
-        #
-        # filename_2 = 'account.txt'
-        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        # run_cmd(commmand_2, filename_2)
-        # time.sleep(3)
-        # # Get account information from web server and write to config.txt
-        # user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # time.sleep(3)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        factory_dut()
+        # ===============================================
         URL_PING_CHECK = '172.16.1.1'
         URL_B = 'http://172.16.1.1'
         EXPECTED_B_IP_ADDR = '172.16.1.10'
@@ -2201,23 +2202,8 @@ class NETWORK(unittest.TestCase):
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('2,3. Assertion wong.')
-
-        URL_LOGIN = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(250)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        time.sleep(10)
+        # ===============================================
+        factory_dut()
         save_config(config_path, 'URL', 'url', 'http://192.168.1.1')
 
         self.assertListEqual(list_step_fail, [])
@@ -2402,18 +2388,18 @@ class NETWORK(unittest.TestCase):
             time.sleep(0.2)
             # Check Error message display and button Save Dimmed
             error_msg_display = len(reserved_ip_block.find_elements_by_css_selector(custom_error_cls)) > 0
-            button_save_dimmed = not reserved_ip_block.find_element_by_css_selector(btn_save).is_enabled()
+            # button_save_dimmed = not reserved_ip_block.find_element_by_css_selector(btn_save).is_enabled()
 
-            list_actual3 = [error_msg_display, button_save_dimmed]
-            list_expected3 = [return_true] * 2
+            list_actual3 = [error_msg_display]
+            list_expected3 = [return_true]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Change IP address out of range. Check Error message display and button Save dimmed. '
+                '[Pass] 3. Change IP address out of range. Check Error message display. '
                 f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Change IP address out of range. Check Error message display and button Save dimmed. '
+                f'[Fail] 3. Change IP address out of range. Check Error message display. '
                 f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             list_step_fail.append('3. Assertion wong.')
 

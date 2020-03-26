@@ -17,7 +17,7 @@ config.read(config_dir)
 serial_num = config.get('GENERAL', 'serial_number')
 
 
-T10x_Prompt = "HUMAX_T10X:~#"
+T10x_Prompt = "root@HUMAX_T10X:~#"
 web_dir = "/opt/humax/rego/www/"
 
 command = crt.Arguments.GetArg(0)
@@ -33,6 +33,8 @@ else:
 def send_command(cmd):
     if not in_RG_console():
         login_console()
+        crt.Sleep(1000)
+    # crt.Dialog.MessageBox(cmd)
     crt.Screen.Clear()
     crt.Screen.Send(cmd + '\r')
     crt.Sleep(1000)
