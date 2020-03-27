@@ -108,22 +108,9 @@ class MEDIASHARE(unittest.TestCase):
         self.list_steps = []
         url_login = get_config('URL', 'url')
 
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
-        time.sleep(3)
-        # ========================================================================
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         DESCRIPTION_3 = get_config('MEDIA_SHARE', 'ms04_desc_3', input_data_path)
         DESCRIPTION_4 = get_config('MEDIA_SHARE', 'ms04_desc_4', input_data_path)
         PATH_FILE_1 = get_config('MEDIA_SHARE', 'ms04_file_1', input_data_path)
@@ -709,20 +696,9 @@ class MEDIASHARE(unittest.TestCase):
         self.list_steps = []
 
         URL_LOGIN = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        time.sleep(3)
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
 
         try:
             grand_login(driver)

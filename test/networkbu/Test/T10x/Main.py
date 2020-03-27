@@ -611,21 +611,8 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
         url_login = get_config('URL', 'url')
         NEW_PASSWORD = 'Dinhcongcanh1'
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
-
+        # ===========================================================
+        factory_dut()
         # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             login(driver)
@@ -685,19 +672,8 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
 
         url_login = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        time.sleep(150)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        # ===========================================================
+        factory_dut()
         # ============================================
         user_request = get_config('ACCOUNT', 'user')
         pass_word = get_config('ACCOUNT', 'password')
@@ -1546,20 +1522,8 @@ class MAIN(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         url_login = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        # ===========================================================
+        factory_dut()
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
@@ -1653,20 +1617,8 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
 
         url_login = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(4)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        # ===========================================================
+        factory_dut()
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
@@ -1804,20 +1756,8 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
 
         url_login = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        # ===========================================================
+        factory_dut()
         # =====================================
         NEW_PASSWORD = get_config('MAIN', 'main23_new_pw', input_data_path)
         try:
@@ -2053,20 +1993,8 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
 
         url_login = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(120)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        # ===========================================================
+        factory_dut()
         # =============================================
         NEW_PASSWORD = get_config('MAIN', 'main25_new_pw', input_data_path)
 
@@ -2185,23 +2113,9 @@ class MAIN(unittest.TestCase):
         url_login = get_config('URL', 'url')
         NEW_PASSWORD = 'abc123'
 
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(100)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        # ===========================================================
+        factory_dut()
         # ================================================================
-        # GOOGLE_URL = 'http://google.com'
-        # YOUTUBE_URL = 'http://youtube.com'
         GOOGLE_URL = get_config('COMMON', 'google_url', input_data_path)
         YOUTUBE_URL = get_config('COMMON', 'youtube_url', input_data_path)
         try:
@@ -2409,23 +2323,9 @@ class MAIN(unittest.TestCase):
         url_login = get_config('URL', 'url')
         NEW_PASSWORD = 'abc123'
 
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(100)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        # ===========================================================
+        factory_dut()
         # ======================================================
-        # GOOGLE_URL = 'http://google.com'
-        # YOUTUBE_URL = 'http://youtube.com'
         GOOGLE_URL = get_config('COMMON', 'google_url', input_data_path)
         YOUTUBE_URL = get_config('COMMON', 'youtube_url', input_data_path)
         try:
@@ -3053,21 +2953,8 @@ class MAIN(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        # url_login = get_config('URL', 'url')
-        # filename = '1'
-        # commmand = 'factorycfg.sh -a'
-        # run_cmd(commmand, filename=filename)
-        # # Wait 5 mins for factory
-        # time.sleep(100)
-        # wait_DUT_activated(url_login)
-        # wait_ping('192.168.1.1')
-        #
-        # filename_2 = 'account.txt'
-        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        # run_cmd(commmand_2, filename_2)
-        # time.sleep(3)
-        # # Get account information from web server and write to config.txt
-        # user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        # ===========================================================
+        factory_dut()
         # ===================================================================
         NEW_PASSWORD_4 = get_config('MAIN', 'main36_password_4', input_data_path)
         NEW_PASSWORD_5_1 = get_config('MAIN', 'main36_password_5_1', input_data_path)
@@ -3696,7 +3583,7 @@ class MAIN(unittest.TestCase):
     #     NEW_PASSWORD = get_config('COMMON', 'new_pw', input_data_path)
     #     filename = '1'
     #     commmand = 'factorycfg.sh -a'
-    #     run_cmd(commmand, filename=filename)
+    #     run_cmd(commmand, filename)
     #     # Wait 5 mins for factory
     #     time.sleep(120)
     #     wait_DUT_activated(url_login)
@@ -3707,7 +3594,7 @@ class MAIN(unittest.TestCase):
     #     run_cmd(commmand_2, filename_2)
     #     time.sleep(3)
     #     # Get account information from web server and write to config.txt
-    #     get_result_command_from_server(url_ip=url_login, filename=filename_2)
+    #     get_result_command_from_server_api(url_ip=url_login, _name=filename_2)
     #     # ===================================================================
     #     WL_2G_PW = get_config('MAIN', 'main37_1', input_data_path)
     #
@@ -3942,20 +3829,8 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
 
         url_login = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(120)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
+        # ===========================================================
+        factory_dut()
         # ============================================================
         NEW_PASSWORD = get_config('COMMON', 'new_pw', input_data_path)
         try:
@@ -4138,21 +4013,9 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
 
         url_login = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=url_login, filename=filename_2)
-        time.sleep(3)
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
 
         try:
             grand_login(driver)
@@ -4248,22 +4111,9 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
 
         url_login = get_config('URL', 'url')
+        # ===========================================================
+        factory_dut()
 
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=url_login, filename=filename_2)
-        time.sleep(3)
         try:
             grand_login(driver)
             time.sleep(1)
@@ -4396,21 +4246,8 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
         url_login = get_config('URL', 'url')
 
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=url_login, filename=filename_2)
-        time.sleep(3)
+        # ===========================================================
+        factory_dut()
 
         try:
             grand_login(driver)
@@ -5293,21 +5130,8 @@ class MAIN(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        # url_login = get_config('URL', 'url')
-        # filename = '1'
-        # commmand = 'factorycfg.sh -a'
-        # run_cmd(commmand, filename=filename)
-        # # Wait 5 mins for factory
-        # time.sleep(120)
-        # wait_DUT_activated(url_login)
-        # wait_ping('192.168.1.1')
-        # filename_2 = 'account.txt'
-        # commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        # run_cmd(commmand_2, filename_2)
-        # time.sleep(3)
-        # # Get account information from web server and write to config.txt
-        # get_result_command_from_server(url_ip=url_login, filename=filename_2)
-        # time.sleep(3)
+        # ===========================================================
+        factory_dut()
         # =======================================================
         NEW_PASSWORD = get_config('MAIN', 'main61_new_pw', input_data_path)
         NEW_PASSWORD_RETYPE = get_config('MAIN', 'main61_retype_new_pw', input_data_path)
@@ -5436,21 +5260,8 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
 
         url_login = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(120)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
-        time.sleep(3)
+        # ===========================================================
+        factory_dut()
         # ===================================
         NEW_PASSWORD_OVER = get_config('MAIN', 'main62_new_pw_over', input_data_path)
         NEW_PASSWORD_SHORT = get_config('MAIN', 'main62_new_pw_short', input_data_path)
@@ -5531,21 +5342,9 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
 
         url_login = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(120)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
+        # ===========================================================
+        factory_dut()
 
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
-        time.sleep(3)
         try:
             grand_login(driver)
             time.sleep(1)
@@ -5641,22 +5440,9 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
 
         url_login = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(120)
-        wait_DUT_activated(url_login)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
-        time.sleep(3)
-        # ======================================
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         NEW_PASSWORD_2 = get_config('MAIN', 'main64_new_pw_2', input_data_path)
         SSID_2G_NEW = get_config('MAIN', 'main64_ssid_2g_new', input_data_path)
         WL_PW_2G = get_config('MAIN', 'main64_wl_pw_2g', input_data_path)
@@ -5773,20 +5559,9 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('3. Assertion wong')
 
         try:
-            filename = '1'
-            commmand = 'factorycfg.sh -a'
-            run_cmd(commmand, filename=filename)
-            # Wait 5 mins for factory
-            time.sleep(150)
-            wait_DUT_activated(url_login)
-            wait_ping('192.168.1.1')
-
-            filename_2 = 'account.txt'
-            commmand_2 = 'capitest get Device.Users.User.2. leaf'
-            run_cmd(commmand_2, filename_2)
-            time.sleep(3)
-            # Get account information from web server and write to config.txt
-            user_pw = get_result_command_from_server(url_ip=url_login, filename=filename_2)
+            # ===========================================================
+            factory_dut()
+            # ===========================================================
             time.sleep(3)
             self.list_steps.append(f'[Pass] 4. Factory DUT Successfully.')
         except:
@@ -7171,21 +6946,9 @@ class MAIN(unittest.TestCase):
         _TOKEN = get_token(_USER, _PW)
         _BODY = ''
         call_api(URL_CONNECT_WAN, _METHOD, _BODY, _TOKEN)
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        time.sleep(3)
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
 
         _USER = get_config('ACCOUNT', 'user')
         _PW = get_config('ACCOUNT', 'password')
@@ -7388,21 +7151,9 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
 
         URL_LOGIN = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(120)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        time.sleep(3)
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         exp_time_zone = get_config('MAIN', 'main69_exp_time_zone', input_data_path)
         try:
             grand_login(driver)

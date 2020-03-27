@@ -50,21 +50,9 @@ class SECURITY(unittest.TestCase):
         self.list_steps = []
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
-        URL_PING_CHECK = '192.168.1.1'
-        filename = '1'
-        command = 'factorycfg.sh -a'
-        run_cmd(command, filename=filename)
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping(URL_PING_CHECK)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        filename_2 = 'account.txt'
-        command_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(command_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         PARENTAL_CODE_KEY = '1234'
         PARENTAL_WRONG_CODE_KEY = '4321'
 

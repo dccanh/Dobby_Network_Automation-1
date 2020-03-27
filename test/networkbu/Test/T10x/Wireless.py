@@ -50,21 +50,9 @@ class WIRELESS(unittest.TestCase):
 
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
-        URL_PING_CHECK = '192.168.1.1'
-        filename = '1'
-        command = 'factorycfg.sh -a'
-        run_cmd(command, filename=filename)
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping(URL_PING_CHECK)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        filename_2 = 'account.txt'
-        command_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(command_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ===================================================================
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         SSID_NAME = get_config('WIRELESS', 'wl02_ssid_name', input_data_path)
 
         try:
@@ -317,20 +305,9 @@ class WIRELESS(unittest.TestCase):
 
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
-        URL_PING_CHECK = '192.168.1.1'
-        filename = '1'
-        command = 'factorycfg.sh -a'
-        run_cmd(command, filename=filename)
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping(URL_PING_CHECK)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        filename_2 = 'account.txt'
-        command_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(command_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         GOOGLE_URL = get_config('WIRELESS', 'wl04_google_url', input_data_path)
         SECURITY_TYPE = get_config('WIRELESS', 'wl04_security_type', input_data_path)
@@ -554,20 +531,9 @@ class WIRELESS(unittest.TestCase):
 
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
-        URL_PING_CHECK = '192.168.1.1'
-        filename = '1'
-        command = 'factorycfg.sh -a'
-        run_cmd(command, filename=filename)
-        time.sleep(120)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping(URL_PING_CHECK)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        filename_2 = 'account.txt'
-        command_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(command_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         GOOGLE_URL = get_config('WIRELESS', 'wl05_google_url', input_data_path)
         SECURITY_TYPE = get_config('WIRELESS', 'wl05_security_type', input_data_path)
@@ -793,21 +759,9 @@ class WIRELESS(unittest.TestCase):
 
         # # Factory reset
         URL_LOGIN = get_config('URL', 'url')
-        URL_PING_CHECK = '192.168.1.1'
-        filename = '1'
-        command = 'factorycfg.sh -a'
-        run_cmd(command, filename=filename)
-        time.sleep(120)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping(URL_PING_CHECK)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        filename_2 = 'account.txt'
-        command_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(command_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ======================================================================
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         GOOGLE_URL = get_config('WIRELESS', 'wl08_google_url', input_data_path)
         SECURITY_TYPE = get_config('WIRELESS', 'wl08_security_type', input_data_path)
         ENCRYPTION_TYPE = get_config('WIRELESS', 'wl08_encryption_type', input_data_path)
@@ -1295,21 +1249,9 @@ class WIRELESS(unittest.TestCase):
 
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
-        URL_PING_CHECK = '192.168.1.1'
-        filename = '1'
-        command = 'factorycfg.sh -a'
-        run_cmd(command, filename=filename)
-        time.sleep(120)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping(URL_PING_CHECK)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        filename_2 = 'account.txt'
-        command_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(command_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ======================================================================
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         GOOGLE_URL = get_config('WIRELESS', 'wl07_google_url', input_data_path)
         SECURITY_TYPE = get_config('WIRELESS', 'wl07_security_type', input_data_path)
         ENCRYPTION_TYPE = get_config('WIRELESS', 'wl07_encryption_type', input_data_path)
@@ -1792,21 +1734,9 @@ class WIRELESS(unittest.TestCase):
 
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
-        URL_PING_CHECK = '192.168.1.1'
-        filename = '1'
-        command = 'factorycfg.sh -a'
-        run_cmd(command, filename=filename)
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping(URL_PING_CHECK)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        filename_2 = 'account.txt'
-        command_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(command_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         GOOGLE_URL = 'http://google.com'
         # Get mac
         URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
@@ -1999,21 +1929,9 @@ class WIRELESS(unittest.TestCase):
 
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
-        URL_PING_CHECK = '192.168.1.1'
-        filename = '1'
-        command = 'factorycfg.sh -a'
-        run_cmd(command, filename=filename)
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping(URL_PING_CHECK)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        filename_2 = 'account.txt'
-        command_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(command_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
 
         try:
             grand_login(driver)
@@ -2252,22 +2170,9 @@ class WIRELESS(unittest.TestCase):
 
         URL_LOGIN = get_config('URL', 'url')
         NEW_PASSWORD = 'abc123'
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account1.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         GOOGLE_URL = 'http://google.com'
         try:
             grand_login(driver)
@@ -2495,21 +2400,9 @@ class WIRELESS(unittest.TestCase):
         self.list_steps = []
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account1.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ======================================================================
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         SSID_TEST = get_config('WIRELESS', 'wl16_ssid_test', input_data_path)
         SSID_2G_DEFAULT_START = 'HUMAX_Guest_2G!_'
         SSID_5G_DEFAULT_START = 'HUMAX_Guest_5G!_'
@@ -2614,21 +2507,9 @@ class WIRELESS(unittest.TestCase):
         self.list_steps = []
 
         URL_LOGIN = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account1.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
 
         try:
             grand_login(driver)
@@ -3210,21 +3091,9 @@ class WIRELESS(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         URL_LOGIN = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account1.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ======================================================================
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         GOOGLE_URL = get_config('WIRELESS', 'wl23_google_url', input_data_path)
         SECURITY_TYPE = get_config('WIRELESS', 'wl23_security_type', input_data_path)
         ENCRYPTION_TYPE = get_config('WIRELESS', 'wl23_encryption_type', input_data_path)
@@ -3742,26 +3611,14 @@ class WIRELESS(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
         NEW_PASSWORD = 'abc123'
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
 
-        filename_2 = 'account1.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ======================================================================
         GOOGLE_URL = get_config('WIRELESS', 'wl24_google_url', input_data_path)
         SECURITY_TYPE = get_config('WIRELESS', 'wl24_security_type', input_data_path)
         ENCRYPTION_TYPE = get_config('WIRELESS', 'wl24_encryption_type', input_data_path)
@@ -4283,21 +4140,9 @@ class WIRELESS(unittest.TestCase):
         # Factory reset
         URL_LOGIN = get_config('URL', 'url')
         NEW_PASSWORD = 'abc123'
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account1.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        user_pw = get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         GOOGLE_URL = 'http://google.com'
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
@@ -4790,21 +4635,9 @@ class WIRELESS(unittest.TestCase):
         #
         URL_LOGIN = get_config('URL', 'url')
         NEW_PASSWORD = 'abc123'
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account1.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # =====================================================================================
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         save_config(config_path, 'URL', 'url', get_config('URL', 'sub_url'))
         _URL_API = get_config('URL', 'url') + '/api/v1/wifi/0/radio'
         _BODY = ''
@@ -5043,21 +4876,9 @@ class WIRELESS(unittest.TestCase):
         self.list_steps = []
         # =====================================================================================
         URL_LOGIN = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account1.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # =====================================================================================
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         save_config(config_path, 'URL', 'url', get_config('URL', 'sub_url'))
         _URL_API = get_config('URL', 'url') + '/api/v1/wifi/0/radio'
         _BODY = ''
@@ -5709,21 +5530,9 @@ class WIRELESS(unittest.TestCase):
         self.list_steps = []
 
         URL_LOGIN = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account1.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # =====================================================================================
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         save_config(config_path, 'URL', 'url', get_config('URL', 'sub_url'))
         _URL_API = get_config('URL', 'url') + '/api/v1/wifi/1/radio'
         _BODY = ''
@@ -5957,21 +5766,9 @@ class WIRELESS(unittest.TestCase):
         self.list_steps = []
         # =====================================================================================
         URL_LOGIN = get_config('URL', 'url')
-        filename = '1'
-        commmand = 'factorycfg.sh -a'
-        run_cmd(commmand, filename=filename)
-        # Wait 5 mins for factory
-        time.sleep(150)
-        wait_DUT_activated(URL_LOGIN)
-        wait_ping('192.168.1.1')
-
-        filename_2 = 'account1.txt'
-        commmand_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(commmand_2, filename_2)
-        time.sleep(3)
-        # Get account information from web server and write to config.txt
-        get_result_command_from_server(url_ip=URL_LOGIN, filename=filename_2)
-        # =====================================================================================
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         save_config(config_path, 'URL', 'url', get_config('URL', 'sub_url'))
         _URL_API = get_config('URL', 'url') + '/api/v1/wifi/1/radio'
         _BODY = ''
