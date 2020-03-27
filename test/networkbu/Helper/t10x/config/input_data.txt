@@ -87,7 +87,7 @@ nw28_step4_ip_address = 192.168.1.90
 
 
 [WIRELESS]
-wl02_ssid_name = 123! @ # ^  * ( ) + _ - = { } [ ] | 456:789 . ? ` $ % \ ;  , /
+wl02_ssid_name =  123!@ abcd #^&*()+_-={}[]|456:78
 wl04_google_url = http://google.com
 wl04_security_type = WPA2-PSK
 wl04_pw_3 = 12345

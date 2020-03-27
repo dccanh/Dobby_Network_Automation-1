@@ -1521,11 +1521,10 @@ class MAIN(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        url_login = get_config('URL', 'url')
         # ===========================================================
         factory_dut()
+        # ===========================================================
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             url_login = get_config('URL', 'url')
             user_request = get_config('ACCOUNT', 'user')

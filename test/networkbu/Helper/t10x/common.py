@@ -284,9 +284,25 @@ def get_result_command_from_server_api(url_ip, _name='1'):
         time.sleep(5)
         url = url_login + '/' + filename_2
         _res = requests.get(url)
+        if _res.status_code != 200:
+            url_login = get_config('URL', 'url')
+            filename_1 = '1'
+            command = 'factorycfg.sh -a'
+            run_cmd(command, filename_1)
+            # Wait 5 mins for factory
+            time.sleep(150)
+            wait_DUT_activated(url_login)
+            wait_ping('192.168.1.1')
+            time.sleep(3)
+            filename_2 = 'account2.txt'
+            command_2 = 'capitest get Device.Users.User.2. leaf'
+            run_cmd(command_2, filename_2)
+            time.sleep(5)
+            url = url_login + '/' + filename_2
+            _res = requests.get(url)
 
     get_all_text = _res.text
-    print(get_all_text)
+    print("Status Code: " + str(_res.status_code))
     command_result = '{' + get_all_text.split('@@@ PRINT OBJLIST START @@@')[1].split(' @@@@@@ PRINT OBJLIST END @@@@@@')[0]
     fit_result = command_result.split('},\n\t },\n }')[0]+'}}}'
 
@@ -1070,10 +1086,10 @@ def connect_wifi(wifi_ssid, password):
     profile.cipher = const.CIPHER_TYPE_CCMP
     profile.key = password
 
-    iface.remove_all_network_profiles()
+    # iface.remove_all_network_profiles()
     tmp_profile = iface.add_network_profile(profile)
     iface.connect(tmp_profile)
-    time.sleep(8)
+    time.sleep(12)
 
 
 def current_connected_wifi():
@@ -1093,7 +1109,7 @@ def factory_dut():
     time.sleep(150)
     wait_DUT_activated(url_login)
     wait_ping('192.168.1.1')
-    time.sleep(3)
+    time.sleep(5)
     filename_2 = 'account2.txt'
     command_2 = 'capitest get Device.Users.User.2. leaf'
     run_cmd(command_2, filename_2)
@@ -1102,3 +1118,75 @@ def factory_dut():
     _res = requests.get(url)
     # Get account information from web server and write to config.txt
     get_result_command_from_server_api(url_login, filename_2)
+
+
+def call_api_login_old_firmware(user, pw):
+    """Method: POST; Require: user, pw; Return: JSON data"""
+    url = get_config('URL', 'url')
+    url_login = url + "/api/v1/gateway/users/login"
+    data = {
+        "userName": user,
+        "password": base64encodev2(user, pw)
+    }
+    res = requests.post(url=url_login, json=data)
+
+    if res.status_code != 200:
+
+        user = get_config('ACCOUNT', 'user')
+        pw = get_config('ACCOUNT', 'default_pw')
+        data = {
+            "userName": user,
+            "password": base64encodev2(user, pw)
+        }
+        res = requests.post(url=url_login, json=data)
+        if res.status_code == 200:
+            save_config(config_path, 'ACCOUNT', 'password', pw)
+
+    json_data = json.loads(res.text)
+    return json_data
+
+
+def detect_firmware_version(driver):
+    url_login = get_config('URL', 'url')
+    driver.get(url_login)
+    time.sleep(1)
+    if len(driver.find_elements_by_css_selector(lg_captcha_src)) == 0:
+        user_request = get_config('ACCOUNT', 'user')
+        pass_word = get_config('ACCOUNT', 'password')
+        call_api_login_old_firmware(user_request, pass_word)
+        user_request = get_config('ACCOUNT', 'user')
+        pass_word = get_config('ACCOUNT', 'password')
+        time.sleep(1)
+        driver.get(url_login)
+        time.sleep(2)
+        driver.find_element_by_css_selector(el_lg_user_down_firm).send_keys(user_request)
+        time.sleep(1)
+        driver.find_element_by_css_selector(el_lg_pw_down_firm).send_keys(pass_word)
+        time.sleep(1)
+        driver.find_element_by_css_selector(el_lg_button_down_firm).click()
+        wait_visible(driver, el_home_wrap_down_firm)
+        time.sleep(3)
+        # ==============================================================================================
+        driver.find_element_by_css_selector('#system_menu_popup').click()
+        time.sleep(1)
+        driver.find_element_by_css_selector('#wrap_system_menu [ng-click="openUpgradePopup()"]').click()
+        os.chdir(files_path)
+        firmware_30012_path = os.path.join(os.getcwd(), 't10x_fullimage_3.00.12_rev11.img')
+        os.chdir(test_t10x_path)
+        time.sleep(1)
+        driver.find_element_by_css_selector('#upload-form-upgrade [uploader="uploader"]').send_keys(
+            firmware_30012_path)
+        time.sleep(1)
+        driver.find_element_by_css_selector('#upload-form-upgrade [ng-click="applyUpgradePopup()"]').click()
+
+        time.sleep(1)
+        if len(driver.find_elements_by_css_selector('.custom-radio:nth-child(2) span')) > 0:
+            driver.find_element_by_css_selector('.custom-radio:nth-child(2) span').click()
+        time.sleep(0.5)
+        driver.find_element_by_css_selector('.fancybox-opened [ng-click="confirmChange()"]').click()
+        time.sleep(5)
+        wait_visible(driver, '.fancybox-opened [ng-click="$parent.completedOk()"]')
+        wait_visible(driver, '.fancybox-opened [ng-click="$parent.completedOk()"]')
+        time.sleep(1)
+        driver.find_element_by_css_selector('.fancybox-opened [ng-click="$parent.completedOk()"]').click()
+        time.sleep(5)
