@@ -503,7 +503,9 @@ class NETWORK(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         URL_LOGIN = get_config('URL', 'url')
         USER_LOGIN = get_config('ACCOUNT', 'user')
         PW_LOGIN = get_config('ACCOUNT', 'password')
