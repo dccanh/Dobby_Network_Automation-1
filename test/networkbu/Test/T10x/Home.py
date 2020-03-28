@@ -2074,8 +2074,6 @@ class HOME(unittest.TestCase):
             os.system(f'netsh wlan disconnect')
             time.sleep(5)
 
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(10)
             self.list_steps.append('[Pass] Precondition Successfully.')
         except:
             self.list_steps.append('[Fail] Precondition Fail')

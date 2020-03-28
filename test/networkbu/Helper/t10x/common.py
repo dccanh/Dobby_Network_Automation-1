@@ -1031,6 +1031,19 @@ def check_enable_ethernet():
         time.sleep(13)
     os.system(f'netsh wlan disconnect')
     time.sleep(2)
+    # Check ethernet working normally
+    # check_ping = ping_to_address('google.com', 3)["packet_loss_rate"]
+    # if check_ping == 100.0:
+    os.system('ipconfig/renew')
+    time.sleep(8)
+    URL_LOGIN = get_config('URL', 'url')
+    URL_CONNECT_WAN = URL_LOGIN + '/api/v1/network/wan/0/connect'
+    _METHOD = 'POST'
+    _USER = get_config('ACCOUNT', 'user')
+    _PW = get_config('ACCOUNT', 'password')
+    _TOKEN = get_token(_USER, _PW)
+    _BODY = ''
+    call_api(URL_CONNECT_WAN, _METHOD, _BODY, _TOKEN)
 
 
 def goto_system(driver, element_option):
@@ -1113,7 +1126,7 @@ def factory_dut():
     filename_2 = 'account2.txt'
     command_2 = 'capitest get Device.Users.User.2. leaf'
     run_cmd(command_2, filename_2)
-    time.sleep(5)
+    time.sleep(10)
     url = url_login + '/' + filename_2
     _res = requests.get(url)
     # Get account information from web server and write to config.txt
