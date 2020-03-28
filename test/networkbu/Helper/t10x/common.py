@@ -1044,6 +1044,7 @@ def check_enable_ethernet():
     _TOKEN = get_token(_USER, _PW)
     _BODY = ''
     call_api(URL_CONNECT_WAN, _METHOD, _BODY, _TOKEN)
+    time.sleep(8)
 
 
 def goto_system(driver, element_option):
