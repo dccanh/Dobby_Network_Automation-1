@@ -356,144 +356,145 @@ class NETWORK(unittest.TestCase):
             self.list_steps.append(
                 '[Pass] 5. Check information changed: Static IP. ' 
                 f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 5. Check information changed: Static IP. '
                 f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
             list_step_fail.append(
                 '5. Assertion wong.')
-
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
-        try:
-            goto_menu(driver, network_tab, network_internet_tab)
-            wait_popup_disappear(driver, dialog_loading)
-            if len(driver.find_elements_by_css_selector(internet_setting_block)) == 0:
-                internet_setting = driver.find_element_by_css_selector(internet_setting_block_single)
-            else:
-                internet_setting = driver.find_element_by_css_selector(internet_setting_block)
-            ActionChains(driver).move_to_element(internet_setting).perform()
-
-            # Settings
-            internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
-            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
-            for l, f in zip(internet_setting_label, internet_setting_fields):
-                # Connection type
-                if l.text == 'Connection Type':
-                    f.click()
-                    time.sleep(0.2)
-                    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
-                    for o in ls_option:
-                        if o.text == 'PPPoE':
-                            o.click()
-                            break
-                    break
-            time.sleep(1)
-            internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
-            internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
-            for l, f in zip(internet_setting_label, internet_setting_fields):
-                # User name
-                if l.text == 'User Name':
-                    user_box = f.find_element_by_css_selector(input)
-                    ActionChains(driver).move_to_element(user_box).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                        Keys.CONTROL).send_keys(Keys.DELETE).send_keys(PPPoE_USER).perform()
-                if l.text == 'Password':
-                    # pw_box
-                    pw_box = f.find_element_by_css_selector(input)
-                    ActionChains(driver).move_to_element(pw_box).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                        Keys.CONTROL).send_keys(Keys.DELETE).send_keys(PPPoE_PW).perform()
-                    break
-
-            # Click Apply of this enable
-            time.sleep(0.2)
-            btn_apply = internet_setting.find_element_by_css_selector(apply)
-            _check_apply = btn_apply.is_displayed()
-            if _check_apply:
-                btn_apply.click()
-                time.sleep(0.5)
-                # Click OK
-                driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(1)
-                wait_popup_disappear(driver, dialog_loading)
-                time.sleep(5)
-                wait_popup_disappear(driver, dialog_loading)
-                time.sleep(5)
-
-                list_actual5 = [_check_apply]
-                list_expected5 = [return_true]
-                check = assert_list(list_actual5, list_expected5)
-
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                '[Pass] 6. Goto Network>Internet: Change values of Internet Settings: PPPoE '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
-        except:
-            self.list_steps.append(
-                f'[Fail] 6. Goto Network>Internet: Change values of Internet Settings: PPPoE . '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
-            list_step_fail.append(
-                '6. Assertion wong.')
-
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 7
-        try:
-            # Login
-            grand_login(driver)
-            time.sleep(1)
-            # Get Wan IP address
-            wan_ip = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
-            # Click icons Internet connection
-            driver.find_element_by_css_selector(home_img_connection).click()
-            time.sleep(1)
-
-            primary = driver.find_elements_by_css_selector(card_cls)[0]
-            ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
-            dict_wan = {}
-            for w in ls_wan_field:
-                label = w.find_element_by_css_selector(home_wan_ls_label).text
-                value = w.find_element_by_css_selector(home_wan_ls_value).text
-                dict_wan.update({label: value})
-
-            translate_key_api2ui = {"linkType": "WAN Type",
-                                    "mode": "Connection Type",
-                                    "address": "WAN IP Address",
-                                    "subnet": "Subnet Mask",
-                                    "gateway": "Gateway",
-                                    "dnsServer1": "DNS Server 1",
-                                    "dnsServer2": "DNS Server 2"}
-            USER_LOGIN = get_config('ACCOUNT', 'user')
-            PW_LOGIN = get_config('ACCOUNT', 'password')
-            _token = get_token(USER_LOGIN, PW_LOGIN)
-            res_wan_primary = call_api(URL_API, METHOD, BODY, _token)
-
-            _actual = [dict_wan[i] for i in translate_key_api2ui.values()]
-            _expected = []
-            for i in translate_key_api2ui.keys():
-                if i != 'linkType':
-                    _expected.append(res_wan_primary['ipv4'][i])
-                else:
-                    _expected.append(res_wan_primary[i])
-
-            if res_wan_primary['linkType'] == 'ethernet':
-                _expected[0] = 'Ethernet'
-            if res_wan_primary['ipv4']['mode'] == 'static':
-                _expected[1] = 'Static IP'
-            if res_wan_primary['ipv4']['dnsServer2'] == '':
-                _expected[-1] = '0.0.0.0'
-            time.sleep(5)
-
-            list_actual6 = [_actual]
-            list_expected6 = [_expected]
-            check = assert_list(list_actual6, list_expected6)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                '[Pass] 7. Check information changed: PPPoE. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
             self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                f'[Fail] 7. Check information changed: PPPoE. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
-            self.list_steps.append('[END TC]')
-            list_step_fail.append('7. Assertion wong.')
+        # # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
+        # try:
+        #     goto_menu(driver, network_tab, network_internet_tab)
+        #     wait_popup_disappear(driver, dialog_loading)
+        #     if len(driver.find_elements_by_css_selector(internet_setting_block)) == 0:
+        #         internet_setting = driver.find_element_by_css_selector(internet_setting_block_single)
+        #     else:
+        #         internet_setting = driver.find_element_by_css_selector(internet_setting_block)
+        #     ActionChains(driver).move_to_element(internet_setting).perform()
+        #
+        #     # Settings
+        #     internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
+        #     internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+        #     for l, f in zip(internet_setting_label, internet_setting_fields):
+        #         # Connection type
+        #         if l.text == 'Connection Type':
+        #             f.click()
+        #             time.sleep(0.2)
+        #             ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+        #             for o in ls_option:
+        #                 if o.text == 'PPPoE':
+        #                     o.click()
+        #                     break
+        #             break
+        #     time.sleep(1)
+        #     internet_setting_fields = internet_setting.find_elements_by_css_selector(wrap_input)
+        #     internet_setting_label = internet_setting.find_elements_by_css_selector(label_name_in_2g)
+        #     for l, f in zip(internet_setting_label, internet_setting_fields):
+        #         # User name
+        #         if l.text == 'User Name':
+        #             user_box = f.find_element_by_css_selector(input)
+        #             ActionChains(driver).move_to_element(user_box).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+        #                 Keys.CONTROL).send_keys(Keys.DELETE).send_keys(PPPoE_USER).perform()
+        #         if l.text == 'Password':
+        #             # pw_box
+        #             pw_box = f.find_element_by_css_selector(input)
+        #             ActionChains(driver).move_to_element(pw_box).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+        #                 Keys.CONTROL).send_keys(Keys.DELETE).send_keys(PPPoE_PW).perform()
+        #             break
+        #
+        #     # Click Apply of this enable
+        #     time.sleep(0.2)
+        #     btn_apply = internet_setting.find_element_by_css_selector(apply)
+        #     _check_apply = btn_apply.is_displayed()
+        #     if _check_apply:
+        #         btn_apply.click()
+        #         time.sleep(0.5)
+        #         # Click OK
+        #         driver.find_element_by_css_selector(btn_ok).click()
+        #         time.sleep(1)
+        #         wait_popup_disappear(driver, dialog_loading)
+        #         time.sleep(5)
+        #         wait_popup_disappear(driver, dialog_loading)
+        #         time.sleep(5)
+        #
+        #         list_actual5 = [_check_apply]
+        #         list_expected5 = [return_true]
+        #         check = assert_list(list_actual5, list_expected5)
+        #
+        #     self.assertTrue(check["result"])
+        #     self.list_steps.append(
+        #         '[Pass] 6. Goto Network>Internet: Change values of Internet Settings: PPPoE '
+        #         f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+        # except:
+        #     self.list_steps.append(
+        #         f'[Fail] 6. Goto Network>Internet: Change values of Internet Settings: PPPoE . '
+        #         f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+        #     list_step_fail.append(
+        #         '6. Assertion wong.')
+        #
+        # # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 7
+        # try:
+        #     # Login
+        #     grand_login(driver)
+        #     time.sleep(1)
+        #     # Get Wan IP address
+        #     wan_ip = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
+        #     # Click icons Internet connection
+        #     driver.find_element_by_css_selector(home_img_connection).click()
+        #     time.sleep(1)
+        #
+        #     primary = driver.find_elements_by_css_selector(card_cls)[0]
+        #     ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
+        #     dict_wan = {}
+        #     for w in ls_wan_field:
+        #         label = w.find_element_by_css_selector(home_wan_ls_label).text
+        #         value = w.find_element_by_css_selector(home_wan_ls_value).text
+        #         dict_wan.update({label: value})
+        #
+        #     translate_key_api2ui = {"linkType": "WAN Type",
+        #                             "mode": "Connection Type",
+        #                             "address": "WAN IP Address",
+        #                             "subnet": "Subnet Mask",
+        #                             "gateway": "Gateway",
+        #                             "dnsServer1": "DNS Server 1",
+        #                             "dnsServer2": "DNS Server 2"}
+        #     USER_LOGIN = get_config('ACCOUNT', 'user')
+        #     PW_LOGIN = get_config('ACCOUNT', 'password')
+        #     _token = get_token(USER_LOGIN, PW_LOGIN)
+        #     res_wan_primary = call_api(URL_API, METHOD, BODY, _token)
+        #
+        #     _actual = [dict_wan[i] for i in translate_key_api2ui.values()]
+        #     _expected = []
+        #     for i in translate_key_api2ui.keys():
+        #         if i != 'linkType':
+        #             _expected.append(res_wan_primary['ipv4'][i])
+        #         else:
+        #             _expected.append(res_wan_primary[i])
+        #
+        #     if res_wan_primary['linkType'] == 'ethernet':
+        #         _expected[0] = 'Ethernet'
+        #     if res_wan_primary['ipv4']['mode'] == 'static':
+        #         _expected[1] = 'Static IP'
+        #     if res_wan_primary['ipv4']['dnsServer2'] == '':
+        #         _expected[-1] = '0.0.0.0'
+        #     time.sleep(5)
+        #
+        #     list_actual6 = [_actual]
+        #     list_expected6 = [_expected]
+        #     check = assert_list(list_actual6, list_expected6)
+        #     self.assertTrue(check["result"])
+        #     self.list_steps.append(
+        #         '[Pass] 7. Check information changed: PPPoE. '
+        #         f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+        #     self.list_steps.append('[END TC]')
+        # except:
+        #     self.list_steps.append(
+        #         f'[Fail] 7. Check information changed: PPPoE. '
+        #         f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+        #     self.list_steps.append('[END TC]')
+        #     list_step_fail.append('7. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
 
@@ -673,7 +674,8 @@ class NETWORK(unittest.TestCase):
                 label_wan = w.find_element_by_css_selector(home_wan_ls_label).text
                 value = w.find_element_by_css_selector(home_wan_ls_value).text
                 dict_wan.update({label_wan: value})
-
+            USER_LOGIN = get_config('ACCOUNT', 'user')
+            PW_LOGIN = get_config('ACCOUNT', 'password')
             _token = get_token(USER_LOGIN, PW_LOGIN)
             time.sleep(2)
             translate_key_api2ui = {"linkType": "WAN Type",
@@ -960,6 +962,8 @@ class NETWORK(unittest.TestCase):
                                     "gateway": "Gateway",
                                     "dnsServer1": "DNS Server 1",
                                     "dnsServer2": "DNS Server 2"}
+            USER_LOGIN = get_config('ACCOUNT', 'user')
+            PW_LOGIN = get_config('ACCOUNT', 'password')
             _token = get_token(USER_LOGIN, PW_LOGIN)
             time.sleep(1)
             res_wan_primary = call_api(URL_API, METHOD, BODY, _token)

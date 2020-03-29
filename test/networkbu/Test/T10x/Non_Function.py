@@ -1394,7 +1394,7 @@ class NON_FUNCTION(unittest.TestCase):
                 f'Expected: {str(list_expected4)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong')
-
+        detect_firmware_version(driver)
         self.assertListEqual(list_step_fail, [])
 
     def test_84_MAIN_Verification_of_Bridge_mode_Menu_Tree(self):
@@ -1715,6 +1715,7 @@ class NON_FUNCTION(unittest.TestCase):
             list_step_fail.append(
                 '6. Assertion wong.')
             self.list_steps.append('[END TC]')
+        detect_firmware_version(driver)
         self.assertListEqual(list_step_fail, [])
 if __name__ == '__main__':
     unittest.main()
