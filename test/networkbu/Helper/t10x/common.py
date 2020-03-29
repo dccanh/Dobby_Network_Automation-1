@@ -1034,17 +1034,17 @@ def check_enable_ethernet():
     # Check ethernet working normally
     # check_ping = ping_to_address('google.com', 3)["packet_loss_rate"]
     # if check_ping == 100.0:
-    os.system('ipconfig/renew')
-    time.sleep(8)
-    URL_LOGIN = get_config('URL', 'url')
-    URL_CONNECT_WAN = URL_LOGIN + '/api/v1/network/wan/0/connect'
-    _METHOD = 'POST'
-    _USER = get_config('ACCOUNT', 'user')
-    _PW = get_config('ACCOUNT', 'password')
-    _TOKEN = get_token(_USER, _PW)
-    _BODY = ''
-    call_api(URL_CONNECT_WAN, _METHOD, _BODY, _TOKEN)
-    time.sleep(8)
+    # os.system('ipconfig/renew')
+    # time.sleep(8)
+    # URL_LOGIN = get_config('URL', 'url')
+    # URL_CONNECT_WAN = URL_LOGIN + '/api/v1/network/wan/0/connect'
+    # _METHOD = 'POST'
+    # _USER = get_config('ACCOUNT', 'user')
+    # _PW = get_config('ACCOUNT', 'password')
+    # _TOKEN = get_token(_USER, _PW)
+    # _BODY = ''
+    # call_api(URL_CONNECT_WAN, _METHOD, _BODY, _TOKEN)
+    # time.sleep(8)
 
 
 def goto_system(driver, element_option):

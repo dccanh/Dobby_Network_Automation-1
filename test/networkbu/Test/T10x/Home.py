@@ -181,15 +181,14 @@ class HOME(unittest.TestCase):
         self.list_steps = []
 
         URL_LOGIN = get_config('URL', 'url')
-        USER_LOGIN = get_config('ACCOUNT', 'user')
-        PW_LOGIN = get_config('ACCOUNT', 'password')
+
 
         URL_API_DUAL_WAN = URL_LOGIN + '/api/v1/network/dualwan'
         URL_NETWORK_WAN = '/api/v1/network/wan/'
         METHOD = 'GET'
         BODY = None
         # Handle API
-        _token = get_token(USER_LOGIN, PW_LOGIN)
+
         # Call API
 
         try:
@@ -224,7 +223,9 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             goto_menu(driver, home_tab, 0)
             time.sleep(2)
-
+            USER_LOGIN = get_config('ACCOUNT', 'user')
+            PW_LOGIN = get_config('ACCOUNT', 'password')
+            _token = get_token(USER_LOGIN, PW_LOGIN)
             res_dual_wan = call_api(URL_API_DUAL_WAN, METHOD, BODY, _token)
             URL_API_WAN_PRIMARY = URL_LOGIN + URL_NETWORK_WAN + str(res_dual_wan['primary']['interface'])
             URL_API_WAN_SECONDARY = URL_LOGIN + URL_NETWORK_WAN + str(res_dual_wan['secondary']['interface'])
@@ -445,9 +446,7 @@ class HOME(unittest.TestCase):
         BODY = None
 
         # Handle API
-        _token = get_token(USER_LOGIN, PW_LOGIN)
-        # Call API
-        res_wan_v4 = call_api(URL_API_WAN_V4, METHOD, BODY, _token)
+
 
         try:
             grand_login(driver)
@@ -473,6 +472,11 @@ class HOME(unittest.TestCase):
                                     "gateway": "Gateway",
                                     "dnsServer1": "DNS Server 1",
                                     "dnsServer2": "DNS Server 2"}
+            USER_LOGIN = get_config('ACCOUNT', 'user')
+            PW_LOGIN = get_config('ACCOUNT', 'password')
+            _token = get_token(USER_LOGIN, PW_LOGIN)
+            # Call API
+            res_wan_v4 = call_api(URL_API_WAN_V4, METHOD, BODY, _token)
             ipv4 = res_wan_v4['ipv4']
             # Get values of Web UI and API based on translate diction
             _actual = [dict_wan[i] for i in translate_key_api2ui.values()]
@@ -603,6 +607,8 @@ class HOME(unittest.TestCase):
                                     "dnsServer1": "DNS Server 1",
                                     "dnsServer2": "DNS Server 2"}
             # Handle API
+            USER_LOGIN = get_config('ACCOUNT', 'user')
+            PW_LOGIN = get_config('ACCOUNT', 'password')
             _token = get_token(USER_LOGIN, PW_LOGIN)
             # Call API
             res_wan_v4 = call_api(URL_API_WAN_V4, METHOD, BODY, _token)
@@ -657,9 +663,9 @@ class HOME(unittest.TestCase):
         BODY = None
         VALUE_DNS2 = '0.0.0.0'
         VALUE_DNS2_SPLIT = VALUE_DNS2.split('.')
-        _token = get_token(USER_LOGIN, PW_LOGIN)
+        # _token = get_token(USER_LOGIN, PW_LOGIN)
         # Call API
-        get_wan = call_api(URL_API_WAN_V4, METHOD, BODY, _token)['ipv4']['address']
+        # get_wan = call_api(URL_API_WAN_V4, METHOD, BODY, _token)['ipv4']['address']
         # ==================================================
         NEW_PASSWORD = get_config('COMMON', 'new_pw', input_data_path)
         try:
@@ -915,8 +921,7 @@ class HOME(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         URL_LOGIN = get_config('URL', 'url')
-        USER_LOGIN = get_config('ACCOUNT', 'user')
-        PW_LOGIN = get_config('ACCOUNT', 'password')
+
         URL_API = URL_LOGIN + '/api/v1/network/lan'
         METHOD = 'GET'
         BODY = None
@@ -944,6 +949,8 @@ class HOME(unittest.TestCase):
                 actual_lan_v4_label.append(label)
             time.sleep(2)
             # Handle API
+            USER_LOGIN = get_config('ACCOUNT', 'user')
+            PW_LOGIN = get_config('ACCOUNT', 'password')
             _token = get_token(USER_LOGIN, PW_LOGIN)
             time.sleep(2)
             # Call API
@@ -2008,7 +2015,7 @@ class HOME(unittest.TestCase):
             time.sleep(5)
 
             os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
-            time.sleep(5)
+            time.sleep(10)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(1)
@@ -2489,476 +2496,476 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    # HOME 32 chua dc
-    def test_32_HOME_Mac_Filtering_registration_deletion_confirmation(self):
-        self.key = 'HOME_32'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-        URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
-        current_pw = get_config('ACCOUNT', 'password')
-
-        # Disconnect Wireless, connect LAN
-        try:
-            os.system(f'netsh wlan disconnect')
-            time.sleep(5)
-
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(10)
-            self.list_steps.append('[Pass] Precondition Successfully.')
-        except:
-            self.list_steps.append('[Fail] Precondition Fail')
-            list_step_fail.append('Assertion wong.')
-
-        # Check popup appear after click Edit
-        try:
-            grand_login(driver)
-
-            # CLick Device Image
-            driver.find_element_by_css_selector(home_img_device_connection).click()
-            time.sleep(2)
-            wait_popup_disappear(driver, dialog_loading)
-
-            # Table first row
-            first_row = driver.find_element_by_css_selector(ele_table_row)
-            # Get information
-            before_device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
-
-            # Click Edit
-            driver.find_element_by_css_selector(edit_cls).click()
-            time.sleep(2)
-
-            check_dialog_display = len(driver.find_elements_by_css_selector(dialog_content)) > 0
-
-            list_actual1 = [check_dialog_display]
-            list_expected1 = [return_true]
-            check = assert_list(list_actual1, list_expected1)
-            self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Click Edit; Check popup display.'
-                                   f'Actual: {str(list_actual1)}. '
-                                   f'Expected: {str(list_expected1)}')
-        except:
-            self.list_steps.append(
-                f'[Fail] 2. Click Edit; Check popup display. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
-            list_step_fail.append('2. Assertion wong.')
-
-        # Mac Filtering OK
-        try:
-            # Click Mac Filtering
-            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
-            for f in all_wrap_form:
-                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
-                    add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
-                    break
-            if len(add_mac_btn.find_elements_by_css_selector(add_class)) > 0:
-                # Click
-                add_mac_btn.click()
-            time.sleep(0.2)
-            # Check confirm message
-            check_confirm_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
-            time.sleep(0.2)
-            # Click Cancel
-            driver.find_element_by_css_selector(btn_cancel).click()
-            time.sleep(0.2)
-            # Check popup confirm disappear
-            check_confirm_pop_disappear = len(driver.find_elements_by_css_selector(confirm_dialog_msg)) == 0
-
-            # Click Mac Filtering
-            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
-            for f in all_wrap_form:
-                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
-                    add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
-                    break
-            # Click mac
-            if len(add_mac_btn.find_elements_by_css_selector(add_class)) > 0:
-                add_mac_btn.click()
-            time.sleep(0.2)
-            # Click OK
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(0.2)
-            wait_popup_disappear(driver, dialog_loading)
-
-            # Switch to disconnect devices
-            driver.find_element_by_css_selector(ele_second_tab).click()
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-
-            # Table first row
-            first_row = driver.find_element_by_css_selector(ele_table_row)
-            # Get information
-            after_device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
-
-            list_actual3 = [check_confirm_msg, check_confirm_pop_disappear, before_device_mac]
-            list_expected3 = [exp_confirm_msg_add_mac_filtering, return_true, after_device_mac]
-            check = assert_list(list_actual3, list_expected3)
-            self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3, 4. Check confirm add Mac Filtering msg, Click Cancel-> Check popup disappear. '
-                                   'Click add again -> Click OK -> Check MAC display in Disconnect Devices'
-                                   f'Actual: {str(list_actual3)}. '
-                                   f'Expected: {str(list_expected3)}')
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                f'[Fail] 3, 4. Check confirm add Mac Filtering msg, Click Cancel-> Check popup disappear. '
-                'Click add again -> Click OK -> Check MAC display in Disconnect Devices'
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
-            self.list_steps.append('[END TC]')
-            list_step_fail.append('3, 4. Assertion wong.')
-
-            # Connect Wifi
-        try:
-            time.sleep(5)
-            new_2g_wf_name = api_change_wifi_setting(URL_2g)
-            time.sleep(3)
-            write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name, new_pw=current_pw)
-            time.sleep(3)
-
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
-            time.sleep(5)
-
-            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
-            time.sleep(110)
-
-            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-            time.sleep(1)
-            self.list_steps.append('8.0 [Pass] Connect wifi Successfully.')
-        except:
-            self.list_steps.append('8.0 [Fail] Connect wifi Fail')
-            list_step_fail.append('8.0 Assertion wong.')
-
-
-
-
-
-
-
-        # Verify Mac Filtering in Network Lan
-        try:
-            # Click Cancel
-            driver.find_element_by_css_selector(btn_cancel).click()
-            time.sleep(1)
-            # Table first row
-            first_row = driver.find_element_by_css_selector(ele_table_row)
-            # Get information
-            device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
-            device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
-
-            goto_menu(driver, network_tab, network_lan_tab)
-            time.sleep(1)
-
-            check_add_in_lan = False
-            reserved_block_rows = driver.find_elements_by_css_selector(rows)
-            if len(reserved_block_rows) > 0:
-                for r in reserved_block_rows:
-                    if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
-                        if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
-                            check_add_in_lan = True
-
-            list_actual4 = [check_add_in_lan]
-            list_expected4 = [return_true]
-            check = assert_list(list_actual4, list_expected4)
-            self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Add Mac Filtering -> Check add successfully in Network Lan'
-                                   f'Actual: {str(list_actual4)}. '
-                                   f'Expected: {str(list_expected4)}')
-        except:
-            self.list_steps.append(
-                f'[Fail] 4. Add Mac Filtering -> Check add successfully in Network Lan'
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
-            list_step_fail.append('4. Assertion wong.')
-
-        # Delete Mac Filtering, Check delete in Network LAN
-        try:
-            time.sleep(3)
-            # Goto Home
-            goto_menu(driver, home_tab, 0)
-            time.sleep(1)
-            wait_popup_disappear(driver, dialog_loading)
-            # CLick Device Image
-            driver.find_element_by_css_selector(home_img_device_connection).click()
-            time.sleep(2)
-            wait_popup_disappear(driver, dialog_loading)
-
-            # Click Edit
-            driver.find_element_by_css_selector(edit_cls).click()
-            time.sleep(2)
-            # Click Mac Filtering
-            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
-            for f in all_wrap_form:
-                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
-                    add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
-                    break
-            # Click
-            if len(add_mac_btn.find_elements_by_css_selector(delete_cls)) > 0:
-                add_mac_btn.click()
-
-            time.sleep(0.2)
-            # Check confirm message
-            check_confirm_delete_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
-            time.sleep(0.2)
-            # Click ok
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(0.2)
-            wait_popup_disappear(driver, dialog_loading)
-
-             # Click Cancel reserved Popup
-            driver.find_element_by_css_selector(btn_cancel).click()
-            time.sleep(1)
-            # Table first row
-            first_row = driver.find_element_by_css_selector(ele_table_row)
-            # Get information
-            device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
-            device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
-
-            goto_menu(driver, network_tab, network_lan_tab)
-            time.sleep(1)
-
-            check_add_in_lan = True
-            reserved_block_rows = driver.find_elements_by_css_selector(rows)
-            if len(reserved_block_rows) > 0:
-                for r in reserved_block_rows:
-                    if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
-                        if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
-                            check_add_in_lan = False
-
-            list_actual5 = [check_confirm_delete_msg, check_add_in_lan]
-            list_expected5 = [exp_confirm_msg_delete_resserve_ip, return_true]
-            check = assert_list(list_actual5, list_expected5)
-            self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 5,6,7. Delete Mac Filtering -> Check Delete successfully in Network Lan'
-                                   f'Actual: {str(list_actual5)}. '
-                                   f'Expected: {str(list_expected5)}')
-        except:
-            self.list_steps.append(
-                f'[Fail] 5,6,7. Delete Mac Filtering -> Check Delete successfully in Network Lan'
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
-            list_step_fail.append('5,6,7. Assertion wong.')
-
-        # Connect Wifi
-        try:
-            time.sleep(5)
-            new_2g_wf_name = api_change_wifi_setting(URL_2g)
-            time.sleep(3)
-            write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name, new_pw=current_pw)
-            time.sleep(3)
-
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
-            time.sleep(5)
-
-            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
-            time.sleep(110)
-
-            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-            time.sleep(1)
-            self.list_steps.append('8.0 [Pass] Connect wifi Successfully.')
-        except:
-            self.list_steps.append('8.0 [Fail] Connect wifi Fail')
-            list_step_fail.append('8.0 Assertion wong.')
-
-        try:
-            # Refresh page
-            driver.refresh()
-            time.sleep(5)
-
-            goto_menu(driver, home_tab, 0)
-            time.sleep(2)
-            wait_popup_disappear(driver, dialog_loading)
-            # CLick Device Image
-            driver.find_element_by_css_selector(home_img_device_connection).click()
-            time.sleep(2)
-            wait_popup_disappear(driver, dialog_loading)
-
-            # Click Edit
-            driver.find_element_by_css_selector(edit_cls).click()
-            time.sleep(2)
-
-            check_dialog_display = len(driver.find_elements_by_css_selector(dialog_content)) > 0
-
-            list_actual1 = [check_dialog_display]
-            list_expected1 = [return_true]
-            check = assert_list(list_actual1, list_expected1)
-            self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 8.1. Click Edit; Check popup display.'
-                                   f'Actual: {str(list_actual1)}. '
-                                   f'Expected: {str(list_expected1)}')
-        except:
-            self.list_steps.append(
-                f'[Fail] 8.1. Click Edit; Check popup display. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
-            list_step_fail.append('8.1. Assertion wong.')
-
-        try:
-            # Click Mac Filtering
-            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
-            for f in all_wrap_form:
-                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
-                    add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
-                    break
-            # Click
-            if len(add_mac_btn.find_elements_by_css_selector(add_class)) > 0:
-                add_mac_btn.click()
-            time.sleep(0.2)
-            # Check confirm message
-            check_confirm_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
-            time.sleep(0.2)
-            # Click Cancel
-            driver.find_element_by_css_selector(btn_cancel).click()
-            time.sleep(0.2)
-            # Check popup confirm disappear
-            check_confirm_pop_disappear = len(driver.find_elements_by_css_selector(confirm_dialog_msg)) == 0
-
-            # Click Mac Filtering
-            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
-            for f in all_wrap_form:
-                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
-                    add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
-                    break
-            # Click reserved
-            if len(add_mac_btn.find_elements_by_css_selector(add_class)) > 0:
-                add_mac_btn.click()
-            time.sleep(0.2)
-            # Click OK
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(0.2)
-            wait_popup_disappear(driver, dialog_loading)
-
-            # Check Reserved to "-"
-            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
-            for f in all_wrap_form:
-                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
-                    check_delete_icon = f.find_element_by_css_selector(ele_icon_cls).get_attribute('class')
-                    break
-            check_delete_icon = check_delete_icon == 'icon delete'
-
-            list_actual3 = [check_confirm_msg, check_confirm_pop_disappear, check_delete_icon]
-            list_expected3 = [exp_confirm_msg_add_mac_filtering, return_true, return_true]
-            check = assert_list(list_actual3, list_expected3)
-            self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 8.2. Check confirm add Mac Filtering msg, Click Cancel-> Check popup disappear. '
-                                   'Click add again -> Click OK -> Check add icon change to delete icon'
-                                   f'Actual: {str(list_actual3)}. '
-                                   f'Expected: {str(list_expected3)}')
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                f'[Fail] 8.2. Check confirm add Mac Filtering msg, Click Cancel-> Check popup disappear. '
-                'Click add again -> Click OK -> Check add icon change to delete icon'
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
-            self.list_steps.append('[END TC]')
-            list_step_fail.append('8.2. Assertion wong.')
-
-        try:
-            # Click Cancel
-            driver.find_element_by_css_selector(btn_cancel).click()
-            time.sleep(1)
-            # Table first row
-            first_row = driver.find_element_by_css_selector(ele_table_row)
-            # Get information
-            device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
-            device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
-
-            goto_menu(driver, network_tab, network_lan_tab)
-            time.sleep(1)
-
-            check_add_in_lan = False
-            reserved_block_rows = driver.find_elements_by_css_selector(rows)
-            if len(reserved_block_rows) > 0:
-                for r in reserved_block_rows:
-                    if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
-                        if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
-                            check_add_in_lan = True
-
-            list_actual4 = [check_add_in_lan]
-            list_expected4 = [return_true]
-            check = assert_list(list_actual4, list_expected4)
-            self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 8.3. Add Mac Filtering -> Check add successfully in Network Lan'
-                                   f'Actual: {str(list_actual4)}. '
-                                   f'Expected: {str(list_expected4)}')
-        except:
-            self.list_steps.append(
-                f'[Fail] 8.3 Mac Filtering -> Check add successfully in Network Lan'
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
-            list_step_fail.append('8.3. Assertion wong.')
-
-        try:
-            # Goto Home
-            goto_menu(driver, home_tab, 0)
-            time.sleep(2)
-            # CLick Device Image
-            driver.find_element_by_css_selector(home_img_device_connection).click()
-            time.sleep(2)
-            wait_popup_disappear(driver, dialog_loading)
-
-            # Click Edit
-            driver.find_element_by_css_selector(edit_cls).click()
-            time.sleep(2)
-            # Click Mac Filtering
-            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
-            for f in all_wrap_form:
-                if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
-                    add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
-                    break
-            # Click
-            if len(add_mac_btn.find_elements_by_css_selector(delete_cls)) > 0:
-                add_mac_btn.click()
-            time.sleep(0.2)
-            # Check confirm message
-            check_confirm_delete_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
-            time.sleep(0.2)
-            # Click ok
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(0.2)
-            wait_popup_disappear(driver, dialog_loading)
-
-            # Click Cancel reserved Popup
-            driver.find_element_by_css_selector(btn_cancel).click()
-            time.sleep(1)
-            # Table first row
-            first_row = driver.find_element_by_css_selector(ele_table_row)
-            # Get information
-            device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
-            device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
-
-            goto_menu(driver, network_tab, network_lan_tab)
-            time.sleep(1)
-
-            check_add_in_lan = True
-            reserved_block_rows = driver.find_elements_by_css_selector(rows)
-            if len(reserved_block_rows) > 0:
-                for r in reserved_block_rows:
-                    if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
-                        if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
-                            check_add_in_lan = False
-
-            list_actual5 = [check_confirm_delete_msg, check_add_in_lan]
-            list_expected5 = [exp_confirm_msg_delete_resserve_ip, return_true]
-            check = assert_list(list_actual5, list_expected5)
-            self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 8.4. Delete Mac Filtering -> Check Delete successfully in Network Lan'
-                                   f'Actual: {str(list_actual5)}. '
-                                   f'Expected: {str(list_expected5)}')
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                f'[Fail] 8.4. Delete Mac Filtering -> Check Delete successfully in Network Lan'
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
-            self.list_steps.append('[END TC]')
-            list_step_fail.append('8.4. Assertion wong.')
-
-        self.assertListEqual(list_step_fail, [])
+    # # HOME 32 chua dc
+    # def test_32_HOME_Mac_Filtering_registration_deletion_confirmation(self):
+    #     self.key = 'HOME_32'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
+    #     current_pw = get_config('ACCOUNT', 'password')
+    #
+    #     # Disconnect Wireless, connect LAN
+    #     try:
+    #         os.system(f'netsh wlan disconnect')
+    #         time.sleep(5)
+    #
+    #         os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+    #         time.sleep(10)
+    #         self.list_steps.append('[Pass] Precondition Successfully.')
+    #     except:
+    #         self.list_steps.append('[Fail] Precondition Fail')
+    #         list_step_fail.append('Assertion wong.')
+    #
+    #     # Check popup appear after click Edit
+    #     try:
+    #         grand_login(driver)
+    #
+    #         # CLick Device Image
+    #         driver.find_element_by_css_selector(home_img_device_connection).click()
+    #         time.sleep(2)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #
+    #         # Table first row
+    #         first_row = driver.find_element_by_css_selector(ele_table_row)
+    #         # Get information
+    #         before_device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+    #
+    #         # Click Edit
+    #         driver.find_element_by_css_selector(edit_cls).click()
+    #         time.sleep(2)
+    #
+    #         check_dialog_display = len(driver.find_elements_by_css_selector(dialog_content)) > 0
+    #
+    #         list_actual1 = [check_dialog_display]
+    #         list_expected1 = [return_true]
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 2. Click Edit; Check popup display.'
+    #                                f'Actual: {str(list_actual1)}. '
+    #                                f'Expected: {str(list_expected1)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 2. Click Edit; Check popup display. '
+    #             f'Actual: {str(list_actual1)}. '
+    #             f'Expected: {str(list_expected1)}')
+    #         list_step_fail.append('2. Assertion wong.')
+    #
+    #     # Mac Filtering OK
+    #     try:
+    #         # Click Mac Filtering
+    #         all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+    #         for f in all_wrap_form:
+    #             if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+    #                 add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
+    #                 break
+    #         if len(add_mac_btn.find_elements_by_css_selector(add_class)) > 0:
+    #             # Click
+    #             add_mac_btn.click()
+    #         time.sleep(0.2)
+    #         # Check confirm message
+    #         check_confirm_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+    #         time.sleep(0.2)
+    #         # Click Cancel
+    #         driver.find_element_by_css_selector(btn_cancel).click()
+    #         time.sleep(0.2)
+    #         # Check popup confirm disappear
+    #         check_confirm_pop_disappear = len(driver.find_elements_by_css_selector(confirm_dialog_msg)) == 0
+    #
+    #         # Click Mac Filtering
+    #         all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+    #         for f in all_wrap_form:
+    #             if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+    #                 add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
+    #                 break
+    #         # Click mac
+    #         if len(add_mac_btn.find_elements_by_css_selector(add_class)) > 0:
+    #             add_mac_btn.click()
+    #         time.sleep(0.2)
+    #         # Click OK
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(0.2)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #
+    #         # Switch to disconnect devices
+    #         driver.find_element_by_css_selector(ele_second_tab).click()
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(1)
+    #
+    #         # Table first row
+    #         first_row = driver.find_element_by_css_selector(ele_table_row)
+    #         # Get information
+    #         after_device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+    #
+    #         list_actual3 = [check_confirm_msg, check_confirm_pop_disappear, before_device_mac]
+    #         list_expected3 = [exp_confirm_msg_add_mac_filtering, return_true, after_device_mac]
+    #         check = assert_list(list_actual3, list_expected3)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 3, 4. Check confirm add Mac Filtering msg, Click Cancel-> Check popup disappear. '
+    #                                'Click add again -> Click OK -> Check MAC display in Disconnect Devices'
+    #                                f'Actual: {str(list_actual3)}. '
+    #                                f'Expected: {str(list_expected3)}')
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 3, 4. Check confirm add Mac Filtering msg, Click Cancel-> Check popup disappear. '
+    #             'Click add again -> Click OK -> Check MAC display in Disconnect Devices'
+    #             f'Actual: {str(list_actual3)}. '
+    #             f'Expected: {str(list_expected3)}')
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('3, 4. Assertion wong.')
+    #
+    #         # Connect Wifi
+    #     try:
+    #         time.sleep(5)
+    #         new_2g_wf_name = api_change_wifi_setting(URL_2g)
+    #         time.sleep(3)
+    #         write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name, new_pw=current_pw)
+    #         time.sleep(3)
+    #
+    #         # Connect Default 2GHz
+    #         os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+    #         time.sleep(5)
+    #
+    #         os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
+    #         time.sleep(110)
+    #
+    #         os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+    #         time.sleep(1)
+    #         self.list_steps.append('8.0 [Pass] Connect wifi Successfully.')
+    #     except:
+    #         self.list_steps.append('8.0 [Fail] Connect wifi Fail')
+    #         list_step_fail.append('8.0 Assertion wong.')
+    #
+    #
+    #
+    #
+    #
+    #
+    #
+    #     # Verify Mac Filtering in Network Lan
+    #     try:
+    #         # Click Cancel
+    #         driver.find_element_by_css_selector(btn_cancel).click()
+    #         time.sleep(1)
+    #         # Table first row
+    #         first_row = driver.find_element_by_css_selector(ele_table_row)
+    #         # Get information
+    #         device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+    #         device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
+    #
+    #         goto_menu(driver, network_tab, network_lan_tab)
+    #         time.sleep(1)
+    #
+    #         check_add_in_lan = False
+    #         reserved_block_rows = driver.find_elements_by_css_selector(rows)
+    #         if len(reserved_block_rows) > 0:
+    #             for r in reserved_block_rows:
+    #                 if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
+    #                     if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
+    #                         check_add_in_lan = True
+    #
+    #         list_actual4 = [check_add_in_lan]
+    #         list_expected4 = [return_true]
+    #         check = assert_list(list_actual4, list_expected4)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 4. Add Mac Filtering -> Check add successfully in Network Lan'
+    #                                f'Actual: {str(list_actual4)}. '
+    #                                f'Expected: {str(list_expected4)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 4. Add Mac Filtering -> Check add successfully in Network Lan'
+    #             f'Actual: {str(list_actual4)}. '
+    #             f'Expected: {str(list_expected4)}')
+    #         list_step_fail.append('4. Assertion wong.')
+    #
+    #     # Delete Mac Filtering, Check delete in Network LAN
+    #     try:
+    #         time.sleep(3)
+    #         # Goto Home
+    #         goto_menu(driver, home_tab, 0)
+    #         time.sleep(1)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         # CLick Device Image
+    #         driver.find_element_by_css_selector(home_img_device_connection).click()
+    #         time.sleep(2)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #
+    #         # Click Edit
+    #         driver.find_element_by_css_selector(edit_cls).click()
+    #         time.sleep(2)
+    #         # Click Mac Filtering
+    #         all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+    #         for f in all_wrap_form:
+    #             if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+    #                 add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
+    #                 break
+    #         # Click
+    #         if len(add_mac_btn.find_elements_by_css_selector(delete_cls)) > 0:
+    #             add_mac_btn.click()
+    #
+    #         time.sleep(0.2)
+    #         # Check confirm message
+    #         check_confirm_delete_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+    #         time.sleep(0.2)
+    #         # Click ok
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(0.2)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #
+    #          # Click Cancel reserved Popup
+    #         driver.find_element_by_css_selector(btn_cancel).click()
+    #         time.sleep(1)
+    #         # Table first row
+    #         first_row = driver.find_element_by_css_selector(ele_table_row)
+    #         # Get information
+    #         device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+    #         device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
+    #
+    #         goto_menu(driver, network_tab, network_lan_tab)
+    #         time.sleep(1)
+    #
+    #         check_add_in_lan = True
+    #         reserved_block_rows = driver.find_elements_by_css_selector(rows)
+    #         if len(reserved_block_rows) > 0:
+    #             for r in reserved_block_rows:
+    #                 if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
+    #                     if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
+    #                         check_add_in_lan = False
+    #
+    #         list_actual5 = [check_confirm_delete_msg, check_add_in_lan]
+    #         list_expected5 = [exp_confirm_msg_delete_resserve_ip, return_true]
+    #         check = assert_list(list_actual5, list_expected5)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 5,6,7. Delete Mac Filtering -> Check Delete successfully in Network Lan'
+    #                                f'Actual: {str(list_actual5)}. '
+    #                                f'Expected: {str(list_expected5)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 5,6,7. Delete Mac Filtering -> Check Delete successfully in Network Lan'
+    #             f'Actual: {str(list_actual5)}. '
+    #             f'Expected: {str(list_expected5)}')
+    #         list_step_fail.append('5,6,7. Assertion wong.')
+    #
+    #     # Connect Wifi
+    #     try:
+    #         time.sleep(5)
+    #         new_2g_wf_name = api_change_wifi_setting(URL_2g)
+    #         time.sleep(3)
+    #         write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name, new_pw=current_pw)
+    #         time.sleep(3)
+    #
+    #         # Connect Default 2GHz
+    #         os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+    #         time.sleep(5)
+    #
+    #         os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
+    #         time.sleep(110)
+    #
+    #         os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+    #         time.sleep(1)
+    #         self.list_steps.append('8.0 [Pass] Connect wifi Successfully.')
+    #     except:
+    #         self.list_steps.append('8.0 [Fail] Connect wifi Fail')
+    #         list_step_fail.append('8.0 Assertion wong.')
+    #
+    #     try:
+    #         # Refresh page
+    #         driver.refresh()
+    #         time.sleep(5)
+    #
+    #         goto_menu(driver, home_tab, 0)
+    #         time.sleep(2)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         # CLick Device Image
+    #         driver.find_element_by_css_selector(home_img_device_connection).click()
+    #         time.sleep(2)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #
+    #         # Click Edit
+    #         driver.find_element_by_css_selector(edit_cls).click()
+    #         time.sleep(2)
+    #
+    #         check_dialog_display = len(driver.find_elements_by_css_selector(dialog_content)) > 0
+    #
+    #         list_actual1 = [check_dialog_display]
+    #         list_expected1 = [return_true]
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 8.1. Click Edit; Check popup display.'
+    #                                f'Actual: {str(list_actual1)}. '
+    #                                f'Expected: {str(list_expected1)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 8.1. Click Edit; Check popup display. '
+    #             f'Actual: {str(list_actual1)}. '
+    #             f'Expected: {str(list_expected1)}')
+    #         list_step_fail.append('8.1. Assertion wong.')
+    #
+    #     try:
+    #         # Click Mac Filtering
+    #         all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+    #         for f in all_wrap_form:
+    #             if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+    #                 add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
+    #                 break
+    #         # Click
+    #         if len(add_mac_btn.find_elements_by_css_selector(add_class)) > 0:
+    #             add_mac_btn.click()
+    #         time.sleep(0.2)
+    #         # Check confirm message
+    #         check_confirm_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+    #         time.sleep(0.2)
+    #         # Click Cancel
+    #         driver.find_element_by_css_selector(btn_cancel).click()
+    #         time.sleep(0.2)
+    #         # Check popup confirm disappear
+    #         check_confirm_pop_disappear = len(driver.find_elements_by_css_selector(confirm_dialog_msg)) == 0
+    #
+    #         # Click Mac Filtering
+    #         all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+    #         for f in all_wrap_form:
+    #             if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+    #                 add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
+    #                 break
+    #         # Click reserved
+    #         if len(add_mac_btn.find_elements_by_css_selector(add_class)) > 0:
+    #             add_mac_btn.click()
+    #         time.sleep(0.2)
+    #         # Click OK
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(0.2)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #
+    #         # Check Reserved to "-"
+    #         all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+    #         for f in all_wrap_form:
+    #             if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+    #                 check_delete_icon = f.find_element_by_css_selector(ele_icon_cls).get_attribute('class')
+    #                 break
+    #         check_delete_icon = check_delete_icon == 'icon delete'
+    #
+    #         list_actual3 = [check_confirm_msg, check_confirm_pop_disappear, check_delete_icon]
+    #         list_expected3 = [exp_confirm_msg_add_mac_filtering, return_true, return_true]
+    #         check = assert_list(list_actual3, list_expected3)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 8.2. Check confirm add Mac Filtering msg, Click Cancel-> Check popup disappear. '
+    #                                'Click add again -> Click OK -> Check add icon change to delete icon'
+    #                                f'Actual: {str(list_actual3)}. '
+    #                                f'Expected: {str(list_expected3)}')
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 8.2. Check confirm add Mac Filtering msg, Click Cancel-> Check popup disappear. '
+    #             'Click add again -> Click OK -> Check add icon change to delete icon'
+    #             f'Actual: {str(list_actual3)}. '
+    #             f'Expected: {str(list_expected3)}')
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('8.2. Assertion wong.')
+    #
+    #     try:
+    #         # Click Cancel
+    #         driver.find_element_by_css_selector(btn_cancel).click()
+    #         time.sleep(1)
+    #         # Table first row
+    #         first_row = driver.find_element_by_css_selector(ele_table_row)
+    #         # Get information
+    #         device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+    #         device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
+    #
+    #         goto_menu(driver, network_tab, network_lan_tab)
+    #         time.sleep(1)
+    #
+    #         check_add_in_lan = False
+    #         reserved_block_rows = driver.find_elements_by_css_selector(rows)
+    #         if len(reserved_block_rows) > 0:
+    #             for r in reserved_block_rows:
+    #                 if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
+    #                     if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
+    #                         check_add_in_lan = True
+    #
+    #         list_actual4 = [check_add_in_lan]
+    #         list_expected4 = [return_true]
+    #         check = assert_list(list_actual4, list_expected4)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 8.3. Add Mac Filtering -> Check add successfully in Network Lan'
+    #                                f'Actual: {str(list_actual4)}. '
+    #                                f'Expected: {str(list_expected4)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 8.3 Mac Filtering -> Check add successfully in Network Lan'
+    #             f'Actual: {str(list_actual4)}. '
+    #             f'Expected: {str(list_expected4)}')
+    #         list_step_fail.append('8.3. Assertion wong.')
+    #
+    #     try:
+    #         # Goto Home
+    #         goto_menu(driver, home_tab, 0)
+    #         time.sleep(2)
+    #         # CLick Device Image
+    #         driver.find_element_by_css_selector(home_img_device_connection).click()
+    #         time.sleep(2)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #
+    #         # Click Edit
+    #         driver.find_element_by_css_selector(edit_cls).click()
+    #         time.sleep(2)
+    #         # Click Mac Filtering
+    #         all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
+    #         for f in all_wrap_form:
+    #             if f.find_element_by_css_selector(home_wan_ls_label).text == 'MAC Filtering':
+    #                 add_mac_btn = f.find_element_by_css_selector(ele_advanced_button)
+    #                 break
+    #         # Click
+    #         if len(add_mac_btn.find_elements_by_css_selector(delete_cls)) > 0:
+    #             add_mac_btn.click()
+    #         time.sleep(0.2)
+    #         # Check confirm message
+    #         check_confirm_delete_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
+    #         time.sleep(0.2)
+    #         # Click ok
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(0.2)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #
+    #         # Click Cancel reserved Popup
+    #         driver.find_element_by_css_selector(btn_cancel).click()
+    #         time.sleep(1)
+    #         # Table first row
+    #         first_row = driver.find_element_by_css_selector(ele_table_row)
+    #         # Get information
+    #         device_mac = first_row.find_element_by_css_selector(wol_mac_addr).text
+    #         device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
+    #
+    #         goto_menu(driver, network_tab, network_lan_tab)
+    #         time.sleep(1)
+    #
+    #         check_add_in_lan = True
+    #         reserved_block_rows = driver.find_elements_by_css_selector(rows)
+    #         if len(reserved_block_rows) > 0:
+    #             for r in reserved_block_rows:
+    #                 if r.find_element_by_css_selector(ip_address_cls).text == device_ip:
+    #                     if r.find_element_by_css_selector(mac_desc_cls).text.splitlines()[1] == device_mac:
+    #                         check_add_in_lan = False
+    #
+    #         list_actual5 = [check_confirm_delete_msg, check_add_in_lan]
+    #         list_expected5 = [exp_confirm_msg_delete_resserve_ip, return_true]
+    #         check = assert_list(list_actual5, list_expected5)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 8.4. Delete Mac Filtering -> Check Delete successfully in Network Lan'
+    #                                f'Actual: {str(list_actual5)}. '
+    #                                f'Expected: {str(list_expected5)}')
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 8.4. Delete Mac Filtering -> Check Delete successfully in Network Lan'
+    #             f'Actual: {str(list_actual5)}. '
+    #             f'Expected: {str(list_expected5)}')
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('8.4. Assertion wong.')
+    #
+    #     self.assertListEqual(list_step_fail, [])
     # OK
     def test_33_HOME_Confirm_Parental_Control_information_display(self):
         self.key = 'HOME_33'
@@ -2967,18 +2974,6 @@ class HOME(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         URL_API = get_config('URL', 'url') + '/api/v1/gateway/devices/1'
-
-        try:
-
-            os.system(f'netsh wlan disconnect')
-            time.sleep(5)
-
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(10)
-            self.list_steps.append('[Pass] Precondition Successfully.')
-        except:
-            self.list_steps.append('[Fail] Precondition Fail')
-            list_step_fail.append('Assertion wong.')
 
         try:
             grand_login(driver)
