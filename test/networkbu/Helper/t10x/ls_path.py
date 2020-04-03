@@ -15,6 +15,7 @@ driver_path = os.path.join(root_dir, "Driver", "chromedriver.exe")
 driver_firefox_path = os.path.join(root_dir, "Driver", "geckodriver.exe")
 driver_edge_path = os.path.join(root_dir, "Driver", "MicrosoftWebDriver.exe")
 driver_safari_path = os.path.join(root_dir, "Driver", "SafariDriver.safariextz")
+explorer_driver_path = os.path.join(root_dir, "Driver", "IEDriverServer.exe")
 
 t10x_crt_path = os.path.join(root_dir, "Helper", "t10x", "secure_crt")
 crt_common = os.path.join(t10x_crt_path, "common.py")

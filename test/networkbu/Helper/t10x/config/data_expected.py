@@ -119,8 +119,8 @@ exp_backup_file_name = f'Setting_{get_config("GENERAL", "model")}.bin'
 exp_backup_confirm_msg = 'Do you want to back up the current setting file?'
 exp_restore_confirm_msg = 'Do you want to restore to the selected file? Restart the system to apply the changes.'
 exp_sub_title_update_firmware = 'You can update the firmware. It may take several minutes, and the system may restart when the firmware update is complete.'
-
-
+exp_restart_confirm_msg = 'Do you want to restart the system? It take about a few minutes to restart.'
+exp_factory_restart_confirm_msg = 'Do you want to reset all settings to the factory default? We recommend that you back up your last settings if you want to restore them.'
 # ~~~~~~~~~~~~~~~~~~~~ HOME
 exp_confirm_msg_add_resserve_ip = 'Do you want to reserve IP Address?'
 exp_confirm_msg_delete_resserve_ip = 'Do you want to delete this item?'

@@ -3037,25 +3037,44 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    # HOME 38. Confuse
-    def test_38_HOME_Check_Disconnect_Devices_information(self):
+    def test_38_HOME_Check_Disconnected_Devices_information(self):
         self.key = 'HOME_38'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        URL_API = get_config('URL', 'url') + '/api/v1/gateway/devices/1'
 
         try:
-
-            os.system(f'netsh wlan disconnect')
-            time.sleep(5)
-
+            # Connect client to DUT via wired
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
             time.sleep(10)
-            self.list_steps.append('[Pass] Precondition Successfully.')
+
+            # Connect wireless
+            _user = get_config('ACCOUNT', 'user')
+            _pw = get_config('ACCOUNT', 'password')
+            _token = get_token(_user, _pw)
+            URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
+            _res = call_api(URL_2g, 'GET', '', _token)
+            ssid_2g = _res['name']
+
+            write_data_to_xml(wifi_default_file_path,
+                              new_name=ssid_2g)
+            time.sleep(1)
+            os.system(f'netsh wlan delete profile name="{ssid_2g}"')
+            time.sleep(1)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(1)
+            os.system(f'netsh wlan connect ssid="{ssid_2g}" name="{ssid_2g}"')
+            time.sleep(10)
+
+            # Disconnect wireless
+            os.system('netsh wlan disconnect')
+            time.sleep(3)
+
+            self.list_steps.append('[Pass] Precondition successfully. Connect then disconnect wireless. Connect wired')
         except:
-            self.list_steps.append('[Fail] Precondition Fail')
+            self.list_steps.append('[Fail] Precondition fail. Connect then disconnect wireless. Connect wired')
             list_step_fail.append('Assertion wong.')
 
         try:
@@ -3066,57 +3085,451 @@ class HOME(unittest.TestCase):
             time.sleep(2)
             wait_popup_disappear(driver, dialog_loading)
 
-            # Click Edit
-            driver.find_element_by_css_selector(edit_cls).click()
-            time.sleep(2)
+            device_img = driver.find_element_by_css_selector(home_img_device)
+            check_device_active = len(device_img.find_elements_by_css_selector(ele_active_cls)) > 0
+            try:
+                check_device_number = int(device_img.find_element_by_css_selector(ele_more_info_cls).text) > 0
+            except:
+                check_device_number = False
+            # Click disconnected device
+            driver.find_element_by_css_selector(ele_disconnect_device_tab).click()
 
-            check_dialog_display = len(driver.find_elements_by_css_selector(dialog_content)) > 0
+            disconnect_table_display = len(driver.find_elements_by_css_selector(ele_disconnect_table)) > 0
 
-            list_actual1 = [check_dialog_display]
-            list_expected1 = [return_true]
+            list_actual1 = [check_device_active, check_device_number, disconnect_table_display]
+            list_expected1 = [return_true] * 3
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Click Edit; Check popup display.'
-                                   f'Actual: {str(list_actual1)}. '
-                                   f'Expected: {str(list_expected1)}')
-        except:
             self.list_steps.append(
-                f'[Fail] 2. Click Edit; Check popup display. '
+                f'[Pass] 1, 2. Login. Click Devices Image. '
+                f'Check device image active, Check device number > 0, Check Disconnect table display. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
-            list_step_fail.append('2. Assertion wong.')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Login. Click Devices Image. '
+                f'Check device image active, Check device number > 0, Check Disconnect table display. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1, 2. Assertion wong.')
 
         try:
-            # Check parental control
-            # Find all wrap form
-            all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
-            for f in all_wrap_form:
-                if f.find_element_by_css_selector(home_wan_ls_label).text == 'Parental Control':
-                    parental_value = f.find_element_by_css_selector(home_wan_ls_value).text
-                    break
+            disconnect_table = driver.find_element_by_css_selector(ele_disconnect_table)
+            list_disconnect_label = [i.text for i in
+                                     disconnect_table.find_elements_by_css_selector(ele_disconnect_header)]
+            btn_refresh_display = len(driver.find_elements_by_css_selector(ele_btn_refresh)) > 0
+            disconnect_device_text = driver.find_elements_by_css_selector(card_tabs_cls)[1].text
+            # API
+            _user = get_config('ACCOUNT', 'user')
+            _pw = get_config('ACCOUNT', 'password')
+            _token = get_token(_user, _pw)
+            URL_2g = get_config('URL', 'url') + '/api/v1/gateway/devices?connected=false'
+            _res = call_api(URL_2g, 'GET', '', _token)
 
-            # Check API
-            user = get_config('ACCOUNT', 'user')
-            pw = get_config('ACCOUNT', 'password')
-            token = get_token(user, pw)
-            res = call_api(URL_API, 'GET', body='', token=token)
-            check_parental_api = res['advanced']['parentalContrl']
+            _res_connected = _res[0]['connected'] is False
+            _check_key_id = _res[0]['id'] is not None
+            _check_key_name = _res[0].get("name") is not None
+            _check_key_mac = _res[0].get("macAddress") is not None
+            _check_key_last_connected = _res[0].get("lastConnected") is not None
 
-            list_actual3 = [parental_value, check_parental_api]
-            list_expected3 = ['Off', False]
+            list_actual2 = [disconnect_device_text, btn_refresh_display, list_disconnect_label,
+                            [_check_key_id, _res_connected, _check_key_name, _check_key_mac, _check_key_last_connected]]
+            list_expected2 = ['Disconnected Devices', return_true,
+                              ['Device Name', 'MAC Address', 'Last Access Date', 'Block'],
+                              [return_true]*5]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Check client disconnected displayed: '
+                f'Disconnected Devices text, Existed refresh button, List header text. '
+                f'Check API: Connected value, Key id, name, mac, last connected. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check client disconnected displayed: '
+                f'Disconnected Devices text, Existed refresh button, List header text. '
+                f'Check API: Connected value, Key id, name, mac, last connected. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        try:
+            write_data_to_xml(wifi_default_file_path,
+                              new_name=ssid_2g)
+            time.sleep(1)
+            os.system(f'netsh wlan delete profile name="{ssid_2g}"')
+            time.sleep(1)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(1)
+            os.system(f'netsh wlan connect ssid="{ssid_2g}" name="{ssid_2g}"')
+            time.sleep(10)
+
+            #
+            get_current_wifi_name = current_connected_wifi()
+
+            list_actual4 = [get_current_wifi_name]
+            list_expected4 = [ssid_2g]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Connect wireless of DUT. Check connect wireless successfully. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Connect wireless of DUT. Check connect wireless successfully. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('5. Assertion wong.')
+
+
+        try:
+            # Connect client to DUT via wired
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+            #
+            interface = subprocess.check_output('ipconfig', shell=True)
+            check_ethernet_disconnected = 'Ethernet adapter Ethernet:' not in interface.decode('utf8')
+
+            list_actual3 = [check_ethernet_disconnected]
+            list_expected3 = [return_true]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Check Parental Control value in Web UI and API.'
-                                   f'Actual: {str(list_actual3)}. '
-                                   f'Expected: {str(list_expected3)}')
+            self.list_steps.append(
+                f'[Pass] 4. Disconnect Ethernet. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Disconnect Ethernet. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        try:
+            driver.refresh()
+            time.sleep(5)
+            driver.find_element_by_css_selector(ele_disconnect_device_tab).click()
+            time.sleep(1)
+            disconnect_table = driver.find_element_by_css_selector(ele_disconnect_table)
+            list_disconnect_label = [i.text for i in
+                                     disconnect_table.find_elements_by_css_selector(ele_disconnect_header)]
+            btn_refresh_display = len(driver.find_elements_by_css_selector(ele_btn_refresh)) > 0
+            disconnect_device_text = driver.find_elements_by_css_selector(card_tabs_cls)[1].text
+            # API
+            _user = get_config('ACCOUNT', 'user')
+            _pw = get_config('ACCOUNT', 'password')
+            _token = get_token(_user, _pw)
+            URL_2g = get_config('URL', 'url') + '/api/v1/gateway/devices?connected=false'
+            _res_ = call_api(URL_2g, 'GET', '', _token)
+
+            _res_connected = _res_[0]['connected'] is False
+            _check_key_id = _res_[0]['id'] is not None
+            _check_key_name = _res_[0].get("name") is not None
+            _check_key_mac = _res_[0].get("macAddress") is not None
+            _check_key_last_connected = _res_[0].get("lastConnected") is not None
+
+            list_actual5 = [disconnect_device_text, btn_refresh_display, list_disconnect_label,
+                            [_check_key_id, _res_connected, _check_key_name, _check_key_mac, _check_key_last_connected]]
+            list_expected5 = ['Disconnected Devices', return_true,
+                              ['Device Name', 'MAC Address', 'Last Access Date', 'Block'],
+                              [return_true]*5]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Check client disconnected displayed: '
+                f'Disconnected Devices text, Existed refresh button, List header text. '
+                f'Check API: Connected value, Key id, name, mac, last connected. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check Parental Control value in Web UI and API. '
+                f'[Fail] 6. Check client disconnected displayed: '
+                f'Disconnected Devices text, Existed refresh button, List header text. '
+                f'Check API: Connected value, Key id, name, mac, last connected. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('6. Assertion wong.')
+        self.assertListEqual(list_step_fail, [])
+
+    def test_39_HOME_Check_Block_Setting_operation(self):
+        self.key = 'HOME_39'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+        try:
+            # Connect client to DUT via wired
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+
+            # Connect wireless
+            _user = get_config('ACCOUNT', 'user')
+            _pw = get_config('ACCOUNT', 'password')
+            _token = get_token(_user, _pw)
+            URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
+            _res = call_api(URL_2g, 'GET', '', _token)
+            ssid_2g = _res['name']
+
+            write_data_to_xml(wifi_default_file_path,
+                              new_name=ssid_2g)
+            time.sleep(1)
+            os.system(f'netsh wlan delete profile name="{ssid_2g}"')
+            time.sleep(1)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(1)
+            os.system(f'netsh wlan connect ssid="{ssid_2g}" name="{ssid_2g}"')
+            time.sleep(10)
+
+            # Disconnect wireless
+            os.system('netsh wlan disconnect')
+            time.sleep(3)
+
+            self.list_steps.append('[Pass] Precondition successfully. Connect then disconnect wireless. Connect wired')
+        except:
+            self.list_steps.append('[Fail] Precondition fail. Connect then disconnect wireless. Connect wired')
+            list_step_fail.append('Assertion wong.')
+
+        try:
+            grand_login(driver)
+
+            # CLick Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+
+            device_img = driver.find_element_by_css_selector(home_img_device)
+            check_device_active = len(device_img.find_elements_by_css_selector(ele_active_cls)) > 0
+            try:
+                check_device_number = int(device_img.find_element_by_css_selector(ele_more_info_cls).text) > 0
+            except:
+                check_device_number = False
+            # Click disconnected device
+            driver.find_element_by_css_selector(ele_disconnect_device_tab).click()
+
+            disconnect_table_display = len(driver.find_elements_by_css_selector(ele_disconnect_table)) > 0
+
+            list_actual1 = [check_device_active, check_device_number, disconnect_table_display]
+            list_expected1 = [return_true] * 3
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Login. Click Devices Image. '
+                f'Check device image active, Check device number > 0, Check Disconnect table display. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Login. Click Devices Image. '
+                f'Check device image active, Check device number > 0, Check Disconnect table display. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1, 2. Assertion wong.')
+
+        try:
+            disconnect_table = driver.find_element_by_css_selector(ele_disconnect_table)
+            list_disconnect_label = [i.text for i in disconnect_table.find_elements_by_css_selector(ele_disconnect_header)]
+            btn_refresh_display = len(driver.find_elements_by_css_selector(ele_btn_refresh)) > 0
+            disconnect_device_text = driver.find_elements_by_css_selector(card_tabs_cls)[1].text
+
+            list_actual2 = [disconnect_device_text, btn_refresh_display, list_disconnect_label]
+            list_expected2 = ['Disconnected Devices', return_true,
+                              ['Device Name', 'MAC Address', 'Last Access Date', 'Block']]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Check client disconnected displayed: '
+                f'Disconnected Devices text, Existed refresh button, List header text. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check client disconnected displayed: '
+                f'Disconnected Devices text, Existed refresh button, List header text. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        try:
+            list_block_icon = disconnect_table.find_elements_by_css_selector(ele_block_button_cls)
+            check_block_enable = list()
+            for i in list_block_icon:
+                i.find_element_by_css_selector(select).click()
+                wait_popup_disappear(driver, icon_loading)
+                check_block_enable.append(i.find_element_by_css_selector(input).is_enabled())
+
+            check_block_enable = all(check_block_enable)
+
+            list_actual3 = [check_block_enable]
+            list_expected3 = [return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Enabled all block. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Enabled all block. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        try:
+            # Connect wireless
+            _user = get_config('ACCOUNT', 'user')
+            _pw = get_config('ACCOUNT', 'password')
+            _token = get_token(_user, _pw)
+            URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
+            _res = call_api(URL_2g, 'GET', '', _token)
+            ssid_2g = _res['name']
+
+            write_data_to_xml(wifi_default_file_path,
+                              new_name=ssid_2g)
+            time.sleep(1)
+            os.system(f'netsh wlan delete profile name="{ssid_2g}"')
+            time.sleep(1)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(1)
+            os.system(f'netsh wlan connect ssid="{ssid_2g}" name="{ssid_2g}"')
+            time.sleep(10)
+
+            #
+            get_current_wifi_name = current_connected_wifi()
+
+            list_actual4 = [get_current_wifi_name]
+            list_expected4 = ['WiFi is not connected']
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Connect wireless of DUT. Check can not wireless. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Connect wireless of DUT. Check can not wireless. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('5. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_07_HOME_Check_Connection_Status_if_unplug_WAN_port(self):
+        self.key = 'HOME_07'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        save_config(config_path, 'URL', 'url', 'http://192.168.1.1')
+        URL_LOGIN = get_config('URL', 'url')
+
+        try:
+            # ===================================================================
+            URL_DISCONNECT_WAN = URL_LOGIN + '/api/v1/network/wan/0/disconnect'
+            _PW = get_config('ACCOUNT', 'password')
+            _USER = get_config('ACCOUNT', 'user')
+            _METHOD = 'POST'
+            _BODY = ''
+            _TOKEN = get_token(_USER, _PW)
+            call_api(URL_DISCONNECT_WAN, _METHOD, _BODY, _TOKEN)
+            time.sleep(10)
+            # ===================================================================
+            grand_login(driver)
+            time.sleep(1)
+            driver.find_element_by_css_selector(home_img_connection).click()
+            time.sleep(1)
+            # ===================================================================
+            URL_WAN = URL_LOGIN + '/api/v1/network/wan'
+            _PW = get_config('ACCOUNT', 'password')
+            _USER = get_config('ACCOUNT', 'user')
+            _METHOD = 'GET'
+            _BODY = ''
+            _TOKEN = get_token(_USER, _PW)
+            _res = call_api(URL_WAN, _METHOD, _BODY, _TOKEN)
+            expected_api = [_res['interfaces'][0]['connectivity'] == 'disconnected',
+                            _res['interfaces'][0]['ipv4']['mode'] == 'dynamic',
+                            _res['interfaces'][0]['ipv4']['address'] == '-',
+                            _res['interfaces'][0]['ipv4']['subnet'] == '-',
+                            _res['interfaces'][0]['ipv4']['gateway'] == '-',
+                            _res['interfaces'][0]['ipv4']['dnsServer1'] == '-',
+                            _res['interfaces'][0]['ipv4']['dnsServer2'] == '-'
+                            ]
+            # ===================================================================
+            wan_card = driver.find_elements_by_css_selector(ele_wan_block)[0]
+            labels = wan_card.find_elements_by_css_selector(label_name_in_2g)
+            values = wan_card.find_elements_by_css_selector(ele_wrap_input_label)
+            for l, v in zip(labels, values):
+                if l.text == 'WAN Type':
+                    _wan_type = v.text == 'Ethernet'
+                    continue
+                if l.text == 'Connection Type':
+                    _connection_type = v.text in ['Dynamic IP', 'Static IP', 'PPPoE']
+                    continue
+                if l.text == 'WAN IP Address':
+                    _wan_ip_address = v.text == '0.0.0.0'
+                    continue
+                if l.text == 'Subnet Mask':
+                    _subnet_mask = v.text == '0.0.0.0'
+                    continue
+                if l.text == 'Gateway':
+                    _gateway = v.text == '0.0.0.0'
+                    continue
+                if l.text == 'DNS Server 1':
+                    _dns_1 = v.text == '0.0.0.0'
+                    continue
+                if l.text == 'DNS Server 2':
+                    _dns_2 = v.text == '0.0.0.0'
+                    break
+            expected_web = [_wan_type,
+                            _connection_type,
+                            _wan_ip_address,
+                            _subnet_mask,
+                            _gateway,
+                            _dns_1,
+                            _dns_2]
+
+            list_actual3 = [expected_api, expected_web]
+            list_expected3 = [[return_true]*7]*2
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Login. Check WAN api (Connectivity is disconnected, mode, address, subnet, gateway, dns1, dns2). '
+                f'Web UI (Wan Type is Ethernet, Connection Type, Wan IP, Subnet Mask, Gateway, DNS server 1, DNS server 2). '
                 f'Actual: {str(list_actual3)}. '
                 f'Expected: {str(list_expected3)}')
             self.list_steps.append('[END TC]')
-            list_step_fail.append('3. Assertion wong.')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Login. Check WAN api (Connectivity is disconnected, mode, address, subnet, gateway, dns1, dns2). '
+                f'Web UI (Wan Type is Ethernet, Connection Type, Wan IP, Subnet Mask, Gateway, DNS server 1, DNS server 2). '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('1, 2. Assertion wong')
+
+        try:
+            URL_CONNECT_WAN = URL_LOGIN + '/api/v1/network/wan/0/connect'
+            _METHOD = 'POST'
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+            _BODY = ''
+            call_api(URL_CONNECT_WAN, _METHOD, _BODY, _TOKEN)
+            time.sleep(10)
+            self.list_steps.append(
+                f'[Pass] API Connect WAN Success After test. Check Status code. ')
+        except:
+            self.list_steps.append(
+                f'[Fail] Connect WAN Fail After test. Check Status code. ')
 
         self.assertListEqual(list_step_fail, [])
 

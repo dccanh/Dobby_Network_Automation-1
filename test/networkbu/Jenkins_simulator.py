@@ -160,24 +160,35 @@ labelFile5.place(x=30, y=240)
 cusStage1 = StringVar()
 stage1 = Entry(root, textvariable=cusStage1)
 stage1.pack()
-# cusStage1.set(get_config(config_path, 'GENERAL', 'stage'))
 stage1.place(x=140, y=40, height=25, width=330)
 
-cusVersion2 = StringVar(None)
-version2 = Entry(root, textvariable=cusVersion2)
-version2.pack()
-# cusVersion2.set(get_config(config_path, 'GENERAL', 'version'))
-version2.place(x=140, y=90, height=25, width=330)
+# cusVersion2 = StringVar(None)
+# version2 = Entry(root, textvariable=cusVersion2)
+# version2.pack()
+# version2.place(x=140, y=90, height=25, width=330)
+cusModel = StringVar()
+choices = ['T9X', 'T10X', 'T11X']
+# cusModel.set(choices[1])
+model = OptionMenu(root, cusModel, *choices)
+model.place(x=140, y=90, height=30, width=330)
+model['background'] = 'white'
 
-cusNumber3 = StringVar()
-number3 = Entry(root, textvariable=cusNumber3)
-number3.pack()
-# cusNumber3.set(get_config(config_path, 'GENERAL', 'serial_number'))
-number3.place(x=140, y=140, height=25, width=330)
+
+# cusNumber3 = StringVar()
+# number3 = Entry(root, textvariable=cusNumber3)
+# number3.pack()
+# number3.place(x=140, y=140, height=25, width=330)
+cusNumber = StringVar()
+choices = ['0001', '0016', '0028', '0049']
+# cusNumber.set(choices[1])
+numberl = OptionMenu(root, cusNumber, *choices)
+numberl.place(x=140, y=140, height=30, width=330)
+numberl['background'] = 'white'
+
 
 cusPort4 = StringVar(None)
 choices = serial_ports()
-cusPort4.set(choices[0])
+# cusPort4.set(choices[0])
 port4 = OptionMenu(root, cusPort4, *choices)
 port4.place(x=140, y=190, height=30, width=330)
 port4['background'] = 'white'
