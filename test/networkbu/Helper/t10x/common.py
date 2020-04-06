@@ -1218,7 +1218,7 @@ def connect_repeater_mode(driver, REPEATER_UPPER='Repeater_Upper_2G', PW='888888
         time.sleep(1)
         wait_popup_disappear(driver, icon_loading)
         wait_popup_disappear(driver, lg_page)
-        save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+    save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
 
 
 def change_firmware_version(driver, version='t10x_fullimage_3.00.12_rev11.img'):

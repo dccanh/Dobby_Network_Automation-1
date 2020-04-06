@@ -168,7 +168,7 @@ stage1.place(x=140, y=40, height=25, width=330)
 # version2.place(x=140, y=90, height=25, width=330)
 cusModel = StringVar()
 choices = ['T9X', 'T10X', 'T11X']
-# cusModel.set(choices[1])
+cusModel.set(choices[1])
 model = OptionMenu(root, cusModel, *choices)
 model.place(x=140, y=90, height=30, width=330)
 model['background'] = 'white'
@@ -180,7 +180,7 @@ model['background'] = 'white'
 # number3.place(x=140, y=140, height=25, width=330)
 cusNumber = StringVar()
 choices = ['0001', '0016', '0028', '0049']
-# cusNumber.set(choices[1])
+cusNumber.set(choices[1])
 numberl = OptionMenu(root, cusNumber, *choices)
 numberl.place(x=140, y=140, height=30, width=330)
 numberl['background'] = 'white'
@@ -188,7 +188,7 @@ numberl['background'] = 'white'
 
 cusPort4 = StringVar(None)
 choices = serial_ports()
-# cusPort4.set(choices[0])
+cusPort4.set(choices[0])
 port4 = OptionMenu(root, cusPort4, *choices)
 port4.place(x=140, y=190, height=30, width=330)
 port4['background'] = 'white'
@@ -346,14 +346,14 @@ def detect_run_testcase():
 
 def _runBtn():
     stage1.configure(state=DISABLED)
-    version2.configure(state=DISABLED)
-    number3.configure(state=DISABLED)
+    model.configure(state=DISABLED)
+    numberl.configure(state=DISABLED)
 
 
 
     save_config(config_path, 'GENERAL', 'stage', stage1.get())
-    save_config(config_path, 'GENERAL', 'version', version2.get())
-    save_config(config_path, 'GENERAL', 'serial_number', number3.get())
+    save_config(config_path, 'GENERAL', 'version', cusModel.get())
+    save_config(config_path, 'GENERAL', 'serial_number', cusNumber.get())
     save_config(config_path, 'CONSOLE', 'serial_port', cusPort4.get())
 
     list_choiced = find_chosen_module()
@@ -392,8 +392,8 @@ def _runBtn():
         mergeButton.configure(text=' Run', image=photo_run, state=NORMAL)
 
         stage1.configure(state=NORMAL)
-        version2.configure(state=NORMAL)
-        number3.configure(state=NORMAL)
+        model.configure(state=NORMAL)
+        numberl.configure(state=NORMAL)
 
 
 

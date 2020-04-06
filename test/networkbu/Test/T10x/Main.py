@@ -7214,5 +7214,121 @@ class MAIN(unittest.TestCase):
     #
     #     detect_firmware_version(driver)
     #     self.assertListEqual(list_step_fail, [])
+
+    def test_83_MAIN_Verification_of_Repeater_Mesh_Menu_Tree(self):
+        self.key = 'MAIN_83'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+        # ===========================================================
+        grand_login(driver)
+        time.sleep(2)
+        goto_menu(driver, network_tab, network_operationmode_tab)
+        connect_repeater_mode(driver)
+        # ===========================================================
+
+        try:
+            grand_login(driver)
+            time.sleep(1)
+
+            # Check Home screen displayed
+            check_home = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual1 = [check_home]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Check Home page is displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. 1. Login. Check Home page is displayed. . '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            ls_menu_enable = driver.find_elements_by_css_selector(ele_home_tree_menu_enable)
+            ls_menu_enable_text = [i.text for i in ls_menu_enable]
+
+            ls_menu_disable = driver.find_elements_by_css_selector(ele_home_tree_menu_disable)
+            ls_menu_disable_text = [i.text for i in ls_menu_disable]
+
+            list_actual2 = [ls_menu_enable_text, ls_menu_disable_text]
+            list_expected2 = [['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE'],
+                              ['QOS', 'SECURITY', 'ADVANCED']]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2. Check list tree menu Enable, list tree menu disable. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check list tree menu Enable, list tree menu disable. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('2. Assertion wong')
+
+        try:
+            # Click Network
+            goto_menu(driver, network_tab, 0)
+            network_submenu = [i.text for i in driver.find_elements_by_css_selector(ele_home_sub_menu)]
+            time.sleep(1)
+            # Click WL
+            goto_menu(driver, wireless_tab, 0)
+            wireless_submenu = [i.text for i in driver.find_elements_by_css_selector(ele_home_sub_menu)]
+            time.sleep(1)
+            # Click MS
+            goto_menu(driver, media_share_tab, 0)
+            media_share_submenu = [i.text for i in driver.find_elements_by_css_selector(ele_home_sub_menu)]
+            time.sleep(1)
+
+            list_actual3 = [network_submenu, wireless_submenu, media_share_submenu]
+            list_expected3 = [['Operation Mode'], ['Repeater Setting', 'WPS'],
+                              ['USB', 'Server Settings']]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3, 4, 5. Check Sub menu of NETWORK, WIRELESS, MS. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3, 4, 5. Check Sub menu of NETWORK, WIRELESS, MS. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('3, 4, 5. Assertion wong')
+
+        try:
+            # CLick system button
+            system_button = driver.find_element_by_css_selector(system_btn)
+            ActionChains(driver).move_to_element(system_button).click().perform()
+
+            time.sleep(1)
+            sys_button_text = [i.text for i in driver.find_elements_by_css_selector(ele_sys_list_button)]
+
+            list_actual6 = sorted(sys_button_text)
+            list_expected6 = sorted(['Language', 'Firmware Update', 'Change Password', 'Backup/Restore',
+                              'Restart/Factory Reset', 'Power Saving Mode', 'LED Mode', 'Date/Time', 'Wizard'])
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Check list button in System button. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Check list button in System button. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('6. Assertion wong')
+        self.assertListEqual(list_step_fail, [])
 if __name__ == '__main__':
     unittest.main()
