@@ -1031,20 +1031,6 @@ def check_enable_ethernet():
         time.sleep(13)
     os.system(f'netsh wlan disconnect')
     time.sleep(2)
-    # Check ethernet working normally
-    # check_ping = ping_to_address('google.com', 3)["packet_loss_rate"]
-    # if check_ping == 100.0:
-    # os.system('ipconfig/renew')
-    # time.sleep(8)
-    # URL_LOGIN = get_config('URL', 'url')
-    # URL_CONNECT_WAN = URL_LOGIN + '/api/v1/network/wan/0/connect'
-    # _METHOD = 'POST'
-    # _USER = get_config('ACCOUNT', 'user')
-    # _PW = get_config('ACCOUNT', 'password')
-    # _TOKEN = get_token(_USER, _PW)
-    # _BODY = ''
-    # call_api(URL_CONNECT_WAN, _METHOD, _BODY, _TOKEN)
-    # time.sleep(8)
 
 
 def goto_system(driver, element_option):
@@ -1121,6 +1107,7 @@ def factory_dut():
     run_cmd(command, filename_1)
     # Wait 5 mins for factory
     time.sleep(150)
+    save_config(config_path, 'URL', 'url', 'http://dearmyrouter.net')
     wait_DUT_activated(url_login)
     wait_ping('192.168.1.1')
     time.sleep(5)
@@ -1198,9 +1185,63 @@ def detect_firmware_version(driver):
             driver.find_element_by_css_selector('.custom-radio:nth-child(2) span').click()
         time.sleep(0.5)
         driver.find_element_by_css_selector('.fancybox-opened [ng-click="confirmChange()"]').click()
-        time.sleep(5)
-        wait_visible(driver, '.fancybox-opened [ng-click="$parent.completedOk()"]')
+        time.sleep(150)
         wait_visible(driver, '.fancybox-opened [ng-click="$parent.completedOk()"]')
         time.sleep(1)
         driver.find_element_by_css_selector('.fancybox-opened [ng-click="$parent.completedOk()"]').click()
-        time.sleep(5)
+        time.sleep(60)
+
+
+def connect_repeater_mode(driver, REPEATER_UPPER='Repeater_Upper_2G', PW='88888888'):
+    if not driver.find_element_by_css_selector(ele_repeater_mode_input).is_selected():
+        driver.find_element_by_css_selector(ele_select_repeater_mode).click()
+        time.sleep(0.5)
+        driver.find_element_by_css_selector(apply).click()
+        time.sleep(0.5)
+        wait_popup_disappear(driver, dialog_loading)
+        _rows = driver.find_elements_by_css_selector(rows)
+        # Choose Network name
+        for r in _rows:
+            if r.find_element_by_css_selector(ele_network_name).text.strip() == REPEATER_UPPER:
+                r.click()
+                break
+        # Fill Password
+        pw_box = driver.find_element_by_css_selector(ele_input_pw)
+        ActionChains(driver).click(pw_box).send_keys(PW).perform()
+        time.sleep(1)
+        # Apply
+        driver.find_element_by_css_selector(ele_apply_highlight).click()
+        time.sleep(0.5)
+        driver.find_element_by_css_selector(btn_ok).click()
+        time.sleep(1)
+        wait_popup_disappear(driver, icon_loading)
+        time.sleep(1)
+        wait_popup_disappear(driver, icon_loading)
+        wait_popup_disappear(driver, lg_page)
+        save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+
+
+def change_firmware_version(driver, version='t10x_fullimage_3.00.12_rev11.img'):
+    driver.find_element_by_css_selector(system_btn).click()
+    time.sleep(1)
+    driver.find_element_by_css_selector(ele_sys_firmware_update).click()
+    time.sleep(1)
+    os.chdir(files_path)
+    firmware_path = os.path.join(os.getcwd(), version)
+    driver.find_element_by_css_selector(ele_choose_firmware_file).send_keys(firmware_path)
+    os.chdir(test_t10x_path)
+    driver.find_element_by_css_selector(apply).click()
+    time.sleep(1)
+    if len(driver.find_elements_by_css_selector(ele_choose_firmware_select)) > 0:
+        driver.find_element_by_css_selector(ele_choose_firmware_select).click()
+    time.sleep(0.5)
+    driver.find_element_by_css_selector(btn_ok).click()
+    time.sleep(0.5)
+    if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
+        driver.find_element_by_css_selector(btn_ok).click()
+    time.sleep(150)
+
+    wait_popup_disappear(driver, icon_loading)
+    wait_visible(driver, content)
+    driver.find_element_by_css_selector(btn_ok).click()
+    time.sleep(1)

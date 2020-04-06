@@ -43,7 +43,6 @@ class NON_FUNCTION(unittest.TestCase):
             check_enable_ethernet()
             self.driver = webdriver.Chrome(driver_path)
             self.driver.maximize_window()
-            detect_firmware_version(self.driver)
         except:
             self.tearDown()
             raise
@@ -900,7 +899,7 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
+        detect_firmware_version(driver)
         # try:
         #     grand_login(driver)
         #     time.sleep(1)
@@ -1050,6 +1049,7 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        detect_firmware_version(self.driver)
         # try:
         #     grand_login(driver)
         #     time.sleep(1)
@@ -1228,6 +1228,7 @@ class NON_FUNCTION(unittest.TestCase):
         firmware_30012 = 't10x_fullimage_3.00.12_rev11.img'
         file_no_format = 'wifi_default_file.xml'
         firmware_40012 = 't10x_fullimage_4.00.12_rev11.img'
+        detect_firmware_version(self.driver)
         # try:
         #     grand_login(driver)
         #     time.sleep(1)
@@ -1403,7 +1404,7 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
+        detect_firmware_version(self.driver)
         try:
             grand_login(driver)
             time.sleep(1)
@@ -1563,6 +1564,8 @@ class NON_FUNCTION(unittest.TestCase):
         url_login = get_config('URL', 'url')
         user_request = get_config('ACCOUNT', 'user')
         pass_word = get_config('ACCOUNT', 'password')
+        save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+        detect_firmware_version(self.driver)
         # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Get and write URL
@@ -1715,7 +1718,85 @@ class NON_FUNCTION(unittest.TestCase):
             list_step_fail.append(
                 '6. Assertion wong.')
             self.list_steps.append('[END TC]')
+        # ================================================================
+        factory_dut()
+        save_config(config_path, 'URL', 'url', get_config('URL', 'sub_url'))
+        # ================================================================
         detect_firmware_version(driver)
+
         self.assertListEqual(list_step_fail, [])
+
+    def test_45_HOME_Verification_of_Network_Map_WAN_information(self):
+        self.key = 'HOME_45'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+        detect_firmware_version(self.driver)
+        # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            grand_login(driver)
+            time.sleep(2)
+            policy_popup = len(driver.find_elements_by_css_selector(lg_privacy_policy_pop)) > 0
+            welcome_popup = len(driver.find_elements_by_css_selector(lg_welcome_header)) > 0
+            home_view = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            check_tab_true = False
+            if any([policy_popup, welcome_popup, home_view]):
+                check_tab_true = True
+
+            list_actual1 = [check_tab_true]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login Web UI successfully. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login Web UI successfully. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            driver.find_element_by_css_selector(home_img_connection).click()
+            time.sleep(1)
+            check_bridge_mode = driver.find_element_by_css_selector(home_connection_mode).text
+            check_ip_assigned = driver.find_element_by_css_selector(home_conection_img_wan_ip).text != '0.0.0.0'
+
+            wan_card = driver.find_elements_by_css_selector(ele_wan_block)[0]
+            list_label = [i.text for i in wan_card.find_elements_by_css_selector(label_name_in_2g)]
+
+            expected_label = ['Connection Status',
+                              'Connection Type',
+                              'IP Address',
+                              'Subnet Mask',
+                              'Gateway',
+                              'DNS Server 1',
+                              'DNS Server 2',
+                              'MAC Address']
+
+            list_actual2 = [check_bridge_mode, check_ip_assigned, list_label]
+            list_expected2 = ['Bridge Mode', return_true, expected_label]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2. Check Bridge Mode, IP address assigned different 0.0.0.0. '
+                f'Check list label displayed. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check Bridge Mode, IP address assigned different 0.0.0.0. '
+                f'Check list label displayed. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            list_step_fail.append('2. Assertion wong.')
+            self.list_steps.append('[END TC]')
+
+        self.assertListEqual(list_step_fail, [])
+
 if __name__ == '__main__':
     unittest.main()
