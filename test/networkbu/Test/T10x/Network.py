@@ -23,22 +23,23 @@ class NETWORK(unittest.TestCase):
 
     def tearDown(self):
         check_enable_ethernet()
-        try:
-            end_time = datetime.now()
-            duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        except:
-            # Connect by wifi if internet is down to handle exception for PPPoE
-            os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
-            time.sleep(1)
-            end_time = datetime.now()
-            duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-            time.sleep(5)
-            # Connect by LAN again
-            os.system('netsh wlan disconnect')
-            time.sleep(1)
-        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        # try:
+        #     end_time = datetime.now()
+        #     duration = str((end_time - self.start_time))
+        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        # except:
+        #     # Connect by wifi if internet is down to handle exception for PPPoE
+        #     os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
+        #     time.sleep(1)
+        #     end_time = datetime.now()
+        #     duration = str((end_time - self.start_time))
+        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        #     time.sleep(5)
+        #     # Connect by LAN again
+        #     os.system('netsh wlan disconnect')
+        #     time.sleep(1)
+        # write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        write_to_excel_tmp(self.key, self.list_steps, self.def_name)
         self.driver.quit()
 
     def test_01_NETWORK_Check_Internet_Status(self):
@@ -1369,6 +1370,138 @@ class NETWORK(unittest.TestCase):
                 '3, 4, 5, 6. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
+
+    # def test_17_NETWORK_Check_operation_of_changing_Gateway_address(self):
+    #     self.key = 'NETWORK_17'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     IP1 = '192.168.10.1'
+    #     IP1_VALUE = IP1.split('.')
+    #     GOOGLE_URL = get_config('COMMON', 'google_url', input_data_path)
+    #     YOUTUBE_URL = get_config('COMMON', 'youtube_url', input_data_path)
+    #     # ===========================================================
+    #     try:
+    #         grand_login(driver)
+    #         time.sleep(1)
+    #         # Network Lan Tab
+    #         goto_menu(driver, network_tab, network_lan_tab)
+    #
+    #         lan_block = driver.find_element_by_css_selector(network_lan_card)
+    #         # Settings
+    #         lan_fields = lan_block.find_elements_by_css_selector(wrap_input)
+    #         lan_label = lan_block.find_elements_by_css_selector(label_name_in_2g)
+    #
+    #         for l, f in zip(lan_label, lan_fields):
+    #             if l.text == 'IP Address':
+    #                 f.find_element_by_css_selector(option_select).click()
+    #                 time.sleep(0.5)
+    #                 ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+    #                 for o in ls_option:
+    #                     # Type C
+    #                     if o.text == IP1_VALUE[0]:
+    #                         o.click()
+    #
+    #                 # Change IP range to 192.168.10.1
+    #                 ip_address_range = driver.find_elements_by_css_selector(ele_ip_address_range_input)
+    #                 for i in range(2):
+    #                     ip_address_range[0].clear()
+    #                     ip_address_range[0].send_keys(IP1_VALUE[2])
+    #                 for i in range(2):
+    #                     ip_address_range[1].clear()
+    #                     ip_address_range[1].send_keys(IP1_VALUE[3])
+    #                 break
+    #
+    #         for l, f in zip(lan_label, lan_fields):
+    #             if l.text == 'Start IP Address':
+    #                 start_ip_value = f.text
+    #                 end_val = f.find_element_by_css_selector(input).get_attribute('value')
+    #                 start_ip_value = start_ip_value + end_val
+    #                 start_ip_value = start_ip_value.replace(' ', '')
+    #             if l.text == 'End IP Address':
+    #                 end_ip_value = f.text
+    #                 end_val = f.find_element_by_css_selector(input).get_attribute('value')
+    #                 end_ip_value = end_ip_value + end_val
+    #                 end_ip_value = end_ip_value.replace(' ', '')
+    #                 break
+    #
+    #         list_actual2 = [start_ip_value.split('.')[:3], end_ip_value.split('.')[:3]]
+    #         list_expected2 = [IP1.split('.')[:3]]*2
+    #         check = assert_list(list_actual2, list_expected2)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 1, 2. Login. Change IP Address. Check Start IP and End IP according to bandwidth. '
+    #             f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 1, 2. Login. Change IP Address. Check Start IP and End IP according to bandwidth. '
+    #             f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+    #         list_step_fail.append('1, 2. Assertion wong.')
+    #
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         # Click Apply
+    #         lan_block = driver.find_element_by_css_selector(network_lan_card)
+    #         lan_block.find_element_by_css_selector(submit_btn).click()
+    #         # Get confirm message
+    #         check_confirm_message = driver.find_element_by_css_selector(confirm_dialog_msg).text
+    #         exp_confirm_message = f'In order to complete the setup of the system must be restart. After restarting, move to new LAN IP Address ({IP1}). Continue?'
+    #         # Click OK
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(100)
+    #         wait_visible(driver, lg_page)
+    #
+    #         list_actual3 = [check_confirm_message]
+    #         list_expected3 = [exp_confirm_message]
+    #         check = assert_list(list_actual3, list_expected3)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 3. Click Apply. Check Confirm message. '
+    #             f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 3. Check Subnet Mask value when Ip Address is class B and verify en Start/End Ip <16 bits. '
+    #             f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+    #         list_step_fail.append('3. Assertion wong.')
+    #
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         # Check in command line
+    #         check_ip_in_cmd = get_url_ipconfig(ipconfig_field='Default Gateway')
+    #         # Check connect
+    #         URL_NEW = 'http://' + check_ip_in_cmd
+    #         USER_ = get_config('ACCOUNT', 'user')
+    #         PW_ = get_config('ACCOUNT', 'password')
+    #         grand_login(driver, URL_NEW, USER_, PW_)
+    #
+    #         check_login_new_url = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+    #         # Check connect with external communication
+    #         driver.get(GOOGLE_URL)
+    #         time.sleep(5)
+    #         check_google = len(driver.find_elements_by_css_selector(google_img)) > 0
+    #
+    #         driver.get(YOUTUBE_URL)
+    #         time.sleep(5)
+    #         check_youtube = len(driver.find_elements_by_css_selector('#logo-icon-container')) != 0
+    #
+    #         list_actual4 = [check_ip_in_cmd, check_login_new_url, check_google, check_youtube]
+    #         list_expected4 = [IP1] + [return_true] * 3
+    #         check = assert_list(list_actual4, list_expected4)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             '[Pass] 4. Check IP in cmd, Check login by New IP Address, Check goto GOOGLE and YOUTUBE. '
+    #             f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 4. Check IP in cmd, Check login by New IP Address, Check goto GOOGLE and YOUTUBE..'
+    #             f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append(
+    #             '4. Assertion wong.')
+    #
+    #     self.assertListEqual(list_step_fail, [])
     # OK
     def test_18_NETWORK_LAN_Change_Subnet_Mask(self):
         self.key = 'NETWORK_18'
@@ -2454,6 +2587,351 @@ class NETWORK(unittest.TestCase):
                 f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong.')
+        self.assertListEqual(list_step_fail, [])
+
+    def test_33_NETWORK_Repeater_Verify_of_menu_tree(self):
+        self.key = 'NETWORK_33'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # ===========================================================
+        grand_login(driver)
+        time.sleep(2)
+        goto_menu(driver, network_tab, network_operationmode_tab)
+        connect_repeater_mode(driver)
+        # ===========================================================
+
+        try:
+            grand_login(driver)
+            time.sleep(1)
+            # Check Home screen displayed
+            check_home = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual1 = [check_home]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Check Home page is displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. Check Home page is displayed. . '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            ls_menu_enable = driver.find_elements_by_css_selector(ele_home_tree_menu_enable)
+            ls_menu_enable_text = [i.text for i in ls_menu_enable]
+
+            ls_menu_disable = driver.find_elements_by_css_selector(ele_home_tree_menu_disable)
+            ls_menu_disable_text = [i.text for i in ls_menu_disable]
+
+            list_actual2 = [ls_menu_enable_text, ls_menu_disable_text]
+            list_expected2 = [['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE'],
+                              ['QOS', 'SECURITY', 'ADVANCED']]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2. Check list tree menu Enable, list tree menu disable. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check list tree menu Enable, list tree menu disable. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('2. Assertion wong')
+
+        try:
+            # Click Network
+            goto_menu(driver, network_tab, 0)
+            network_submenu = [i.text for i in driver.find_elements_by_css_selector(ele_home_sub_menu)]
+            time.sleep(1)
+            # Click WL
+            goto_menu(driver, wireless_tab, 0)
+            wireless_submenu = [i.text for i in driver.find_elements_by_css_selector(ele_home_sub_menu)]
+            time.sleep(1)
+            # Click MS
+            goto_menu(driver, media_share_tab, 0)
+            media_share_submenu = [i.text for i in driver.find_elements_by_css_selector(ele_home_sub_menu)]
+            time.sleep(1)
+
+            list_actual3 = [network_submenu, wireless_submenu, media_share_submenu]
+            list_expected3 = [['Operation Mode'], ['Primary Network', 'Repeater Setting', 'WPS'],
+                              ['USB', 'Server Setting']]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3, 4, 5. Check Sub menu of NETWORK, WIRELESS, MS. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3, 4, 5. Check Sub menu of NETWORK, WIRELESS, MS. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('3, 4, 5. Assertion wong')
+
+        try:
+            # CLick system button
+            system_button = driver.find_element_by_css_selector(system_btn)
+            ActionChains(driver).move_to_element(system_button).click().perform()
+
+            time.sleep(1)
+            sys_button_text = [i.text for i in driver.find_elements_by_css_selector(ele_sys_list_button)]
+
+            list_actual6 = sorted(sys_button_text)
+            list_expected6 = sorted(['Language', 'Firmware Update', 'Change Password', 'Backup/Restore',
+                              'Restart/Factory Reset', 'Power Saving Mode', 'LED Mode', 'Date/Time', 'Wizard'])
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Check list button in System button. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Check list button in System button. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('6. Assertion wong')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_38_NETWORK_Operation_Mode_Verify_of_Network_operation(self):
+        self.key = 'NETWORK_38'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+        # ===========================================================
+        grand_login(driver)
+        time.sleep(2)
+        goto_menu(driver, network_tab, network_operationmode_tab)
+        connect_repeater_mode(driver)
+        # ===========================================================
+
+        try:
+            grand_login(driver)
+            time.sleep(1)
+            # Check Home screen displayed
+            check_home = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual1 = [check_home]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Check Home page is displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. Check Home page is displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            # Check Current Operation mode
+            mode_cards = driver.find_elements_by_css_selector(ele_operation_mode_card)
+            for m in mode_cards:
+                if m.find_element_by_css_selector(input).is_selected():
+                    get_mode_name = m.find_element_by_css_selector('h3').text
+                    break
+
+
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/network/qmode'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+
+            res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            check_api = [
+                res.get('qmode') == 'extender',
+                res.get('operation') == 'mesh slave'
+            ]
+
+            list_actual2 = [get_mode_name, check_api]
+            list_expected2 = ['Repeater Mode', [return_true] * 2]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2. Check current operation Mode. '
+                f'Check API /network/qmode. qmode is extender, operation is mesh salve. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check current operation Mode. '
+                f'Check API /network/qmode. qmode is extender, operation is mesh salve. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('2. Assertion wong')
+
+        try:
+            mode_cards = driver.find_elements_by_css_selector(ele_operation_mode_card)
+            # Router mode
+            list_card_info = list()
+            for m in mode_cards:
+                mode_name = m.find_element_by_css_selector('h3').text
+                mesh_icon = len(m.find_elements_by_css_selector(ele_mesh_mode_icon)) == 1
+                check_active = m.find_element_by_css_selector(input).is_selected()
+                mode_desc = m.find_element_by_css_selector(ele_description_text).text
+                _tmp_dict = {"name": mode_name,
+                             "meshIcon": mesh_icon,
+                             "active": check_active,
+                             "description": mode_desc}
+                list_card_info.append(_tmp_dict)
+
+            expected_router_mode = {"name": "Router Mode",
+                                    "meshIcon": True,
+                                    "active": False,
+                                    "description": exp_router_mode_description}
+            expected_bridge_mode = {"name": "Bridge Mode",
+                                    "meshIcon": False,
+                                    "active": False,
+                                    "description": exp_bridge_mode_description}
+            expected_repeater_mode = {"name": "Repeater Mode",
+                                      "meshIcon": True,
+                                      "active": True,
+                                      "description": exp_repeater_mode_description}
+            expected_access_point_mode = {"name": "AP Mode",
+                                          "meshIcon": True,
+                                          "active": False,
+                                          "description": exp_access_point_mode_description}
+            list_actual3 = list_card_info
+            list_expected3 = [expected_router_mode, expected_bridge_mode,
+                              expected_repeater_mode, expected_access_point_mode]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Check Card information of Router mode, Bridge mode, Repeater Mode, AP mode:'
+                f'name, meshIcon, active, description. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check Card information of Router mode, Bridge mode, Repeater Mode, AP mode. '
+                f'name, meshIcon, active, description. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong')
+
+        try:
+            # Select Router mode
+            mode_cards = driver.find_elements_by_css_selector(ele_operation_mode_card)
+            for m in mode_cards:
+                if m.find_element_by_css_selector('h3').text == 'Router Mode':
+                    m.find_element_by_css_selector(ele_select_router_mode).click()
+                    time.sleep(1)
+                    apply_router_mode = driver.find_element_by_css_selector(apply).is_enabled()
+                    time.sleep(0.5)
+                    break
+
+            list_actual4 = [apply_router_mode]
+            list_expected4 = [return_true]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Select Router mode. Check Apply button enabled. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Select Router mode. Check Apply button enabled. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong')
+
+        try:
+            mode_cards = driver.find_elements_by_css_selector(ele_operation_mode_card)
+            for m in mode_cards:
+                if m.find_element_by_css_selector('h3').text == 'Bridge Mode':
+                    m.find_element_by_css_selector(ele_select_bridge_mode).click()
+                    time.sleep(1)
+                    apply_bridge_mode = driver.find_element_by_css_selector(apply).is_enabled()
+                    time.sleep(0.5)
+                    break
+
+            list_actual5 = [apply_bridge_mode]
+            list_expected5 = [return_true]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Select Bridge mode. Check Apply button enabled. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Select Bridge mode. Check Apply button enabled. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            list_step_fail.append('5. Assertion wong')
+
+        try:
+            mode_cards = driver.find_elements_by_css_selector(ele_operation_mode_card)
+            for m in mode_cards:
+                if m.find_element_by_css_selector('h3').text == 'Access Point Mode':
+                    m.find_element_by_css_selector(ele_select_ap_mode).click()
+                    time.sleep(0.5)
+                    apply_ap_mode = driver.find_element_by_css_selector(apply).is_enabled()
+                    time.sleep(0.5)
+                    break
+
+            list_actual6 = [apply_ap_mode]
+            list_expected6 = [return_true]
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Select Access Point mode. Check Apply button enabled. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Select Access Point mode. Check Apply button enabled. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            list_step_fail.append('6. Assertion wong')
+
+        try:
+            mode_cards = driver.find_elements_by_css_selector(ele_operation_mode_card)
+            for m in mode_cards:
+                if m.find_element_by_css_selector('h3').text == 'Repeater Mode':
+                    m.find_element_by_css_selector(ele_select_repeater_mode).click()
+                    time.sleep(1)
+                    apply_repeater_mode = driver.find_element_by_css_selector(apply).is_enabled()
+                    apply_repeater_mode_text = driver.find_element_by_css_selector(apply).text
+                    time.sleep(0.5)
+                    break
+
+            list_actual7 = [apply_repeater_mode, apply_repeater_mode_text]
+            list_expected7 = [return_true, 'Next']
+            check = assert_list(list_actual7, list_expected7)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 7. Select Repeater mode. Check Apply button enabled. '
+                f'Actual: {str(list_actual7)}. '
+                f'Expected: {str(list_expected7)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 7. Select Repeater mode. Check Apply button enabled. '
+                f'Actual: {str(list_actual7)}. '
+                f'Expected: {str(list_expected7)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('7. Assertion wong')
         self.assertListEqual(list_step_fail, [])
 if __name__ == '__main__':
     unittest.main()

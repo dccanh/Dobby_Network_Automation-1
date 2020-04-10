@@ -1,7 +1,6 @@
 import sys
 sys.path.append('../../')
 import unittest
-from selenium import webdriver
 import time
 from datetime import datetime
 from Helper.t10x.config.data_expected import *
@@ -23,22 +22,23 @@ class HOME(unittest.TestCase):
 
     def tearDown(self):
         check_enable_ethernet()
-        try:
-            end_time = datetime.now()
-            duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        except:
-            # Connect by wifi if internet is down to handle exception for PPPoE
-            os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
-            time.sleep(1)
-            end_time = datetime.now()
-            duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-            time.sleep(5)
-            # Connect by LAN again
-            os.system('netsh wlan disconnect')
-            time.sleep(1)
-        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        # try:
+        #     end_time = datetime.now()
+        #     duration = str((end_time - self.start_time))
+        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        # except:
+        #     # Connect by wifi if internet is down to handle exception for PPPoE
+        #     os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
+        #     time.sleep(1)
+        #     end_time = datetime.now()
+        #     duration = str((end_time - self.start_time))
+        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        #     time.sleep(5)
+        #     # Connect by LAN again
+        #     os.system('netsh wlan disconnect')
+        #     time.sleep(1)
+        # write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        write_to_excel_tmp(self.key, self.list_steps, self.def_name)
         self.driver.quit()
     # OK
     def test_01_HOME_Check_Internet_Image_Operation_when_Dual_WAN_is_off(self):
@@ -1372,6 +1372,187 @@ class HOME(unittest.TestCase):
                 f'Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_15_HOME_Check_Memory_Status_Table(self):
+        self.key = 'HOME_15'
+        self.def_name = get_func_name()
+        self.list_steps = []
+        list_step_fail = []
+        try:
+            from seleniumwire import webdriver
+        except:
+            os.system('pip install selenium-wire')
+            from seleniumwire import webdriver
+        driver2 = webdriver.Chrome(driver_path)  # open chrome
+        driver2.maximize_window()
+
+
+        try:
+            grand_login(driver2)
+            time.sleep(1)
+
+            # CLick Wireless Image
+            driver2.find_element_by_css_selector(home_img_lan_connection).click()
+            time.sleep(2)
+            memory_block = driver2.find_element_by_css_selector(ele_memory_card)
+            memory_label = [i.text for i in memory_block.find_elements_by_css_selector('.legend-name')]
+
+            memory_chart_displayed = len(memory_block.find_elements_by_css_selector('#memory-chart')) > 0
+            # Get information API
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/gateway/statuses/memoryUsage'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+
+            res3 = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            check_has_key_memory = [
+                res3.get('total') is not None,
+                res3.get('free') is not None
+            ]
+
+            list_actual1 = [[memory_label, memory_chart_displayed],
+                            check_has_key_memory]
+            list_expected1 = [[['Free Memory', 'Total Memory'], return_true],
+                              [return_true] * 2]
+
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2.1 Login. Check list label, Graph displayed, API has key total and free. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2.1 Login. Check list label, Graph displayed, API has key total and free. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1, 2.1 . Assertion wong.')
+
+        try:
+            check_request_update = False
+            del driver2.requests
+            while True:
+                _tmp_rq = driver2.requests
+                _tmp_rq_path = [r.path for r in _tmp_rq if r.path == _URL_API]
+                if len(_tmp_rq_path) > 0:
+                    time.sleep(2)
+                    _tmp_rq_after = driver2.requests
+                    _tmp_rq_after_path = [r.path for r in _tmp_rq_after if r.path == _URL_API]
+                    if _tmp_rq_path.count(_URL_API) + 1 == _tmp_rq_after_path.count(_URL_API):
+                        check_request_update = True
+                    break
+            driver2.quit()
+            list_actual2 = [check_request_update]
+            list_expected2 = [return_true]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2.2 Check Request recalled each 2 seconds.  '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.2. Check Request recalled each 2 seconds.'
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('2.2. Assertion wong.')
+            self.list_steps.append('[END TC]')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_16_HOME_Check_CPU_Status_Table(self):
+        self.key = 'HOME_16'
+        self.def_name = get_func_name()
+        self.list_steps = []
+        list_step_fail = []
+        try:
+            from seleniumwire import webdriver
+        except:
+            os.system('pip install selenium-wire')
+            from seleniumwire import webdriver
+        driver2 = webdriver.Chrome(driver_path)  # open chrome
+        driver2.maximize_window()
+        try:
+            grand_login(driver2)
+            time.sleep(1)
+            # CLick Wireless Image
+            driver2.find_element_by_css_selector(home_img_lan_connection).click()
+            time.sleep(2)
+            cpu_block = driver2.find_element_by_css_selector(ele_cpu_card)
+            cpu_core_1_label = cpu_block.find_element_by_css_selector('.text-1').text
+            cpu_core_2_label = cpu_block.find_element_by_css_selector('.text-2').text
+            cpu_chart_displayed = len(cpu_block.find_elements_by_css_selector('#cpu-chart')) > 0
+            # Get information API
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/gateway/statuses/cpuUsage'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+
+            res2 = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            check_has_key = [
+                res2[0].get('name') == 'Core 1',
+                res2[0].get('percentage') is not None,
+                res2[1].get('name') == 'Core 2',
+                res2[1].get('percentage') is not None
+            ]
+
+            list_actual1 = [[cpu_core_1_label, cpu_core_2_label, cpu_chart_displayed],
+                            check_has_key]
+            list_expected1 = [['Core1', 'Core2', return_true],
+                              [return_true] * 4]
+
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2.1 Login. Check list label, Graph displayed, API has key total and free. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2.1 Login. Check list label, Graph displayed, API has key total and free. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1, 2.1 . Assertion wong.')
+
+        try:
+            check_request_update = False
+            del driver2.requests
+            while True:
+                _tmp_rq = driver2.requests
+                _tmp_rq_path = [r.path for r in _tmp_rq if r.path == _URL_API]
+                if len(_tmp_rq_path) > 0:
+                    time.sleep(2)
+                    _tmp_rq_after = driver2.requests
+                    _tmp_rq_after_path = [r.path for r in _tmp_rq_after if r.path == _URL_API]
+                    if _tmp_rq_path.count(_URL_API) + 1 == _tmp_rq_after_path.count(_URL_API):
+                        check_request_update = True
+                    break
+            driver2.quit()
+            list_actual2 = [check_request_update]
+            list_expected2 = [return_true]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2.2 Check Request recalled each 2 seconds.  '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.2. Check Request recalled each 2 seconds.'
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('2.2. Assertion wong.')
+            self.list_steps.append('[END TC]')
 
         self.assertListEqual(list_step_fail, [])
     # OK
@@ -3530,6 +3711,963 @@ class HOME(unittest.TestCase):
         except:
             self.list_steps.append(
                 f'[Fail] Connect WAN Fail After test. Check Status code. ')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_40_HOME_Verification_of_Home_Screen(self):
+        self.key = 'HOME_40'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        try:
+            repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
+            repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
+            # # Disconnect Wireless
+            # os.system('netsh wlan disconnect')
+            # time.sleep(1)
+            # grand_login(driver)
+            # time.sleep(2)
+            # goto_menu(driver, network_tab, network_operationmode_tab)
+            # if driver.find_element_by_css_selector(ele_repeater_mode_input).is_selected():
+            #     goto_menu(driver, wireless_tab, wireless_repeater_setting_tab)
+            #     wait_popup_disappear(driver, icon_loading)
+            #     scan_wifi_repeater_mode(driver, repeater_name, repeater_pw)
+            # else:
+            #     connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
+            # time.sleep(3)
+
+            # Verify_connect successfully
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/wifi/0/ssid/0'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            time.sleep(1)
+            _TOKEN = get_token(_USER, _PW)
+
+            res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+
+            list_actual0 = [res['name']]
+            list_expected0 = [repeater_name]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] Precondition successfully. Check Upper name. '
+                f'Actual: {str(list_actual0)}. '
+                f'Expected: {str(list_expected0)}')
+        except:
+            self.list_steps.append(
+                f'[Faill] Precondition Fail. Check Upper name. '
+                f'Actual: {str(list_actual0)}. '
+                f'Expected: {str(list_expected0)}')
+            list_step_fail.append('0. Precondition wong')
+
+        try:
+            grand_login(driver)
+            time.sleep(1)
+            goto_menu(driver, home_tab, 0)
+            # Check Home screen displayed
+            check_home = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual1 = [check_home]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Check Home page is displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. Check Home page is displayed. . '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            # Check network map image
+            check_wan_img = len(driver.find_elements_by_css_selector(home_img_connection)) > 0
+            check_router_img = len(driver.find_elements_by_css_selector(home_img_lan_connection)) > 0
+            check_usb_img = len(driver.find_elements_by_css_selector(home_img_usb_connection)) > 0
+            check_device = len(driver.find_elements_by_css_selector(home_img_device_connection)) > 0
+
+            list_actual2 = [check_wan_img, check_router_img, check_usb_img, check_device]
+            list_expected2 = [return_true] * 4
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2. Check Network map image: WAN, Router and Wireless, USB, Device image. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check Network map image: WAN, Router and Wireless, USB, Device image. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('2. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_41_HOME_Verification_of_Host_Network_information(self):
+        self.key = 'HOME_41'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        try:
+            repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
+            repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
+
+            # grand_login(driver)
+            # time.sleep(2)
+            # goto_menu(driver, network_tab, network_operationmode_tab)
+            # if driver.find_element_by_css_selector(ele_repeater_mode_input).is_selected():
+            #     goto_menu(driver, wireless_tab, wireless_repeater_setting_tab)
+            #     wait_popup_disappear(driver, icon_loading)
+            #     scan_wifi_repeater_mode(driver, repeater_name, repeater_pw)
+            # else:
+            #     connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
+            # time.sleep(3)
+
+            # Verify_connect successfully
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/wifi/0/ssid/0'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+            time.sleep(1)
+            res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            time.sleep(1)
+            list_actual0 = [res['name']]
+            list_expected0 = [repeater_name]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] Precondition successfully. Check Upper name. '
+                f'Actual: {str(list_actual0)}. '
+                f'Expected: {str(list_expected0)}')
+        except:
+            self.list_steps.append(
+                f'[Faill] Precondition Fail. Check Upper name. '
+                f'Actual: {str(list_actual0)}. '
+                f'Expected: {str(list_expected0)}')
+            list_step_fail.append('0. Precondition wong')
+
+        try:
+            grand_login(driver)
+            time.sleep(1)
+            goto_menu(driver, home_tab, 0)
+            # Check Home screen displayed
+            check_home = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual1 = [check_home]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Check Home page is displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. Check Home page is displayed. . '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            # Click WAN image in network map image
+            driver.find_element_by_css_selector(home_img_connection).click()
+            # Check icon is highlight
+            wan_connection = driver.find_element_by_css_selector(home_img_connection).get_attribute('class').split()
+            check_wan_image_highlight = 'active' in wan_connection
+            # Check Host Network is displayed
+            check_host_network_table = len(driver.find_elements_by_css_selector(ele_host_network)) > 0
+
+            list_actual2 = [check_wan_image_highlight, check_host_network_table]
+            list_expected2 = [return_true] * 2
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2.1 Click WAN image. Check WAN image highlight, Host Network table displayed. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.1 Click WAN image. Check WAN image highlight, Host Network table displayed. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('2.1 Assertion wong.')
+
+        try:
+            # Get information from WEB
+            host_nw_block = driver.find_element_by_css_selector(ele_host_network)
+            host_nw_title = host_nw_block.find_element_by_css_selector(title_tabs_cls).text
+            # Check Sub items displayed
+            sub_label = host_nw_block.find_elements_by_css_selector(label_name_in_2g)
+            sub_label_text = [i.text for i in sub_label]
+            # Check Connection status
+            labels = host_nw_block.find_elements_by_css_selector(label_name_in_2g)
+            values = host_nw_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Connection status':
+                    check_conn_status = v.text in ['Connected (2.4GHz)', 'Connected (5GHz)']
+                    continue
+                if l.text == 'Signal Strength':
+                    check_signal = v.text != ''
+                    continue
+                if l.text == 'Network Name(SSID)':
+                    check_nw_name = v.text != ''
+                    continue
+                if l.text == 'Security':
+                    check_security = v.text != ''
+                    continue
+                if l.text == 'Password':
+                    check_pw = wireless_check_pw_eye(driver, host_nw_block, change_pw=False) == repeater_pw
+                    continue
+                if l.text == 'BSSID':
+                    check_bssid = checkMACAddress(v.text)
+                    break
+
+            list_actual3 = [host_nw_title, sub_label_text,
+                            [check_conn_status, check_signal, check_nw_name, check_security, check_pw, check_bssid]]
+            list_expected3 = ['Host Network',
+                              ['Connection status', 'Signal Strength', 'Network Name(SSID)', 'Security', 'Password', 'BSSID'],
+                              [return_true]*6]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2.2 Check WebUI Host network component. Title, List Sub title, Values of subtitle. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.2 Check WebUI Host network component. Title, List Sub title, Values of subtitle. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('2.2 Assertion wong.')
+
+        try:
+            # Get information API
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/network/qmode'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+
+            res2 = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            check_has_key = [
+                res2.get('qmode') == 'extender',
+                res2.get('operation') == 'mesh slave',
+                res2.get('connection') is not None,
+                res2['connection'].get('ssid') is not None,
+                res2['connection'].get('securityType') is not None,
+                res2['connection'].get('password') is not None,
+                res2['connection'].get('status') is not None,
+
+            ]
+
+            list_actual4 = check_has_key
+            list_expected4 = [return_true]*7
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2.3 Check API Host network component: '
+                f'qmode, operation, connection, ssid, securityType, pw, status. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.3 Check API Host network component: '
+                f'qmode, operation, connection, ssid, securityType, pw, status. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('2.3 Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_42_HOME_Verification_of_Network_Map_Router_Wireless_Information(self):
+        self.key = 'HOME_42'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        try:
+            repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
+            repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
+
+            grand_login(driver)
+            time.sleep(2)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
+            time.sleep(3)
+
+            # Verify_connect successfully
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/wifi/0/ssid/0'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+            time.sleep(1)
+            res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            time.sleep(1)
+            list_actual0 = [res['name']]
+            list_expected0 = [repeater_name]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] Precondition successfully. Check Upper name. '
+                f'Actual: {str(list_actual0)}. '
+                f'Expected: {str(list_expected0)}')
+        except:
+            self.list_steps.append(
+                f'[Faill] Precondition Fail. Check Upper name. '
+                f'Actual: {str(list_actual0)}. '
+                f'Expected: {str(list_expected0)}')
+            list_step_fail.append('0. Precondition wong')
+
+        try:
+            grand_login(driver)
+            time.sleep(1)
+            goto_menu(driver, home_tab, 0)
+            # Check Home screen displayed
+            check_home = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual1 = [check_home]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Check Home page is displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. Check Home page is displayed. . '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            # Click Router and Wireless image in network map image
+            driver.find_element_by_css_selector(home_img_lan_connection).click()
+            # Check icon is highlight
+            lan_connection = driver.find_element_by_css_selector(home_img_lan_connection).get_attribute('class').split()
+            check_lan_image_highlight = 'active' in lan_connection
+
+            list_actual2 = [check_lan_image_highlight]
+            list_expected2 = [return_true]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2.1 Click LAN image. Check LAN image highlight active. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.1 Click LAN image. Check LAN image highlight active. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('2.1 Assertion wong.')
+
+        try:
+            lan_block = driver.find_element_by_css_selector(ele_lan_card)
+            # IP v4
+            lan_label_ipv4 = [i.text for i in lan_block.find_elements_by_css_selector(label_name_in_2g)]
+
+            # IP v6
+            lan_block.find_element_by_css_selector(ele_second_tab).click()
+            time.sleep(1)
+            lan_label_ipv6 = [i.text for i in lan_block.find_elements_by_css_selector(label_name_in_2g)]
+
+            list_actual3 = [lan_label_ipv4, lan_label_ipv6]
+            list_expected3 = [['LAN IP Address', 'Subnet Mask', 'DHCP Server', 'MAC Address'],
+                              ['LAN IPv6 Address', 'Prefix Length', 'Assigned Type', 'MAC Address']]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2.2 Check LAN card component. Label text of IPv4 and IPv6. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.2 Check LAN card component. Label text of IPv4 and IPv6. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('2.2 Assertion wong.')
+
+        try:
+            wireless_block = driver.find_element_by_css_selector(ele_wireless_card)
+            # IP v4
+            wireless_label_ipv4 = [i.text for i in wireless_block.find_elements_by_css_selector(label_name_in_2g)]
+
+            # IP v6
+            wireless_block.find_element_by_css_selector(ele_second_tab).click()
+            time.sleep(1)
+            wireless_label_ipv6 = [i.text for i in wireless_block.find_elements_by_css_selector(label_name_in_2g)]
+
+            list_actual4 = [wireless_label_ipv4, wireless_label_ipv6]
+            list_expected4 = [['Network Name(SSID)', 'Security', 'Password', 'MAC Address'],
+                              ['Network Name(SSID)', 'Security', 'Password', 'MAC Address']]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2.3 Check Wireless card component. Label text of 2.4GHz and 5GHz. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.3 Check Wireless card component. Label text of 2.4GHz and 5GHz. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('2.3 Assertion wong.')
+
+        try:
+            information_block = driver.find_element_by_css_selector(ele_information_card)
+            information_label = [i.text for i in information_block.find_elements_by_css_selector(label_name_in_2g)]
+
+            list_actual5 = information_label
+            list_expected5 = ['Model Name', 'Serial Number', 'Firmware Version', 'Build Time', 'Operation Time']
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2.4 Check Information card component. Check Information Label text. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.4 Check Information card component. Check Information Label text. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            list_step_fail.append('2.4 Assertion wong.')
+
+        try:
+            ethernet_status_block = driver.find_element_by_css_selector(ele_ethernet_port_status)
+            ethernet_label = [i.text for i in ethernet_status_block.find_elements_by_css_selector(label_name_in_2g)]
+
+            list_actual6 = ethernet_label
+            list_expected6 = ['Internet Port', 'LAN Port 1', 'LAN Port 2', 'LAN Port 3', 'LAN Port 4']
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2.5 Check Ethernet Port Status card component. Check Ethernet Port Status Label text. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.5 Check Ethernet Port Status card component. Check Ethernet Port Status Label text. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            list_step_fail.append('2.5 Assertion wong.')
+
+        try:
+            cpu_block = driver.find_element_by_css_selector(ele_cpu_card)
+            cpu_core_1_label = cpu_block.find_element_by_css_selector('.text-1').text
+            cpu_core_2_label = cpu_block.find_element_by_css_selector('.text-2').text
+            cpu_chart_displayed = len(cpu_block.find_elements_by_css_selector('#cpu-chart')) > 0
+            # Get information API
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/gateway/statuses/cpuUsage'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+
+            res2 = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            check_has_key = [
+                res2[0].get('name') == 'Core 1',
+                res2[0].get('percentage') is not None,
+                res2[1].get('name') == 'Core 2',
+                res2[1].get('percentage') is not None
+            ]
+
+            list_actual7 = [[cpu_core_1_label, cpu_core_2_label, cpu_chart_displayed],
+                            check_has_key]
+            list_expected7 = [['Core1', 'Core2', return_true],
+                              [return_true] *4]
+            check = assert_list(list_actual7, list_expected7)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2.6 Check CPU Status card: Check Label text, Chart display. '
+                f'API: Check Name and Percent of Core 1 and Core 2'
+                f'Actual: {str(list_actual7)}. '
+                f'Expected: {str(list_expected7)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.6 Check CPU Status card: Check Label text, Chart display. '
+                f'API: Check Name and Percent of Core 1 and Core 2. '
+                f'Actual: {str(list_actual7)}. '
+                f'Expected: {str(list_expected7)}')
+            list_step_fail.append('2.6 Assertion wong.')
+
+        try:
+            memory_block = driver.find_element_by_css_selector(ele_memory_card)
+            memory_label = [i.text for i in memory_block.find_elements_by_css_selector('.legend-name')]
+
+            memory_chart_displayed = len(memory_block.find_elements_by_css_selector('#memory-chart')) > 0
+            # Get information API
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/gateway/statuses/memoryUsage'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+
+            res3 = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            check_has_key_memory = [
+                res3.get('total') is not None,
+                res3.get('free') is not None
+            ]
+
+            list_actual8 = [[memory_label, memory_chart_displayed],
+                            check_has_key_memory]
+            list_expected8 = [[['Free Memory', 'Total Memory'], return_true],
+                              [return_true] *2]
+            check = assert_list(list_actual8, list_expected8)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2.7 Check Memory Status card: Check Label text, Chart display. '
+                f'API: Check Total and Free. '
+                f'Actual: {str(list_actual8)}. '
+                f'Expected: {str(list_expected8)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.7 Check Memory Status card: Check Label text, Chart display. '
+                f'API: Check Total and Free. '
+                f'Actual: {str(list_actual8)}. '
+                f'Expected: {str(list_expected8)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('2.7 Assertion wong.')
+        self.assertListEqual(list_step_fail, [])
+
+    def test_43_HOME_Verification_of_Network_Map_USB_Information(self):
+        self.key = 'HOME_43'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        try:
+            repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
+            repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
+            grand_login(driver)
+            time.sleep(2)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
+
+            # Verify_connect successfully
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/wifi/0/ssid/0'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+            time.sleep(1)
+            res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            time.sleep(1)
+            list_actual0 = [res['name']]
+            list_expected0 = [repeater_name]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] Precondition successfully. Check Upper name. '
+                f'Actual: {str(list_actual0)}. '
+                f'Expected: {str(list_expected0)}')
+        except:
+            self.list_steps.append(
+                f'[Faill] Precondition Fail. Check Upper name. '
+                f'Actual: {str(list_actual0)}. '
+                f'Expected: {str(list_expected0)}')
+            list_step_fail.append('0. Precondition wong')
+
+        try:
+            grand_login(driver)
+            goto_menu(driver, home_tab, 0)
+            time.sleep(1)
+            # Check Home screen displayed
+            check_home = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual1 = [check_home]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Check Home page is displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. Check Home page is displayed. . '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            # Click USB image in network map image
+            driver.find_element_by_css_selector(home_img_usb_connection).click()
+            time.sleep(2)
+            # Check icon is highlight
+            check_usb_image = driver.find_element_by_css_selector(home_img_usb_connection).get_attribute('class').split()
+            check_usb_image_highlight = 'active' in check_usb_image
+
+            list_actual2 = [check_usb_image_highlight]
+            list_expected2 = [return_true]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2.1 Click USB image. Check USB image highlight. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.1 Click WAN image. Check WAN image highlight. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('2.1 Assertion wong.')
+
+        try:
+            time.sleep(1)
+            # Check USB Card Component
+            usb_block = driver.find_elements_by_css_selector(ele_usb_card)[0]
+            time.sleep(1)
+            device_name_text = usb_block.find_elements_by_css_selector(label_name_in_2g)[0].text
+            total_size_text = usb_block.find_elements_by_css_selector(label_name_in_2g)[1].text
+            graph_display = len(usb_block.find_elements_by_css_selector(ele_space_bar)) > 0
+            available_space = len(usb_block.find_elements_by_css_selector(ele_usb_space_available)) > 0
+            icon_fab_displayed = len(usb_block.find_elements_by_css_selector(home_icon_fab)) > 0
+            button_text = usb_block.find_element_by_css_selector(apply).text
+            #
+
+            list_actual3 = [device_name_text, graph_display, available_space,
+                            total_size_text, button_text, icon_fab_displayed]
+            list_expected3 = ['Device Name', return_true, return_true,
+                              'Total Size', 'Remove', return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2.2 Check USB card component. Device name text, Graph displayed, Available Space displayed, '
+                f'Total Size label text, button remove text, icon fab displayed. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.2 Check USB card component. Device name text, Graph displayed, Available Space displayed, '
+                f'Total Size label text, button remove text, icon fab displayed. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('2.2 Assertion wong.')
+
+        try:
+            # Get information API
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/mediashare/usb'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+
+            res2 = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            check_has_key = [
+                res2.get('usbs') is not None,
+                res2['usbs'][0].get('id') is not None,
+                res2['usbs'][0].get('name') is not None,
+                res2['usbs'][0].get('available') is not None,
+                res2['usbs'][0].get('total') is not None
+            ]
+
+            list_actual4 = check_has_key
+            list_expected4 = [return_true]*5
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2.3 Check API USB component: usb, id, name, available, total. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.3 Check API USB component: usb, id, name, available, total. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('2.3 Assertion wong.')
+
+        try:
+            # Check Server Card Component
+            server_block = driver.find_element_by_css_selector(ele_server_card)
+            label_servers = server_block.find_elements_by_css_selector(label_name_in_2g)
+            label_servers_text = [i.text for i in label_servers]
+            icon_fab_server_displayed = len(server_block.find_elements_by_css_selector(home_icon_fab)) > 0
+
+            list_actual5 = [label_servers_text, icon_fab_server_displayed]
+            list_expected5 = [['FTP Server', 'Windows Network (Samba)', 'Media Server (DLNA)'], return_true]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2.4 Check Server card component. List label text and icon fab displayed. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2.4 Check Server card component. List label text and icon fab displayed. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('2.4 Assertion wong.')
+        self.assertListEqual(list_step_fail, [])
+
+    def test_44_HOME_Verification_of_Network_Map_Connected_Disconnected_Device(self):
+        self.key = 'HOME_44'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        try:
+            repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
+            repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
+            grand_login(driver)
+            time.sleep(2)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
+
+            # Verify_connect successfully
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/wifi/0/ssid/0'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+            time.sleep(1)
+            res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            time.sleep(1)
+            list_actual0 = [res['name']]
+            list_expected0 = [repeater_name]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] Precondition successfully. Check Upper name. '
+                f'Actual: {str(list_actual0)}. '
+                f'Expected: {str(list_expected0)}')
+        except:
+            self.list_steps.append(
+                f'[Faill] Precondition Fail. Check Upper name. '
+                f'Actual: {str(list_actual0)}. '
+                f'Expected: {str(list_expected0)}')
+            list_step_fail.append('0. Precondition wong')
+
+        try:
+            grand_login(driver)
+            goto_menu(driver, home_tab, 0)
+            time.sleep(1)
+            # Check Home screen displayed
+            check_home = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual1 = [check_home]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Check Home page is displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. Check Home page is displayed. . '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            # Check icon is dimmed
+            check_device_image = driver.find_element_by_css_selector(home_img_device).get_attribute('class').split()
+            check_device_image_highlight = 'disabled' in check_device_image
+
+            list_actual2 = [check_device_image_highlight]
+            list_expected2 = [return_true]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2. Check Device image is disabled. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check Device image is disabled. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('2. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_35_HOME_Check_Connected_Devices_show_in_Mesh_Network(self):
+        self.key = 'HOME_35'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+        # save_config(config_path, 'URL', 'user', 'admin')
+        # save_config(config_path, 'URL', 'password', get_config('COMMON', 'new_pw', input_data_path))
+        try:
+            repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
+            repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
+            grand_login(driver)
+            time.sleep(2)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
+
+            # Verify_connect successfully
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/wifi/0/ssid/0'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+            time.sleep(1)
+            res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            time.sleep(1)
+            list_actual0 = [res['name']]
+            list_expected0 = [repeater_name]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] Precondition successfully. Check Upper name. '
+                f'Actual: {str(list_actual0)}. '
+                f'Expected: {str(list_expected0)}')
+        except:
+            self.list_steps.append(
+                f'[Faill] Precondition Fail. Check Upper name. '
+                f'Actual: {str(list_actual0)}. '
+                f'Expected: {str(list_expected0)}')
+            list_step_fail.append('0. Precondition wong')
+
+        try:
+            # Input data of Upper
+            url_upper = get_config('REPEATER', 'url', input_data_path)
+            user_upper = get_config('REPEATER', 'user', input_data_path)
+            pw_upper = get_config('REPEATER', 'pw', input_data_path)
+            # save_config(config_path, 'URL', 'url', url_upper)
+            # save_config(config_path, 'URL', 'user', user_upper)
+            # save_config(config_path, 'URL', 'password', pw_upper)
+
+            grand_login(driver, url_login=url_upper,user_request=user_upper, pass_word=pw_upper)
+            goto_menu(driver, home_tab, 0)
+            time.sleep(1)
+            # Click to Device Image
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(2)
+            # Check access to Device Connection
+            check_device_page = len(driver.find_elements_by_css_selector(ele_active_connected_device)) > 0
+
+            list_actual1 = [check_device_page]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Click to Device Image. Check Device Connection page is displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. Click to Device Image. Check Device Connection page is displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            # Check Connected devices shows in Mesh Mode
+            router_model_name = get_config('REPEATER', 'repeater_model', input_data_path)
+            ls_row = driver.find_elements_by_css_selector(ele_device_row_connected)
+            # Check Device Name
+            for r in ls_row:
+                if r.find_element_by_css_selector(name_cls).text == router_model_name:
+                    # Check icon dot
+                    check_icon_dot = len(r.find_elements_by_css_selector(ele_icon_dot)) > 0
+                    # Check Upgrade button and version
+                    check_upgrade_button = len(r.find_elements_by_css_selector(ele_upgrade_btn)) > 0
+                    check_version = len(r.find_elements_by_css_selector(ele_version)) > 0
+                else:
+                    check_edit_btn = len(r.find_elements_by_css_selector(edit_cls)) > 0
+
+
+            # Check Interface
+            ls_interfaces = [i.find_element_by_css_selector(ele_ssid_cls) for i in ls_row]
+            check_interfaces = all([True if i.text.startswith('Wireless') or i.text.startswith('LAN Port') else False for i in ls_interfaces])
+
+            # Check MAC Address
+            ls_macs = [m.find_element_by_css_selector(wol_mac_addr) for m in ls_row]
+            check_macs = all([True if checkMACAddress(m.text) else False for m in ls_macs])
+
+            # Check IP address
+            ls_ip_address = [i.find_element_by_css_selector(ip_address_cls) for i in ls_row]
+            check_ips = all([True if checkIPAddress(i.text) else False for i in ls_ip_address])
+
+            list_actual2 = [check_icon_dot, check_interfaces, check_macs, check_ips,
+                            check_upgrade_button, check_version, check_edit_btn]
+            list_expected2 = [return_true] * 7
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2. Check Dot icon of Mesh, Interfaces, MAC, IP, Upgrade btn, Version, Edit button displayed. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check Dot icon of Mesh, Interfaces, MAC, IP, Upgrade btn, Version, Edit button displayed. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('2. Assertion wong.')
+
+        try:
+            # Click to Mesh mode IP address.
+            router_model_name = get_config('REPEATER', 'repeater_model', input_data_path)
+            ls_row = driver.find_elements_by_css_selector(ele_device_row_connected)
+            # Check Device Name
+            for r in ls_row:
+                if r.find_element_by_css_selector(name_cls).text == router_model_name:
+                    get_ip = r.find_element_by_css_selector(ip_address_cls).text
+                    r.find_element_by_css_selector(ip_address_cls).find_element_by_css_selector('a').click()
+                    break
+            time.sleep(2)
+            driver.switch_to.window(self.driver.window_handles[1])
+            time.sleep(1)
+            current_url = driver.current_url
+
+            list_actual3 = [current_url]
+            list_expected3 = ['http://'+get_ip + '/']
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Click to Upper Ip address link. Check URL. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Click to Upper Ip address link. Check URL. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
 

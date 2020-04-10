@@ -100,7 +100,39 @@ def write_to_excel(key, list_steps, func_name, duration, time_stamp=0):
             wb.save(excel_file)
             break
 
+def write_to_excel_tmp(key, list_steps, func_name):
+    import openpyxl
+    ls = subprocess.check_output('tasklist')
+    if b'EXCEL.EXE' in ls:
+        os.system("taskkill /f /im EXCEL.EXE")
 
+    excel_file = report_offline_path
+    wb = openpyxl.load_workbook(excel_file)
+    # wb.active = 2
+    ws = wb.active
+
+    for i in range(2, ws.max_row + 2):
+        if ws.cell(i, 1).value is None:
+            ws.cell(row=i, column=1).value = key
+            ws.cell(row=i, column=2).value = func_name
+            # Fill result
+            if '[Fail]' in str(list_steps):
+                ws.cell(row=i, column=3).value = 'FAIL'
+            else:
+                if '[END TC]' not in list_steps:
+                    ws.cell(row=i, column=3).value = 'FAIL'
+                    list_steps.append('Can not execute next step ...')
+                else:
+                    ws.cell(row=i, column=3).value = 'PASS'
+            # Fill step
+            steps = ''
+            for j in list_steps:
+                steps = steps + (str(j) + '\n')
+            ws.cell(row=i, column=5).value = steps
+
+            # Save file
+            wb.save(excel_file)
+            break
 
 
 def write_ggsheet(key, list_steps, func_name, duration, time_stamp=0):
@@ -309,17 +341,20 @@ def get_result_command_from_server_api(url_ip, _name='1'):
     info = json.loads(fit_result)
     username = info['Device.Users.User.2']['Username']['paramValue']
     password = info['Device.Users.User.2']['Password']['paramValue']
-
+    print(username, password)
     save_config(config_path, 'ACCOUNT', 'user', username)
     save_config(config_path, 'ACCOUNT', 'password', password)
     return {'userName': username, 'passWord': password}
 
 
-def login(driver):
-    url_login = get_config('URL', 'url')
-    user_request = get_config('ACCOUNT', 'user')
-    pass_word = get_config('ACCOUNT', 'password')
-    call_api_login(user_request, pass_word)
+def login(driver, url_login='', user_request='', pass_word=''):
+    if url_login == '':
+        url_login = get_config('URL', 'url')
+    if user_request == '':
+        user_request = get_config('ACCOUNT', 'user')
+    if pass_word == '':
+        pass_word = get_config('ACCOUNT', 'password')
+    call_api_login(user_request, pass_word, url=url_login)
     user_request = get_config('ACCOUNT', 'user')
     pass_word = get_config('ACCOUNT', 'password')
 
@@ -375,9 +410,9 @@ def login(driver):
         time.sleep(3)
 
 
-def grand_login(driver):
-    login(driver)
-    wait_popup_disappear(driver, dialog_loading)
+def grand_login(driver, url_login='', user_request='', pass_word=''):
+    login(driver, url_login, user_request, pass_word)
+    # wait_popup_disappear(driver, dialog_loading)
     time.sleep(1)
     # Goto Homepage
     if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
@@ -392,8 +427,10 @@ def get_url_ipconfig(ipconfig_field='Default Gateway'):
     write_cmd = subprocess.check_output(cmd, encoding='oem')
     split_result = [i.strip() for i in write_cmd.splitlines()]
     default_gw = [i for i in split_result if i.startswith(ipconfig_field)]
-    url_ = 'http://'+[i.split(':')[1].strip() for i in default_gw if i.split(':')[1].strip().startswith('192.168.1')][0]
-    save_config(config_path, 'URL', 'url', url_)
+    ip = [i.split(':')[1].strip() for i in default_gw if i.split(':')[1].strip().startswith('192.168.')][0]
+    url_ = 'http://'+ip
+    # save_config(config_path, 'URL', 'url', url_)
+    return ip
 
 
 def goto_menu(driver, parent_tab, child_tab):
@@ -424,7 +461,7 @@ def base64encode(user, pw):
     salt = base64.b64encode(('hmx#cpe@pbkdf2*SALT!' + user).encode('utf-8'))
 
     # salt = binascii.hexlify(hash0_pw)
-    if salt is not None:
+    if salt.decode('utf8') != '':
         mode = 'sha512'
         iterations = 1000
         dklen = 64
@@ -470,9 +507,10 @@ def send_request(url, method, headers, body, timeout=120):
     return result
 
 
-def call_api_login(user, pw):
+def call_api_login(user, pw, url=''):
     """Method: POST; Require: user, pw; Return: JSON data"""
-    url = get_config('URL', 'url')
+    if url == '':
+        url = get_config('URL', 'url')
     url_login = url + "/api/v1/gateway/users/login"
     data = {
         "userName": user,
@@ -1192,7 +1230,37 @@ def detect_firmware_version(driver):
         time.sleep(60)
 
 
-def connect_repeater_mode(driver, REPEATER_UPPER='Repeater_Upper_2G', PW='88888888'):
+def scan_wifi_repeater_mode(driver, wifi_name, wifi_pw):
+    _rows = driver.find_elements_by_css_selector(rows)
+    # Choose Network name
+    for r in _rows:
+        if r.find_element_by_css_selector(ele_network_name).text.strip() == wifi_name:
+            r.click()
+            time.sleep(1)
+            break
+    # Fill Password
+    pw_box = driver.find_element_by_css_selector(ele_input_pw)
+    ActionChains(driver).click(pw_box).send_keys(wifi_pw).perform()
+    time.sleep(1)
+    # Apply
+    driver.find_element_by_css_selector(ele_apply_highlight).click()
+    time.sleep(0.5)
+
+    driver.find_element_by_css_selector(btn_ok).click()
+    time.sleep(50)
+    wait_popup_disappear(driver, icon_loading)
+    time.sleep(1)
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(5)
+    wait_visible(driver, lg_page)
+    save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+
+
+def connect_repeater_mode(driver, REPEATER_UPPER='', PW=''):
+    if REPEATER_UPPER == '':
+        REPEATER_UPPER = get_config('REPEATER', 'repeater_name', input_data_path)
+    if PW == '':
+        PW = get_config('REPEATER', 'repeater_pw', input_data_path)
     if not driver.find_element_by_css_selector(ele_repeater_mode_input).is_selected():
         driver.find_element_by_css_selector(ele_select_repeater_mode).click()
         time.sleep(0.5)
@@ -1217,9 +1285,44 @@ def connect_repeater_mode(driver, REPEATER_UPPER='Repeater_Upper_2G', PW='888888
         wait_popup_disappear(driver, icon_loading)
         time.sleep(1)
         wait_popup_disappear(driver, icon_loading)
-        wait_popup_disappear(driver, lg_page)
+        wait_visible(driver, lg_page)
     save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
 
+
+def connect_repeater_mode_third_party(driver, UPPER='Repeater_Upper_2G', PW='88888888'):
+    if not driver.find_element_by_css_selector(ele_repeater_mode_input).is_selected():
+        driver.find_element_by_css_selector(ele_select_repeater_mode).click()
+        time.sleep(0.5)
+        driver.find_element_by_css_selector(apply).click()
+        time.sleep(0.5)
+    else:
+        goto_menu(driver, wireless_tab, wireless_repeater_setting_tab)
+        wait_popup_disappear(driver, dialog_loading)
+
+    wait_popup_disappear(driver, dialog_loading)
+    _rows = driver.find_elements_by_css_selector(rows)
+    # Choose Network name
+    for r in _rows:
+        if r.find_element_by_css_selector(ele_network_name).text.strip() == UPPER:
+            r.click()
+            time.sleep(1)
+            break
+    # Fill Password
+    pw_box = driver.find_element_by_css_selector(ele_input_pw)
+    ActionChains(driver).click(pw_box).send_keys(PW).perform()
+    time.sleep(1)
+    # Apply
+    driver.find_element_by_css_selector(ele_apply_highlight).click()
+    time.sleep(0.5)
+    driver.find_element_by_css_selector(ele_apply_highlight).click()
+    time.sleep(0.5)
+    driver.find_element_by_css_selector(btn_ok).click()
+    time.sleep(50)
+    wait_popup_disappear(driver, icon_loading)
+    time.sleep(1)
+    wait_popup_disappear(driver, icon_loading)
+    # wait_popup_disappear(driver, lg_page)
+    save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
 
 def change_firmware_version(driver, version='t10x_fullimage_3.00.12_rev11.img'):
     driver.find_element_by_css_selector(system_btn).click()

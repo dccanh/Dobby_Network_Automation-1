@@ -893,6 +893,219 @@ class NON_FUNCTION(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+    def test_14_NON_FUNC_Extender_Aging_Wireless_24GHz(self):
+        self.key = 'NON_FUNCTION_14'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # ===========================================================
+        grand_login(driver)
+        time.sleep(2)
+        goto_menu(driver, network_tab, network_operationmode_tab)
+
+        upper_2g_name = get_config('REPEATER', 'repeater_name', input_data_path)
+        upper_2g_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
+        connect_repeater_mode(driver, REPEATER_UPPER=upper_2g_name, PW=upper_2g_pw)
+        # ===========================================================
+
+        PING_ADDRESS = '192.168.1.1'
+        # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
+        YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
+        try:
+            ping_result = 0.0
+
+            def thread_ping():
+                global ping_result
+                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
+
+            count_interrupt = 0
+
+            def thread_youtube():
+                global count_interrupt, live_time
+                # ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
+                # if ping_result['packet_loss_rate'] != 100.0:
+                time.sleep(2)
+                driver.get(YOUTUBE_URL)
+                time.sleep(5)
+
+                video_form = len(driver.find_elements_by_css_selector(ele_playing))
+
+                count_video = 0
+                while video_form == 0:
+                    time.sleep(1)
+                    video_form = len(driver.find_elements_by_css_selector(ele_playing))
+                    # print(count_video)
+                    count_video += 1
+                    if count_video >= 30:
+                        live_time = 0
+                        break
+                time.sleep(3)
+                live_time = 0
+                while live_time <= PING_TIMES:
+                    buff_time = len(driver.find_elements_by_css_selector(ele_buffering))
+                    time.sleep(1)
+                    live_time += 1
+                    print('Live time ' + str(live_time))
+                    if buff_time == 1:
+                        count_interrupt += 1
+
+            thread1 = threading.Thread(target=thread_ping)
+            thread2 = threading.Thread(target=thread_youtube)
+            thread1.start()
+            thread2.start()
+
+            c = 0
+            while thread1.is_alive():
+                print(str(thread1.is_alive()) + ' th1 - ' + str(c))
+                time.sleep(1)
+                c += 1
+
+            c, in_video_interface = 0, False
+            while thread2.is_alive():
+                print(str(thread2.is_alive()) + ' th2 - ' + str(c))
+                video_form = len(driver.find_elements_by_css_selector(ele_playing))
+                if video_form > 0:
+                    in_video_interface = True
+                time.sleep(1)
+                c += 1
+            time.sleep(2)
+
+            # list_actual2 = [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]
+            # list_expected2 = [return_true] * 3
+
+            list_actual1 = [[ping_result <= 1.0], [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]]
+            list_expected1 = [[return_true],  [return_true] * 3]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
+                f'Loss rate {str(ping_result)} '
+                f'on {str(PING_TIMES)} seconds. '
+                f'Check Youtube live stream: interrupt times =0, run enough time and in playing video mode. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Check Ping {PING_ADDRESS}'
+                f'Loss rate {str(ping_result)}'
+                f' on {str(PING_TIMES)} seconds. '
+                f'Check Youtube live stream: interrupt times =0, run enough time and in playing video mode. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('1, 2. Assertion wong')
+
+        self.assertListEqual(list_step_fail, [])
+
+    # def test_15_NON_FUNC_Extender_Aging_Wireless_5GHz(self):
+    #     self.key = 'NON_FUNCTION_15'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     # ===========================================================
+    #     grand_login(driver)
+    #     time.sleep(2)
+    #     goto_menu(driver, network_tab, network_operationmode_tab)
+    #
+    #     upper_5g_name = get_config('REPEATER', 'repeater_name_5g', input_data_path)
+    #     upper_5g_pw = get_config('REPEATER', 'repeater_pw_5g', input_data_path)
+    #     # connect_repeater_mode(driver, REPEATER_UPPER=upper_5g_name, PW=upper_5g_pw)
+    #     scan_wifi_repeater_mode(driver, upper_5g_name, upper_5g_pw)
+    #     # ===========================================================
+    #
+    #     PING_ADDRESS = '192.168.1.1'
+    #     # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
+    #     YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
+    #     try:
+    #         ping_result = 0.0
+    #
+    #         def thread_ping():
+    #             global ping_result
+    #             ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
+    #
+    #         count_interrupt = 0
+    #
+    #         def thread_youtube():
+    #             global count_interrupt, live_time
+    #             # ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
+    #             # if ping_result['packet_loss_rate'] != 100.0:
+    #             time.sleep(2)
+    #             driver.get(YOUTUBE_URL)
+    #             time.sleep(5)
+    #
+    #             video_form = len(driver.find_elements_by_css_selector(ele_playing))
+    #
+    #             count_video = 0
+    #             while video_form == 0:
+    #                 time.sleep(1)
+    #                 video_form = len(driver.find_elements_by_css_selector(ele_playing))
+    #                 # print(count_video)
+    #                 count_video += 1
+    #                 if count_video >= 30:
+    #                     live_time = 0
+    #                     break
+    #             time.sleep(3)
+    #             live_time = 0
+    #             while live_time <= PING_TIMES:
+    #                 buff_time = len(driver.find_elements_by_css_selector(ele_buffering))
+    #                 time.sleep(1)
+    #                 live_time += 1
+    #                 print('Live time ' + str(live_time))
+    #                 if buff_time == 1:
+    #                     count_interrupt += 1
+    #
+    #         thread1 = threading.Thread(target=thread_ping)
+    #         thread2 = threading.Thread(target=thread_youtube)
+    #         thread1.start()
+    #         thread2.start()
+    #
+    #         c = 0
+    #         while thread1.is_alive():
+    #             print(str(thread1.is_alive()) + ' th1 - ' + str(c))
+    #             time.sleep(1)
+    #             c += 1
+    #
+    #         c, in_video_interface = 0, False
+    #         while thread2.is_alive():
+    #             print(str(thread2.is_alive()) + ' th2 - ' + str(c))
+    #             video_form = len(driver.find_elements_by_css_selector(ele_playing))
+    #             if video_form > 0:
+    #                 in_video_interface = True
+    #             time.sleep(1)
+    #             c += 1
+    #         time.sleep(2)
+    #
+    #         # list_actual2 = [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]
+    #         # list_expected2 = [return_true] * 3
+    #
+    #         list_actual1 = [[ping_result <= 1.0], [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]]
+    #         list_expected1 = [[return_true],  [return_true] * 3]
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
+    #             f'Loss rate {str(ping_result)} '
+    #             f'on {str(PING_TIMES)} seconds. '
+    #             f'Check Youtube live stream: interrupt times =0, run enough time and in playing video mode. '
+    #             f'Actual: {str(list_actual1)}. '
+    #             f'Expected: {str(list_expected1)}')
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 1, 2. Check Ping {PING_ADDRESS}'
+    #             f'Loss rate {str(ping_result)}'
+    #             f' on {str(PING_TIMES)} seconds. '
+    #             f'Check Youtube live stream: interrupt times =0, run enough time and in playing video mode. '
+    #             f'Actual: {str(list_actual1)}. '
+    #             f'Expected: {str(list_expected1)}')
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('1, 2. Assertion wong')
+    #
+    #     self.assertListEqual(list_step_fail, [])
+
     def test_48_MAIN_System_Router_mode_Check_Manual_Firmware_Update_operation(self):
         self.key = 'MAIN_48'
         driver = self.driver

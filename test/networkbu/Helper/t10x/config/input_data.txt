@@ -3,6 +3,17 @@ new_pw = abc123
 google_url = http://google.com
 youtube_url = http://youtube.com
 
+[REPEATER]
+url = http://dearmyrouter.net
+user = admin
+pw = abc123
+repeater_model = HUMAX_T10X
+repeater_name = wifi_upper_16_2G!
+repeater_pw = humax_0016
+third_party_name = DINHCONGHUONGT2
+third_party_pw = 12344321
+repeater_name_5g = wifi_upper_16_5G!
+repeater_pw_5g = humax_0016
 [MAIN]
 main5_set_language_1 = English
 main5_set_language_2 = Tiếng Việt
