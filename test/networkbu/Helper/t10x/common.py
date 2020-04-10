@@ -427,7 +427,7 @@ def get_url_ipconfig(ipconfig_field='Default Gateway'):
     write_cmd = subprocess.check_output(cmd, encoding='oem')
     split_result = [i.strip() for i in write_cmd.splitlines()]
     default_gw = [i for i in split_result if i.startswith(ipconfig_field)]
-    ip = [i.split(':')[1].strip() for i in default_gw if i.split(':')[1].strip().startswith('192.168.')][0]
+    ip = [i.split(':')[1].strip() for i in default_gw if i.split(':')[1].strip()][0]
     url_ = 'http://'+ip
     # save_config(config_path, 'URL', 'url', url_)
     return ip
@@ -593,7 +593,7 @@ def wait_ping(url):
     TIME_OUT = 'Request time out'
     count = 0
     while True:
-        result = subprocess.check_output('ping ' + url)
+        result = subprocess.check_output('ping ' + url, shell=True)
         time.sleep(1)
         count += 1
         if TIME_OUT not in result.decode('utf8'):

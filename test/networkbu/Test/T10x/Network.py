@@ -23,23 +23,23 @@ class NETWORK(unittest.TestCase):
 
     def tearDown(self):
         check_enable_ethernet()
-        # try:
-        #     end_time = datetime.now()
-        #     duration = str((end_time - self.start_time))
-        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        # except:
-        #     # Connect by wifi if internet is down to handle exception for PPPoE
-        #     os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
-        #     time.sleep(1)
-        #     end_time = datetime.now()
-        #     duration = str((end_time - self.start_time))
-        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        #     time.sleep(5)
-        #     # Connect by LAN again
-        #     os.system('netsh wlan disconnect')
-        #     time.sleep(1)
-        # write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        write_to_excel_tmp(self.key, self.list_steps, self.def_name)
+        try:
+            end_time = datetime.now()
+            duration = str((end_time - self.start_time))
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        except:
+            # Connect by wifi if internet is down to handle exception for PPPoE
+            os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
+            time.sleep(1)
+            end_time = datetime.now()
+            duration = str((end_time - self.start_time))
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+            time.sleep(5)
+            # Connect by LAN again
+            os.system('netsh wlan disconnect')
+            time.sleep(1)
+        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        # write_to_excel_tmp(self.key, self.list_steps, self.def_name)
         self.driver.quit()
 
     def test_01_NETWORK_Check_Internet_Status(self):
@@ -1371,137 +1371,379 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    # def test_17_NETWORK_Check_operation_of_changing_Gateway_address(self):
-    #     self.key = 'NETWORK_17'
-    #     driver = self.driver
-    #     self.def_name = get_func_name()
-    #     list_step_fail = []
-    #     self.list_steps = []
-    #     IP1 = '192.168.10.1'
-    #     IP1_VALUE = IP1.split('.')
-    #     GOOGLE_URL = get_config('COMMON', 'google_url', input_data_path)
-    #     YOUTUBE_URL = get_config('COMMON', 'youtube_url', input_data_path)
-    #     # ===========================================================
-    #     try:
-    #         grand_login(driver)
-    #         time.sleep(1)
-    #         # Network Lan Tab
-    #         goto_menu(driver, network_tab, network_lan_tab)
-    #
-    #         lan_block = driver.find_element_by_css_selector(network_lan_card)
-    #         # Settings
-    #         lan_fields = lan_block.find_elements_by_css_selector(wrap_input)
-    #         lan_label = lan_block.find_elements_by_css_selector(label_name_in_2g)
-    #
-    #         for l, f in zip(lan_label, lan_fields):
-    #             if l.text == 'IP Address':
-    #                 f.find_element_by_css_selector(option_select).click()
-    #                 time.sleep(0.5)
-    #                 ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
-    #                 for o in ls_option:
-    #                     # Type C
-    #                     if o.text == IP1_VALUE[0]:
-    #                         o.click()
-    #
-    #                 # Change IP range to 192.168.10.1
-    #                 ip_address_range = driver.find_elements_by_css_selector(ele_ip_address_range_input)
-    #                 for i in range(2):
-    #                     ip_address_range[0].clear()
-    #                     ip_address_range[0].send_keys(IP1_VALUE[2])
-    #                 for i in range(2):
-    #                     ip_address_range[1].clear()
-    #                     ip_address_range[1].send_keys(IP1_VALUE[3])
-    #                 break
-    #
-    #         for l, f in zip(lan_label, lan_fields):
-    #             if l.text == 'Start IP Address':
-    #                 start_ip_value = f.text
-    #                 end_val = f.find_element_by_css_selector(input).get_attribute('value')
-    #                 start_ip_value = start_ip_value + end_val
-    #                 start_ip_value = start_ip_value.replace(' ', '')
-    #             if l.text == 'End IP Address':
-    #                 end_ip_value = f.text
-    #                 end_val = f.find_element_by_css_selector(input).get_attribute('value')
-    #                 end_ip_value = end_ip_value + end_val
-    #                 end_ip_value = end_ip_value.replace(' ', '')
-    #                 break
-    #
-    #         list_actual2 = [start_ip_value.split('.')[:3], end_ip_value.split('.')[:3]]
-    #         list_expected2 = [IP1.split('.')[:3]]*2
-    #         check = assert_list(list_actual2, list_expected2)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 1, 2. Login. Change IP Address. Check Start IP and End IP according to bandwidth. '
-    #             f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 1, 2. Login. Change IP Address. Check Start IP and End IP according to bandwidth. '
-    #             f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
-    #         list_step_fail.append('1, 2. Assertion wong.')
-    #
-    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #     try:
-    #         # Click Apply
-    #         lan_block = driver.find_element_by_css_selector(network_lan_card)
-    #         lan_block.find_element_by_css_selector(submit_btn).click()
-    #         # Get confirm message
-    #         check_confirm_message = driver.find_element_by_css_selector(confirm_dialog_msg).text
-    #         exp_confirm_message = f'In order to complete the setup of the system must be restart. After restarting, move to new LAN IP Address ({IP1}). Continue?'
-    #         # Click OK
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         time.sleep(100)
-    #         wait_visible(driver, lg_page)
-    #
-    #         list_actual3 = [check_confirm_message]
-    #         list_expected3 = [exp_confirm_message]
-    #         check = assert_list(list_actual3, list_expected3)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 3. Click Apply. Check Confirm message. '
-    #             f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 3. Check Subnet Mask value when Ip Address is class B and verify en Start/End Ip <16 bits. '
-    #             f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
-    #         list_step_fail.append('3. Assertion wong.')
-    #
-    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #     try:
-    #         # Check in command line
-    #         check_ip_in_cmd = get_url_ipconfig(ipconfig_field='Default Gateway')
-    #         # Check connect
-    #         URL_NEW = 'http://' + check_ip_in_cmd
-    #         USER_ = get_config('ACCOUNT', 'user')
-    #         PW_ = get_config('ACCOUNT', 'password')
-    #         grand_login(driver, URL_NEW, USER_, PW_)
-    #
-    #         check_login_new_url = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
-    #         # Check connect with external communication
-    #         driver.get(GOOGLE_URL)
-    #         time.sleep(5)
-    #         check_google = len(driver.find_elements_by_css_selector(google_img)) > 0
-    #
-    #         driver.get(YOUTUBE_URL)
-    #         time.sleep(5)
-    #         check_youtube = len(driver.find_elements_by_css_selector('#logo-icon-container')) != 0
-    #
-    #         list_actual4 = [check_ip_in_cmd, check_login_new_url, check_google, check_youtube]
-    #         list_expected4 = [IP1] + [return_true] * 3
-    #         check = assert_list(list_actual4, list_expected4)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             '[Pass] 4. Check IP in cmd, Check login by New IP Address, Check goto GOOGLE and YOUTUBE. '
-    #             f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
-    #         self.list_steps.append('[END TC]')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 4. Check IP in cmd, Check login by New IP Address, Check goto GOOGLE and YOUTUBE..'
-    #             f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
-    #         self.list_steps.append('[END TC]')
-    #         list_step_fail.append(
-    #             '4. Assertion wong.')
-    #
-    #     self.assertListEqual(list_step_fail, [])
+    def test_17_NETWORK_Check_operation_of_changing_Gateway_address(self):
+        self.key = 'NETWORK_17'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        IP1 = '192.168.10.1'
+        IP1_VALUE = IP1.split('.')
+
+        IP2 = '172.16.1.1'
+        IP2_VALUE = IP2.split('.')
+
+        IP3 = '10.0.1.1'
+        IP3_VALUE = IP3.split('.')
+        GOOGLE_URL = get_config('COMMON', 'google_url', input_data_path)
+        YOUTUBE_URL = get_config('COMMON', 'youtube_url', input_data_path)
+        # ===========================================================
+        try:
+            grand_login(driver)
+            time.sleep(1)
+            # Network Lan Tab
+            goto_menu(driver, network_tab, network_lan_tab)
+
+            lan_block = driver.find_element_by_css_selector(network_lan_card)
+            # Settings
+            lan_fields = lan_block.find_elements_by_css_selector(wrap_input)
+            lan_label = lan_block.find_elements_by_css_selector(label_name_in_2g)
+
+            for l, f in zip(lan_label, lan_fields):
+                if l.text == 'IP Address':
+                    f.find_element_by_css_selector(option_select).click()
+                    time.sleep(0.5)
+                    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+                    for o in ls_option:
+                        # Type C
+                        if o.text == IP1_VALUE[0]:
+                            o.click()
+
+                    # Change IP range to 192.168.10.1
+                    ip_address_range = driver.find_elements_by_css_selector(ele_ip_address_range_input)
+                    for i in range(2):
+                        ip_address_range[0].clear()
+                        ip_address_range[0].send_keys(IP1_VALUE[2])
+                    for i in range(2):
+                        ip_address_range[1].clear()
+                        ip_address_range[1].send_keys(IP1_VALUE[3])
+                    break
+
+            for l, f in zip(lan_label, lan_fields):
+                if l.text == 'Start IP Address':
+                    start_ip_value = f.text
+                    end_val = f.find_element_by_css_selector(input).get_attribute('value')
+                    start_ip_value = start_ip_value + end_val
+                    start_ip_value = start_ip_value.replace(' ', '')
+                if l.text == 'End IP Address':
+                    end_ip_value = f.text
+                    end_val = f.find_element_by_css_selector(input).get_attribute('value')
+                    end_ip_value = end_ip_value + end_val
+                    end_ip_value = end_ip_value.replace(' ', '')
+                    break
+
+            list_actual2 = [start_ip_value.split('.')[:3], end_ip_value.split('.')[:3]]
+            list_expected2 = [IP1_VALUE[:3]]*2
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2._1 Set: {IP1}. Login. Change IP Address. Check Start IP and End IP according to bandwidth. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2._1 Set: {IP1}. Login. Change IP Address. Check Start IP and End IP according to bandwidth. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            list_step_fail.append('1, 2._1 Assertion wong.')
+
+        try:
+            # Click Apply
+            lan_block = driver.find_element_by_css_selector(network_lan_card)
+            lan_block.find_element_by_css_selector(submit_btn).click()
+            time.sleep(2)
+            # Get confirm message
+            check_confirm_message = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            exp_confirm_message = f'In order to complete the setup of the system must be restart. After restarting, move to new LAN IP Address ({IP1}). Continue?'
+
+            # Click OK
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(120)
+            wait_ping(IP1)
+            time.sleep(5)
+
+            list_actual3 = [check_confirm_message]
+            list_expected3 = [exp_confirm_message]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3._1 Click Apply. Check Confirm message. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3._1 Click Apply. Check Confirm message. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('3._1 Assertion wong.')
+
+        try:
+
+            # Check connect with external communication
+            driver.get(GOOGLE_URL)
+            time.sleep(5)
+            check_google = len(driver.find_elements_by_css_selector(google_img)) > 0
+
+            driver.get(YOUTUBE_URL)
+            time.sleep(5)
+            check_youtube = len(driver.find_elements_by_css_selector('#logo-icon-container')) != 0
+
+            # Check in command line
+            check_ip_in_cmd = get_url_ipconfig(ipconfig_field='Default Gateway')
+            # Check connect
+            URL_NEW = 'http://' + check_ip_in_cmd
+            USER_ = get_config('ACCOUNT', 'user')
+            PW_ = get_config('ACCOUNT', 'password')
+            login(driver, URL_NEW, USER_, PW_)
+            check_login_new_url = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual4 = [check_ip_in_cmd, check_login_new_url, check_google, check_youtube]
+            list_expected4 = [IP1] + [return_true] * 3
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 4._1 Check IP in cmd, Check login by New IP Address, Check goto GOOGLE and YOUTUBE. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4_1. Check IP in cmd, Check login by New IP Address, Check goto GOOGLE and YOUTUBE..'
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            list_step_fail.append('4._1 Assertion wong.')
+
+        # ===========================================================
+        try:
+            # Network Lan Tab
+            goto_menu(driver, network_tab, network_lan_tab)
+
+            lan_block = driver.find_element_by_css_selector(network_lan_card)
+            # Settings
+            lan_fields = lan_block.find_elements_by_css_selector(wrap_input)
+            lan_label = lan_block.find_elements_by_css_selector(label_name_in_2g)
+
+            for l, f in zip(lan_label, lan_fields):
+                if l.text == 'IP Address':
+                    f.find_element_by_css_selector(option_select).click()
+                    time.sleep(0.5)
+                    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+                    for o in ls_option:
+                        # Type C
+                        if o.text == IP2_VALUE[0]:
+                            o.click()
+
+                    # Change IP range to 176.16.1.1
+                    ip_address_range = driver.find_elements_by_css_selector(ele_ip_address_range_input)
+                    for i in range(2):
+                        ip_address_range[0].clear()
+                        ip_address_range[0].send_keys(IP2_VALUE[2])
+                    for i in range(2):
+                        ip_address_range[1].clear()
+                        ip_address_range[1].send_keys(IP2_VALUE[3])
+                    break
+
+            for l, f in zip(lan_label, lan_fields):
+                if l.text == 'Start IP Address':
+                    start_ip_value = f.text
+                    end_val = f.find_element_by_css_selector(input).get_attribute('value')
+                    start_ip_value = start_ip_value + end_val
+                    start_ip_value = start_ip_value.replace(' ', '')
+                if l.text == 'End IP Address':
+                    end_ip_value = f.text
+                    end_val = f.find_element_by_css_selector(input).get_attribute('value')
+                    end_ip_value = end_ip_value + end_val
+                    end_ip_value = end_ip_value.replace(' ', '')
+                    break
+
+            list_actual5 = [start_ip_value.split('.')[:3], end_ip_value.split('.')[:3]]
+            list_expected5 = [IP2_VALUE[:3]] * 2
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2._2 Set: {IP2}. Login. Change IP Address. Check Start IP and End IP according to bandwidth. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2._2 Set: {IP2}. Login. Change IP Address. Check Start IP and End IP according to bandwidth. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+            list_step_fail.append('1, 2._2 Assertion wong.')
+
+
+        try:
+            # Click Apply
+            lan_block = driver.find_element_by_css_selector(network_lan_card)
+            lan_block.find_element_by_css_selector(submit_btn).click()
+            time.sleep(2)
+            # Get confirm message
+            check_confirm_message = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            exp_confirm_message = f'In order to complete the setup of the system must be restart. After restarting, move to new LAN IP Address ({IP2}). Continue?'
+
+            # Click OK
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(120)
+            # wait_ping(IP2)
+            time.sleep(5)
+
+            list_actual6 = [check_confirm_message]
+            list_expected6 = [exp_confirm_message]
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3._2 Click Apply. Check Confirm message. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3._2 Click Apply. Check Confirm message. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+            list_step_fail.append('3._2 Assertion wong.')
+
+        try:
+
+            # Check connect with external communication
+            driver.get(GOOGLE_URL)
+            time.sleep(5)
+            check_google = len(driver.find_elements_by_css_selector(google_img)) > 0
+
+            driver.get(YOUTUBE_URL)
+            time.sleep(5)
+            check_youtube = len(driver.find_elements_by_css_selector('#logo-icon-container')) != 0
+
+            # Check in command line
+            check_ip_in_cmd = get_url_ipconfig(ipconfig_field='Default Gateway')
+            # Check connect
+            URL_NEW_2 = 'http://' + IP2
+            USER_ = get_config('ACCOUNT', 'user')
+            PW_ = get_config('ACCOUNT', 'password')
+            login(driver, URL_NEW_2, USER_, PW_)
+            check_login_new_url = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual7 = [check_ip_in_cmd, check_login_new_url, check_google, check_youtube]
+            list_expected7 = [IP2] + [return_true] * 3
+            check = assert_list(list_actual7, list_expected7)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 4._2 Check IP in cmd, Check login by New IP Address, Check goto GOOGLE and YOUTUBE. '
+                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4._2 Check IP in cmd, Check login by New IP Address, Check goto GOOGLE and YOUTUBE..'
+                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+            list_step_fail.append('4._2 Assertion wong.')
+
+        # ===========================================================
+        try:
+            # Network Lan Tab
+            goto_menu(driver, network_tab, network_lan_tab)
+
+            lan_block = driver.find_element_by_css_selector(network_lan_card)
+            # Settings
+            lan_fields = lan_block.find_elements_by_css_selector(wrap_input)
+            lan_label = lan_block.find_elements_by_css_selector(label_name_in_2g)
+
+            for l, f in zip(lan_label, lan_fields):
+                if l.text == 'IP Address':
+                    f.find_element_by_css_selector(option_select).click()
+                    time.sleep(0.5)
+                    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+                    for o in ls_option:
+                        # Type C
+                        if o.text == IP3_VALUE[0]:
+                            o.click()
+
+                    # Change IP range to 10.0.1.1
+                    ip_address_range = driver.find_elements_by_css_selector(ele_ip_address_range_input)
+                    for i in range(2):
+                        ip_address_range[0].clear()
+                        ip_address_range[0].send_keys(IP3_VALUE[2])
+                    for i in range(2):
+                        ip_address_range[1].clear()
+                        ip_address_range[1].send_keys(IP3_VALUE[3])
+                    break
+
+            for l, f in zip(lan_label, lan_fields):
+                if l.text == 'Start IP Address':
+                    start_ip_value = f.text
+                    end_val = f.find_element_by_css_selector(input).get_attribute('value')
+                    start_ip_value = start_ip_value + end_val
+                    start_ip_value = start_ip_value.replace(' ', '')
+                if l.text == 'End IP Address':
+                    end_ip_value = f.text
+                    end_val = f.find_element_by_css_selector(input).get_attribute('value')
+                    end_ip_value = end_ip_value + end_val
+                    end_ip_value = end_ip_value.replace(' ', '')
+                    break
+
+            list_actual8 = [start_ip_value.split('.')[:3], end_ip_value.split('.')[:3]]
+            list_expected8 = [IP3_VALUE[:3]] * 2
+            check = assert_list(list_actual8, list_expected8)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2._3 Set: {IP3}. Login. Change IP Address. Check Start IP and End IP according to bandwidth. '
+                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2._3 Set: {IP3}. Login. Change IP Address. Check Start IP and End IP according to bandwidth. '
+                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+            list_step_fail.append('1, 2._3 Assertion wong.')
+
+        try:
+            # Click Apply
+            lan_block = driver.find_element_by_css_selector(network_lan_card)
+            lan_block.find_element_by_css_selector(submit_btn).click()
+            time.sleep(2)
+            # Get confirm message
+            check_confirm_message = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            exp_confirm_message = f'In order to complete the setup of the system must be restart. After restarting, move to new LAN IP Address ({IP3}). Continue?'
+
+            # Click OK
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(120)
+            wait_ping(IP3)
+            time.sleep(5)
+
+            list_actual9 = [check_confirm_message]
+            list_expected9 = [exp_confirm_message]
+            check = assert_list(list_actual9, list_expected9)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3._3 Click Apply. Check Confirm message. '
+                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3._3  Click Apply. Check Confirm message. '
+                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+            list_step_fail.append('3._3 Assertion wong.')
+
+        try:
+            # Check connect with external communication
+            driver.get(GOOGLE_URL)
+            time.sleep(5)
+            check_google = len(driver.find_elements_by_css_selector(google_img)) > 0
+
+            driver.get(YOUTUBE_URL)
+            time.sleep(5)
+            check_youtube = len(driver.find_elements_by_css_selector('#logo-icon-container')) != 0
+
+            # Check in command line
+            check_ip_in_cmd = get_url_ipconfig(ipconfig_field='Default Gateway')
+            # Check connect
+            URL_NEW_3 = 'http://' + IP3
+            USER_ = get_config('ACCOUNT', 'user')
+            PW_ = get_config('ACCOUNT', 'password')
+            login(driver, URL_NEW_3, USER_, PW_)
+
+            check_login_new_url = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual10 = [check_ip_in_cmd, check_login_new_url, check_google, check_youtube]
+            list_expected10 = [IP3] + [return_true] * 3
+            check = assert_list(list_actual10, list_expected10)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4._3 Check IP in cmd, Check login by New IP Address, Check goto GOOGLE and YOUTUBE. '
+                f'Actual: {str(list_actual10)}. Expected: {str(list_expected10)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4._3 Check IP in cmd, Check login by New IP Address, Check goto GOOGLE and YOUTUBE..'
+                f'Actual: {str(list_actual10)}. Expected: {str(list_expected10)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('4._3 Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
     # OK
     def test_18_NETWORK_LAN_Change_Subnet_Mask(self):
         self.key = 'NETWORK_18'

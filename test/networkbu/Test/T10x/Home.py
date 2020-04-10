@@ -22,23 +22,23 @@ class HOME(unittest.TestCase):
 
     def tearDown(self):
         check_enable_ethernet()
-        # try:
-        #     end_time = datetime.now()
-        #     duration = str((end_time - self.start_time))
-        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        # except:
-        #     # Connect by wifi if internet is down to handle exception for PPPoE
-        #     os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
-        #     time.sleep(1)
-        #     end_time = datetime.now()
-        #     duration = str((end_time - self.start_time))
-        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        #     time.sleep(5)
-        #     # Connect by LAN again
-        #     os.system('netsh wlan disconnect')
-        #     time.sleep(1)
-        # write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        write_to_excel_tmp(self.key, self.list_steps, self.def_name)
+        try:
+            end_time = datetime.now()
+            duration = str((end_time - self.start_time))
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        except:
+            # Connect by wifi if internet is down to handle exception for PPPoE
+            os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
+            time.sleep(1)
+            end_time = datetime.now()
+            duration = str((end_time - self.start_time))
+            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+            time.sleep(5)
+            # Connect by LAN again
+            os.system('netsh wlan disconnect')
+            time.sleep(1)
+        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        # write_to_excel_tmp(self.key, self.list_steps, self.def_name)
         self.driver.quit()
     # OK
     def test_01_HOME_Check_Internet_Image_Operation_when_Dual_WAN_is_off(self):
