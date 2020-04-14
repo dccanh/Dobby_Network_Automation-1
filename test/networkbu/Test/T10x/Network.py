@@ -22,24 +22,24 @@ class NETWORK(unittest.TestCase):
             raise
 
     def tearDown(self):
-        check_enable_ethernet()
-        try:
-            end_time = datetime.now()
-            duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        except:
-            # Connect by wifi if internet is down to handle exception for PPPoE
-            os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
-            time.sleep(1)
-            end_time = datetime.now()
-            duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-            time.sleep(5)
-            # Connect by LAN again
-            os.system('netsh wlan disconnect')
-            time.sleep(1)
-        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        # write_to_excel_tmp(self.key, self.list_steps, self.def_name)
+        # check_enable_ethernet()
+        # try:
+        #     end_time = datetime.now()
+        #     duration = str((end_time - self.start_time))
+        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        # except:
+        #     # Connect by wifi if internet is down to handle exception for PPPoE
+        #     os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
+        #     time.sleep(1)
+        #     end_time = datetime.now()
+        #     duration = str((end_time - self.start_time))
+        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        #     time.sleep(5)
+        #     # Connect by LAN again
+        #     os.system('netsh wlan disconnect')
+        #     time.sleep(1)
+        # write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        write_to_excel_tmp(self.key, self.list_steps, self.def_name)
         self.driver.quit()
 
     def test_01_NETWORK_Check_Internet_Status(self):
@@ -1742,7 +1742,9 @@ class NETWORK(unittest.TestCase):
                 f'Actual: {str(list_actual10)}. Expected: {str(list_expected10)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4._3 Assertion wong.')
-
+        # ===========================================================
+        factory_dut()
+        # ===========================================================
         self.assertListEqual(list_step_fail, [])
     # OK
     def test_18_NETWORK_LAN_Change_Subnet_Mask(self):
@@ -2236,6 +2238,84 @@ class NETWORK(unittest.TestCase):
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '4. Assertion wong.')
+        self.assertListEqual(list_step_fail, [])
+
+    def test_24_NETWORK_Reserved_IP_Address_Add_a_rule(self):
+        self.key = 'NETWORK_24'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # ===========================================================
+        get_mac_address = get_value_from_ipconfig('Ethernet adapter Ethernet', 'Physical Address')
+        correct_mac_address = get_mac_address.replace('-', ':')
+        RESERVED_IP_ADDRESS = get_config('NETWORK', 'nw24_reserved_ip', input_data_path)
+        try:
+            grand_login(driver)
+            time.sleep(1)
+            # Network Lan Tab
+            goto_menu(driver, network_tab, network_lan_tab)
+
+            wait_popup_disappear(driver, dialog_loading)
+            reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
+
+            nw_add_reserved_ip(driver, correct_mac_address, RESERVED_IP_ADDRESS)
+
+            reserved_ip_block.find_element_by_css_selector(btn_save).click()
+            time.sleep(0.2)
+            reserved_ip_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.2)
+
+            # Get info of first row
+            first_row = reserved_ip_block.find_elements_by_css_selector(rows)[0]
+            mac_address = first_row.find_element_by_css_selector(mac_desc_cls).text
+            mac_address = mac_address.splitlines()[1]
+            ip_addr = first_row.find_element_by_css_selector(ip_address_cls).text
+
+            list_actual1 = [mac_address, ip_addr]
+            list_expected1 = [correct_mac_address, RESERVED_IP_ADDRESS]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2, 3. Login. Goto LAN. Registering a reserved IP. Check Registered successfully. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2, 3. Login. Goto LAN. Registering a reserved IP. Check Registered successfully. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            list_step_fail.append('1, 2, 3. Assertion wong.')
+
+        try:
+            # Release
+            subprocess.check_output('ipconfig/release', shell=True)
+            time.sleep(2)
+            # Renew
+            subprocess.check_output('ipconfig/renew', shell=True)
+            time.sleep(15)
+
+            get_current_ipv4 = get_value_from_ipconfig('Ethernet adapter Ethernet', 'IPv4 Address')
+
+            ipv4_address = get_current_ipv4.split('(Preferred)')[0]
+
+            list_actual3 = [ipv4_address]
+            list_expected3 = [RESERVED_IP_ADDRESS]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Command: ipconfig/release > ipconfig/renew > ipconfig/all. '
+                f'Check Client assigned IP address registered with Reserved IP. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Command: ipconfig/release > ipconfig/renew > ipconfig/all. '
+                f'Check Client assigned IP address registered with Reserved IP. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('4. Assertion wong.')
+
         self.assertListEqual(list_step_fail, [])
     # OK F
     def test_25_NETWORK_Reserved_IP_Confirm_duplicate_registration_prevention(self):
@@ -2831,6 +2911,201 @@ class NETWORK(unittest.TestCase):
             list_step_fail.append('5. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
 
+    def test_32_NETWORK_Verify_operation_of_Router_Mode(self):
+        self.key = 'NETWORK_32'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        UPPER_5G_NAME = get_config('REPEATER', 'repeater_name_5g', input_data_path)
+        UPPER_5G_PW = get_config('REPEATER', 'repeater_pw_5g', input_data_path)
+        # ===========================================================
+        try:
+            grand_login(driver)
+            time.sleep(1)
+
+            check_google = check_connect_to_google()
+
+            list_actual1 = [check_google]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Check external communication is successfully. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. Check external communication is successfully. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            disconnect_or_connect_wan(disconnected=True)
+            time.sleep(5)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            time.sleep(2)
+            connect_repeater_mode(driver, UPPER_5G_NAME, UPPER_5G_PW)
+            time.sleep(5)
+            # Login
+            driver.refresh()
+            time.sleep(5)
+            grand_login(driver)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            time.sleep(5)
+            check_repeater_active = driver.find_element_by_css_selector(ele_repeater_mode_input).is_selected()
+
+            list_actual2 = [check_repeater_active]
+            list_expected2 = [return_true]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2. Disconnect WAN. Change to Repeater mode. Login again. Check Repeater Mode activated. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Disconnect WAN. Change to Repeater mode. Login again. Check Repeater Mode activated. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('2. Assertion wong')
+
+        try:
+            # Select Router mode
+            driver.find_element_by_css_selector(ele_select_router_mode).click()
+            # Apply
+            driver.find_element_by_css_selector(apply).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            wait_popup_disappear(driver, icon_loading)
+            time.sleep(1)
+            wait_popup_disappear(driver, icon_loading)
+            wait_visible(driver, lg_page)
+            save_config(config_path, 'URL', 'url', 'http://dearmyrouter.net')
+            time.sleep(5)
+            grand_login(driver)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            time.sleep(5)
+            check_router_active = driver.find_element_by_css_selector(ele_router_mode_input).is_selected()
+
+            list_actual3 = [check_router_active]
+            list_expected3 = [return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Select Router mode. Login again. Check Router mode activated. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Select Router mode. Login again. Check Router mode activated. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong')
+
+        try:
+            disconnect_or_connect_wan(disconnected=False)
+            time.sleep(5)
+            grand_login(driver)
+            time.sleep(5)
+            check_ip_assigned = driver.find_element_by_css_selector(home_conection_img_wan_ip).text != '0.0.0.0'
+
+
+            list_actual4 = [check_ip_assigned]
+            list_expected4 = [return_true]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Enabled WAN. Login. Check IP assigned (difference 0.0.0.0). '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Enabled WAN. Login. Check IP assigned (difference 0.0.0.0). '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong')
+
+        try:
+            grand_login(driver)
+            time.sleep(5)
+
+            check_google = check_connect_to_google()
+            time.sleep(5)
+
+            list_actual5 = [check_google]
+            list_expected5 = [return_true]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Login. Check external communication with Google is successfully. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Login. Check external communication with Google is successfully. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            list_step_fail.append('5. Assertion wong')
+
+        try:
+            goto_system(driver, sys_reset)
+            time.sleep(0.5)
+            apply_btn = driver.find_element_by_css_selector(apply)
+            if apply_btn.text == 'Restart':
+                apply_btn.click()
+                time.sleep(2)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+            time.sleep(180)
+            wait_popup_disappear(driver, icon_loading)
+            wait_visible(driver, lg_page)
+
+            check_google = check_connect_to_google()
+            time.sleep(5)
+            grand_login(driver)
+            time.sleep(5)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            time.sleep(5)
+            check_router_active = driver.find_element_by_css_selector(ele_router_mode_input).is_selected()
+
+            URL_LOGIN = get_config('URL', 'url')
+            _URL_API = URL_LOGIN + '/api/v1/network/qmode'
+            _METHOD = 'GET'
+            _BODY = ''
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _TOKEN = get_token(_USER, _PW)
+
+            res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            check_api = [
+                res.get('qmode') == 'router',
+                res.get('operation') == 'router'
+            ]
+
+            list_actual6 = [check_google, check_router_active, check_api]
+            list_expected6 = [return_true, return_true, [return_true, return_true]]
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Restart DUT. Check access Google success. Check operation mode is Router mode. '
+                f'Check API /network/qmode. qmode is router, operation is router. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Restart DUT. Check access Google success. Check operation mode is Router mode. '
+                f'Check API /network/qmode. qmode is router, operation is router. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('6. Assertion wong')
+        self.assertListEqual(list_step_fail, [])
+
     def test_33_NETWORK_Repeater_Verify_of_menu_tree(self):
         self.key = 'NETWORK_33'
         driver = self.driver
@@ -3174,6 +3449,304 @@ class NETWORK(unittest.TestCase):
                 f'Expected: {str(list_expected7)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('7. Assertion wong')
+        self.assertListEqual(list_step_fail, [])
+
+    def test_51_NETWORK_Verify_Bridge_Mode_operation(self):
+        self.key = 'NETWORK_51'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # ===========================================================
+        NEW_SSID_2G_NAME = get_config('NETWORK', 'nw_51_new_ssid_2g', input_data_path)
+        NEW_SSID_5G_NAME = get_config('NETWORK', 'nw_51_new_ssid_5g', input_data_path)
+        # ===========================================================
+        factory_dut()
+        try:
+            grand_login(driver)
+            time.sleep(1)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            time.sleep(1)
+            current_page = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual1 = [current_page]
+            list_expected1 = ['Advanced > Operation Mode']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Login. Goto Operation mode page. Check current page. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Login. Goto Operation mode page. Check current page. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1, 2. Assertion wong')
+
+        try:
+            driver.find_element_by_css_selector(ele_select_bridge_mode).click()
+            # Apply
+            driver.find_element_by_css_selector(apply).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            wait_popup_disappear(driver, icon_loading)
+            time.sleep(1)
+            wait_popup_disappear(driver, icon_loading)
+            wait_visible(driver, lg_page)
+            save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+            # ==========================================================================
+            time.sleep(5)
+            # Login
+            # driver.refresh()
+            time.sleep(5)
+            grand_login(driver)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            time.sleep(5)
+            check_bridge_mode_active = driver.find_element_by_css_selector(ele_bridge_mode_input).is_selected()
+
+            list_actual3 = [check_bridge_mode_active]
+            list_expected3 = [return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Change to Bridge mode. Check change successfully in Operation mode. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Change to Bridge mode. Check change successfully in Operation mode. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong')
+
+        try:
+            get_ip_v4 = get_value_from_ipconfig('Ethernet adapter Ethernet', 'IPv4 Address')
+            if '(Preferred)' in get_ip_v4:
+                get_ip_v4 = get_ip_v4.replace('(Preferred)', '')
+            check_ipv4 = get_ip_v4 != 'Block or field error.'
+            check_access_google = check_connect_to_google()
+
+            list_actual4 = [check_ipv4, check_access_google]
+            list_expected4 = [return_true] *2
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Check IPv4 address assigned (difference 0.0.0.0). '
+                f'Check connect to Google success.  '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Check IPv4 address assigned (difference 0.0.0.0). '
+                f'Check connect to Google success.  '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong')
+
+        try:
+            # Get information
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            # Get information of wireless
+            block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
+            wifi_2g_name = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
+            wifi_2g_pw = wireless_check_pw_eye(driver, block_2g, change_pw=False)
+
+            block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
+            wifi_5g_name = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
+            wifi_5g_pw = wireless_check_pw_eye(driver, block_5g, change_pw=False)
+
+            # Disconnect Wire
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(3)
+
+            # Connect wireless 2G
+            write_data_to_xml(wifi_default_file_path, new_name=wifi_2g_name, new_pw=wifi_2g_pw)
+            time.sleep(3)
+            os.system(f'netsh wlan delete profile name="{wifi_2g_name}"')
+            time.sleep(3)
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(5)
+            os.system(f'netsh wlan connect ssid="{wifi_2g_name}" name="{wifi_2g_name}"')
+            time.sleep(10)
+
+            # Check IP assigned
+            wifi_2g_ip = get_value_from_ipconfig('Wireless LAN adapter Wi-Fi', 'IPv4 Address').replace('(Preferred)', '')
+            wifi_2g_ip = wifi_2g_ip != 'Block or field error.'
+            wifi_2g_check_google = check_connect_to_google()
+            current_connected_wifi_2g_name = current_connected_wifi()
+
+            list_actual5 = [wifi_2g_ip, wifi_2g_check_google, current_connected_wifi_2g_name]
+            list_expected5 = [return_true, return_true, exp_ssid_2g_default_val]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5.1 Connect Wifi 2G. '
+                f'Check IP address assigned. '
+                f'Check connect to Google. '
+                f'Check Current connected Wifi. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+
+        except:
+            self.list_steps.append(
+                f'[Fail] 5.1 Connect Wifi 2G. '
+                f'Check IP address assigned. '
+                f'Check connect to Google. '
+                f'Check Current connected Wifi. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            list_step_fail.append('5.1 Assertion wong')
+
+
+        try:
+            os.system(f'netsh wlan disconnect')
+            time.sleep(3)
+            write_data_to_xml(wifi_default_file_path, new_name=wifi_5g_name, new_pw=wifi_5g_pw)
+            time.sleep(3)
+            os.system(f'netsh wlan delete profile name="{wifi_5g_name}"')
+            time.sleep(3)
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(3)
+            os.system(f'netsh wlan connect ssid="{wifi_5g_name}" name="{wifi_5g_name}"')
+            time.sleep(3)
+
+            # Check IP assigned
+            wifi_5g_ip = get_value_from_ipconfig('Wireless LAN adapter Wi-Fi', 'IPv4 Address').replace('(Preferred)', '')
+            wifi_5g_ip = wifi_5g_ip != 'Block or field error.'
+            wifi_5g_check_google = check_connect_to_google()
+            current_connected_wifi_5g_name = current_connected_wifi()
+            # =============================================================
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(15)
+
+            list_actual6 = [wifi_5g_ip, wifi_5g_check_google, current_connected_wifi_5g_name]
+            list_expected6 = [return_true, return_true, exp_ssid_5g_default_val]
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5.2 Connect Wifi 5G. '
+                f'Check IP address assigned. '
+                f'Check connect to Google. '
+                f'Check Current connected Wifi. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+
+        except:
+            self.list_steps.append(
+                f'[Fail] 5.2 Connect Wifi 5G. '
+                f'Check IP address assigned. '
+                f'Check connect to Google. '
+                f'Check Current connected Wifi. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            list_step_fail.append('5.2 Assertion wong')
+
+        try:
+
+            grand_login(driver)
+            time.sleep(3)
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(3)
+            # Get information of wireless
+            block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
+            edit_2g_label = block_2g.find_elements_by_css_selector(label_name_in_2g)
+            edit_2g_fields = block_2g.find_elements_by_css_selector(wrap_input)
+            for l, f in zip(edit_2g_label, edit_2g_fields):
+                # Connection type
+                if l.text == 'Network Name(SSID)':
+                    f.click()
+                    ActionChains(driver).key_down(Keys.CONTROL).send_keys('a').key_up(
+                        Keys.CONTROL).send_keys(Keys.DELETE).send_keys(NEW_SSID_2G_NAME).perform()
+                    break
+            time.sleep(1)
+            block_2g.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, icon_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
+            edit_2g_label = block_5g.find_elements_by_css_selector(label_name_in_2g)
+            edit_2g_fields = block_5g.find_elements_by_css_selector(wrap_input)
+            for l, f in zip(edit_2g_label, edit_2g_fields):
+                # Connection type
+                if l.text == 'Network Name(SSID)':
+                    f.click()
+                    ActionChains(driver).key_down(Keys.CONTROL).send_keys('a').key_up(
+                        Keys.CONTROL).send_keys(Keys.DELETE).send_keys(NEW_SSID_5G_NAME).perform()
+                break
+            time.sleep(3)
+            block_5g.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, icon_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            # =================================================================================
+            # Disconnect Wire
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(3)
+            os.system(f'netsh wlan disconnect')
+
+            # Connect wireless 2G
+            write_data_to_xml(wifi_default_file_path, new_name=NEW_SSID_2G_NAME, new_pw=wifi_2g_pw)
+            time.sleep(3)
+            os.system(f'netsh wlan delete profile name="{NEW_SSID_2G_NAME}"')
+            time.sleep(3)
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(5)
+            os.system(f'netsh wlan connect ssid="{NEW_SSID_2G_NAME}" name="{NEW_SSID_2G_NAME}"')
+            time.sleep(10)
+
+            # Check IP assigned
+            wifi_2g_ip_2 = get_value_from_ipconfig('Wireless LAN adapter Wi-Fi', 'IPv4 Address')
+            wifi_2g_ip_2 = wifi_2g_ip_2.replace('(Preferred)','') != 'Block or field error.'
+            wifi_2g_check_google_2 = check_connect_to_google()
+            current_connected_wifi_2g_name_2 = current_connected_wifi()
+            # =================================================================================
+            os.system(f'netsh wlan disconnect')
+            time.sleep(3)
+            write_data_to_xml(wifi_default_file_path, new_name=NEW_SSID_5G_NAME, new_pw=wifi_5g_pw)
+            time.sleep(3)
+            os.system(f'netsh wlan delete profile name="{NEW_SSID_5G_NAME}"')
+            time.sleep(3)
+            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            time.sleep(3)
+            os.system(f'netsh wlan connect ssid="{NEW_SSID_5G_NAME}" name="{NEW_SSID_5G_NAME}"')
+            time.sleep(10)
+
+            # Check IP assigned
+            wifi_5g_ip_2 = get_value_from_ipconfig('Wireless LAN adapter Wi-Fi', 'IPv4 Address')
+            wifi_5g_ip_2 = wifi_5g_ip_2.replace('(Preferred)','') != 'Block or field error.'
+            wifi_5g_check_google_2 = check_connect_to_google()
+            current_connected_wifi_5g_name_2 = current_connected_wifi()
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+
+            list_actual7 = [[wifi_2g_ip_2, wifi_2g_check_google_2, current_connected_wifi_2g_name_2],
+                            [wifi_5g_ip_2, wifi_5g_check_google_2, current_connected_wifi_5g_name_2]]
+            list_expected7 = [[return_true, return_true, NEW_SSID_2G_NAME],
+                              [return_true, return_true, NEW_SSID_5G_NAME]]
+            check = assert_list(list_actual7, list_expected7)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Change SSID 2G/5G. '
+                f'Check 2G IPv4, Connect Google, Current connected wifi. '
+                f'Check 5G IPv4, Connect Google, Current connected wifi. '
+                f'Actual: {str(list_actual7)}. '
+                f'Expected: {str(list_expected7)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Change SSID 2G/5G. '
+                f'Check 2G IPv4, Connect Google, Current connected wifi. '
+                f'Check 5G IPv4, Connect Google, Current connected wifi. '
+                f'Actual: {str(list_actual7)}. '
+                f'Expected: {str(list_expected7)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('6. Assertion wong')
+
         self.assertListEqual(list_step_fail, [])
 if __name__ == '__main__':
     unittest.main()

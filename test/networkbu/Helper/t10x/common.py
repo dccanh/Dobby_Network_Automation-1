@@ -308,33 +308,34 @@ def get_result_command_from_server(url_ip, filename='1'):
 def get_result_command_from_server_api(url_ip, _name='1'):
     url = url_ip + '/' + _name
     _res = requests.get(url)
-    if _res.status_code != 200:
-        url_login = get_config('URL', 'url')
-        filename_2 = 'account2.txt'
-        command_2 = 'capitest get Device.Users.User.2. leaf'
-        run_cmd(command_2, filename_2)
-        time.sleep(5)
-        url = url_login + '/' + filename_2
-        _res = requests.get(url)
-        if _res.status_code != 200:
-            url_login = get_config('URL', 'url')
-            filename_1 = '1'
-            command = 'factorycfg.sh -a'
-            run_cmd(command, filename_1)
-            # Wait 5 mins for factory
-            time.sleep(150)
-            wait_DUT_activated(url_login)
-            wait_ping('192.168.1.1')
-            time.sleep(3)
-            filename_2 = 'account2.txt'
-            command_2 = 'capitest get Device.Users.User.2. leaf'
-            run_cmd(command_2, filename_2)
-            time.sleep(5)
-            url = url_login + '/' + filename_2
-            _res = requests.get(url)
+    # if _res.status_code != 200:
+    #     url_login = get_config('URL', 'url')
+    #     filename_2 = 'account2.txt'
+    #     command_2 = 'capitest get Device.Users.User.2. leaf'
+    #     run_cmd(command_2, filename_2)
+    #     time.sleep(5)
+    #     url = url_login + '/' + filename_2
+    #     _res = requests.get(url)
+    #     if _res.status_code != 200:
+    #         url_login = get_config('URL', 'url')
+    #         filename_1 = '1'
+    #         command = 'factorycfg.sh -a'
+    #         run_cmd(command, filename_1)
+    #         # Wait 5 mins for factory
+    #         time.sleep(150)
+    #         wait_DUT_activated(url_login)
+    #         wait_ping('192.168.1.1')
+    #         time.sleep(3)
+    #         filename_2 = 'account2.txt'
+    #         command_2 = 'capitest get Device.Users.User.2. leaf'
+    #         run_cmd(command_2, filename_2)
+    #         time.sleep(5)
+    #         url = url_login + '/' + filename_2
+    #         _res = requests.get(url)
 
     get_all_text = _res.text
     print("Status Code: " + str(_res.status_code))
+    print(get_all_text)
     command_result = '{' + get_all_text.split('@@@ PRINT OBJLIST START @@@')[1].split(' @@@@@@ PRINT OBJLIST END @@@@@@')[0]
     fit_result = command_result.split('},\n\t },\n }')[0]+'}}}'
 
@@ -428,9 +429,28 @@ def get_url_ipconfig(ipconfig_field='Default Gateway'):
     split_result = [i.strip() for i in write_cmd.splitlines()]
     default_gw = [i for i in split_result if i.startswith(ipconfig_field)]
     ip = [i.split(':')[1].strip() for i in default_gw if i.split(':')[1].strip()][0]
-    url_ = 'http://'+ip
+    # url_ = 'http://'+ip
     # save_config(config_path, 'URL', 'url', url_)
     return ip
+
+
+def get_value_from_ipconfig(block, field):
+    import subprocess
+    cmd = 'ipconfig/all'
+    write_cmd = subprocess.check_output(cmd, shell=True)
+    write_cmd = write_cmd.decode('utf8')
+    # print(write_cmd)
+    if block in write_cmd:
+        write_cmd = write_cmd.split(block)[1].split('\r\n\r\n')[1]
+        split_result = [i.strip() for i in write_cmd.splitlines()]
+        field_row = [i for i in split_result if i.startswith(field)]
+        if len(field_row):
+            field_value = [i.split(':')[1].strip() for i in field_row if i.split(':')[1].strip()][0]
+        else:
+            field_value = 'Block or field error.'
+        return field_value
+    else:
+        return 'Block or field error.'
 
 
 def goto_menu(driver, parent_tab, child_tab):
@@ -1153,8 +1173,9 @@ def factory_dut():
     command_2 = 'capitest get Device.Users.User.2. leaf'
     run_cmd(command_2, filename_2)
     time.sleep(10)
-    url = url_login + '/' + filename_2
-    _res = requests.get(url)
+    url_login = get_config('URL', 'url')
+    # url = url_login + '/' + filename_2
+    # _res = requests.get(url)
     # Get account information from web server and write to config.txt
     get_result_command_from_server_api(url_login, filename_2)
 
@@ -1348,3 +1369,96 @@ def change_firmware_version(driver, version='t10x_fullimage_3.00.12_rev11.img'):
     wait_visible(driver, content)
     driver.find_element_by_css_selector(btn_ok).click()
     time.sleep(1)
+
+def check_connect_to_google():
+    driver2 = webdriver.Chrome(driver_path)
+    GOOGLE_URL = get_config('COMMON', 'google_url', input_data_path)
+    driver2.get(GOOGLE_URL)
+    time.sleep(5)
+    check_google = len(driver2.find_elements_by_css_selector(google_img)) > 0
+    driver2.quit()
+    return check_google
+
+def check_connect_to_youtube(driver):
+    driver2 = webdriver.Chrome(driver_path)
+    YOUTUBE_URL = get_config('COMMON', 'youtube_url', input_data_path)
+    driver2.get(YOUTUBE_URL)
+    time.sleep(5)
+    check_youtube = len(driver2.find_elements_by_css_selector('#logo-icon-container')) > 0
+    driver2.quit()
+    return check_youtube
+
+
+def disconnect_or_connect_wan(disconnected=True, URL_LOGIN='', _USER='', _PW=''):
+    if URL_LOGIN == '':
+        URL_LOGIN = get_config('URL', 'url')
+    if _USER == '':
+        _USER = get_config('ACCOUNT', 'user')
+    if _PW == '':
+        _PW = get_config('ACCOUNT', 'password')
+
+    if disconnected:
+        _URL = URL_LOGIN + '/api/v1/network/wan/0/disconnect'
+    else:
+        _URL = URL_LOGIN + '/api/v1/network/wan/0/connect'
+    _METHOD = 'POST'
+    _TOKEN = get_token(_USER, _PW)
+    _BODY = ''
+    call_api(_URL, _METHOD, _BODY, _TOKEN)
+    time.sleep(10)
+
+
+def add_port_forwarding(driver, SERVICE_TYPE,
+                        IP_ADDRESS_SPLIT, LOCAL_START_END,
+                        EXTERNAL_START_END, PROTOCOL_TYPE='TCP'):
+    # Click Add button to change setting
+    driver.find_element_by_css_selector(add_class).click()
+    time.sleep(1)
+    edit_field = driver.find_element_by_css_selector(edit_mode)
+    time.sleep(0.5)
+    # Fill Service type
+    service_type = edit_field.find_element_by_css_selector(service_type_cls)
+    service_type.find_element_by_css_selector(input).send_keys(SERVICE_TYPE)
+    # IP address
+    for i in range(2):
+        ip_address = edit_field.find_element_by_css_selector(ip_address_col_cls)
+        ip_address_box = ip_address.find_element_by_css_selector(input)
+        ip_address_box.clear()
+        ip_address_box.send_keys(IP_ADDRESS_SPLIT)
+    # Local Port
+    local_port = edit_field.find_element_by_css_selector(local_port_cls)
+    local_port_input = local_port.find_elements_by_css_selector(input)
+    for i, v in zip(local_port_input, LOCAL_START_END):
+        i.clear()
+        i.send_keys(v)
+    # External Port
+    external_port = edit_field.find_element_by_css_selector(external_port_cls)
+    external_port_input = external_port.find_elements_by_css_selector(input)
+    for i, v in zip(external_port_input, EXTERNAL_START_END):
+        i.clear()
+        i.send_keys(v)
+    # Protocol
+    protocol_box = edit_field.find_element_by_css_selector(protocol_col_cls)
+    protocol_box.find_element_by_css_selector(option_select).click()
+    time.sleep(0.2)
+    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+    for o in ls_option:
+        if o.text == PROTOCOL_TYPE:
+            o.click()
+            time.sleep(1)
+            break
+
+def get_port_forwarding_table(driver):
+    table_value = list()
+    ls_rows = driver.find_elements_by_css_selector(rows)
+    if len(ls_rows):
+        for r in ls_rows:
+            row_active = r.find_element_by_css_selector(input).is_selected()
+            row_service = r.find_element_by_css_selector(service_type_cls).text
+            row_ip = r.find_element_by_css_selector(ip_address_col_cls).text
+            row_local = r.find_element_by_css_selector(local_port_cls).text
+            row_external = r.find_element_by_css_selector(external_port_cls).text
+            row_protocol = r.find_element_by_css_selector(protocol_col_cls).text
+            row_values = [row_active, row_service, row_ip, row_local, row_external, row_protocol]
+            table_value.append(row_values)
+    return table_value

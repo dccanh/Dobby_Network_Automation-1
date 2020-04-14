@@ -23,23 +23,24 @@ class ADVANCED(unittest.TestCase):
             raise
 
     def tearDown(self):
-        check_enable_ethernet()
-        try:
-            end_time = datetime.now()
-            duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        except:
-            # Connect by wifi if internet is down to handle exception for PPPoE
-            os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
-            time.sleep(1)
-            end_time = datetime.now()
-            duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-            time.sleep(5)
-            # Connect by LAN again
-            os.system('netsh wlan disconnect')
-            time.sleep(1)
-        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        # check_enable_ethernet()
+        # try:
+        #     end_time = datetime.now()
+        #     duration = str((end_time - self.start_time))
+        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        # except:
+        #     # Connect by wifi if internet is down to handle exception for PPPoE
+        #     os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
+        #     time.sleep(1)
+        #     end_time = datetime.now()
+        #     duration = str((end_time - self.start_time))
+        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        #     time.sleep(5)
+        #     # Connect by LAN again
+        #     os.system('netsh wlan disconnect')
+        #     time.sleep(1)
+        # write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        write_to_excel_tmp(self.key, self.list_steps, self.def_name)
         self.driver.quit()
     # OK F
     def test_08_ADVANCED_Local_Access_and_External_Access_confirmation(self):
@@ -327,157 +328,164 @@ class ADVANCED(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_29_ADVANCED_Check_message_for_exception_case_Port_Forwarding(self):
+    def test_29_ADVANCED_Port_Forwarding_message(self):
         self.key = 'ADVANCED_29'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        # factory_dut()
+        # =======================================
+        SERVICE_TYPE_3 = 'Test01'
+        IP_ADDRESS_3 = '192.168.1.2'
+        IP_ADDRESS_3_SPLIT = IP_ADDRESS_3.split('.')[-1]
+        LOCAL_START_END_3 = '1 - 1'
+        LOCAL_START_END_3_SPLIT = LOCAL_START_END_3.split(' - ')
+        EXTERNAL_START_END_3 = '1 - 1'
+        EXTERNAL_START_END_3_SPLIT = EXTERNAL_START_END_3.split(' - ')
+        PROTOCOL_TYPE_3 = 'TCP'
 
-        URL_LOGIN = get_config('URL', 'url')
-        LOCAL_START_END = ['100', '200']
-        EXTERNAL_START_END = ['201', '250']
+        SERVICE_TYPE_4 = 'Test02'
+        IP_ADDRESS_4 = '192.168.1.1'
+        IP_ADDRESS_4_SPLIT = IP_ADDRESS_4.split('.')[-1]
+        LOCAL_START_END_4 = '2 - 2'
+        LOCAL_START_END_4_SPLIT = LOCAL_START_END_4.split(' - ')
+        EXTERNAL_START_END_4 = '2 - 2'
+        EXTERNAL_START_END_4_SPLIT = EXTERNAL_START_END_4.split(' - ')
+        PROTOCOL_TYPE_4 = 'TCP'
+
+        SERVICE_TYPE_5 = 'Test03'
+        IP_ADDRESS_5 = '192.168.1.2'
+        IP_ADDRESS_5_SPLIT = IP_ADDRESS_5.split('.')[-1]
+        LOCAL_START_END_5 = '10 - 20'
+        LOCAL_START_END_5_SPLIT = LOCAL_START_END_5.split(' - ')
+        EXTERNAL_START_END_5 = '15 - 25'
+        EXTERNAL_START_END_5_SPLIT = EXTERNAL_START_END_5.split(' - ')
+        PROTOCOL_TYPE_5 = 'TCP'
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         try:
-            # Login
             grand_login(driver)
 
-            # Goto Advanced > WoL
             goto_menu(driver, advanced_tab, advanced_portforwarding_tab)
             wait_popup_disappear(driver, dialog_loading)
+            title = driver.find_element_by_css_selector(ele_title_page).text
 
-            # Enable DMZ
-            dmz_block = driver.find_element_by_css_selector(dmz_card)
-            dmz_btn = dmz_block.find_element_by_css_selector(select)
-            dmz_input = dmz_btn.find_element_by_css_selector(input)
-            if not dmz_input.is_selected():
-                dmz_btn.click()
-            # Get block again
-            dmz_block = driver.find_element_by_css_selector(dmz_card)
-            dmz_block.find_element_by_css_selector(edit_cls).click()
-            time.sleep(0.2)
-            ip_addr_field = dmz_block.find_element_by_css_selector(ip_address_cls)
-            ip_addr_input = ip_addr_field.find_element_by_css_selector(input)
-            ActionChains(driver).move_to_element(ip_addr_input).click().key_down(Keys.CONTROL).send_keys(
-                'a').key_up(Keys.CONTROL).send_keys('1').perform()
-            # Save
-            driver.find_element_by_css_selector(btn_save).click()
-            time.sleep(0.2)
-            error_msg = driver.find_element_by_css_selector(custom_error_cls).text
-            # click Cancel
-            driver.find_element_by_css_selector(btn_cancel).click()
-
-            list_actual1 = [error_msg]
-            list_expected1 = [exp_destination_same_lan_ip_error_msg]
+            list_actual1 = [title]
+            list_expected1 = ['Advanced > Port Forwarding/DMZ']
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1. Enable DMZ, put Destination same as LAN ip address: Check error message.'
+                '[Pass] 1, 2. Login. Goto PortForwarding/DMZ. Check page title. '
                 f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1. Enable DMZ, put Destination same as LAN ip address: Check error message. '
+                f'[Fail] 1, 2. Login. Goto PortForwarding/DMZ. Check page title. '
                 f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
-            list_step_fail.append(
-                '1. Assertion wong.')
+            list_step_fail.append('1, 2. Assertion wong.')
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2
         try:
             port_forwarding_block = driver.find_element_by_css_selector(port_forwarding_card)
-            # Click Add button to change setting
-            port_forwarding_block.find_element_by_css_selector(add_class).click()
+            add_port_forwarding(port_forwarding_block,
+                                SERVICE_TYPE_3,
+                                IP_ADDRESS_3_SPLIT,
+                                LOCAL_START_END_3_SPLIT,
+                                EXTERNAL_START_END_3_SPLIT,
+                                PROTOCOL_TYPE_3)
+            # Save
+            driver.find_element_by_css_selector(btn_save).click()
             time.sleep(1)
-            edit_field = port_forwarding_block.find_element_by_css_selector(edit_mode)
-            # Fill Service type
-            service_type = edit_field.find_element_by_css_selector(service_type_cls)
-            service_type.find_element_by_css_selector(input).send_keys('admin')
-            # Local Port
-            local_port = edit_field.find_element_by_css_selector(local_port_cls)
-            local_port_input = local_port.find_elements_by_css_selector(input)
-            for i, v in zip(local_port_input, LOCAL_START_END):
-                i.clear()
-                i.send_keys(v)
-            # External Port
-            external_port = edit_field.find_element_by_css_selector(external_port_cls)
-            external_port_input = external_port.find_elements_by_css_selector(input)
-            for i, v in zip(external_port_input, EXTERNAL_START_END):
-                i.clear()
-                i.send_keys(v)
-
-            port_forwarding_block.find_element_by_css_selector(btn_save).click()
-            time.sleep(0.5)
-            warning_msg = driver.find_element_by_css_selector(complete_dialog_msg).text
-            time.sleep(0.5)
+            port_forwarding_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(0.5)
-            # External Port
-            external_port = edit_field.find_element_by_css_selector(external_port_cls)
-            external_port_input = external_port.find_elements_by_css_selector(input)
-            for i, v in zip(external_port_input, LOCAL_START_END):
-                i.clear()
-                i.send_keys(v)
-            port_forwarding_block.find_element_by_css_selector(btn_save).click()
-            time.sleep(0.5)
-
-            list_actual2 = [warning_msg]
-            list_expected2 = [exp_warning_local_port_same_external]
-            check = assert_list(list_actual2, list_expected2)
-            self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Put External ports different Local ports: Check Warning message'
-                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
-        except:
-            self.list_steps.append(
-                f'[Fail] 2. Put External ports different Local ports: Check Warning message. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
-            list_step_fail.append('2. Assertion wong.')
-
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
-        try:
-            port_forwarding_block = driver.find_element_by_css_selector(port_forwarding_card)
-            # Click Add button to change setting
-            port_forwarding_block.find_element_by_css_selector(add_class).click()
             time.sleep(1)
-            edit_field = port_forwarding_block.find_element_by_css_selector(edit_mode)
-            # Fill Service type
-            service_type = edit_field.find_element_by_css_selector(service_type_cls)
-            service_type.find_element_by_css_selector(input).send_keys('admin')
-            # Local Port
-            local_port = edit_field.find_element_by_css_selector(local_port_cls)
-            local_port_input = local_port.find_elements_by_css_selector(input)
-            for i, v in zip(local_port_input, LOCAL_START_END):
-                i.clear()
-                i.send_keys(v)
-            # External Port
-            external_port = edit_field.find_element_by_css_selector(external_port_cls)
-            external_port_input = external_port.find_elements_by_css_selector(input)
-            for i, v in zip(external_port_input, LOCAL_START_END):
-                i.clear()
-                i.send_keys(v)
+            table_value = get_port_forwarding_table(driver)
 
-            port_forwarding_block.find_element_by_css_selector(btn_save).click()
-            time.sleep(0.5)
-            warning_msg = driver.find_element_by_css_selector(complete_dialog_msg).text
-            time.sleep(0.5)
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(0.5)
-
-            list_actual3 = [warning_msg]
-            list_expected3 = [exp_add_local_external_port_exist]
+            list_actual3 = [table_value[-1]]
+            list_expected3 = [[True, SERVICE_TYPE_3, IP_ADDRESS_3, LOCAL_START_END_3, EXTERNAL_START_END_3, PROTOCOL_TYPE_3]]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Put Local/External ports same as previous rule: Check Warning message'
-                                   f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            self.list_steps.append(
+                '[Pass] 3. Add a Port Forwarding. Check Add successfully. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Add a Port Forwarding. Check Add successfully.  '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        try:
+            port_forwarding_block = driver.find_element_by_css_selector(port_forwarding_card)
+            add_port_forwarding(port_forwarding_block,
+                                SERVICE_TYPE_4,
+                                IP_ADDRESS_4_SPLIT,
+                                LOCAL_START_END_4_SPLIT,
+                                EXTERNAL_START_END_4_SPLIT,
+                                PROTOCOL_TYPE_4)
+            # Save
+            driver.find_element_by_css_selector(btn_save).click()
+            time.sleep(1)
+            # Check popup error display
+            check_waring_popup = len(driver.find_elements_by_css_selector(dialog_content)) > 0
+            if not check_waring_popup:
+                port_forwarding_block.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+            else:
+                driver.find_element_by_css_selector(btn_ok).click()
+
+            table_value_4 = get_port_forwarding_table(driver)
+
+            list_actual4 = [check_waring_popup, table_value_4[-1]]
+            list_expected4 = [return_true,
+                [True, SERVICE_TYPE_4, IP_ADDRESS_4, LOCAL_START_END_4, EXTERNAL_START_END_4, PROTOCOL_TYPE_4]]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 4. Add PF IP same as LAN IP. Check Popup warning displayed. If not Check PF just added. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Add PF IP same as LAN IP. Check Popup warning displayed. If not Check PF just added.  '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        try:
+            port_forwarding_block = driver.find_element_by_css_selector(port_forwarding_card)
+            add_port_forwarding(port_forwarding_block,
+                                SERVICE_TYPE_5,
+                                IP_ADDRESS_5_SPLIT,
+                                LOCAL_START_END_5_SPLIT,
+                                EXTERNAL_START_END_5_SPLIT,
+                                PROTOCOL_TYPE_5)
+            driver.find_element_by_css_selector(btn_save).click()
+            time.sleep(1)
+
+            check_confirm_message = driver.find_element_by_css_selector(complete_dialog_msg).text
+
+            driver.find_element_by_css_selector(btn_ok).click()
+
+
+            list_actual5 = [check_confirm_message]
+            list_expected5 = [exp_warning_local_port_same_external]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Put External ports different Local ports: Check Warning message'
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Put Local/External ports same as previous rule: Check Warning message. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                f'[Fail] 5. Put External ports different Local ports: Check Warning message. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
-            list_step_fail.append('3. Assertion wong.')
+            list_step_fail.append('5. Assertion wong.')
+
         self.assertListEqual(list_step_fail, [])
 
-    # # Chưa implement Check forwarding from the external network PC
-    # def test_30_Verify_Port_Forwarding_Correction(self):
+    # Chưa implement Check forwarding from the external network PC
+    # def test_30_Port_Forwarding_Edit(self):
     #     self.key = 'ADVANCED_30'
     #     driver = self.driver
     #     self.def_name = get_func_name()
@@ -485,7 +493,7 @@ class ADVANCED(unittest.TestCase):
     #     self.list_steps = []
     #
     #     URL_LOGIN = get_config('URL', 'url')
-    #     SERVICE_TEST = 'admin'
+    #     SERVICE_TEST = 'Test03'
     #     IP_ADDRESS_TEST = '192.168.1.3'
     #     IP_ADDRESS_SPLIT = IP_ADDRESS_TEST.split('.')[-1]
     #     START_END_1 = '100 - 200'
@@ -496,11 +504,7 @@ class ADVANCED(unittest.TestCase):
     #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #     try:
     #         # Login
-    #         login(driver)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-    #             driver.get(URL_LOGIN + homepage)
-    #             wait_popup_disappear(driver, dialog_loading)
+    #         grand_login(driver)
     #
     #         # Goto Advanced > WoL
     #         goto_menu(driver, advanced_tab, advanced_portforwarding_tab)

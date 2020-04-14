@@ -369,7 +369,8 @@ class WIRELESS(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Check Default Password of 2G, 5G \n')
+                f'[Pass] 1,2. Check Default Password of 2G, 5G. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1,2. Check Default Password of 2G, 5G. '
@@ -469,12 +470,13 @@ class WIRELESS(unittest.TestCase):
             expected_pw = PASSWORD_4[:63]
             save_config(config_path, 'GENERAL', 'wifi_pw', expected_pw)
 
-
             list_actual = [pw_2g, pw_5g]
             list_expected = [expected_pw, expected_pw]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Change password > 63 chars of  2G/5G ')
+            self.list_steps.append(
+                f'[Pass] 4. Change password > 63 chars of  2G/5G. '
+                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
                 f'[Fail] 4. Change password > 63 chars of  2G/5G . '
