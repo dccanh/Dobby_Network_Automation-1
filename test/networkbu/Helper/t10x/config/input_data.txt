@@ -85,6 +85,7 @@ nf_youtube_url = https://www.youtube.com/watch?v=e6iGJIYUroo
 
 
 [NETWORK]
+nw24_reserved_ip = 192.168.1.15
 nw25_mac2 = 22:22:22:22:22:22
 nw25_ip2 = 192.168.1.16
 nw25_mac4 = 44:44:44:44:44:44
@@ -98,6 +99,8 @@ nw27_ip2 = 192.168.1.10
 nw_28_step3_mac = 12:12:12:12:12:12
 nw28_step3_ip_address = 192.168.1.200
 nw28_step4_ip_address = 192.168.1.90
+nw_51_new_ssid_2g = Wireless Network Name 2G
+nw_51_new_ssid_5g = Wireless Network Name 5G
 
 
 [WIRELESS]
