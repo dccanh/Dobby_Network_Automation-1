@@ -1379,7 +1379,7 @@ def check_connect_to_google():
     driver2.quit()
     return check_google
 
-def check_connect_to_youtube(driver):
+def check_connect_to_youtube():
     driver2 = webdriver.Chrome(driver_path)
     YOUTUBE_URL = get_config('COMMON', 'youtube_url', input_data_path)
     driver2.get(YOUTUBE_URL)
@@ -1462,3 +1462,212 @@ def get_port_forwarding_table(driver):
             row_values = [row_active, row_service, row_ip, row_local, row_external, row_protocol]
             table_value.append(row_values)
     return table_value
+
+
+def add_a_parental_control_rule(driver):
+    rule_block = driver.find_element_by_css_selector(parental_rule_card)
+    # Click Add 1
+    rule_block.find_element_by_css_selector(add_class).click()
+    time.sleep(1)
+    rule_block = driver.find_element_by_css_selector(parental_rule_card)
+    # Edit mode
+    edit_field = rule_block.find_element_by_css_selector(edit_mode)
+
+    device_name_field = edit_field.find_element_by_css_selector(name_cls)
+    device_name_field.find_element_by_css_selector(input).click()
+
+    # Select all
+    opts = device_name_field.find_elements_by_css_selector(secure_value_in_drop_down)
+    for i in range(len(opts) - 1):
+        opts = device_name_field.find_elements_by_css_selector(secure_value_in_drop_down)
+        opts[0].click()
+        break
+    time.sleep(1)
+    # Setup the filter
+    edit_field.find_element_by_css_selector('.service-filter').find_element_by_css_selector(apply).click()
+    time.sleep(1)
+
+    ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
+    for f in ls_service:
+        if f.text == 'Social Network':
+            f.click()
+            break
+    time.sleep(1)
+    ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
+    for s in ls_service_sub:
+        if s.text == 'facebook':
+            if not len(s.find_elements_by_css_selector('.selected-icon')) > 0:
+                s.click()
+                break
+    time.sleep(1)
+    driver.find_element_by_css_selector(btn_ok).click()
+    time.sleep(1)
+    driver.find_element_by_css_selector(btn_save).click()
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(2)
+
+
+def add_a_ip_port_filtering(driver, DESC_VALUE, IP_ADDRESS_SPLIT, PORT_START_END, PROTOCOL_TYPE):
+    filter_block = driver.find_element_by_css_selector(ele_ip_port_filtering)
+    # Click Add 1
+    filter_block.find_element_by_css_selector(add_class).click()
+    time.sleep(1)
+    filter_block = driver.find_element_by_css_selector(ele_ip_port_filtering)
+    # Edit mode
+    edit_field = filter_block.find_element_by_css_selector(edit_mode)
+
+    # Fill Service type
+    description_box = edit_field.find_element_by_css_selector(description)
+    description_box.find_element_by_css_selector(input).send_keys(DESC_VALUE)
+    # IP address
+    ip_address = edit_field.find_element_by_css_selector(ip_address_cls)
+    ip_address_box = ip_address.find_element_by_css_selector(input)
+    for i in range(2):
+        ip_address_box.clear()
+        ip_address_box.send_keys(IP_ADDRESS_SPLIT)
+    # Port Start End
+
+    # for i in range(2):
+    #     for i, v in zip(port_input, PORT_START_END):
+    #         i.clear()
+    #         i.send_keys(v)
+    time.sleep(0.5)
+    port_box = edit_field.find_element_by_css_selector(ele_port)
+    port_input = port_box.find_elements_by_css_selector(input)
+
+
+    for i in port_input:
+        # for i in range(2):
+        i.clear()
+        i.clear()
+        i.send_keys('10')
+        time.sleep(0.2)
+
+    time.sleep(0.5)
+    # Protocol
+    protocol_box = edit_field.find_element_by_css_selector(ele_protocol)
+    protocol_box.find_element_by_css_selector(option_select).click()
+    time.sleep(0.2)
+    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+    for o in ls_option:
+        if o.text == PROTOCOL_TYPE:
+            o.click()
+            time.sleep(1)
+            break
+
+    driver.find_element_by_css_selector(btn_save).click()
+    time.sleep(2)
+    driver.find_element_by_css_selector(apply).click()
+    wait_popup_disappear(driver, dialog_loading)
+    driver.find_element_by_css_selector(btn_ok).click()
+    time.sleep(0.5)
+
+
+def get_ip_port_filtering_table(driver):
+    table_value = list()
+    ls_rows = driver.find_elements_by_css_selector(rows)
+    if len(ls_rows):
+        for r in ls_rows:
+            row_active = r.find_element_by_css_selector(input).is_selected()
+            row_desc = r.find_element_by_css_selector(description).text
+            row_ip = r.find_element_by_css_selector(ip_address_cls).text
+            row_port = r.find_element_by_css_selector(ele_port).text
+            row_protocol = r.find_element_by_css_selector(ele_protocol).text
+            row_values = [row_active, row_desc, row_ip, row_port, row_protocol]
+            table_value.append(row_values)
+    return table_value
+
+
+def connect_wifi_by_command(wifi_name, wifi_pw):
+    write_data_to_xml(wifi_default_file_path, new_name=wifi_name, new_pw=wifi_pw)
+    time.sleep(1)
+    os.system(f'netsh wlan delete profile name="{wifi_name}"')
+    time.sleep(0.5)
+    # Connect Default 2GHz
+    os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+    time.sleep(0.5)
+    os.system(f'netsh wlan connect ssid="{wifi_name}" name="{wifi_name}"')
+    time.sleep(10)
+    return current_connected_wifi()
+
+
+
+def add_a_mac_filtering(driver, OTHER_MAC=''):
+    mac_block = driver.find_element_by_css_selector(ele_mac_filtering)
+    # Click Add 1
+    mac_block.find_element_by_css_selector(add_class).click()
+    time.sleep(1)
+    mac_block = driver.find_element_by_css_selector(ele_mac_filtering)
+    # Edit mode
+    edit_field = mac_block.find_element_by_css_selector(edit_mode)
+
+    # Select all
+    mac_field = edit_field.find_element_by_css_selector(wol_mac_addr)
+    mac_field.find_element_by_css_selector(input).click()
+    if OTHER_MAC == '':
+        opts = mac_field.find_elements_by_css_selector(secure_value_in_drop_down)
+        for i in range(len(opts) - 1):
+            opts = mac_field.find_elements_by_css_selector(secure_value_in_drop_down)
+            opts[0].click()
+            break
+        time.sleep(1)
+        time.sleep(2)
+        driver.find_element_by_css_selector(btn_save).click()
+    else:
+        CORRECT_OTHER_MAC = OTHER_MAC.replace(':', '')
+        driver.find_element_by_css_selector('.user-define').click()
+        time.sleep(0.5)
+        driver.find_element_by_css_selector('.mac-address input').send_keys(CORRECT_OTHER_MAC)
+        time.sleep(0.5)
+        if driver.find_element_by_css_selector(btn_save).is_enabled():
+            driver.find_element_by_css_selector(btn_save).click()
+            time.sleep(0.5)
+        else:
+            driver.find_element_by_css_selector('.input-cancel-button').click()
+
+            edit_field = driver.find_element_by_css_selector(edit_mode)
+            mac_field = edit_field.find_element_by_css_selector(wol_mac_addr)
+            mac_field.find_element_by_css_selector(input).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector('.user-define').click()
+            time.sleep(0.5)
+            tmp_mac = random_mac_address().replace(':', '')
+            driver.find_element_by_css_selector('.mac-address input').send_keys(tmp_mac)
+            driver.find_element_by_css_selector(btn_save).click()
+            time.sleep(0.5)
+
+
+    time.sleep(1)
+    driver.find_element_by_css_selector(apply).click()
+    time.sleep(0.5)
+    driver.find_element_by_css_selector(btn_ok).click()
+    wait_popup_disappear(driver, dialog_loading)
+    driver.find_element_by_css_selector(btn_ok).click()
+    wait_popup_disappear(driver, dialog_loading)
+
+def get_mac_filtering_table(driver):
+    mac_block = driver.find_element_by_css_selector(ele_mac_filtering)
+    table_value = list()
+    ls_rows = mac_block.find_elements_by_css_selector(rows)
+    if len(ls_rows):
+        for r in ls_rows:
+            row_active = r.find_element_by_css_selector(input).is_selected()
+            row_device_name = r.find_element_by_css_selector(ele_mac_device_name).text
+            row_mac = r.find_element_by_css_selector(wol_mac_addr).text
+            row_values = [row_active, row_device_name, row_mac]
+            table_value.append(row_values)
+    return table_value
+
+
+def random_mac_address():
+    import random
+    ls_random = ['0', '2', '4', '6', '8', 'A', 'C', 'E']
+    mac = [
+        random.choices(ls_random, k=2),
+        random.choices(ls_random, k=2),
+        random.choices(ls_random, k=2),
+        random.choices(ls_random, k=2),
+        random.choices(ls_random, k=2),
+        random.choices(ls_random, k=2)]
+    return ':'.join([''.join(i) for i in mac]).upper()
+

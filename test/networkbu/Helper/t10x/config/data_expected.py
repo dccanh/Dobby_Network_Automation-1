@@ -117,6 +117,7 @@ exp_add_local_external_port_exist = 'This Local Port/External Port already exist
 exp_none_text = ''
 exp_error_msg_ip_same_lan_ip = 'Enter another IP address. Cannot same as the LAN IP address.'
 exp_advance_restore_confirm_msg = 'Do you want to restore to default wireless settings?'
+exp_subtitle_set_website_app = 'You can block websites and apps based on the filtering options.\nSelect items up to 10.'
 # ~~~~~~~~~~~~~~~~~~~~ System
 # exp_backup_file_name = 'Setting_HUMAX T10X.bin'
 exp_backup_file_name = f'Setting_{get_config("GENERAL", "model")}.bin'

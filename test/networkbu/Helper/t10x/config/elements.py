@@ -186,6 +186,13 @@ block_schedule = 'td.schedule>span'
 ele_firewall_medium = '.medium'
 ele_firewall_lv_medium = '.circle-icon.medium'
 ele_security_check_parental = '.toggle-right'
+
+ele_ip_port_filtering = '.ip-port-filtering-card'
+ele_port = '.port'
+ele_protocol = '.protocol '
+
+ele_mac_filtering = '.mac-filtering-card'
+ele_mac_device_name = '.device-name'
 # ~~~~~~~~~~~~~~~~ ADVANCED
 advanced_extra_info = '.server-guide>div'
 wol_mac_addr = '.mac-address'

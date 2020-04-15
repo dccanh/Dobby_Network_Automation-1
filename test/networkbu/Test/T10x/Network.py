@@ -1245,7 +1245,7 @@ class NETWORK(unittest.TestCase):
                             break
                     break
 
-            exp_secondary_1 = 'USB'
+            exp_secondary_1 = 'USB Broadband'
             exp_secondary_2 = 'Ethernet'
             exp_secondary_3 = 'Ethernet'
             list_actual = [check_secondary_1, check_secondary_2, check_secondary_3]
