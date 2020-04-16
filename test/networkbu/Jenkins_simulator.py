@@ -14,6 +14,7 @@ from Test.T10x.Non_Function import *
 import threading
 import signal
 import glob, subprocess
+from Helper.t10x.common import factory_dut
 os.chdir(root_dir)
 try:
     import keyboard
@@ -552,6 +553,9 @@ def abort():
     threadAbort = threading.Thread(target=_abortBtn)
     threadAbort.start()
     # exit_Btn()
+
+factoryButton = Button(root, text=" Factory", command=lambda: factory_dut(), height=20, width=80, borderwidth=4, image=photo_run, compound=LEFT)
+factoryButton.place(x=140, y=370)
 
 
 mergeButton = Button(root, text=" Run", command=run, height=20, width=80, borderwidth=4, image=photo_run, compound=LEFT)
