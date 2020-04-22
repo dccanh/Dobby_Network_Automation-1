@@ -44,3 +44,6 @@ firmware_4_path = os.path.join(files_path, "t10x_fullimage_4.00.12_rev11.img")
 firmware_3_path = os.path.join(files_path, "t10x_fullimage_3.00.05_rev09.img")
 
 report_offline_path = os.path.join(root_dir, "Report", "T10X", "T10x_report_automation.xlsx")
+
+image_path = os.path.join(root_dir, "Image")
+run_image_photo = os.path.join(image_path, 'run.png')

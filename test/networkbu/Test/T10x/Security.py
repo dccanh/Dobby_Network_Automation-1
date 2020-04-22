@@ -2142,5 +2142,1207 @@ class SECURITY(unittest.TestCase):
             list_step_fail.append('5, 6. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
+
+    def test_27_SECURITY_Security_Check(self):
+        self.key = 'SECURITY_27'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        NEW_PW_1 = '1qaz'
+        NEW_PW_2 = 'abc123@'
+        try:
+            grand_login(driver)
+            # Goto media share USB
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            check_title = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual1 = [check_title]
+            list_expected1 = ['Security check']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Login. Goto Security > Security Check page. Check page title. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Login. Goto Security > Security Check page. Check page title. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            list_step_fail.append('1, 2. Assertion wong.')
+
+        try:
+            # Check Security list
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            list_secure_label = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            list_secure_label_text = [i.text for i in list_secure_label]
+
+            list_actual3 = list_secure_label_text
+            list_expected3 = ['Login Password Changed',
+                              'Login Password Security Level',
+                              '2.4GHz Wireless Password Security Type',
+                              '5GHz Wireless Password Security Type',
+                              'UPnP Service',
+                              'Remote Access',
+                              'Ping from WAN',
+                              'DMZ',
+                              'Port Triggering',
+                              'Port Forwarding',
+                              'Anonymous Login to FTP Server']
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Check list label of Security Check Block. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3.Check list label of Security Check Block. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        try:
+            grand_login(driver)
+            # Goto media share USB
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Login Password Changed':
+                    check_lg_pw_changed_value = v.text
+                    break
+
+            list_actual4 = [check_lg_pw_changed_value]
+            list_expected4 = ['Yes']
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Check Value of Login Password Changed. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Check Value of Login Password Changed. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        try:
+            CURRENT_PW = get_config('ACCOUNT', 'password')
+
+            goto_system(driver, ele_sys_change_pw)
+            change_password(driver, CURRENT_PW, NEW_PW_1)
+            time.sleep(1)
+            #
+            driver.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(2)
+            save_config(config_path, 'ACCOUNT', 'password', NEW_PW_1)
+            time.sleep(1)
+            # =======================================================
+            grand_login(driver)
+            # Goto media share USB
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Login Password Security Level':
+                    check_lg_pw_changed_value_2 = v.text
+                    break
+
+            list_actual5 = [check_lg_pw_changed_value_2]
+            list_expected5 = ['Medium']
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Change PW to Good Password. '
+                f'Check value of Login Password Security Level. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Change PW to Good Password. '
+                f'Check value of Login Password Security Level. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+            list_step_fail.append('5. Assertion wong.')
+
+        try:
+            CURRENT_PW = get_config('ACCOUNT', 'password')
+
+            goto_system(driver, ele_sys_change_pw)
+            change_password(driver, CURRENT_PW, NEW_PW_2)
+            time.sleep(1)
+            #
+            driver.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(2)
+            save_config(config_path, 'ACCOUNT', 'password', NEW_PW_2)
+            time.sleep(1)
+            # =======================================================
+            grand_login(driver)
+            # Goto media share USB
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Login Password Security Level':
+                    check_lg_pw_changed_value_3 = v.text
+                    break
+
+            list_actual6 = [check_lg_pw_changed_value_3]
+            list_expected6 = ['Strong']
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Change PW to Strong Password. '
+                f'Check value of Login Password Security Level. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Change PW to Strong Password. '
+                f'Check value of Login Password Security Level. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+            list_step_fail.append('6. Assertion wong.')
+        # Step 7
+        try:
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+
+            block_2g_card = driver.find_element_by_css_selector(wl_primary_card)
+            # Change Security type
+            wireless_change_choose_option(block_2g_card, secure_value_field, VALUE_OPTION='NONE')
+
+            block_2g_card.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == '2.4GHz Wireless Password Security Type':
+                    check_24g_wireless = v.text
+                    time.sleep(1)
+                    v.click()
+                    time.sleep(1)
+                    break
+            check_current_screen = detect_current_menu(driver)
+
+            list_actual7 = [check_24g_wireless, check_current_screen]
+            list_expected7 = ['Weak(None)', ('WIRELESS', 'Primary Network')]
+            check = assert_list(list_actual7, list_expected7)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 7. Change Wifi 24GHz to NONE. '
+                f'Check value of 2.4GHz Wireless Password Security Type. '
+                f'Click to link text. Check Re-direct to Wireless > Primary Network. '
+                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 7. Change Wifi 24GHz to NONE. '
+                f'Check value of 2.4GHz Wireless Password Security Type. '
+                f'Click to link text. Check Re-direct to Wireless > Primary Network. '
+                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+            list_step_fail.append('7. Assertion wong.')
+        # Step 8
+        try:
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+            # =======================================================
+            block_2g_card = driver.find_element_by_css_selector(wl_primary_card)
+            # Change Security type
+            wireless_change_choose_option(block_2g_card, secure_value_field, VALUE_OPTION='WEP')
+            wireless_check_pw_eye(driver, block_2g_card, change_pw=True, new_pw='123@!')
+
+            block_2g_card.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == '2.4GHz Wireless Password Security Type':
+                    check_24g_wireless = v.text
+                    time.sleep(1)
+                    v.click()
+                    time.sleep(1)
+                    break
+            check_current_screen = detect_current_menu(driver)
+
+            list_actual8 = [check_24g_wireless, check_current_screen]
+            list_expected8 = ['Weak(WEP)', ('WIRELESS', 'Primary Network')]
+            check = assert_list(list_actual8, list_expected8)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 8. Change Wifi 24GHz to WEP. '
+                f'Check value of 2.4GHz Wireless Password Security Type. '
+                f'Click to link text. Check Re-direct to Wireless > Primary Network. '
+                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8. Change Wifi 24GHz to WEP. '
+                f'Check value of 2.4GHz Wireless Password Security Type. '
+                f'Click to link text. Check Re-direct to Wireless > Primary Network. '
+                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+            list_step_fail.append('8. Assertion wong.')
+        # Step 9
+        try:
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+            #
+            block_2g_card = driver.find_element_by_css_selector(wl_primary_card)
+            #
+            wireless_change_choose_option(block_2g_card, secure_value_field, VALUE_OPTION='WPA2-PSK')
+            #
+            block_2g_card.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            #
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+            #
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == '2.4GHz Wireless Password Security Type':
+                    check_24g_1 = v.text
+                    break
+            # ========================================================
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+            #
+            block_2g_card = driver.find_element_by_css_selector(wl_primary_card)
+            #
+            wireless_change_choose_option(block_2g_card, secure_value_field, VALUE_OPTION='WPA2/WPA-PSK')
+            #
+            block_2g_card.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            #
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+            #
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == '2.4GHz Wireless Password Security Type':
+                    check_24g_2 = v.text
+                    break
+
+            # ========================================================
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+            #
+            block_2g_card = driver.find_element_by_css_selector(wl_primary_card)
+            wireless_change_choose_option(block_2g_card, secure_value_field, VALUE_OPTION='WPA2-Enterprise')
+            #
+            block_2g_card = driver.find_element_by_css_selector(wl_primary_card)
+            labels_2 = block_2g_card.find_elements_by_css_selector(label_name_in_2g)
+            values_2 = block_2g_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels_2, values_2):
+                if l.text == 'RADIUS Key':
+                    v.find_element_by_css_selector(input).send_keys('5')
+                    break
+            #
+            block_2g_card.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            #
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+            #
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == '2.4GHz Wireless Password Security Type':
+                    check_24g_3 = v.text
+                    break
+
+            # ========================================================
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+            #
+            block_2g_card = driver.find_element_by_css_selector(wl_primary_card)
+            wireless_change_choose_option(block_2g_card, secure_value_field, VALUE_OPTION='WPA2/WPA-Enterprise')
+            #
+            block_2g_card = driver.find_element_by_css_selector(wl_primary_card)
+            labels_2 = block_2g_card.find_elements_by_css_selector(label_name_in_2g)
+            values_2 = block_2g_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels_2, values_2):
+                if l.text == 'RADIUS Key':
+                    v.find_element_by_css_selector(input).send_keys('5')
+                    break
+            #
+            block_2g_card.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            #
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+            #
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == '2.4GHz Wireless Password Security Type':
+                    check_24g_4 = v.text
+                    break
+
+            list_actual9 = [check_24g_1, check_24g_2, check_24g_3, check_24g_4]
+            list_expected9 = ['Good(WPA2-PSK)',
+                              'Good(WPA2/WPA-PSK)',
+                              'Good(WPA2-Enterprise)',
+                              'Good(WPA2/WPA-Enterprise)']
+            check = assert_list(list_actual9, list_expected9)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 9. Change Wifi 24GHz Security to WPA2-PSK, WPA2/WPA-PSK, WPA2-ENTERPRISE, WPA2/WPA-ENTERPRISE. '
+                f'Check value of 2.4GHz Wireless Password Security Type. '
+                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 9. Change Wifi 24GHz Security to WPA2-PSK, WPA2/WPA-PSK, WPA2-ENTERPRISE, WPA2/WPA-ENTERPRISE. '
+                f'Check value of 2.4GHz Wireless Password Security Type. '
+                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+            list_step_fail.append('9. Assertion wong.')
+        # Step 10
+        try:
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+            #
+            block_5g_card = driver.find_elements_by_css_selector(wl_primary_card)[1]
+            #
+            wireless_change_choose_option(block_5g_card, secure_value_field, VALUE_OPTION='NONE')
+            #
+            block_5g_card.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            #
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+            #
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == '5GHz Wireless Password Security Type':
+                    check_5g_wireless_1 = v.text
+                    time.sleep(1)
+                    v.click()
+                    time.sleep(1)
+                    break
+            check_current_screen_5 = detect_current_menu(driver)
+            # =======================================================
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+            #
+            block_5g_card = driver.find_elements_by_css_selector(wl_primary_card)[1]
+            #
+            wireless_change_choose_option(block_5g_card, secure_value_field, VALUE_OPTION='WEP')
+            wireless_check_pw_eye(driver, block_5g_card, change_pw=True, new_pw='123@!')
+            #
+            block_5g_card.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            #
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+            #
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == '5GHz Wireless Password Security Type':
+                    check_5g_wireless_2 = v.text
+                    time.sleep(1)
+                    break
+            # =======================================================
+
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+            #
+            block_5g_card = driver.find_elements_by_css_selector(wl_primary_card)[1]
+            #
+            wireless_change_choose_option(block_5g_card, secure_value_field, VALUE_OPTION='WPA2-PSK')
+            #
+            block_5g_card.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            #
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+            #
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == '5GHz Wireless Password Security Type':
+                    check_5g_3 = v.text
+                    break
+            # ========================================================
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+            #
+            block_5g_card = driver.find_elements_by_css_selector(wl_primary_card)[1]
+            #
+            wireless_change_choose_option(block_5g_card, secure_value_field, VALUE_OPTION='WPA2/WPA-PSK')
+            #
+            block_5g_card.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            #
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+            #
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == '5GHz Wireless Password Security Type':
+                    check_5g_4 = v.text
+                    break
+
+            # ========================================================
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+            #
+            block_5g_card = driver.find_elements_by_css_selector(wl_primary_card)[1]
+            wireless_change_choose_option(block_5g_card, secure_value_field, VALUE_OPTION='WPA2-Enterprise')
+            #
+            block_5g_card = driver.find_elements_by_css_selector(wl_primary_card)[1]
+            labels_2 = block_5g_card.find_elements_by_css_selector(label_name_in_2g)
+            values_2 = block_5g_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels_2, values_2):
+                if l.text == 'RADIUS Key':
+                    v.find_element_by_css_selector(input).send_keys('5')
+                    break
+            #
+            block_5g_card.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            #
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+            #
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == '5GHz Wireless Password Security Type':
+                    check_5g_5 = v.text
+                    break
+
+            # ========================================================
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            time.sleep(1)
+            #
+            block_5g_card = driver.find_elements_by_css_selector(wl_primary_card)[1]
+            wireless_change_choose_option(block_5g_card, secure_value_field, VALUE_OPTION='WPA2/WPA-Enterprise')
+            #
+            block_5g_card = driver.find_elements_by_css_selector(wl_primary_card)[1]
+            labels_2 = block_5g_card.find_elements_by_css_selector(label_name_in_2g)
+            values_2 = block_5g_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels_2, values_2):
+                if l.text == 'RADIUS Key':
+                    v.find_element_by_css_selector(input).send_keys('5')
+                    break
+            #
+            block_5g_card.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            #
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+            #
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == '5GHz Wireless Password Security Type':
+                    check_5g_6 = v.text
+                    break
+
+            list_actual10 = [check_5g_wireless_1,
+                             check_5g_wireless_2,
+                             check_5g_3,
+                             check_5g_4,
+                             check_5g_5,
+                             check_5g_6,
+                             check_current_screen_5]
+            list_expected10 = ['Weak(None)',
+                               'Weak(WEP)',
+                               'Good(WPA2-PSK)',
+                               'Good(WPA2/WPA-PSK)',
+                               'Good(WPA2-Enterprise)',
+                               'Good(WPA2/WPA-Enterprise)',
+                               ('WIRELESS', 'Primary Network')]
+            check = assert_list(list_actual10, list_expected10)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 10. Change Wifi 5GHz Security to NONE, WEP, WPA2-PSK, WPA2/WPA-PSK, WPA2-ENTERPRISE, WPA2/WPA-ENTERPRISE. '
+                f'Check value of 5GHz Wireless Password Security Type. '
+                f'Check click to link text to Re-direct to Wireless > Primary Network. '
+                f'Actual: {str(list_actual10)}. Expected: {str(list_expected10)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 10. Change Wifi 5GHz Security to NONE, WEP, WPA2-PSK, WPA2/WPA-PSK, WPA2-ENTERPRISE, WPA2/WPA-ENTERPRISE. '
+                f'Check value of 5GHz Wireless Password Security Type. '
+                f'Check click to link text to Re-direct to Wireless > Primary Network. '
+                f'Actual: {str(list_actual10)}. Expected: {str(list_expected10)}')
+            list_step_fail.append('10. Assertion wong.')
+
+        # Step 11
+        try:
+            goto_menu(driver, advanced_tab, advanced_upnp_tab)
+            time.sleep(1)
+            # =======================================================
+            block_unpn = driver.find_element_by_css_selector(ele_upnp_card)
+            upnp_check_box = block_unpn.find_element_by_css_selector(select)
+            if upnp_check_box.find_element_by_css_selector(input).is_selected():
+                upnp_check_box.click()
+                block_unpn.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'UPnP Service':
+                    check_disabled_upnp = v.text
+                    break
+            # =======================================================
+            goto_menu(driver, advanced_tab, advanced_upnp_tab)
+            time.sleep(1)
+            # =======================================================
+            block_unpn = driver.find_element_by_css_selector(ele_upnp_card)
+            upnp_check_box = block_unpn.find_element_by_css_selector(select)
+            if not upnp_check_box.find_element_by_css_selector(input).is_selected():
+                upnp_check_box.click()
+                block_unpn.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'UPnP Service':
+                    check_enabled_upnp = v.text
+                    time.sleep(0.5)
+                    v.click()
+                    time.sleep(0.5)
+                    break
+            check_upnp_redirect = detect_current_menu(driver)
+
+            list_actual11 = [check_disabled_upnp, check_enabled_upnp, check_upnp_redirect]
+            list_expected11 = ['Disable', 'Enable', ('ADVANCED', 'UPnP')]
+            check = assert_list(list_actual11, list_expected11)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 11. Disable UPnp. Check status in Security Check. '
+                f'Enable UPnP. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to ADVANCED > UPnP. '
+                f'Actual: {str(list_actual11)}. Expected: {str(list_expected11)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 11. Disable UPnp. Check status in Security Check. '
+                f'Enable UPnP. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to ADVANCED > UPnP. '
+                f'Actual: {str(list_actual11)}. Expected: {str(list_expected11)}')
+            list_step_fail.append('11. Assertion wong.')
+
+        # Step 12
+        try:
+            goto_menu(driver, advanced_tab, advanced_network_tab)
+            time.sleep(1)
+            # =======================================================
+            block_options = driver.find_element_by_css_selector(ele_options_card)
+            labels = block_options.find_elements_by_css_selector(label_name_in_2g)
+            values = block_options.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Remote Access':
+                    if not v.find_element_by_css_selector(input).is_selected():
+                        v.find_element_by_css_selector(select).click()
+                        time.sleep(1)
+
+                        block_options.find_element_by_css_selector(apply).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(1)
+                        driver.find_element_by_css_selector(btn_ok).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(1)
+
+                        grand_login(driver)
+                        break
+
+
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Remote Access':
+                    check_enable_remote = v.text
+                    time.sleep(0.5)
+                    v.click()
+                    time.sleep(0.5)
+                    break
+            check_remote_redirect = detect_current_menu(driver)
+            # =======================================================
+            goto_menu(driver, advanced_tab, advanced_network_tab)
+            time.sleep(1)
+            # =======================================================
+            block_options = driver.find_element_by_css_selector(ele_options_card)
+            labels = block_options.find_elements_by_css_selector(label_name_in_2g)
+            values = block_options.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Remote Access':
+                    if v.find_element_by_css_selector(input).is_selected():
+                        v.find_element_by_css_selector(select).click()
+                        block_options.find_element_by_css_selector(apply).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(1)
+                        driver.find_element_by_css_selector(btn_ok).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(1)
+
+                        grand_login(driver)
+                        break
+
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Remote Access':
+                    check_disable_remote = v.text
+                    break
+
+            list_actual12 = [check_enable_remote, check_disable_remote, check_remote_redirect]
+            list_expected12 = ['Enable', 'Disable', ('ADVANCED', 'Network')]
+            check = assert_list(list_actual12, list_expected12)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 12. Enable Remote Access. Check status in Security Check. '
+                f'Disable Remote Access. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to ADVANCED > Network. '
+                f'Actual: {str(list_actual12)}. Expected: {str(list_expected12)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 12. Enable Remote Access. Check status in Security Check. '
+                f'Disable Remote Access. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to ADVANCED > Network. '
+                f'Actual: {str(list_actual12)}. Expected: {str(list_expected12)}')
+            list_step_fail.append('12. Assertion wong.')
+
+        # Step 13
+        try:
+            goto_menu(driver, advanced_tab, advanced_network_tab)
+            time.sleep(1)
+            # =======================================================
+            block_options = driver.find_element_by_css_selector(ele_options_card)
+            labels = block_options.find_elements_by_css_selector(label_name_in_2g)
+            values = block_options.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'WAN ICMP Blocking':
+                    if not v.find_element_by_css_selector(input).is_selected():
+                        v.find_element_by_css_selector(select).click()
+                        block_options.find_element_by_css_selector(apply).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(1)
+                        driver.find_element_by_css_selector(btn_ok).click()
+                        time.sleep(1)
+                        break
+
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Ping from WAN':
+                    check_disable_ping = v.text
+                    break
+
+            # =======================================================
+            goto_menu(driver, advanced_tab, advanced_network_tab)
+            time.sleep(1)
+            # =======================================================
+            block_options = driver.find_element_by_css_selector(ele_options_card)
+            labels = block_options.find_elements_by_css_selector(label_name_in_2g)
+            values = block_options.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'WAN ICMP Blocking':
+                    if v.find_element_by_css_selector(input).is_selected():
+                        v.find_element_by_css_selector(select).click()
+                        block_options.find_element_by_css_selector(apply).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(1)
+                        driver.find_element_by_css_selector(btn_ok).click()
+                        time.sleep(1)
+                        break
+
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Ping from WAN':
+                    check_enable_ping = v.text
+                    time.sleep(0.5)
+                    v.click()
+                    time.sleep(0.5)
+                    break
+            check_ping_redirect = detect_current_menu(driver)
+
+            list_actual13 = [check_disable_ping, check_enable_ping, check_ping_redirect]
+            list_expected13 = ['Disable', 'Enable', ('ADVANCED', 'Network')]
+            check = assert_list(list_actual13, list_expected13)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 13. Enable WAN ICMP Blocking. Check status in Security Check. '
+                f'Disable WAN ICMP Blocking. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to ADVANCED > Network. '
+                f'Actual: {str(list_actual13)}. Expected: {str(list_expected13)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 13.  Enable WAN ICMP Blocking. Check status in Security Check. '
+                f'Disable WAN ICMP Blocking. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to ADVANCED > Network. '
+                f'Actual: {str(list_actual13)}. Expected: {str(list_expected13)}')
+            list_step_fail.append('13. Assertion wong.')
+
+        # Step 14
+        try:
+            goto_menu(driver, advanced_tab, advanced_portforwarding_tab)
+            time.sleep(1)
+            # =======================================================
+            block_dmz = driver.find_element_by_css_selector(dmz_card)
+            if block_dmz.find_element_by_css_selector(input).is_selected():
+                block_dmz.find_element_by_css_selector(select).click()
+                block_dmz.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'DMZ':
+                    check_disable_dmz = v.text
+                    break
+
+            # =======================================================
+            goto_menu(driver, advanced_tab, advanced_portforwarding_tab)
+            time.sleep(1)
+            # =======================================================
+            block_dmz = driver.find_element_by_css_selector(dmz_card)
+            if not block_dmz.find_element_by_css_selector(input).is_selected():
+                block_dmz.find_element_by_css_selector(select).click()
+                block_dmz.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'DMZ':
+                    check_enable_dmz = v.text
+                    time.sleep(0.5)
+                    v.click()
+                    time.sleep(0.5)
+                    break
+            check_dmz_redirect = detect_current_menu(driver)
+
+            list_actual14 = [check_disable_dmz, check_enable_dmz, check_dmz_redirect]
+            list_expected14 = ['Disable', 'Enable', ('ADVANCED', 'Port Forwarding/DMZ')]
+            check = assert_list(list_actual14, list_expected14)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 14. Disabled DMZ. Check status in Security Check. '
+                f'Enabled DMZ. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to ADVANCED > Port Forwarding/DMZ. '
+                f'Actual: {str(list_actual14)}. Expected: {str(list_expected14)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 14. Disabled DMZ. Check status in Security Check. '
+                f'Enabled DMZ. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to ADVANCED > Port Forwarding/DMZ. '
+                f'Actual: {str(list_actual14)}. Expected: {str(list_expected14)}')
+            list_step_fail.append('14. Assertion wong.')
+
+        # Step 15
+        try:
+            goto_menu(driver, advanced_tab, advanced_porttriggering_tab)
+            time.sleep(1)
+
+            triggering_block = driver.find_element_by_css_selector(port_triggering_card)
+            while len(triggering_block.find_elements_by_css_selector(delete_cls)) > 0:
+                triggering_block.find_element_by_css_selector(delete_cls).click()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Port Triggering':
+                    check_disable_trigger = v.text
+                    break
+
+            # =======================================================
+            goto_menu(driver, advanced_tab, advanced_porttriggering_tab)
+            time.sleep(1)
+            # =======================================================
+            add_a_port_triggering(driver,
+                                  DESC_VALUE='Test',
+                                  TRIGGERED_START_END=['10', '10'],
+                                  PROTOCOL_TYPE_TRIGGERED='UDP',
+                                  FORWARDED_START_END=['100', '100'],
+                                  PROTOCOL_TYPE_FORWARDED='TCP')
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Port Triggering':
+                    check_enable_trigger = v.text
+                    time.sleep(0.5)
+                    v.click()
+                    time.sleep(0.5)
+                    break
+            check_trigger_redirect = detect_current_menu(driver)
+
+            list_actual15 = [check_disable_trigger, check_enable_trigger, check_trigger_redirect]
+            list_expected15 = ['Disable', 'Enable', ('ADVANCED', 'Port Triggering')]
+            check = assert_list(list_actual15, list_expected15)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 15. Delete all Triggering rule. Check status in Security Check. '
+                f'Add a Triggering rule. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to ADVANCED > Port Triggering. '
+                f'Actual: {str(list_actual15)}. Expected: {str(list_expected15)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 15. Delete all Triggering rule. Check status in Security Check. '
+                f'Add a Triggering rule. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to ADVANCED > Port Triggering. '
+                f'Actual: {str(list_actual15)}. Expected: {str(list_expected15)}')
+            list_step_fail.append('15. Assertion wong.')
+
+        # Step 16
+        try:
+            goto_menu(driver, advanced_tab, advanced_portforwarding_tab)
+            time.sleep(1)
+
+            forwarding_block = driver.find_element_by_css_selector(port_forwarding_card)
+            while len(forwarding_block.find_elements_by_css_selector(delete_cls)) > 0:
+                forwarding_block.find_element_by_css_selector(delete_cls).click()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Port Forwarding':
+                    check_disable_forwarding = v.text
+                    break
+
+            # =======================================================
+            goto_menu(driver, advanced_tab, advanced_portforwarding_tab)
+            time.sleep(1)
+            # =======================================================
+            add_port_forwarding(driver,
+                                SERVICE_TYPE='HTTP',
+                                IP_ADDRESS_SPLIT='100',
+                                LOCAL_START_END=['80', '80'],
+                                EXTERNAL_START_END=['80', '80'],
+                                PROTOCOL_TYPE='TCP')
+            driver.find_element_by_css_selector(btn_save).click()
+            time.sleep(2)
+            driver.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.5)
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Port Forwarding':
+                    check_enable_forwarding = v.text
+                    time.sleep(0.5)
+                    v.click()
+                    time.sleep(0.5)
+                    break
+            check_forwarding_redirect = detect_current_menu(driver)
+
+            list_actual16 = [check_disable_forwarding, check_enable_forwarding, check_forwarding_redirect]
+            list_expected16 = ['Disable', 'Enable', ('ADVANCED', 'Port Forwarding/DMZ')]
+            check = assert_list(list_actual16, list_expected16)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 16. Delete all Forwarding rule. Check status in Security Check. '
+                f'Add a Forwarding rule. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to ADVANCED > Port Forwarding/DMZ. '
+                f'Actual: {str(list_actual16)}. Expected: {str(list_expected16)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 16. Delete all Forwarding rule. Check status in Security Check. '
+                f'Add a Forwarding rule. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to ADVANCED > Port Forwarding/DMZ. '
+                f'Actual: {str(list_actual16)}. Expected: {str(list_expected16)}')
+            list_step_fail.append('16. Assertion wong.')
+
+        # Step 17
+        try:
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            # ===================================================== Enable FTP server
+            ftp_block = driver.find_element_by_css_selector(ftp_server)
+            if ftp_block.find_element_by_css_selector(input).is_selected():
+                ftp_block.find_element_by_css_selector(select).click()
+                time.sleep(0.5)
+                ftp_block.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+
+            goto_menu(driver, media_share_tab, media_share_usb_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            # # ===================================================== Delete
+            network_block = driver.find_element_by_css_selector(usb_network)
+            while len(network_block.find_elements_by_css_selector(delete_cls)) > 0:
+                network_block.find_element_by_css_selector(delete_cls).click()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+            account_settings_block = driver.find_element_by_css_selector(account_setting_card)
+            while len(account_settings_block.find_elements_by_css_selector(delete_cls)) > 0:
+                account_settings_block.find_element_by_css_selector(delete_cls).click()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+            # =====================================================
+            add_a_usb_network_folder(driver,
+                                     DESC_VALUE='Test123',
+                                     PATH_FILE='network_file_5',
+                                     WRITE=True)
+            add_a_usb_account_setting(driver,
+                                      ID_VALUE='Humax',
+                                      PASSWORD_VALUE='12345')
+            # ===================================================== Goto
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            # ===================================================== Enable FTP server
+            ftp_block = driver.find_element_by_css_selector(ftp_server)
+            if not ftp_block.find_element_by_css_selector(input).is_selected():
+                ftp_block.find_element_by_css_selector(select).click()
+                time.sleep(0.5)
+            ftp_block = driver.find_element_by_css_selector(ftp_server)
+            labels = ftp_block.find_elements_by_css_selector(label_name_in_2g)
+            values = ftp_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Account':
+                    v.click()
+                    time.sleep(0.5)
+                    ls_options = driver.find_elements_by_css_selector(secure_value_in_drop_down)
+                    for o in ls_options:
+                        if o.text == 'Anonymous':
+                            o.click()
+                            time.sleep(0.5)
+                            break
+                    continue
+                elif l.text == 'Network Folder':
+                    v.click()
+                    time.sleep(0.5)
+                    ls_options = ftp_block.find_elements_by_css_selector(secure_value_in_drop_down)
+                    for o in ls_options:
+                        if o.text == 'Test123':
+                            o.click()
+                            time.sleep(0.5)
+                            break
+                    break
+            ftp_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Anonymous Login to FTP Server':
+                    check_enable_server = v.text
+                    time.sleep(0.5)
+                    v.click()
+                    time.sleep(2)
+                    break
+            check_server_redirect = detect_current_menu(driver)
+            # =======================================================
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            # =======================================================
+            ftp_block = driver.find_element_by_css_selector(ftp_server)
+            labels = ftp_block.find_elements_by_css_selector(label_name_in_2g)
+            values = ftp_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Account':
+                    v.click()
+                    time.sleep(0.5)
+                    ls_options = ftp_block.find_elements_by_css_selector(secure_value_in_drop_down)
+                    for o in ls_options:
+                        if o.text != 'Anonymous':
+                            o.click()
+                            time.sleep(0.5)
+                            break
+                    break
+            ftp_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            # =======================================================
+            goto_menu(driver, security_tab, security_selfcheck_tab)
+            time.sleep(1)
+
+            secure_card = driver.find_element_by_css_selector(ele_security_check_block)
+            labels = secure_card.find_elements_by_css_selector(label_name_in_2g)
+            values = secure_card.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Anonymous Login to FTP Server':
+                    check_disable_server = v.text
+                    time.sleep(0.5)
+                    break
+
+            list_actual17 = [check_enable_server, check_disable_server, check_server_redirect]
+            list_expected17 = ['Enable', 'Disable', ('MEDIA SHARE', 'Server Settings')]
+            check = assert_list(list_actual17, list_expected17)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 17. Add USB Network Folder and Account Settings. Change Settings FTP server info. '
+                f'Change Account to Anonymous. Check status in Security Check. '
+                f'Change Account to other option of Anonymous. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to MEDIA SHARE > Server Settings. '
+                f'Actual: {str(list_actual17)}. Expected: {str(list_expected17)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 17.  Add USB Network Folder and Account Settings. Change Settings FTP server info. '
+                f'Change Account to Anonymous. Check status in Security Check. '
+                f'Change Account to other option of Anonymous. Check Status in Security Check. '
+                f'Click to link text. Check Redirect to MEDIA SHARE > Server Settings. '
+                f'Actual: {str(list_actual17)}. Expected: {str(list_expected17)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('17. Assertion wong.')
+        self.assertListEqual(list_step_fail, [])
 if __name__ == '__main__':
     unittest.main()

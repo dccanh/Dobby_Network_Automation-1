@@ -307,6 +307,7 @@ def get_result_command_from_server(url_ip, filename='1'):
 
 def get_result_command_from_server_api(url_ip, _name='1'):
     url = url_ip + '/' + _name
+    print(url)
     _res = requests.get(url)
     # if _res.status_code != 200:
     #     url_login = get_config('URL', 'url')
@@ -351,14 +352,23 @@ def get_result_command_from_server_api(url_ip, _name='1'):
 def login(driver, url_login='', user_request='', pass_word=''):
     if url_login == '':
         url_login = get_config('URL', 'url')
+
     if user_request == '':
         user_request = get_config('ACCOUNT', 'user')
+
     if pass_word == '':
         pass_word = get_config('ACCOUNT', 'password')
-    call_api_login(user_request, pass_word, url=url_login)
-    user_request = get_config('ACCOUNT', 'user')
-    pass_word = get_config('ACCOUNT', 'password')
 
+    print(url_login)
+    print(user_request)
+    print(pass_word)
+
+    # a = call_api_login(user_request, pass_word, url=url_login)
+    # print(a)
+
+
+    # user_request = get_config('ACCOUNT', 'user')
+    # pass_word = get_config('ACCOUNT', 'password')
     time.sleep(1)
     driver.get(url_login)
     time.sleep(2)
@@ -405,6 +415,9 @@ def login(driver, url_login='', user_request='', pass_word=''):
     time.sleep(2)
     policy_popup = driver.find_elements_by_css_selector(lg_privacy_policy_pop)
     if len(policy_popup):
+        wait_popup_disappear(driver, icon_loading)
+        wait_popup_disappear(driver, icon_loading)
+        time.sleep(3)
         ActionChains(driver).move_to_element(policy_popup[0]).click().send_keys(Keys.ARROW_DOWN).perform()
         time.sleep(1)
         driver.find_element_by_css_selector(btn_ok).click()
@@ -536,8 +549,9 @@ def call_api_login(user, pw, url=''):
         "userName": user,
         "password": base64encode(user, pw)
     }
+    print(base64encode(user, pw))
     res = requests.post(url=url_login, json=data)
-
+    print(res)
     if res.status_code != 200:
 
         user = get_config('ACCOUNT', 'user')
@@ -1091,6 +1105,19 @@ def check_enable_ethernet():
     time.sleep(2)
 
 
+def wait_ethernet_available():
+    count = 0
+    while True:
+        time.sleep(1)
+        count += 1
+        res = get_value_from_ipconfig('Ethernet adapter Ethernet', 'IPv4 Address')
+        if res != 'Block or field error.':
+            return True
+        if (count % 180) == 0:
+            return False
+
+
+
 def goto_system(driver, element_option):
     driver.find_element_by_css_selector(system_btn).click()
     time.sleep(0.2)
@@ -1159,13 +1186,13 @@ def current_connected_wifi():
 
 
 def factory_dut():
+    save_config(config_path, 'URL', 'url', 'http://dearmyrouter.net')
     url_login = get_config('URL', 'url')
     filename_1 = '1'
     command = 'factorycfg.sh -a'
     run_cmd(command, filename_1)
     # Wait 5 mins for factory
     time.sleep(150)
-    save_config(config_path, 'URL', 'url', 'http://dearmyrouter.net')
     wait_DUT_activated(url_login)
     wait_ping('192.168.1.1')
     time.sleep(5)
@@ -1310,6 +1337,7 @@ def connect_repeater_mode(driver, REPEATER_UPPER='', PW=''):
     save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
 
 
+
 def connect_repeater_mode_third_party(driver, UPPER='Repeater_Upper_2G', PW='88888888'):
     if not driver.find_element_by_css_selector(ele_repeater_mode_input).is_selected():
         driver.find_element_by_css_selector(ele_select_repeater_mode).click()
@@ -1387,6 +1415,15 @@ def check_connect_to_youtube():
     check_youtube = len(driver2.find_elements_by_css_selector('#logo-icon-container')) > 0
     driver2.quit()
     return check_youtube
+
+def check_connect_to_web_admin_page():
+    driver2 = webdriver.Chrome(driver_path)
+    URL = get_config('URL', 'url')
+    driver2.get(URL)
+    time.sleep(5)
+    check_web = len(driver2.find_elements_by_css_selector(lg_page)) > 0
+    driver2.quit()
+    return check_web
 
 
 def disconnect_or_connect_wan(disconnected=True, URL_LOGIN='', _USER='', _PW=''):
@@ -1540,7 +1577,7 @@ def add_a_ip_port_filtering(driver, DESC_VALUE, IP_ADDRESS_SPLIT, PORT_START_END
         # for i in range(2):
         i.clear()
         i.clear()
-        i.send_keys('10')
+        i.send_keys(PORT_START_END[0])
         time.sleep(0.2)
 
     time.sleep(0.5)
@@ -1590,6 +1627,32 @@ def connect_wifi_by_command(wifi_name, wifi_pw):
     time.sleep(10)
     return current_connected_wifi()
 
+
+def add_a_wireless_mac_filtering(driver, INPUT_DEVICE, INPUT_MAC):
+    mac_block = driver.find_element_by_css_selector(ele_block_card)
+    # Click Add 1
+    mac_block.find_element_by_css_selector(add_class).click()
+    time.sleep(1)
+    mac_block = driver.find_element_by_css_selector(ele_block_card)
+    # Edit mode
+    edit_field = mac_block.find_element_by_css_selector(edit_mode)
+
+    device_field = edit_field.find_element_by_css_selector(ele_mac_device_name)
+    device_field.find_element_by_css_selector(input).send_keys(INPUT_DEVICE)
+
+    # Select all
+    mac_field = edit_field.find_element_by_css_selector(wol_mac_addr)
+    mac_field.find_element_by_css_selector(input).click()
+
+    CORRECT_OTHER_MAC = INPUT_MAC.replace(':', '')
+    driver.find_element_by_css_selector('.user-define').click()
+    time.sleep(0.5)
+    driver.find_element_by_css_selector('.mac-address input').send_keys(CORRECT_OTHER_MAC)
+    time.sleep(0.5)
+
+    if driver.find_element_by_css_selector(btn_save).is_enabled():
+        driver.find_element_by_css_selector(btn_save).click()
+        time.sleep(0.5)
 
 
 def add_a_mac_filtering(driver, OTHER_MAC=''):
@@ -1671,3 +1734,159 @@ def random_mac_address():
         random.choices(ls_random, k=2)]
     return ':'.join([''.join(i) for i in mac]).upper()
 
+
+def change_password(driver, CURRENT_PW, NEW_PW):
+    fields = driver.find_elements_by_css_selector(ele_input_pw)
+    fields[0].send_keys(CURRENT_PW)
+    fields[1].send_keys(NEW_PW)
+    fields[2].send_keys(NEW_PW)
+
+
+def add_a_port_triggering(driver,
+                          DESC_VALUE,
+                          TRIGGERED_START_END,
+                          PROTOCOL_TYPE_TRIGGERED,
+                          FORWARDED_START_END,
+                          PROTOCOL_TYPE_FORWARDED):
+    triggering_block = driver.find_element_by_css_selector(port_triggering_card)
+    # Click Add 1
+    triggering_block.find_element_by_css_selector(add_class).click()
+    time.sleep(1)
+    triggering_block = driver.find_element_by_css_selector(port_triggering_card)
+    # Edit mode
+    edit_field = triggering_block.find_element_by_css_selector(edit_mode)
+
+    # Fill Service type
+    description_box = edit_field.find_element_by_css_selector(description_col_cls)
+    description_box.find_element_by_css_selector(input).send_keys(DESC_VALUE)
+
+    # Port Start End
+    trigger_range = edit_field.find_element_by_css_selector(triggered_col_cls)
+    trigger_range.find_elements_by_css_selector(input)[0].send_keys(TRIGGERED_START_END[0])
+    trigger_range.find_elements_by_css_selector(input)[1].send_keys(TRIGGERED_START_END[1])
+    # Protocol
+    protocol_box_trigger = edit_field.find_elements_by_css_selector(protocol_col_cls)[0]
+    protocol_box_trigger.find_element_by_css_selector(option_select).click()
+    time.sleep(0.2)
+    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+    for o in ls_option:
+        if o.text == PROTOCOL_TYPE_TRIGGERED:
+            o.click()
+            time.sleep(1)
+            break
+    # Port Start End
+    forwarding_range = edit_field.find_element_by_css_selector(forwarded_col_cls)
+    forwarding_range.find_elements_by_css_selector(input)[0].send_keys(FORWARDED_START_END[0])
+    forwarding_range.find_elements_by_css_selector(input)[1].send_keys(FORWARDED_START_END[1])
+    time.sleep(0.5)
+    # Protocol
+    protocol_box_forwarding = edit_field.find_elements_by_css_selector(protocol_col_cls)[1]
+    protocol_box_forwarding.find_element_by_css_selector(option_select).click()
+    time.sleep(0.2)
+    ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+    for o in ls_option:
+        if o.text == PROTOCOL_TYPE_FORWARDED:
+            o.click()
+            time.sleep(1)
+            break
+    driver.find_element_by_css_selector(btn_save).click()
+    time.sleep(2)
+    driver.find_element_by_css_selector(apply).click()
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(1)
+    driver.find_element_by_css_selector(btn_ok).click()
+    time.sleep(1)
+
+
+def add_a_usb_network_folder(driver, DESC_VALUE, PATH_FILE, WRITE=True):
+    network_block = driver.find_element_by_css_selector(usb_network)
+    network_block.find_element_by_css_selector(add_class).click()
+
+    # Edit mode
+    network_block = driver.find_element_by_css_selector(usb_network)
+    edit_field = network_block.find_element_by_css_selector(edit_mode)
+    # Description
+    description_field = edit_field.find_element_by_css_selector(description)
+    description_field.find_element_by_css_selector(input).send_keys(DESC_VALUE)
+    # Folder path
+    path_field = edit_field.find_element_by_css_selector(path)
+    path_field.find_element_by_css_selector(input).click()
+    time.sleep(0.5)
+    # Choose path
+    driver.find_element_by_css_selector(tree_icon).click()
+    time.sleep(0.2)
+
+    ls_path_lv1 = driver.find_elements_by_css_selector(path_name_lv1)
+    for o in ls_path_lv1:
+        if o.text == PATH_FILE:
+            ActionChains(driver).move_to_element(o).click().perform()
+            break
+    # OK
+    driver.find_element_by_css_selector(btn_ok).click()
+    time.sleep(1)
+    if WRITE:
+        edit_field.find_element_by_css_selector('.read-write #custom-checkbox-write-add+label').click()
+    else:
+        edit_field.find_element_by_css_selector('.read-write #custom-checkbox-read-add+label').click()
+    time.sleep(1)
+    network_block.find_element_by_css_selector(btn_save).click()
+    time.sleep(1)
+    network_block.find_element_by_css_selector(apply).click()
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(1)
+    driver.find_element_by_css_selector(btn_ok).click()
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(1)
+
+
+def add_a_usb_account_setting(driver, ID_VALUE, PASSWORD_VALUE):
+    account_settings_block = driver.find_element_by_css_selector(account_setting_card)
+    account_settings_block.find_element_by_css_selector(add_class).click()
+
+    # Edit mode
+    account_settings_block = driver.find_element_by_css_selector(account_setting_card)
+    edit_field = account_settings_block.find_element_by_css_selector(edit_mode)
+    # ID
+    id_field = edit_field.find_element_by_css_selector(id_cls)
+    id_field.find_element_by_css_selector(input).send_keys(ID_VALUE)
+    # PASSWORD
+    pw_field = edit_field.find_element_by_css_selector(password_cls)
+    pw_field.find_element_by_css_selector(input).send_keys(PASSWORD_VALUE)
+
+    account_settings_block.find_element_by_css_selector(btn_save).click()
+    time.sleep(1)
+    account_settings_block.find_element_by_css_selector(apply).click()
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(1)
+    driver.find_element_by_css_selector(btn_ok).click()
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(1)
+
+
+def add_a_default_guest_network(driver, block):
+    block.find_element_by_css_selector(add_class).click()
+    time.sleep(0.5)
+    # Check Default Value
+    edit_2g_block = driver.find_elements_by_css_selector(wl_primary_card)[0]
+    # Settings
+    wl_2g_ssid = wireless_get_default_ssid(edit_2g_block, 'Network Name(SSID)')
+    # Click Hide SSID
+    edit_2g_block.find_elements_by_css_selector(select)[0].click()
+    time.sleep(0.5)
+    confirm_msg_2g = driver.find_element_by_css_selector(confirm_dialog_msg).text
+    time.sleep(0.5)
+    driver.find_element_by_css_selector(btn_ok).click()
+    # Apply
+    edit_2g_block.find_element_by_css_selector(apply).click()
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(0.5)
+    return wl_2g_ssid
+
+
+def scan_wifi_repeater_mode(driver):
+    ls_row = driver.find_elements_by_css_selector(rows)
+    table = list()
+    for r in ls_row:
+        row_data = [i.text for i in r.find_elements_by_css_selector('.col')]
+        table.append(row_data)
+    return table

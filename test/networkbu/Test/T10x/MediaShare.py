@@ -9,7 +9,7 @@ from Helper.t10x.common import *
 from selenium import webdriver
 from faker import Faker
 
-save_config(config_path, 'URL', 'url', 'http://192.168.1.1')
+# save_config(config_path, 'URL', 'url', 'http://192.168.1.1')
 class MEDIASHARE(unittest.TestCase):
     def setUp(self):
         try:
@@ -1406,6 +1406,906 @@ class MEDIASHARE(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+    def test_16_MS_Verify_Samba_Behavior(self):
+        self.key = 'MEDIA_SHARE_16'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # factory_dut()
+        try:
+            grand_login(driver)
+            time.sleep(2)
+
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            # ===================================================== Enable FTP server
+            card_block = driver.find_elements_by_css_selector(card_cls)
+            for b in card_block:
+                if b.find_element_by_css_selector(' '.join([select, input])).is_selected():
+                    b.find_element_by_css_selector(select).click()
+                    time.sleep(1)
+                    b.find_element_by_css_selector(apply).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(1)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    time.sleep(1)
+
+            goto_menu(driver, media_share_tab, media_share_usb_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Check Title page
+            page_title = driver.find_element_by_css_selector(ele_title_page).text
+            # ===================================================== Delete
+            network_block = driver.find_element_by_css_selector(usb_network)
+            while len(network_block.find_elements_by_css_selector(delete_cls)) > 0:
+                network_block.find_element_by_css_selector(delete_cls).click()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+            account_settings_block = driver.find_element_by_css_selector(account_setting_card)
+            while len(account_settings_block.find_elements_by_css_selector(delete_cls)) > 0:
+                account_settings_block.find_element_by_css_selector(delete_cls).click()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+            # =====================================================
+            add_a_usb_network_folder(driver,
+                                     DESC_VALUE='Test123',
+                                     PATH_FILE='network_file_5',
+                                     WRITE=True)
+            add_a_usb_account_setting(driver,
+                                      ID_VALUE='Humax',
+                                      PASSWORD_VALUE='12345')
+
+            list_actual1 = [page_title]
+            list_expected1 = ['Media Share > USB']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Goto USB page. Check page title. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. Goto USB page. Check page title. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
+        try:
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            # ===================================================== Enable FTP server
+            samba_block = driver.find_element_by_css_selector(samba_server_card)
+            default_samba = samba_block.find_element_by_css_selector(' '.join([select, input])).is_selected()
+
+            URL_API = get_config('URL', 'url') + '/api/v1/mediashare/samba'
+            _METHOD = 'GET'
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _BODY = ''
+            _TOKEN = get_token(_USER, _PW)
+            _res = call_api(URL_API, _METHOD, _BODY, _TOKEN)
+            expected_res = _res['active']
+
+            list_actual2 = [default_samba]
+            list_expected2 = [expected_res]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2. Check default Status of Samba server with API. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check default Status of Samba server with API. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            list_step_fail.append('2. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
+        try:
+            samba_block = driver.find_element_by_css_selector(samba_server_card)
+            time.sleep(0.5)
+            samba_block.find_element_by_css_selector(select).click()
+            time.sleep(1)
+
+            samba_enable_2 = samba_block.find_element_by_css_selector(' '.join([select, input])).is_selected()
+            time.sleep(1)
+            list_actual3 = [samba_enable_2]
+            list_expected3 = [return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Enabled Samba server. Check Status. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Enabled Samba server. Check Status. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
+        try:
+            samba_block = driver.find_element_by_css_selector(samba_server_card)
+            labels = samba_block.find_elements_by_css_selector(label_name_in_2g)
+            values = samba_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Connection Name':
+                    v.click()
+                    time.sleep(0.5)
+                    l.click()
+                    time.sleep(0.5)
+                    conn_name_error = samba_block.find_element_by_css_selector(error_message).text
+                    break
+
+            list_actual4 = [conn_name_error]
+            list_expected4 = ['This field is required']
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Not enter Connection Name. Check Error message displayed. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Not enter Connection Name. Check Error message displayed. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
+        try:
+            samba_block = driver.find_element_by_css_selector(samba_server_card)
+            labels = samba_block.find_elements_by_css_selector(label_name_in_2g)
+            values = samba_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Connection Name':
+                    v.click()
+                    time.sleep(0.5)
+                    v.find_element_by_css_selector(input).send_keys('hoa')
+                    break
+
+            samba_block = driver.find_element_by_css_selector(samba_server_card)
+            labels = samba_block.find_elements_by_css_selector(label_name_in_2g)
+            values = samba_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Connection Name':
+                    get_conn_name = v.find_element_by_css_selector(input).get_attribute('value')
+                    break
+
+            list_actual5 = [get_conn_name]
+            list_expected5 = ['hoa']
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Enter valid connection name. Check value in input box. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Enter valid connection name. Check value in input box. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+            list_step_fail.append('5. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
+        try:
+            samba_block = driver.find_element_by_css_selector(samba_server_card)
+            labels = samba_block.find_elements_by_css_selector(label_name_in_2g)
+            values = samba_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Account':
+                    v.click()
+                    time.sleep(0.5)
+                    ls_options = driver.find_elements_by_css_selector(secure_value_in_drop_down)
+                    for o in ls_options:
+                        if o.text == 'Humax':
+                            o.click()
+                            time.sleep(0.5)
+                            break
+                if l.text == 'Network Folder':
+                    v.click()
+                    time.sleep(0.5)
+                    ls_options = driver.find_elements_by_css_selector(secure_value_in_drop_down)
+                    for o in ls_options:
+                        if o.text == 'Test123':
+                            o.click()
+                            time.sleep(0.5)
+                            break
+            samba_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(3)
+
+            # Access via http
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            time.sleep(1)
+            login(driver, url_login='http://hoa', user_request=_USER, pass_word=_PW)
+            time.sleep(1)
+            check_home_page = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+            time.sleep(1)
+            list_actual6 = [check_home_page]
+            list_expected6 = [return_true]
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6, 7. Enter Network Folder. Apply. Access DUT login via connection name. '
+                f'Check access success home page displayed. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6, 7. Enter Network Folder. Apply. Access DUT login via connection name. '
+                f'Check access success home page displayed. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+            list_step_fail.append('6, 7. Assertion wong.')
+
+
+            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
+        try:
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            samba_block = driver.find_element_by_css_selector(samba_server_card)
+            labels = samba_block.find_elements_by_css_selector(label_name_in_2g)
+            values = samba_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Account':
+                    v.click()
+                    time.sleep(0.5)
+                    ls_options = driver.find_elements_by_css_selector(secure_value_in_drop_down)
+                    for o in ls_options:
+                        if o.text == 'Anonymous':
+                            o.click()
+                            time.sleep(0.5)
+                            break
+            samba_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(3)
+
+            # Access via http
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            time.sleep(1)
+            login(driver, url_login='http://hoa', user_request=_USER, pass_word=_PW)
+            time.sleep(1)
+            check_home_page_2 = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+            time.sleep(1)
+            list_actual7 = [check_home_page_2]
+            list_expected7 = [return_true]
+            check = assert_list(list_actual7, list_expected7)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 8, 9. Enter Account to  Anonymous. Apply. Access DUT login via connection name. '
+                f'Check access success home page displayed. '
+                f'Actual: {str(list_actual7)}. Expected: {str(list_expected5)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8, 9. Enter Account to  Anonymous. Apply. Access DUT login via connection name. '
+                f'Check access success home page displayed. '
+                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('8, 9. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_07_MS_Check_Read_Write_permission(self):
+        self.key = 'MEDIA_SHARE_07'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # factory_dut()
+        try:
+            grand_login(driver)
+            time.sleep(2)
+            # Get WAN
+            get_wan = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
+
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            # ===================================================== Enable FTP server
+            card_block = driver.find_elements_by_css_selector(card_cls)
+            for b in card_block:
+                if b.find_element_by_css_selector(' '.join([select, input])).is_selected():
+                    b.find_element_by_css_selector(select).click()
+                    time.sleep(1)
+                    b.find_element_by_css_selector(apply).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(1)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    time.sleep(1)
+
+            goto_menu(driver, media_share_tab, media_share_usb_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # Check Title page
+            page_title = driver.find_element_by_css_selector(ele_title_page).text
+            # ===================================================== Delete
+            network_block = driver.find_element_by_css_selector(usb_network)
+            while len(network_block.find_elements_by_css_selector(delete_cls)) > 0:
+                network_block.find_element_by_css_selector(delete_cls).click()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+            account_settings_block = driver.find_element_by_css_selector(account_setting_card)
+            while len(account_settings_block.find_elements_by_css_selector(delete_cls)) > 0:
+                account_settings_block.find_element_by_css_selector(delete_cls).click()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
+            # =====================================================
+            add_a_usb_network_folder(driver,
+                                     DESC_VALUE='Test123',
+                                     PATH_FILE='network_file_5',
+                                     WRITE=True)
+            add_a_usb_account_setting(driver,
+                                      ID_VALUE='Humax',
+                                      PASSWORD_VALUE='12345')
+
+            list_actual1 = [page_title]
+            list_expected1 = ['Media Share > USB']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Goto USB page. Check page title. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. Goto USB page. Check page title. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
+        try:
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            check_title_server = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual2 = [check_title_server]
+            list_expected2 = ['Media Share > Server Settings']
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2. Goto Server setting. Check title. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Goto Server setting. Check title. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            list_step_fail.append('2. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
+        try:
+            ftp_block = driver.find_element_by_css_selector(ftp_server)
+            if not ftp_block.find_element_by_css_selector(input).is_selected():
+                ftp_block.find_element_by_css_selector(select).click()
+                time.sleep(0.5)
+            ftp_block = driver.find_element_by_css_selector(ftp_server)
+            labels = ftp_block.find_elements_by_css_selector(label_name_in_2g)
+            values = ftp_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Account':
+                    v.click()
+                    time.sleep(0.5)
+                    ls_options = driver.find_elements_by_css_selector(secure_value_in_drop_down)
+                    for o in ls_options:
+                        if o.text == 'Humax':
+                            o.click()
+                            time.sleep(0.5)
+                            break
+                    continue
+                elif l.text == 'Network Folder':
+                    v.click()
+                    time.sleep(0.5)
+                    ls_options = ftp_block.find_elements_by_css_selector(secure_value_in_drop_down)
+                    for o in ls_options:
+                        if o.text == 'Test123':
+                            o.click()
+                            time.sleep(0.5)
+                            break
+                    break
+            ftp_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            ftp_block = driver.find_element_by_css_selector(ftp_server)
+            check_ftp_on = ftp_block.find_element_by_css_selector(' '.join([select, input])).is_selected()
+
+            list_actual3 = [check_ftp_on]
+            list_expected3 = [return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Create a FTP server. Check create success. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3.  Create a FTP server. Check create success. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
+        try:
+            import ftplib
+            # Precondition
+            ftp_pre = ftplib.FTP(get_wan, 'Humax', '12345')
+            if 'run.png' in ftp_pre.nlst():
+                ftp_pre.delete('run.png')
+            ftp_pre.quit()
+            # Put file
+            ftp = ftplib.FTP(get_wan, 'Humax', '12345')
+            file = open(run_image_photo, 'rb')
+            ftp.storbinary('STOR run.png', file)
+            file.close()
+            ftp.quit()
+            # Check Put file success ?
+            check_put_ftp = ftplib.FTP(get_wan, 'Humax', '12345')
+            check_put = 'run.png' in check_put_ftp.nlst()
+            check_put_ftp.quit()
+
+            # Now, Check file in local
+            pre_local = os.listdir()
+            file_ = 'run_tmp.png'
+            if file_ in pre_local:
+                os.remove(file_)
+            # Download
+            ftp = ftplib.FTP(get_wan, 'Humax', '12345')
+            with open(file_, 'wb') as local_file:
+                ftp.retrbinary('RETR run.png', local_file.write)
+            ftp.quit()
+            # Check
+            check_get = file_ in os.listdir()
+
+            list_actual4 = [check_put, check_get]
+            list_expected4 = [return_true]*2
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Connect FTP. Put a *.png file. Check that file in server. '
+                f'Get that file to local. Check that file downloaded. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Connect FTP. Put a *.png file. Check that file in server. '
+                f'Get that file to local. Check that file downloaded. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
+        try:
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            # Disabled all running server
+            card_block = driver.find_elements_by_css_selector(card_cls)
+            for b in card_block:
+                if b.find_element_by_css_selector(' '.join([select, input])).is_selected():
+                    b.find_element_by_css_selector(select).click()
+                    time.sleep(1)
+                    b.find_element_by_css_selector(apply).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(1)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    time.sleep(1)
+
+            goto_menu(driver, media_share_tab, media_share_usb_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            network_block = driver.find_element_by_css_selector(usb_network)
+            network_block.find_elements_by_css_selector(edit_cls)[0].click()
+            time.sleep(0.5)
+            network_block = driver.find_element_by_css_selector(usb_network)
+            edit_field = network_block.find_element_by_css_selector(edit_mode)
+
+            edit_field.find_element_by_css_selector('.read-write #custom-checkbox-read-0+label').click()
+
+            network_block.find_element_by_css_selector(btn_save).click()
+            time.sleep(1)
+            network_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+
+            # check
+            network_block = driver.find_element_by_css_selector(usb_network)
+            first_row = network_block.find_elements_by_css_selector(rows)[0]
+            check_read = first_row.find_element_by_css_selector(permission_read_check_box_first_row).is_selected()
+
+
+            list_actual5 = [check_read]
+            list_expected5 = [return_true]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Disabled Server. Change Permission to Read. '
+                f'Check Read is checked. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Disabled Server. Change Permission to Read. '
+                f'Check Read is checked. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+            list_step_fail.append('5. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
+        try:
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            # On server
+            ftp_block = driver.find_element_by_css_selector(ftp_server)
+            if not ftp_block.find_element_by_css_selector(input).is_selected():
+                ftp_block.find_element_by_css_selector(select).click()
+                time.sleep(0.5)
+            ftp_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(5)
+
+            import ftplib
+            # Put file
+            ftp = ftplib.FTP(get_wan, 'Humax', '12345')
+            file = open(run_image_photo, 'rb')
+            try:
+                ftp.storbinary('STOR run.png', file)
+                check_put_perm = False
+            except ftplib.error_perm:
+                check_put_perm = True
+            file.close()
+            ftp.quit()
+
+            # Now, Check file in local
+            pre_local = os.listdir()
+            file_ = 'run_tmp.png'
+            if file_ in pre_local:
+                os.remove(file_)
+            # Download
+            ftp = ftplib.FTP(get_wan, 'Humax', '12345')
+            with open(file_, 'wb') as local_file:
+                ftp.retrbinary('RETR run.png', local_file.write)
+            ftp.quit()
+            # Check
+            check_get_perm = file_ in os.listdir()
+
+            list_actual6 = [check_put_perm, check_get_perm]
+            list_expected6 = [return_true] * 2
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Enable FTP server. '
+                f'Check can not put file to server cause no permission. Check can get file from server. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6.  Enable FTP server. '
+                f'Check can not put file to server cause no permission. Check can not get file from server. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('6. Assertion wong.')
+        self.assertListEqual(list_step_fail, [])
+
+    # def test_17_MS_Verify_Samba_File_Upload_Download_operation(self):
+    #     self.key = 'MEDIA_SHARE_17'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     # factory_dut()
+    #     try:
+    #         grand_login(driver)
+    #         time.sleep(2)
+    #         # Get WAN
+    #         get_wan = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
+    #
+    #         goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         # =====================================================
+    #         card_block = driver.find_elements_by_css_selector(card_cls)
+    #         for b in card_block:
+    #             if b.find_element_by_css_selector(' '.join([select, input])).is_selected():
+    #                 b.find_element_by_css_selector(select).click()
+    #                 time.sleep(1)
+    #                 b.find_element_by_css_selector(apply).click()
+    #                 wait_popup_disappear(driver, dialog_loading)
+    #                 time.sleep(1)
+    #                 driver.find_element_by_css_selector(btn_ok).click()
+    #                 time.sleep(1)
+    #
+    #         goto_menu(driver, media_share_tab, media_share_usb_tab)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #
+    #         # Check Title page
+    #         page_title = driver.find_element_by_css_selector(ele_title_page).text
+    #         # ===================================================== Delete
+    #         network_block = driver.find_element_by_css_selector(usb_network)
+    #         while len(network_block.find_elements_by_css_selector(delete_cls)) > 0:
+    #             network_block.find_element_by_css_selector(delete_cls).click()
+    #             time.sleep(0.5)
+    #             driver.find_element_by_css_selector(btn_ok).click()
+    #             wait_popup_disappear(driver, dialog_loading)
+    #             driver.find_element_by_css_selector(btn_ok).click()
+    #             time.sleep(1)
+    #         account_settings_block = driver.find_element_by_css_selector(account_setting_card)
+    #         while len(account_settings_block.find_elements_by_css_selector(delete_cls)) > 0:
+    #             account_settings_block.find_element_by_css_selector(delete_cls).click()
+    #             time.sleep(0.5)
+    #             driver.find_element_by_css_selector(btn_ok).click()
+    #             wait_popup_disappear(driver, dialog_loading)
+    #             driver.find_element_by_css_selector(btn_ok).click()
+    #             time.sleep(1)
+    #         # =====================================================
+    #         add_a_usb_network_folder(driver,
+    #                                  DESC_VALUE='Test123',
+    #                                  PATH_FILE='network_file_5',
+    #                                  WRITE=True)
+    #         add_a_usb_account_setting(driver,
+    #                                   ID_VALUE='Humax',
+    #                                   PASSWORD_VALUE='12345')
+    #
+    #         # Enabled samba server
+    #         samba_block = driver.find_element_by_css_selector(samba_server_card)
+    #         default_samba = samba_block.find_element_by_css_selector(' '.join([select, input])).is_selected()
+    #
+    #
+    #         list_actual1 = [page_title]
+    #         list_expected1 = ['Media Share > USB']
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 1. Login. Goto USB page. Check page title. '
+    #             f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 1. Login. Goto USB page. Check page title. '
+    #             f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+    #         list_step_fail.append('1. Assertion wong.')
+    #
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
+    #     try:
+    #         goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #
+    #         check_title_server = driver.find_element_by_css_selector(ele_title_page).text
+    #
+    #         list_actual2 = [check_title_server]
+    #         list_expected2 = ['Media Share > Server Settings']
+    #         check = assert_list(list_actual2, list_expected2)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 2. Goto Server setting. Check title. '
+    #             f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 2. Goto Server setting. Check title. '
+    #             f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+    #         list_step_fail.append('2. Assertion wong.')
+    #
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
+    #     try:
+    #         ftp_block = driver.find_element_by_css_selector(ftp_server)
+    #         if not ftp_block.find_element_by_css_selector(input).is_selected():
+    #             ftp_block.find_element_by_css_selector(select).click()
+    #             time.sleep(0.5)
+    #         ftp_block = driver.find_element_by_css_selector(ftp_server)
+    #         labels = ftp_block.find_elements_by_css_selector(label_name_in_2g)
+    #         values = ftp_block.find_elements_by_css_selector(wrap_input)
+    #         for l, v in zip(labels, values):
+    #             if l.text == 'Account':
+    #                 v.click()
+    #                 time.sleep(0.5)
+    #                 ls_options = driver.find_elements_by_css_selector(secure_value_in_drop_down)
+    #                 for o in ls_options:
+    #                     if o.text == 'Humax':
+    #                         o.click()
+    #                         time.sleep(0.5)
+    #                         break
+    #                 continue
+    #             elif l.text == 'Network Folder':
+    #                 v.click()
+    #                 time.sleep(0.5)
+    #                 ls_options = ftp_block.find_elements_by_css_selector(secure_value_in_drop_down)
+    #                 for o in ls_options:
+    #                     if o.text == 'Test123':
+    #                         o.click()
+    #                         time.sleep(0.5)
+    #                         break
+    #                 break
+    #         ftp_block.find_element_by_css_selector(apply).click()
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(1)
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(1)
+    #
+    #         ftp_block = driver.find_element_by_css_selector(ftp_server)
+    #         check_ftp_on = ftp_block.find_element_by_css_selector(' '.join([select, input])).is_selected()
+    #
+    #         list_actual3 = [check_ftp_on]
+    #         list_expected3 = [return_true]
+    #         check = assert_list(list_actual3, list_expected3)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 3. Create a FTP server. Check create success. '
+    #             f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 3.  Create a FTP server. Check create success. '
+    #             f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+    #         list_step_fail.append('3. Assertion wong.')
+    #
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
+    #     try:
+    #         import ftplib
+    #         # Precondition
+    #         ftp_pre = ftplib.FTP(get_wan, 'Humax', '12345')
+    #         if 'run.png' in ftp_pre.nlst():
+    #             ftp_pre.delete('run.png')
+    #         ftp_pre.quit()
+    #         # Put file
+    #         ftp = ftplib.FTP(get_wan, 'Humax', '12345')
+    #         file = open(run_image_photo, 'rb')
+    #         ftp.storbinary('STOR run.png', file)
+    #         file.close()
+    #         ftp.quit()
+    #         # Check Put file success ?
+    #         check_put_ftp = ftplib.FTP(get_wan, 'Humax', '12345')
+    #         check_put = 'run.png' in check_put_ftp.nlst()
+    #         check_put_ftp.quit()
+    #
+    #         # Now, Check file in local
+    #         pre_local = os.listdir()
+    #         file_ = 'run_tmp.png'
+    #         if file_ in pre_local:
+    #             os.remove(file_)
+    #         # Download
+    #         ftp = ftplib.FTP(get_wan, 'Humax', '12345')
+    #         with open(file_, 'wb') as local_file:
+    #             ftp.retrbinary('RETR run.png', local_file.write)
+    #         ftp.quit()
+    #         # Check
+    #         check_get = file_ in os.listdir()
+    #
+    #         list_actual4 = [check_put, check_get]
+    #         list_expected4 = [return_true]*2
+    #         check = assert_list(list_actual4, list_expected4)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 4. Connect FTP. Put a *.png file. Check that file in server. '
+    #             f'Get that file to local. Check that file downloaded. '
+    #             f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 4. Connect FTP. Put a *.png file. Check that file in server. '
+    #             f'Get that file to local. Check that file downloaded. '
+    #             f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+    #         list_step_fail.append('4. Assertion wong.')
+    #
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
+    #     try:
+    #         goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         # Disabled all running server
+    #         card_block = driver.find_elements_by_css_selector(card_cls)
+    #         for b in card_block:
+    #             if b.find_element_by_css_selector(' '.join([select, input])).is_selected():
+    #                 b.find_element_by_css_selector(select).click()
+    #                 time.sleep(1)
+    #                 b.find_element_by_css_selector(apply).click()
+    #                 wait_popup_disappear(driver, dialog_loading)
+    #                 time.sleep(1)
+    #                 driver.find_element_by_css_selector(btn_ok).click()
+    #                 time.sleep(1)
+    #
+    #         goto_menu(driver, media_share_tab, media_share_usb_tab)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #
+    #         network_block = driver.find_element_by_css_selector(usb_network)
+    #         network_block.find_elements_by_css_selector(edit_cls)[0].click()
+    #         time.sleep(0.5)
+    #         network_block = driver.find_element_by_css_selector(usb_network)
+    #         edit_field = network_block.find_element_by_css_selector(edit_mode)
+    #
+    #         edit_field.find_element_by_css_selector('.read-write #custom-checkbox-read-0+label').click()
+    #
+    #         network_block.find_element_by_css_selector(btn_save).click()
+    #         time.sleep(1)
+    #         network_block.find_element_by_css_selector(apply).click()
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(1)
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(1)
+    #
+    #         # check
+    #         network_block = driver.find_element_by_css_selector(usb_network)
+    #         first_row = network_block.find_elements_by_css_selector(rows)[0]
+    #         check_read = first_row.find_element_by_css_selector(permission_read_check_box_first_row).is_selected()
+    #
+    #
+    #         list_actual5 = [check_read]
+    #         list_expected5 = [return_true]
+    #         check = assert_list(list_actual5, list_expected5)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 5. Disabled Server. Change Permission to Read. '
+    #             f'Check Read is checked. '
+    #             f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 5. Disabled Server. Change Permission to Read. '
+    #             f'Check Read is checked. '
+    #             f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+    #         list_step_fail.append('5. Assertion wong.')
+    #
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
+    #     try:
+    #         goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         # On server
+    #         ftp_block = driver.find_element_by_css_selector(ftp_server)
+    #         if not ftp_block.find_element_by_css_selector(input).is_selected():
+    #             ftp_block.find_element_by_css_selector(select).click()
+    #             time.sleep(0.5)
+    #         ftp_block.find_element_by_css_selector(apply).click()
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(1)
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(5)
+    #
+    #         import ftplib
+    #         # Put file
+    #         ftp = ftplib.FTP(get_wan, 'Humax', '12345')
+    #         file = open(run_image_photo, 'rb')
+    #         try:
+    #             ftp.storbinary('STOR run.png', file)
+    #             check_put_perm = False
+    #         except ftplib.error_perm:
+    #             check_put_perm = True
+    #         file.close()
+    #         ftp.quit()
+    #
+    #         # Now, Check file in local
+    #         pre_local = os.listdir()
+    #         file_ = 'run_tmp.png'
+    #         if file_ in pre_local:
+    #             os.remove(file_)
+    #         # Download
+    #         ftp = ftplib.FTP(get_wan, 'Humax', '12345')
+    #         with open(file_, 'wb') as local_file:
+    #             ftp.retrbinary('RETR run.png', local_file.write)
+    #         ftp.quit()
+    #         # Check
+    #         check_get_perm = file_ in os.listdir()
+    #
+    #         list_actual6 = [check_put_perm, check_get_perm]
+    #         list_expected6 = [return_true] * 2
+    #         check = assert_list(list_actual6, list_expected6)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 6. Enable FTP server. '
+    #             f'Check can not put file to server cause no permission. Check can get file from server. '
+    #             f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 6.  Enable FTP server. '
+    #             f'Check can not put file to server cause no permission. Check can not get file from server. '
+    #             f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('6. Assertion wong.')
+    #     self.assertListEqual(list_step_fail, [])
 
 if __name__ == '__main__':
     unittest.main()

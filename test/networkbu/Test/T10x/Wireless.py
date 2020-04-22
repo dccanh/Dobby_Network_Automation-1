@@ -4127,6 +4127,7 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('5. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
+
     # OK
     def test_36_WIRELESS_Verification_of_WPS_Not_Support_WEB(self):
         self.key = 'WIRELESS_36'
@@ -6219,5 +6220,725 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('4.2 Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
+
+
+    def test_27_WIRELESS_Guest_Network_Verification_of_WEBUI_Access_operation(self):
+        self.key = 'WIRELESS_27'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+        # ===========================================================
+        factory_dut()
+
+        try:
+            grand_login((driver))
+            # Enable Dual WAN
+            goto_menu(driver, wireless_tab, wireless_guestnetwork_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            check_page_title = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual1 = [check_page_title]
+            list_expected1 = ['Wireless > Guest Network']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Login. Goto Guest network. Check page title. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Login. Goto Guest network. Check page title. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1, 2. Login. Assertion wong.')
+
+        try:
+
+            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Add Guest 2G
+            block_2g = driver.find_elements_by_css_selector(guest_network_block)[0]
+            # Click Add
+            block_2g.find_element_by_css_selector(add_class).click()
+            time.sleep(0.5)
+            # Check Default Value
+            edit_2g_block = driver.find_elements_by_css_selector(wl_primary_card)[0]
+            # Settings
+            wl_2g_ssid = wireless_get_default_ssid(edit_2g_block, 'Network Name(SSID)')
+            labels = edit_2g_block.find_elements_by_css_selector(label_name_in_2g)
+            values = edit_2g_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Web UI Access':
+                    check_web_access = len(v.find_elements_by_css_selector(ele_btn_select_disable)) > 0
+                    break
+            # Apply
+            edit_2g_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
+
+            list_actual3 = [check_web_access]
+            list_expected3 = [return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Add Wireless 2G. Check Web UI Access option is Disabled. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3.  Add Wireless 2G. Check Web UI Access option is Disabled. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            # Disconnect Ethernet
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+
+            write_data_to_none_secure_xml(wifi_none_secure_path, new_name=wl_2g_ssid)
+            time.sleep(1)
+            os.system(f'netsh wlan delete profile name="{wl_2g_ssid}"')
+            time.sleep(0.5)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
+            time.sleep(0.5)
+            os.system(f'netsh wlan connect ssid="{wl_2g_ssid}" name="{wl_2g_ssid}"')
+            time.sleep(10)
+            # ========================================================================
+            get_current_wifi = current_connected_wifi()
+            # Check connect to Web
+            _URL = get_value_from_ipconfig('Wireless LAN adapter Wi-Fi', 'Default Gateway')
+            driver.get('http://'+_URL)
+            time.sleep(15)
+            check_not_connect_web = len(driver.find_elements_by_css_selector(lg_page)) == 0
+
+            list_actual4 = [get_current_wifi, check_not_connect_web]
+            list_expected4 = [wl_2g_ssid, return_true]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Disconnect Ethernet. Connect Guest wifi. '
+                f'Check current connected wifi and Check can not connect to WEB UI page. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Disconnect Ethernet. Connect Guest wifi. '
+                f'Check current connected wifi and Check can not connect to WEB UI page. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        try:
+            os.system('netsh wlan disconnect')
+            time.sleep(1)
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+            # Check can login Web UI
+            grand_login(driver)
+
+            check_home_page = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual5 = [check_home_page]
+            list_expected5 = [return_true]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Disconnect Wifi. Connect Ethernet.'
+                f'Login. Check Home page displayed. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5.  Disconnect Wifi. Connect Ethernet.'
+                f'Login. Check Home page displayed. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            list_step_fail.append('5. Assertion wong.')
+
+        try:
+            goto_menu(driver, wireless_tab, wireless_guestnetwork_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            block_2g = driver.find_elements_by_css_selector(guest_network_block)[0]
+            # Click Add
+            block_2g.find_elements_by_css_selector(edit_cls)[0].click()
+            time.sleep(0.5)
+            # Check Default Value
+            edit_2g_block = driver.find_elements_by_css_selector(wl_primary_card)[0]
+            # Settings
+            labels = edit_2g_block.find_elements_by_css_selector(label_name_in_2g)
+            values = edit_2g_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Internet Only':
+                    if v.find_element_by_css_selector(input).is_selected():
+                        v.find_element_by_css_selector(select).click()
+                        time.sleep(1)
+                if l.text == 'Web UI Access':
+                    if not v.find_element_by_css_selector(input).is_selected():
+                        v.find_element_by_css_selector(select).click()
+                        time.sleep(1)
+            # Apply
+            edit_2g_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            # Disconnect Ethernet
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+
+            write_data_to_none_secure_xml(wifi_none_secure_path, new_name=wl_2g_ssid)
+            time.sleep(1)
+            os.system(f'netsh wlan delete profile name="{wl_2g_ssid}"')
+            time.sleep(0.5)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
+            time.sleep(0.5)
+            os.system(f'netsh wlan connect ssid="{wl_2g_ssid}" name="{wl_2g_ssid}"')
+            time.sleep(10)
+            # ========================================================================
+            get_current_wifi_2 = current_connected_wifi()
+            # Check connect to Web
+            _URL_2 = get_value_from_ipconfig('Wireless LAN adapter Wi-Fi', 'Default Gateway')
+            driver.get('http://' + _URL_2)
+            time.sleep(5)
+            check_connect_web = len(driver.find_elements_by_css_selector(lg_page)) > 0
+
+            list_actual6 = [get_current_wifi_2, check_connect_web]
+            list_expected6 = [wl_2g_ssid, return_true]
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6, 7. Check to WEB UI Access. Disconnect Ethernet. Connect wifi. '
+                f'Check Current connected wifi and can get URL via Default gateway. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6, 7. Check to WEB UI Access. Disconnect Ethernet. Connect wifi. '
+                f'Check Current connected wifi and can get URL via Default gateway. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            list_step_fail.append('6, 7. Assertion wong.')
+
+        try:
+            grand_login((driver))
+            # Enable Dual WAN
+            goto_menu(driver, wireless_tab, wireless_guestnetwork_tab)
+            # ====================================================================
+            block_5g = driver.find_elements_by_css_selector(guest_network_block)[1]
+            # Click Add
+            block_5g.find_element_by_css_selector(add_class).click()
+            time.sleep(0.5)
+            # Check Default Value
+            edit_5g_block = driver.find_elements_by_css_selector(wl_primary_card)[0]
+            # Settings
+            wl_5g_ssid = wireless_get_default_ssid(edit_5g_block, 'Network Name(SSID)')
+            labels = edit_5g_block.find_elements_by_css_selector(label_name_in_2g)
+            values = edit_5g_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Web UI Access':
+                    check_web_access_5g = len(v.find_elements_by_css_selector(ele_btn_select_disable)) > 0
+                    break
+            # Apply
+            edit_5g_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
+            # ====================================================================
+
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+
+            write_data_to_none_secure_xml(wifi_none_secure_path, new_name=wl_5g_ssid)
+            time.sleep(1)
+            os.system(f'netsh wlan delete profile name="{wl_5g_ssid}"')
+            time.sleep(0.5)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
+            time.sleep(0.5)
+            os.system(f'netsh wlan connect ssid="{wl_5g_ssid}" name="{wl_5g_ssid}"')
+            time.sleep(15)
+            # ========================================================================
+            get_current_wifi_5g = current_connected_wifi()
+            # Check connect to Web
+            _URL = get_value_from_ipconfig('Wireless LAN adapter Wi-Fi', 'Default Gateway')
+            driver.get('http://' + _URL)
+            time.sleep(15)
+            check_not_connect_web_2 = len(driver.find_elements_by_css_selector(lg_page)) == 0
+            # ==============================================================
+            os.system('netsh wlan disconnect')
+            time.sleep(1)
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+            # Check can login Web UI
+            grand_login(driver)
+
+            goto_menu(driver, wireless_tab, wireless_guestnetwork_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            block_5g = driver.find_elements_by_css_selector(guest_network_block)[1]
+            # Click Add
+            block_5g.find_elements_by_css_selector(edit_cls)[0].click()
+            time.sleep(0.5)
+            # Check Default Value
+            edit_5g_block = driver.find_elements_by_css_selector(wl_primary_card)[0]
+            # Settings
+            labels = edit_5g_block.find_elements_by_css_selector(label_name_in_2g)
+            values = edit_5g_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Internet Only':
+                    if v.find_element_by_css_selector(input).is_selected():
+                        v.find_element_by_css_selector(select).click()
+                        time.sleep(1)
+                if l.text == 'Web UI Access':
+                    if not v.find_element_by_css_selector(input).is_selected():
+                        v.find_element_by_css_selector(select).click()
+                        time.sleep(1)
+            # Apply
+            edit_5g_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            # Disconnect Ethernet
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+
+            write_data_to_none_secure_xml(wifi_none_secure_path, new_name=wl_5g_ssid)
+            time.sleep(1)
+            os.system(f'netsh wlan delete profile name="{wl_5g_ssid}"')
+            time.sleep(0.5)
+            # Connect Default 2GHz
+            os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
+            time.sleep(0.5)
+            os.system(f'netsh wlan connect ssid="{wl_5g_ssid}" name="{wl_5g_ssid}"')
+            time.sleep(15)
+            # ========================================================================
+            get_current_wifi_5g_2 = current_connected_wifi()
+            # Check connect to Web
+            _URL_2 = get_value_from_ipconfig('Wireless LAN adapter Wi-Fi', 'Default Gateway')
+            driver.get('http://' + _URL_2)
+            time.sleep(5)
+            check_connect_web_5g = len(driver.find_elements_by_css_selector(lg_page)) > 0
+
+            list_actual8 = [check_web_access_5g,
+                            [get_current_wifi_5g, check_not_connect_web_2],
+                            [get_current_wifi_5g_2, check_connect_web_5g]]
+            list_expected8 = [return_true,
+                              [wl_5g_ssid, return_true],
+                              [wl_5g_ssid, return_true]]
+            check = assert_list(list_actual8, list_expected8)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 8. Re-do for 5G. '
+                f'Check default Access 5G option.'
+                f'Check Connect Wifi and check can not connect to Web UI. '
+                f'Enable Web UI Access. Connect wifi and check can connect to Web UI. '
+                f'Actual: {str(list_actual8)}. '
+                f'Expected: {str(list_expected8)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8. Re-do for 5G. '
+                f'Check default Access 5G option.'
+                f'Check Connect Wifi and check can not connect to Web UI. '
+                f'Enable Web UI Access. Connect wifi and check can connect to Web UI. '
+                f'Actual: {str(list_actual8)}. '
+                f'Expected: {str(list_expected8)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('8. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_31_WIRELESS_Guest_Network_Enabled_Disable_Guest_Network(self):
+        self.key = 'WIRELESS_31'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+
+        # ===========================================================
+        # factory_dut()
+        get_device_mac = get_value_from_ipconfig('Ethernet adapter Ethernet', 'Physical Address').replace('-', ':')
+        device_name = 'HostPC'
+        try:
+            grand_login((driver))
+            # Enable Dual WAN
+            goto_menu(driver, wireless_tab, wireless_guestnetwork_tab)
+            wait_popup_disappear(driver, dialog_loading)
+
+            check_page_title = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual1 = [check_page_title]
+            list_expected1 = ['Wireless > Guest Network']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Login. Goto Guest network. Check page title. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Login. Goto Guest network. Check page title. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1, 2. Login. Assertion wong.')
+
+        try:
+            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Add Guest 2G
+            block_2g = driver.find_elements_by_css_selector(guest_network_block)[0]
+            # Click Add
+            block_2g.find_element_by_css_selector(add_class).click()
+            time.sleep(0.5)
+            # Check Default Value
+            edit_2g_block = driver.find_elements_by_css_selector(wl_primary_card)[0]
+            # Settings
+            wl_2g_ssid = wireless_get_default_ssid(edit_2g_block, 'Network Name(SSID)')
+
+            wireless_change_choose_option(edit_2g_block, secure_value_field, 'WPA2/WPA-PSK')
+
+            wl_2g_pw = wireless_check_pw_eye(driver, edit_2g_block, change_pw=False)
+            labels = edit_2g_block.find_elements_by_css_selector(label_name_in_2g)
+            values = edit_2g_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Wireless MAC Filtering':
+                    if not v.find_element_by_css_selector(input).is_selected():
+                        v.find_element_by_css_selector(select).click()
+                        time.sleep(1)
+                        add_a_wireless_mac_filtering(driver, INPUT_DEVICE=device_name, INPUT_MAC=get_device_mac)
+                    break
+            # Apply
+            edit_2g_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
+
+            block_2g = driver.find_elements_by_css_selector(guest_network_block)[0]
+            ls_row = len(block_2g.find_elements_by_css_selector(rows)) == 1
+
+            list_actual3 = [ls_row]
+            list_expected3 = [return_true]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3, 4. Add a Guest Network. Add a Wireless MAC Filtering.'
+                f'Check Add successfully. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3, 4. Add a Guest Network. Add a Wireless MAC Filtering.'
+                f'Check Add successfully. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            # Disconnect Ethernet
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+
+            connect_wifi_by_command(wl_2g_ssid, wl_2g_pw)
+            # ========================================================================
+            check_wifi_blocked = current_connected_wifi()  == wl_2g_ssid
+            check_connect_to_web = check_connect_to_web_admin_page()
+
+            list_actual4 = [check_wifi_blocked, check_connect_to_web]
+            list_expected4 = [return_true, return_false]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4, 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
+                f'Check connect to Wifi. Check connect to WEB blocked. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4, 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
+                f'Check connect to Wifi. '
+                f'Check connect to WEB blocked. ' 
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('4, 5. Assertion wong.')
+
+        try:
+            os.system('netsh wlan disconnect')
+            time.sleep(1)
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+            # Check can login Web UI
+            driver.refresh()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+
+            # Disabled
+            block_2g = driver.find_elements_by_css_selector(guest_network_block)[0]
+            ls_row = block_2g.find_elements_by_css_selector(rows)
+            if ls_row[0].find_element_by_css_selector(input).is_selected():
+                ls_row[0].find_element_by_css_selector(select).click()
+                time.sleep(1)
+                block_2g.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(2)
+            time.sleep(20)
+            # Check scan Wifi
+            current_wifi_existed = scan_wifi()
+            check_scan_wifi = wl_2g_ssid not in current_wifi_existed
+
+            # Check connect
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+
+            connect_wifi_by_command(wl_2g_ssid, wl_2g_pw)
+            # ========================================================================
+            check_wifi_blocked_2 = current_connected_wifi() == 'WiFi is not connected'
+            check_connect_to_web = check_connect_to_web_admin_page()
+
+            list_actual6 = [check_scan_wifi, check_wifi_blocked_2, check_connect_to_web]
+            list_expected6 = [return_true, return_true, return_false]
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Disable 2G Guest Wifi. Check that Wifi is not in Wifi Scan list.'
+                f'Check Can connect to that Wifi. Check Connect to WEB is blocked. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Disable 2G Guest Wifi. Check that Wifi is not in Wifi Scan list.'
+                f'Check Can connect to that Wifi. Check Connect to WEB is blocked.  '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            list_step_fail.append('6. Assertion wong.')
+
+        try:
+            os.system('netsh wlan disconnect')
+            time.sleep(1)
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+            # Check can login Web UI
+            driver.refresh()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(2)
+
+            # Enabled
+            block_2g = driver.find_elements_by_css_selector(guest_network_block)[0]
+            ls_row = block_2g.find_elements_by_css_selector(rows)
+            if not ls_row[0].find_element_by_css_selector(input).is_selected():
+                ls_row[0].find_element_by_css_selector(select).click()
+                time.sleep(1)
+                block_2g.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(2)
+
+            # Check connect
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+
+            connect_wifi_by_command(wl_2g_ssid, wl_2g_pw)
+
+            # ========================================================================
+            check_wifi_blocked_3 = current_connected_wifi() == wl_2g_ssid
+            check_connect_to_web = check_connect_to_web_admin_page()
+
+            list_actual7 = [check_wifi_blocked_3, check_connect_to_web]
+            list_expected7 = [return_true, return_false]
+            check = assert_list(list_actual7, list_expected7)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 7. Disconnect Ethernet. Connect Guest Wifi 2G. '
+                f'Check Can connect to that Wifi. Check Connect to WEB is blocked. '
+                f'Actual: {str(list_actual7)}. '
+                f'Expected: {str(list_expected7)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 7.  Disconnect Ethernet. Connect Guest Wifi 2G. '
+                f'Check Can connect to that Wifi. Check Connect to WEB is blocked. '
+                f'Actual: {str(list_actual7)}. '
+                f'Expected: {str(list_expected7)}')
+            list_step_fail.append('7. Assertion wong.')
+
+        try:
+            os.system('netsh wlan disconnect')
+            time.sleep(1)
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+            # Check can login Web UI
+            driver.refresh()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(5)
+
+            # Enabled
+            block_2g = driver.find_elements_by_css_selector(guest_network_block)[0]
+            ls_row = block_2g.find_elements_by_css_selector(rows)
+
+            ls_row[0].find_element_by_css_selector(edit_cls).click()
+            time.sleep(2)
+
+            block_2g = driver.find_elements_by_css_selector(guest_network_block)[0]
+            # Click Add
+            block_2g.find_element_by_css_selector(add_class).click()
+            time.sleep(0.5)
+            # Check Default Value
+            edit_2g_block = driver.find_elements_by_css_selector(wl_primary_card)[0]
+            # Settings
+            labels = edit_2g_block.find_elements_by_css_selector(label_name_in_2g)
+            values = edit_2g_block.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels, values):
+                if l.text == 'Wireless MAC Filtering':
+                    check_mac_filtering = v.find_element_by_css_selector(input).is_selected()
+                    break
+
+            mac_block = driver.find_element_by_css_selector(ele_block_card)
+            ls_rows = mac_block.find_elements_by_css_selector(rows)
+            row_device_name = ls_rows[0].find_element_by_css_selector(ele_mac_device_name).text
+            row_mac = ls_rows[0].find_element_by_css_selector(wol_mac_addr).text
+
+            list_actual8 = [check_mac_filtering, row_device_name, row_mac]
+            list_expected8 = [return_true, device_name, get_device_mac]
+            check = assert_list(list_actual8, list_expected8)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 8. Check Information remain.'
+                f'Check Wireless Mac Filtering. Block Device Name, Block MAC Address. '
+                f'Actual: {str(list_actual8)}. '
+                f'Expected: {str(list_expected8)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8. Check Information remain.'
+                f'Check Wireless Mac Filtering. Block Device Name, Block MAC Address. '
+                f'Actual: {str(list_actual8)}. '
+                f'Expected: {str(list_expected8)}')
+            list_step_fail.append('8. Assertion wong.')
+
+        try:
+            block_mac_filter = driver.find_elements_by_css_selector(ele_access_control_card)[0]
+            block_mac_filter.find_element_by_css_selector(select).click()
+            time.sleep(1)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            add_a_wireless_mac_filtering(driver, INPUT_DEVICE=device_name, INPUT_MAC=get_device_mac)
+            #
+            edit_2g_block = driver.find_elements_by_css_selector(wl_primary_card)[0]
+            edit_2g_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(10)
+            # ===================================================================================
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+
+            connect_wifi_by_command(wl_2g_ssid, wl_2g_pw)
+
+            check_wifi_connect_1 = current_connected_wifi() == wl_2g_ssid
+            check_connect_to_web_1 = check_connect_to_web_admin_page()
+            # ===============================================================
+            os.system('netsh wlan disconnect')
+            time.sleep(1)
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+            # Check can login Web UI
+            driver.refresh()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+
+            # Disabled
+            block_2g = driver.find_elements_by_css_selector(guest_network_block)[0]
+            ls_row = block_2g.find_elements_by_css_selector(rows)
+            if ls_row[0].find_element_by_css_selector(input).is_selected():
+                ls_row[0].find_element_by_css_selector(select).click()
+                time.sleep(1)
+                block_2g.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(2)
+            time.sleep(20)
+            # Check scan Wifi
+            current_wifi_existed = scan_wifi()
+            check_scan_wifi_2 = wl_2g_ssid not in current_wifi_existed
+
+            # Check connect
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+
+            connect_wifi_by_command(wl_2g_ssid, wl_2g_pw)
+
+            check_wifi_connect_3 = current_connected_wifi() == 'WiFi is not connected'
+            check_connect_to_web_3 = check_connect_to_web_admin_page()
+            # ========================================================================
+
+            os.system('netsh wlan disconnect')
+            time.sleep(1)
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+            # Check can login Web UI
+            driver.refresh()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(2)
+
+            # Enabled
+            block_2g = driver.find_elements_by_css_selector(guest_network_block)[0]
+            ls_row = block_2g.find_elements_by_css_selector(rows)
+            if not ls_row[0].find_element_by_css_selector(input).is_selected():
+                ls_row[0].find_element_by_css_selector(select).click()
+                time.sleep(1)
+                block_2g.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(2)
+            time.sleep(10)
+            # Check connect
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(5)
+
+            connect_wifi_by_command(wl_2g_ssid, wl_2g_pw)
+            # ========================================================================
+            check_wifi_connect_4 = current_connected_wifi() == wl_2g_ssid
+            check_connect_to_web_4 = check_connect_to_web_admin_page()
+
+            list_actual9 = [[check_wifi_connect_1, check_connect_to_web_1],
+                            [check_scan_wifi_2, check_wifi_connect_3, check_connect_to_web_3],
+                            [check_wifi_connect_4, check_connect_to_web_4]]
+            list_expected9 = [[return_true]*2, [return_true, return_true, return_false], [return_true]*2]
+            check = assert_list(list_actual9, list_expected9)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 9. Re do all step With white Mode.'
+                f'Check connect wifi.'
+                f'Disable Guest Wifi. Check can not scan and Check can connect Wifi.'
+                f'Enabled Guest Wifi. Check Can connect wifi. '
+                f'Actual: {str(list_actual9)}. '
+                f'Expected: {str(list_expected9)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 9.  Re do all step With white Mode.'
+                f'Check connect wifi.'
+                f'Disable Guest Wifi. Check can not scan and Check can connect Wifi.'
+                f'Enabled Guest Wifi. Check Can connect wifi. '
+                f'Actual: {str(list_actual9)}. '
+                f'Expected: {str(list_expected9)}')
+            list_step_fail.append('9. Assertion wong.')
+        self.assertListEqual(list_step_fail, [])
+
 if __name__ == '__main__':
     unittest.main()

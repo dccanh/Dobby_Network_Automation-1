@@ -7,13 +7,25 @@ youtube_url = http://youtube.com
 url = http://dearmyrouter.net
 user = admin
 pw = abc123
+
 repeater_model = HUMAX_T10X
 repeater_name = wifi_upper_16_2G!
-repeater_pw = humax_0016
+repeater_pw = humax_0001
+repeater_name_5g = wifi_upper_16_5G!
+repeater_pw_5g = humax_0001
+
 third_party_name = DINHCONGHUONGT2
 third_party_pw = 12344321
-repeater_name_5g = wifi_upper_16_5G!
-repeater_pw_5g = humax_0016
+third_party_name_5g = DINHCONGHUONGT2
+third_party_pw_5g = 12344321
+
+
+
+[PPPOE]
+pppoe_user = admin
+pppoe_pw = 12345
+
+
 [MAIN]
 main5_set_language_1 = English
 main5_set_language_2 = Tiếng Việt
@@ -25,6 +37,8 @@ main24_wrong_pw = acb000
 main24_new_pw = acb123
 main24_retype_new_pw = acb321
 main25_new_pw = abc000
+main_31_new_pw_1 = abc000
+main_31_new_pw_2 = abc123
 main35_new_pw = abc321
 main36_ssid_wifi_4 = (!@#^&*()+_-={}[]|:.?~`$%\;'"<>,/)
 main36_ssid_wifi_5_1 =     123

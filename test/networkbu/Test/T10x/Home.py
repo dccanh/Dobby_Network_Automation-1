@@ -22,23 +22,23 @@ class HOME(unittest.TestCase):
 
     def tearDown(self):
         check_enable_ethernet()
-        try:
-            end_time = datetime.now()
-            duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        except:
-            # Connect by wifi if internet is down to handle exception for PPPoE
-            os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
-            time.sleep(1)
-            end_time = datetime.now()
-            duration = str((end_time - self.start_time))
-            write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-            time.sleep(5)
-            # Connect by LAN again
-            os.system('netsh wlan disconnect')
-            time.sleep(1)
-        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        # write_to_excel_tmp(self.key, self.list_steps, self.def_name)
+        # try:
+        #     end_time = datetime.now()
+        #     duration = str((end_time - self.start_time))
+        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        # except:
+        #     # Connect by wifi if internet is down to handle exception for PPPoE
+        #     os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
+        #     time.sleep(1)
+        #     end_time = datetime.now()
+        #     duration = str((end_time - self.start_time))
+        #     write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        #     time.sleep(5)
+        #     # Connect by LAN again
+        #     os.system('netsh wlan disconnect')
+        #     time.sleep(1)
+        # write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        write_to_excel_tmp(self.key, self.list_steps, self.def_name)
         self.driver.quit()
     # OK
     def test_01_HOME_Check_Internet_Image_Operation_when_Dual_WAN_is_off(self):
@@ -830,6 +830,172 @@ class HOME(unittest.TestCase):
                 f'Expected: {str(list_expected2)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('2. Assertion wong.')
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_08_HOME_Check_Router_Wireless_Image_operation(self):
+        self.key = 'HOME_08'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        factory_dut()
+        # ================================================
+        try:
+            grand_login(driver)
+            time.sleep(1)
+
+            router_wireless_icon = driver.find_element_by_css_selector(home_img_lan_connection)
+            router_wireless_icon_check_active = 'active' in router_wireless_icon.get_attribute('class')
+            router_wireless_icon.click()
+
+            time.sleep(1)
+            #
+            check_2g_active = len(
+                driver.find_elements_by_css_selector('.lan-connection>a.active:not(.disconnect24)')) > 0
+            check_5g_active = len(
+                driver.find_elements_by_css_selector('.lan-connection>a.active:not(.disconnect5)')) > 0
+
+            list_actual1 = [router_wireless_icon_check_active, check_2g_active, check_5g_active]
+            list_expected1 = [return_true] * 3
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Check Icon is active, Color of 2.4GHz and 5GHz. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Check Icon is active, Color of 2.4GHz and 5GHz. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            list_step_fail.append('1, 2. Assertion wong.')
+
+        try:
+            #
+            goto_menu(driver, advanced_tab, advanced_wireless_tab)
+
+            block_2g = driver.find_elements_by_css_selector(ele_adv_wireless_card)[0]
+
+            labels_2 = block_2g.find_elements_by_css_selector(label_name_in_2g)
+            values_2 = block_2g.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels_2, values_2):
+                if l.text == 'Radio':
+                    v.find_element_by_css_selector(select).click()
+                    break
+
+            block_2g.find_element_by_css_selector(apply).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            block_2g = driver.find_elements_by_css_selector(ele_adv_wireless_card)[0]
+            labels_2 = block_2g.find_elements_by_css_selector(label_name_in_2g)
+            values_2 = block_2g.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels_2, values_2):
+                if l.text == 'Radio':
+                    check_radio_box = v.find_element_by_css_selector(input).is_selected()
+                    break
+
+            list_actual3 = [check_radio_box]
+            list_expected3 = [return_false]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Goto Advanced> Wireless. Disabled 2G Radio. Check Disabled. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Goto Advanced> Wireless. Disabled 2G Radio. Check Disabled. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong.')
+
+        try:
+            # Go home
+            goto_menu(driver, home_tab, 0)
+            time.sleep(1)
+            check_2g_active_2 = len(
+                driver.find_elements_by_css_selector('.lan-connection>a.active.disconnect24')) > 0
+            check_5g_active_2 = len(
+                driver.find_elements_by_css_selector('.lan-connection>a.active:not(.disconnect5)')) > 0
+
+            list_actual4 = [check_2g_active_2, check_5g_active_2]
+            list_expected4 = [return_true] * 2
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Check 2GHz image is disconnected, 5GHz image is connected. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Check 2GHz image is disconnected, 5GHz image is connected. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong.')
+
+        try:
+            #
+            goto_menu(driver, advanced_tab, advanced_wireless_tab)
+
+            block_5g = driver.find_elements_by_css_selector(ele_adv_wireless_card)[1]
+
+            labels_3 = block_5g.find_elements_by_css_selector(label_name_in_2g)
+            values_3 = block_5g.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels_3, values_3):
+                if l.text == 'Radio':
+                    v.find_element_by_css_selector(select).click()
+                    break
+
+            block_5g.find_element_by_css_selector(apply).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            block_5g = driver.find_elements_by_css_selector(ele_adv_wireless_card)[1]
+            labels_4 = block_5g.find_elements_by_css_selector(label_name_in_2g)
+            values_4 = block_5g.find_elements_by_css_selector(wrap_input)
+            for l, v in zip(labels_4, values_4):
+                if l.text == 'Radio':
+                    check_radio_box = v.find_element_by_css_selector(input).is_selected()
+                    break
+
+            list_actual5 = [check_radio_box]
+            list_expected5 = [return_false]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Goto Advanced> Wireless. Disabled 5G Radio. Check Disabled. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Goto Advanced> Wireless. Disabled 5G Radio. Check Disabled. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+            list_step_fail.append('5. Assertion wong.')
+
+        try:
+            # Go home
+            goto_menu(driver, home_tab, 0)
+            time.sleep(1)
+            check_2g_active_3 = len(
+                driver.find_elements_by_css_selector('.lan-connection>a.active.disconnect24')) > 0
+            check_5g_active_3 = len(
+                driver.find_elements_by_css_selector('.lan-connection>a.active.disconnect5')) > 0
+
+            list_actual6 = [check_2g_active_3, check_5g_active_3]
+            list_expected6 = [return_true] * 2
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Check 2GHz image is disconnected, 5GHz image is disconnected. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Check 2GHz image is disconnected, 5GHz image is disconnected. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('6. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
     # OK
@@ -3612,7 +3778,7 @@ class HOME(unittest.TestCase):
         self.list_steps = []
         save_config(config_path, 'URL', 'url', 'http://192.168.1.1')
         URL_LOGIN = get_config('URL', 'url')
-
+        factory_dut()
         try:
             # ===================================================================
             URL_DISCONNECT_WAN = URL_LOGIN + '/api/v1/network/wan/0/disconnect'
@@ -3723,19 +3889,13 @@ class HOME(unittest.TestCase):
         try:
             repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
             repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
-            # # Disconnect Wireless
-            # os.system('netsh wlan disconnect')
-            # time.sleep(1)
-            # grand_login(driver)
-            # time.sleep(2)
-            # goto_menu(driver, network_tab, network_operationmode_tab)
-            # if driver.find_element_by_css_selector(ele_repeater_mode_input).is_selected():
-            #     goto_menu(driver, wireless_tab, wireless_repeater_setting_tab)
-            #     wait_popup_disappear(driver, icon_loading)
-            #     scan_wifi_repeater_mode(driver, repeater_name, repeater_pw)
-            # else:
-            #     connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
-            # time.sleep(3)
+
+            time.sleep(1)
+            grand_login(driver)
+            time.sleep(2)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            connect_repeater_mode(driver)
+            time.sleep(3)
 
             # Verify_connect successfully
             URL_LOGIN = get_config('URL', 'url')
@@ -3822,16 +3982,12 @@ class HOME(unittest.TestCase):
             repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
             repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
 
-            # grand_login(driver)
-            # time.sleep(2)
-            # goto_menu(driver, network_tab, network_operationmode_tab)
-            # if driver.find_element_by_css_selector(ele_repeater_mode_input).is_selected():
-            #     goto_menu(driver, wireless_tab, wireless_repeater_setting_tab)
-            #     wait_popup_disappear(driver, icon_loading)
-            #     scan_wifi_repeater_mode(driver, repeater_name, repeater_pw)
-            # else:
-            #     connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
-            # time.sleep(3)
+            time.sleep(1)
+            grand_login(driver)
+            time.sleep(2)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            connect_repeater_mode(driver)
+            time.sleep(3)
 
             # Verify_connect successfully
             URL_LOGIN = get_config('URL', 'url')
@@ -4670,6 +4826,394 @@ class HOME(unittest.TestCase):
             list_step_fail.append('3. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
+
+    def test_06_HOME_Check_Connection_Status_of_PPPoE(self):
+        self.key = 'HOME_06'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # ====================================================
+        factory_dut()
+        # ======================================================
+        NEW_PASSWORD_1 = get_config('COMMON', 'new_pw', input_data_path)
+        PPPOE_USER = get_config('PPPOE', 'pppoe_user', input_data_path)
+        PPPOE_PW = get_config('PPPOE', 'pppoe_pw', input_data_path)
+        try:
+            time.sleep(1)
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            wait_popup_disappear(driver, dialog_loading)
+            # Click start btn
+            driver.find_element_by_css_selector(welcome_start_btn).click()
+            wait_visible(driver, welcome_change_pw_fields)
+
+            change_pw_fields = driver.find_elements_by_css_selector(welcome_change_pw_fields)
+
+            # A list contain values: Current Password, New Password, Retype new pw
+            ls_change_pw_value = [get_config('ACCOUNT', 'password'), NEW_PASSWORD_1, NEW_PASSWORD_1]
+            for p, v in zip(change_pw_fields, ls_change_pw_value):
+                ActionChains(driver).move_to_element(p).click().send_keys(v).perform()
+                time.sleep(0.5)
+            # Next Change pw
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+                wait_popup_disappear(driver, dialog_loading)
+
+            # Next
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+                time.sleep(3)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(10)
+            wait_popup_disappear(driver, icon_loading)
+
+            internet_setup = driver.find_element_by_css_selector(ele_welcome_connection_box)
+            internet_setup.click()
+            time.sleep(1)
+            ls_option = internet_setup.find_elements_by_css_selector(secure_value_in_drop_down)
+            for o in ls_option:
+                if o.text == 'PPPoE':
+                    o.click()
+
+            form = driver.find_element_by_css_selector('.form-container>div:nth-child(2)')
+            labels = form.find_elements_by_css_selector(label_name_in_2g)
+            values = form.find_elements_by_css_selector(label_value_in_2g)
+            for l, v in zip(labels, values):
+                if l.text == 'User Name':
+                    v.send_keys(PPPOE_USER)
+                    time.sleep(1)
+                if l.text == 'Password':
+                    v.send_keys(PPPOE_PW)
+                    break
+
+            while True:
+                time.sleep(1)
+                wait_visible(driver, welcome_next_btn)
+                next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+                if not next_btn.get_property('disabled'):
+                    next_btn.click()
+                time.sleep(3)
+
+                if len(driver.find_elements_by_css_selector(welcome_let_go_btn)) > 0:
+                    break
+
+            time.sleep(3)
+            driver.find_element_by_css_selector(welcome_let_go_btn).click()
+            # Write config
+            save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD_1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            wait_visible(driver, home_view_wrap)
+
+            self.list_steps.append(
+                f'[Pass] 0. Precondition. ')
+        except:
+            self.list_steps.append(
+                f'[Fail] 0. Precondition')
+            list_step_fail.append('0. Assertion wong')
+
+        try:
+            driver.refresh()
+            time.sleep(5)
+            driver.find_element_by_css_selector(home_img_connection).click()
+            time.sleep(2)
+
+            card = driver.find_element_by_css_selector('.tabs-information')
+            ls_label = [i.text for i in card.find_elements_by_css_selector(label_name_in_2g)]
+            labels = card.find_elements_by_css_selector(label_name_in_2g)
+            fields = card.find_elements_by_css_selector(ele_wrap_input_label)
+            for l, f in zip(labels, fields):
+                if l.text == 'Connection Type':
+                    get_connection_type = f.text
+                    time.sleep(1)
+
+            check_card_title = card.find_element_by_css_selector(title_tabs_cls).text
+            check_icon_more = len(card.find_elements_by_css_selector(home_icon_fab)) > 0
+
+            list_actual4 = [ls_label, get_connection_type, check_card_title, check_icon_more]
+            list_expected4 = [['WAN Type', 'Connection Type', 'WAN IP Address', 'Subnet Mask',
+                               'Gateway', 'DNS Server 1', 'DNS Server 1'], 'PPPoE', 'Internet', True
+                              ]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2. Set to PPPoE. Click to WAN image. '
+                f'Check list label, Check Connection Type, Card title, Icon more. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Set to PPPoE. Click to WAN image. '
+                f'Check list label, Check Connection Type, Card title, Icon more. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('2.  Assertion wong')
+
+
+
+
+        self.assertListEqual(list_step_fail, [])
+
+    def test_37_HOME_Check_Edit_icon_works_in_connected_devices_of_Mesh_Network(self):
+        self.key = 'HOME_37'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        try:
+            grand_login(driver)
+            time.sleep(2)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            connect_repeater_mode(driver)
+            time.sleep(3)
+
+            REPEATER_WIFI_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
+            REPEATER_WIFI_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
+            connect_wifi_by_command(REPEATER_WIFI_NAME, REPEATER_WIFI_PW)
+            self.list_steps.append(
+                f'[Pass] Precondition successfully. Set Repeater mode. Connect wifi repeater. ')
+        except:
+            self.list_steps.append(
+                f'[Fail] Precondition Fail. Set Repeater mode. Connect wifi repeater. ')
+            list_step_fail.append('0. Precondition wong')
+
+        try:
+            UPPER_URL = get_config('REPEATER', 'url', input_data_path)
+            UPPER_USER = get_config('REPEATER', 'user', input_data_path)
+            UPPER_PW = get_config('REPEATER', 'pw', input_data_path)
+            grand_login(driver, url_login=UPPER_URL, user_request=UPPER_USER, pass_word=UPPER_PW)
+            time.sleep(1)
+            driver.refresh()
+            time.sleep(5)
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            wait_popup_disappear(driver, dialog_loading)
+
+            nw_items = driver.find_elements_by_css_selector('.network-item')
+            for i in nw_items:
+                if len(i.find_elements_by_css_selector(title_cls)) > 0:
+                    if i.find_element_by_css_selector(title_cls).text == 'Mesh Network':
+                        i.find_element_by_css_selector(edit_cls).click()
+                        time.sleep(2)
+                        break
+
+            check_device_name = driver.find_element_by_css_selector(ele_mac_device_name+ ' input').get_attribute('value').startswith('DESKTOP')
+            check_device_type_image = len(driver.find_elements_by_css_selector('.basic-info .thumb')) > 0
+            check_device_type = len(driver.find_elements_by_css_selector('.custom-select-box')) > 0
+            check_device_mac = checkMACAddress(driver.find_elements_by_css_selector('.info')[0].text)
+            check_device_ip = checkIPAddress(driver.find_elements_by_css_selector('.info')[1].text)
+            check_device_interface = driver.find_elements_by_css_selector('.info')[2].text.startswith('LAN Port')
+
+            check_label = [i.text for i in driver.find_elements_by_css_selector(label_name_in_2g)]
+
+
+            list_actual1 = [check_device_name, check_device_type_image, check_device_type,
+                            check_device_mac, check_device_ip, check_device_interface, check_label]
+            list_expected1 = [return_true] * 6 + [['Reserved IP', 'MAC Filtering', 'Parental Control', 'WoL (Wake on LAN)']]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Goto Device image. Click Edit of Mesh Network. '
+                f'Check Device name, Device, Type image, Device Type, MAC address, IP address, Interface and List Labels. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail]  1, 2. Goto Device image. Click Edit of Mesh Network. '
+                f'Check Device name, Device, Type image, Device Type, MAC address, IP address, Interface and List Labels. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('1. Assertion wong')
+
+        self.assertListEqual(list_step_fail, [])
+
+    # def test_36_HOME_Check_Firmware_Update_icon_works_when_firmware_file_in_extender_DUT_is_not_latest_version(self):
+    #     self.key = 'HOME_36'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     factory_dut()
+    #
+    #     disconnect_or_connect_wan(disconnected=True)
+    #     # ======================================================
+    #     REPEATER_MESH_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
+    #     REPEATER_MESH_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
+    #     NEW_PASSWORD = get_config('COMMON', 'new_pw', input_data_path)
+    #     try:
+    #         time.sleep(1)
+    #         login(driver)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         # Click start btn
+    #         driver.find_element_by_css_selector(welcome_start_btn).click()
+    #         wait_visible(driver, welcome_change_pw_fields)
+    #
+    #         change_pw_fields = driver.find_elements_by_css_selector(welcome_change_pw_fields)
+    #
+    #         # A list contain values: Current Password, New Password, Retype new pw
+    #         ls_change_pw_value = [get_config('ACCOUNT', 'password'), NEW_PASSWORD, NEW_PASSWORD]
+    #         for p, v in zip(change_pw_fields, ls_change_pw_value):
+    #             ActionChains(driver).move_to_element(p).click().send_keys(v).perform()
+    #             time.sleep(0.5)
+    #         # Next Change pw
+    #         wait_visible(driver, welcome_next_btn)
+    #         next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    #         if not next_btn.get_property('disabled'):
+    #             next_btn.click()
+    #             wait_popup_disappear(driver, dialog_loading)
+    #
+    #         # Change Operation Mode
+    #         driver.find_element_by_css_selector(ele_welcome_router_box).click()
+    #         time.sleep(0.5)
+    #         operation_block = driver.find_element_by_css_selector(ele_welcome_router_box)
+    #         list_options = operation_block.find_elements_by_css_selector(secure_value_in_drop_down)
+    #         # Choose
+    #         for o in list_options:
+    #             if o.text == 'Repeater Mode':
+    #                 o.click()
+    #                 break
+    #
+    #         # Next
+    #         wait_visible(driver, welcome_next_btn)
+    #         next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    #         if not next_btn.get_property('disabled'):
+    #             next_btn.click()
+    #             time.sleep(3)
+    #             wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(10)
+    #         wait_popup_disappear(driver, icon_loading)
+    #
+    #
+    #         time.sleep(5)
+    #         _rows = driver.find_elements_by_css_selector(rows)
+    #         # Choose Network name
+    #         for r in _rows:
+    #             if r.find_element_by_css_selector(ele_network_name).text.strip() == REPEATER_MESH_NAME:
+    #                 r.click()
+    #                 time.sleep(1)
+    #                 break
+    #         # Fill Password
+    #         pw_box = driver.find_element_by_css_selector(ele_input_pw)
+    #         ActionChains(driver).click(pw_box).send_keys(REPEATER_MESH_PW).perform()
+    #         time.sleep(1)
+    #
+    #         # Get info
+    #         for r in _rows:
+    #             if r.find_element_by_css_selector(ele_network_name).text.strip() == REPEATER_MESH_NAME:
+    #                 get_security = r.find_element_by_css_selector(security_page).text
+    #
+    #         while True:
+    #             time.sleep(1)
+    #             wait_visible(driver, welcome_next_btn)
+    #             next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+    #             if not next_btn.get_property('disabled'):
+    #                 next_btn.click()
+    #             time.sleep(3)
+    #
+    #             if len(driver.find_elements_by_css_selector(welcome_let_go_btn)) > 0:
+    #                 break
+    #
+    #         # Click Let go
+    #         driver.find_element_by_css_selector(welcome_let_go_btn).click()
+    #         time.sleep(100)
+    #         wait_popup_disappear(driver, icon_loading)
+    #         save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD)
+    #         save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+    #         time.sleep(1)
+    #         os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+    #         time.sleep(10)
+    #         connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
+    #         time.sleep(5)
+    #         print(current_connected_wifi())
+    #         driver.get('http://dearmyextender.net')
+    #         time.sleep(1)
+    #         grand_login(driver)
+    #         time.sleep(2)
+    #
+    #         change_firmware_version(driver, version='t10x_fullimage_3.00.12_rev11.img')
+    #
+    #         time.sleep(10)
+    #         self.list_steps.append(
+    #             f'[Pass] Precondition successfully. '
+    #             f'Set Repeater mode. Connect wifi repeater. Upto low firmware version. ')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] Precondition Fail. '
+    #             f'Set Repeater mode. Connect wifi repeater. Upto low firmware version.  ')
+    #         list_step_fail.append('0. Precondition wong')
+    #
+    #     try:
+    #
+    #         UPPER_URL = get_config('REPEATER', 'url', input_data_path)
+    #         UPPER_USER = get_config('REPEATER', 'user', input_data_path)
+    #         UPPER_PW = get_config('REPEATER', 'pw', input_data_path)
+    #         grand_login(driver, url_login=UPPER_URL, user_request=UPPER_USER, pass_word=UPPER_PW)
+    #         time.sleep(1)
+    #
+    #         driver.find_element_by_css_selector(home_img_device_connection).click()
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(2)
+    #         connected_devices = driver.find_element_by_css_selector(ele_device_tab_titles)
+    #         connected_devices.find_element_by_css_selector(ele_upgrade_btn).click()
+    #         time.sleep(1)
+    #         check_message = driver.find_element_by_css_selector(confirm_dialog_msg).text
+    #         time.sleep(0.5)
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(100)
+    #
+    #         list_actual1 = [check_message]
+    #         list_expected1 = [exp_msg_upgrade_extender]
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 1, 2, 3. Goto Device image. CLick Upgrade. Check message. '
+    #             f'Actual: {str(list_actual1)}. '
+    #             f'Expected: {str(list_expected1)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail]  1, 2. Goto Device image. CLick Upgrade. Check message. '
+    #             f'Actual: {str(list_actual1)}. '
+    #             f'Expected: {str(list_expected1)}')
+    #         list_step_fail.append('1, 2, 3. Assertion wong')
+    #
+    #
+    #     try:
+    #
+    #         time.sleep(10)
+    #         # Login
+    #
+    #         grand_login(driver)
+    #         wait_popup_disappear(driver, home_view_wrap)
+    #
+    #         goto_system(driver, ele_sys_firmware_update)
+    #         time.sleep(1)
+    #         check_text = driver.find_element_by_css_selector(ele_firm_update_msg).text
+    #
+    #         list_actual2 = [check_text]
+    #         list_expected2 = ['The current version is up to date.']
+    #         check = assert_list(list_actual2, list_expected2)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] 4, 5. Goto Extender. Goto System. Check Version is lastest. '
+    #             f'Actual: {str(list_actual2)}. '
+    #             f'Expected: {str(list_expected2)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 4, 5.  Goto Extender. Goto System. Check Version is lastest. '
+    #             f'Actual: {str(list_actual2)}. '
+    #             f'Expected: {str(list_expected2)}')
+    #         list_step_fail.append('4, 5. Assertion wong')
+    #
+    #     self.assertListEqual(list_step_fail, [])
 
 if __name__ == '__main__':
     unittest.main()
