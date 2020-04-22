@@ -1883,7 +1883,7 @@ def add_a_default_guest_network(driver, block):
     return wl_2g_ssid
 
 
-def scan_wifi_repeater_mode(driver):
+def scan_wifi_repeater_mode_table(driver):
     ls_row = driver.find_elements_by_css_selector(rows)
     table = list()
     for r in ls_row:

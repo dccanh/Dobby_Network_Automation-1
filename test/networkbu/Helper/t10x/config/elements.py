@@ -400,6 +400,7 @@ ele_mesh_mode_icon = '.meshmode-img'
 ele_description_text = '.description-text'
 ele_manual_scan_btn = '.manual-action button'
 ele_guideline = '.guideline'
+ele_btn_next = 'button.next'
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ USB
 ele_usb_card = '.simple-usb'
 ele_space_use = '.space-used'

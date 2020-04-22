@@ -109,7 +109,10 @@ exp_router_mode_description = 'Your router connects to the internet via Dynamic 
 exp_bridge_mode_description = 'In Bridge mode, your router wired to the host router to extend the wieless coverage. However, Mesh Mode are not supported even if they are connected to HUMAX High-Performance product.'
 exp_repeater_mode_description = 'In Repeater mode, your router wirelessly connects to the host router to extend the wieless coverage. If your host network is a HUMAX High-Performance product, you can configure a more powerful Mesh Network. If it is not a HUMAX product, it operates in universal repeater mode.\nDisconnect the cable from Internet Port for wireless connection.'
 exp_access_point_mode_description = 'In Access Point mode, your router wired to the host router to extend the wieless coverage. Automatically recognizes the wired network and configures the Mesh Network for HUMAX High-Performance product. If it is not a HUMAX product, it operates in normal access point mode. Connect the Ethernet cable of the host network you want to connect to the WAN port.'
-
+exp_repeater_mode_scan_guide = '※ If the security type of the upper router is WEP or Enterprise, it can not be connected and is not displayed in the list.\n※ In Mesh Mode, you cannot change the network name(SSID) of a node.'
+exp_repeater_mode_scan_desc = 'Select the network name(SSID) of the host network to connect and enter the password.\nWhen connected to HUMAX High-Performance products (T10x / T9x / T7x / T5x / T9 / T7 / T5), it operates in Mesh Mode and configures the Mesh Network.\nWhen connected to other routers, it operates in universal repeater mode.'
+exp_repeater_mode_confirm_msg = 'Do you want to restart the system? It take about a few minutes to restart. After restart, connect to http://dearmyextender.net.'
+exp_repeater_mode_confirm_msg_2 = 'Do you want to change the operation mode to Mesh mode? The changed SSID and password are automatically set the same as the parent router.'
 # ~~~~~~~~~~~~~~~~~~~~~ Advanced
 exp_destination_same_lan_ip_error_msg = 'Enter another IP address. Cannot same as the LAN IP address.'
 exp_warning_local_port_same_external = 'The number of Local Ports must be the same as that of External Ports.'
