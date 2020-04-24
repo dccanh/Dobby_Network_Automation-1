@@ -145,6 +145,7 @@ ele_wps_button = 'button.active-wps-button'
 ele_btn_select_disable = '.toggle-disable'
 ele_block_card = '.access-content'
 ele_access_control_card = '.access-control-card'
+ele_wps_status = '.wps-status-message'
 # ~~~~~~~~~~~~~~~~ MEDIA SHARE
 usb_class = '.usb'
 usb_network = '.usb .network-folder'

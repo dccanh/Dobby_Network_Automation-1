@@ -28,7 +28,7 @@ class MAIN(unittest.TestCase):
             elif 'Explorer' in self._testMethodName:
                 self.driver = webdriver.Ie(explorer_driver_path)
             elif '_Edge' in self._testMethodName:
-                self.driver = webdriver.Edge()
+                self.driver = webdriver.Edge(executable_path=driver_edge_path)
             elif '_Safari' in self._testMethodName:
                 self.driver = webdriver.Safari(driver_safari_path)
             else:
@@ -69,11 +69,11 @@ class MAIN(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~ Get info URL, ACCOUNT ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Get and write URL
-            url_ = get_url_ipconfig(ipconfig_field='Default Gateway')
-            save_config(config_path, 'URL', 'url', url_)
+            url_ = get_value_from_ipconfig('Ethernet adapter Ethernet', 'Default Gateway')
+            save_config(config_path, 'URL', 'url', 'http://'+url_)
             url_config = get_config('URL', 'url')
             time.sleep(1)
-            check_url = True if url_config != '' else False
+            check_url = checkIPAddress(url_)
             # Check url, account info is not None
             list_actual1 = [check_url]
             list_expected1 = [return_true]
@@ -1614,6 +1614,125 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('5. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
+
+    def test_18_MAIN_Check_Edge_Browser_behavior(self):
+        self.key = 'MAIN_18'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        url_login = get_config('URL', 'url')
+        user_request = get_config('ACCOUNT', 'user')
+        pass_word = get_config('ACCOUNT', 'password')
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            time.sleep(1)
+            driver.get(url_login)
+            time.sleep(2)
+
+            list_actual1 = [url_login + '/']
+            list_expected1 = [driver.current_url]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1. Check URL Login Page in Chrome. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Check URL Login Page in Chrome. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
+            time.sleep(1)
+            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
+            time.sleep(1)
+            # Captcha
+            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+            captcha_text = get_captcha_string(captcha_src)
+            driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+            time.sleep(1)
+
+            user_value = driver.find_element_by_css_selector(lg_user).get_attribute('value')
+            captcha_value = driver.find_element_by_css_selector(lg_captcha_box).get_attribute('value')
+            # Click Login
+            driver.find_element_by_css_selector(lg_btn_login).click()
+
+            list_actual2 = [user_value, captcha_value]
+            list_expected2 = [user_request, captcha_text]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 2,3. Check input correct username and captcha. '
+                                   f'Actual: {str(list_actual2)}. '
+                                   f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2,3. Check input correct username and captcha. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('2,3. Assertion wong')
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(url_login + homepage)
+                time.sleep(2)
+                wait_popup_disappear(driver, dialog_loading)
+
+            list_tab_text = driver.find_elements_by_css_selector(ls_tab)
+            list_tab_text = [i.text for i in list_tab_text]
+
+            list_actual3 = [list_tab_text]
+            list_expected3 = [['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE', 'QOS', 'SECURITY', 'ADVANCED']]
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 4. Check Menu tree in Home page via domain address. '
+                                   f'Actual: {str(list_actual3)}. '
+                                   f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Check Menu tree in Home page via domain address. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('4. Assertion wong')
+
+        try:
+            url_login = get_config('URL', 'url')
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            # Goto Homepage
+            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+                driver.get(url_login + homepage)
+                time.sleep(2)
+                wait_popup_disappear(driver, dialog_loading)
+
+            list_tab_text = driver.find_elements_by_css_selector(ls_tab)
+            list_tab_text = [i.text for i in list_tab_text]
+
+            list_actual4 = [list_tab_text]
+            list_expected4 = [['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE', 'QOS', 'SECURITY', 'ADVANCED']]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append('[Pass] 5. Check Menu tree in Home page via IP address. '
+                                   f'Actual: {str(list_actual4)}. '
+                                   f'Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Check Menu tree in Home page via IP address. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('5. Assertion wong')
+
+        self.assertListEqual(list_step_fail, [])
     # OK
     def test_20_MAIN_Verify_the_Wizard_Main_page(self):
         self.key = 'MAIN_20'
@@ -3014,330 +3133,335 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('6. Assertion wong')
         self.assertListEqual(list_step_fail, [])
 
-    # def test_32_MAIN_Verification_of_setting_Repeater_Mode_via_Wizard(self):
-    #     self.key = 'MAIN_31'
-    #     driver = self.driver
-    #     self.def_name = get_func_name()
-    #     list_step_fail = []
-    #     self.list_steps = []
-    #     # ====================================================
-    #     factory_dut()
-    #     # ======================================================
-    #     REPEATER_MESH_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
-    #     REPEATER_MESH_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
-    #     REPEATER_THIRD_NAME = get_config('REPEATER', 'third_party_name', input_data_path)
-    #     REPEATER_THIRD_PW = get_config('REPEATER', 'third_party_pw', input_data_path)
-    #     NEW_PASSWORD_1 = get_config('MAIN', 'main_31_new_pw_1', input_data_path)
-    #     NEW_PASSWORD_2 = get_config('MAIN', 'main_31_new_pw_2', input_data_path)
-    #     try:
-    #         time.sleep(1)
-    #         login(driver)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         # Click start btn
-    #         driver.find_element_by_css_selector(welcome_start_btn).click()
-    #         wait_visible(driver, welcome_change_pw_fields)
-    #
-    #         title_page = driver.find_element_by_css_selector(lg_welcome_header).text
-    #
-    #         list_actual1 = [title_page]
-    #         list_expected1 = ['Change Login Password']
-    #         check = assert_list(list_actual1, list_expected1)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 1. Login. Click Start button. Check title page displayed. '
-    #             f'Actual: {str(list_actual1)}. '
-    #             f'Expected: {str(list_expected1)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 1. Login. Click Start button. Check title page displayed. '
-    #             f'Actual: {str(list_actual1)}. '
-    #             f'Expected: {str(list_expected1)}')
-    #         list_step_fail.append('1. Assertion wong')
-    #
-    #     try:
-    #         change_pw_fields = driver.find_elements_by_css_selector(welcome_change_pw_fields)
-    #
-    #         # A list contain values: Current Password, New Password, Retype new pw
-    #         ls_change_pw_value = [get_config('ACCOUNT', 'password'), NEW_PASSWORD_1, NEW_PASSWORD_1]
-    #         for p, v in zip(change_pw_fields, ls_change_pw_value):
-    #             ActionChains(driver).move_to_element(p).click().send_keys(v).perform()
-    #             time.sleep(0.5)
-    #         # Next Change pw
-    #         wait_visible(driver, welcome_next_btn)
-    #         next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    #         if not next_btn.get_property('disabled'):
-    #             next_btn.click()
-    #             wait_popup_disappear(driver, dialog_loading)
-    #
-    #         # title_next_page = driver.find_element_by_css_selector(lg_welcome_header).text
-    #         # =============================================================================
-    #         # Change Operation Mode
-    #         driver.find_element_by_css_selector(ele_welcome_router_box).click()
-    #         time.sleep(0.5)
-    #         operation_block = driver.find_element_by_css_selector(ele_welcome_router_box)
-    #         list_options = operation_block.find_elements_by_css_selector(secure_value_in_drop_down)
-    #         # Choose
-    #         for o in list_options:
-    #             if o.text == 'Repeater Mode':
-    #                 o.click()
-    #                 break
-    #
-    #         check_router_again = driver.find_element_by_css_selector(ele_welcome_router_box).text
-    #         list_actual2 = [check_router_again]
-    #         list_expected2 = ['Repeater Mode']
-    #         check = assert_list(list_actual2, list_expected2)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 2. Select Repeater mode. Check Repeater mode is selected. '
-    #             f'Actual: {str(list_actual2)}. '
-    #             f'Expected: {str(list_expected2)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 2. Select Repeater mode. Check Repeater mode is selected.  '
-    #             f'Actual: {str(list_actual2)}. '
-    #             f'Expected: {str(list_expected2)}')
-    #         list_step_fail.append('2. Assertion wong')
-    #
-    #     try:
-    #         # Next
-    #         wait_visible(driver, welcome_next_btn)
-    #         next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    #         if not next_btn.get_property('disabled'):
-    #             next_btn.click()
-    #             time.sleep(3)
-    #             wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(10)
-    #         wait_popup_disappear(driver, icon_loading)
-    #
-    #         title_repeater_setting_1 = driver.find_element_by_css_selector(lg_welcome_header).text
-    #         time.sleep(5)
-    #         _rows = driver.find_elements_by_css_selector(rows)
-    #         # Choose Network name
-    #         for r in _rows:
-    #             if r.find_element_by_css_selector(ele_network_name).text.strip() == REPEATER_MESH_NAME:
-    #                 r.click()
-    #                 time.sleep(1)
-    #                 break
-    #         # Fill Password
-    #         pw_box = driver.find_element_by_css_selector(ele_input_pw)
-    #         ActionChains(driver).click(pw_box).send_keys(REPEATER_MESH_PW).perform()
-    #         time.sleep(1)
-    #
-    #         list_actual3 = [title_repeater_setting_1]
-    #         list_expected3 = ['Repeater Setting']
-    #         check = assert_list(list_actual3, list_expected3)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 3. Check title of Repeater Settings. Choose Mesh network. Input password normaly. '
-    #             f'Actual: {str(list_actual3)}. '
-    #             f'Expected: {str(list_expected3)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 3. Check title of Repeater Settings. Choose Mesh network. Input password normaly. '
-    #             f'Actual: {str(list_actual3)}. '
-    #             f'Expected: {str(list_expected3)}')
-    #         list_step_fail.append('3. Assertion wong')
-    #
-    #     try:
-    #         time.sleep(1)
-    #         wait_visible(driver, welcome_next_btn)
-    #         next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    #         if not next_btn.get_property('disabled'):
-    #             next_btn.click()
-    #         time.sleep(3)
-    #         title_humax_wifi_app_2 = driver.find_element_by_css_selector(lg_welcome_header).text
-    #
-    #         # Next
-    #         wait_visible(driver, welcome_next_btn)
-    #         next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    #         if not next_btn.get_property('disabled'):
-    #             next_btn.click()
-    #             time.sleep(3)
-    #             wait_popup_disappear(driver, dialog_loading)
-    #
-    #         title_summary_3 = driver.find_element_by_css_selector(lg_welcome_header).text
-    #
-    #         list_actual4 = [title_humax_wifi_app_2, title_summary_3]
-    #         list_expected4 = ['HUMAX Wi-Fi App', 'Summary']
-    #         check = assert_list(list_actual4, list_expected4)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 4.1 Check order of page wizard with Repeater mode Mesh mode. '
-    #             f'Actual: {str(list_actual4)}. '
-    #             f'Expected: {str(list_expected4)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 4.1  Check order of page wizard with Repeater mode Mesh mode. '
-    #             f'Actual: {str(list_actual4)}. '
-    #             f'Expected: {str(list_expected4)}')
-    #         list_step_fail.append('4.1 Assertion wong')
-    #
-    #     try:
-    #         # Click Let go
-    #         driver.find_element_by_css_selector(welcome_let_go_btn).click()
-    #         time.sleep(150)
-    #         wait_popup_disappear(driver, icon_loading)
-    #         wait_visible(driver, lg_page)
-    #         time.sleep(5)
-    #         save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD_1)
-    #         save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
-    #         time.sleep(5)
-    #         driver.refresh()
-    #         time.sleep(5)
-    #         login(driver)
-    #         time.sleep(10)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         wait_visible(driver, home_view_wrap)
-    #
-    #         check_wan_mode = driver.find_element_by_css_selector(home_connection_description).text
-    #
-    #         check_google = check_connect_to_google()
-    #
-    #         list_actual5 = [check_wan_mode, check_google]
-    #         list_expected5 = ['Repeater Mode', return_true]
-    #         check = assert_list(list_actual5, list_expected5)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 5. Click Let go. Login again. Check WAN mode description. Check connect google. '
-    #             f'Actual: {str(list_actual5)}. '
-    #             f'Expected: {str(list_expected5)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 5. Click Let go. Login again. Check WAN mode description. Check connect google. '
-    #             f'Actual: {str(list_actual5)}. '
-    #             f'Expected: {str(list_expected5)}')
-    #         list_step_fail.append('5. Assertion wong')
-    #
-    #     try:
-    #         goto_system(driver, ele_sys_winzard)
-    #         time.sleep(2)
-    #         driver.find_element_by_css_selector(welcome_start_btn).click()
-    #         wait_visible(driver, welcome_change_pw_fields)
-    #         # ===================================================
-    #         change_pw_fields = driver.find_elements_by_css_selector(welcome_change_pw_fields)
-    #
-    #         # A list contain values: Current Password, New Password, Retype new pw
-    #         ls_change_pw_value = [get_config('ACCOUNT', 'password'), NEW_PASSWORD_2, NEW_PASSWORD_2]
-    #         for p, v in zip(change_pw_fields, ls_change_pw_value):
-    #             ActionChains(driver).move_to_element(p).click().send_keys(v).perform()
-    #             time.sleep(0.5)
-    #         # Next Change pw
-    #         wait_visible(driver, welcome_next_btn)
-    #         next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    #         if not next_btn.get_property('disabled'):
-    #             next_btn.click()
-    #             wait_popup_disappear(driver, dialog_loading)
-    #         # ===================================================
-    #         driver.find_element_by_css_selector(ele_welcome_router_box).click()
-    #         time.sleep(0.5)
-    #         operation_block = driver.find_element_by_css_selector(ele_welcome_router_box)
-    #         list_options = operation_block.find_elements_by_css_selector(secure_value_in_drop_down)
-    #         # Choose
-    #         for o in list_options:
-    #             if o.text == 'Repeater Mode':
-    #                 o.click()
-    #                 break
-    #         # Apply
-    #         wait_visible(driver, welcome_next_btn)
-    #         next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    #         if not next_btn.get_property('disabled'):
-    #             next_btn.click()
-    #             time.sleep(3)
-    #             wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(10)
-    #         wait_popup_disappear(driver, icon_loading)
-    #         # ======================================================
-    #         _rows = driver.find_elements_by_css_selector(rows)
-    #         # Choose Network name
-    #         for r in _rows:
-    #             if r.find_element_by_css_selector(ele_network_name).text.strip() == REPEATER_THIRD_NAME:
-    #                 r.click()
-    #                 time.sleep(1)
-    #                 break
-    #         # Fill Password
-    #         pw_box = driver.find_element_by_css_selector(ele_input_pw)
-    #         ActionChains(driver).click(pw_box).send_keys(REPEATER_THIRD_PW).perform()
-    #         time.sleep(1)
-    #         wait_visible(driver, welcome_next_btn)
-    #         next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    #         if not next_btn.get_property('disabled'):
-    #             next_btn.click()
-    #         time.sleep(3)
-    #
-    #         # Check SSID tag
-    #         network_name = driver.find_elements_by_css_selector('.input-wrap input[name="input-field"]')
-    #         check_network_name_2g = network_name[0].get_attribute('value').endswith('_Ext2G')
-    #         check_network_name_5g = network_name[1].get_attribute('value').endswith('_Ext5G')
-    #         # =============================================================
-    #
-    #         list_actual6 = [check_network_name_2g, check_network_name_5g]
-    #         list_expected6 = [return_true] * 2
-    #         check = assert_list(list_actual6, list_expected6)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 6. Run wizard again. Select Repeater -3 Party mode.'
-    #             f'Check network name at Reapeater setting page end with _Ext2G/_Ext5G.. '
-    #             f'Actual: {str(list_actual6)}. '
-    #             f'Expected: {str(list_expected6)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 6. Run wizard again. Select Repeater -3 Party mode.'
-    #             f'Check network name at Reapeater setting page end with _Ext2G/_Ext5G. '
-    #             f'Actual: {str(list_actual6)}. '
-    #             f'Expected: {str(list_expected6)}')
-    #         list_step_fail.append('6. Assertion wong')
-    #
-    #     try:
-    #         while True:
-    #             time.sleep(1)
-    #             wait_visible(driver, welcome_next_btn)
-    #             next_btn = driver.find_element_by_css_selector(welcome_next_btn)
-    #             if not next_btn.get_property('disabled'):
-    #                 next_btn.click()
-    #             time.sleep(3)
-    #
-    #             if len(driver.find_elements_by_css_selector(welcome_let_go_btn)) > 0:
-    #                 break
-    #         time.sleep(3)
-    #         driver.find_element_by_css_selector(welcome_let_go_btn).click()
-    #         time.sleep(150)
-    #         # Write config
-    #         save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD_2)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(1)
-    #         wait_visible(driver, lg_page)
-    #         time.sleep(10)
-    #         save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
-    #         time.sleep(3)
-    #         driver.refresh()
-    #         time.sleep(5)
-    #         login(driver)
-    #         time.sleep(3)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         wait_visible(driver, home_view_wrap)
-    #         check_wan_mode_2 = driver.find_element_by_css_selector(home_connection_description).text
-    #
-    #         time.sleep(2)
-    #         check_google_2 = check_connect_to_google()
-    #
-    #         list_actual7 = [check_wan_mode_2, check_google_2]
-    #         list_expected7 = ['Repeater Mode', return_true]
-    #         check = assert_list(list_actual7, list_expected7)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 7. Click Let go. Check Wan mode is Repeater Mode. Check connect to Google. '
-    #             f'Actual: {str(list_actual7)}. '
-    #             f'Expected: {str(list_expected7)}')
-    #         self.list_steps.append('[END TC]')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 7.  Click Let go. Check Wan mode is Repeater Mode. Check connect to Google.. '
-    #             f'Actual: {str(list_actual7)}. '
-    #             f'Expected: {str(list_expected7)}')
-    #         self.list_steps.append('[END TC]')
-    #         list_step_fail.append('7. Assertion wong')
-    #     self.assertListEqual(list_step_fail, [])
+    def test_32_MAIN_Verification_of_setting_Repeater_Mode_via_Wizard(self):
+        self.key = 'MAIN_32'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # ====================================================
+        disconnect_or_connect_wan(disconnected=True)
+        factory_dut()
+        # ======================================================
+        REPEATER_MESH_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
+        REPEATER_MESH_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
+        REPEATER_THIRD_NAME = get_config('REPEATER', 'third_party_name', input_data_path)
+        REPEATER_THIRD_PW = get_config('REPEATER', 'third_party_pw', input_data_path)
+        NEW_PASSWORD_1 = get_config('MAIN', 'main_31_new_pw_1', input_data_path)
+        NEW_PASSWORD_2 = get_config('MAIN', 'main_31_new_pw_2', input_data_path)
+        try:
+            os.system(f'netsh wlan delete profile name="{REPEATER_MESH_NAME}"')
+            time.sleep(1)
+            os.system(f'netsh wlan delete profile name="{REPEATER_THIRD_NAME}"')
+            time.sleep(1)
+            login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            wait_popup_disappear(driver, dialog_loading)
+            # Click start btn
+            driver.find_element_by_css_selector(welcome_start_btn).click()
+            wait_visible(driver, welcome_change_pw_fields)
+
+            title_page = driver.find_element_by_css_selector(lg_welcome_header).text
+
+            list_actual1 = [title_page]
+            list_expected1 = ['Change Login Password']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. Click Start button. Check title page displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. Click Start button. Check title page displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            change_pw_fields = driver.find_elements_by_css_selector(welcome_change_pw_fields)
+
+            # A list contain values: Current Password, New Password, Retype new pw
+            ls_change_pw_value = [get_config('ACCOUNT', 'password'), NEW_PASSWORD_1, NEW_PASSWORD_1]
+            for p, v in zip(change_pw_fields, ls_change_pw_value):
+                ActionChains(driver).move_to_element(p).click().send_keys(v).perform()
+                time.sleep(0.5)
+            # Next Change pw
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+                wait_popup_disappear(driver, dialog_loading)
+
+            # Change Operation Mode
+            driver.find_element_by_css_selector(ele_welcome_router_box).click()
+            time.sleep(0.5)
+            operation_block = driver.find_element_by_css_selector(ele_welcome_router_box)
+            list_options = operation_block.find_elements_by_css_selector(secure_value_in_drop_down)
+            # Choose
+            for o in list_options:
+                if o.text == 'Repeater Mode':
+                    o.click()
+                    break
+
+            check_router_again = driver.find_element_by_css_selector(ele_welcome_router_box)
+            check_router_again_text = check_router_again.find_element_by_css_selector(input).get_attribute('value')
+            list_actual2 = [check_router_again_text]
+            list_expected2 = ['Repeater Mode']
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2. Select Repeater mode. Check Repeater mode is selected. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Select Repeater mode. Check Repeater mode is selected.  '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            list_step_fail.append('2. Assertion wong')
+
+        try:
+            # Next
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+                time.sleep(3)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(10)
+            wait_popup_disappear(driver, icon_loading)
+
+            title_repeater_setting_1 = driver.find_element_by_css_selector(lg_welcome_header).text
+            time.sleep(5)
+            _rows = driver.find_elements_by_css_selector(rows)
+            # Choose Network name
+            for r in _rows:
+                if r.find_element_by_css_selector(ele_network_name).text.strip() == REPEATER_MESH_NAME:
+                    r.click()
+                    time.sleep(1)
+                    break
+            # Fill Password
+            pw_box = driver.find_element_by_css_selector(ele_input_pw)
+            ActionChains(driver).click(pw_box).send_keys(REPEATER_MESH_PW).perform()
+            time.sleep(1)
+
+            list_actual3 = [title_repeater_setting_1]
+            list_expected3 = ['Repeater Setting']
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Check title of Repeater Settings. Choose Mesh network. Input password normally. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check title of Repeater Settings. Choose Mesh network. Input password normally. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong')
+
+        try:
+            time.sleep(1)
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+            time.sleep(3)
+            title_humax_wifi_app_2 = driver.find_element_by_css_selector(lg_welcome_header).text
+
+            # Next
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+                time.sleep(3)
+                wait_popup_disappear(driver, dialog_loading)
+
+            title_summary_3 = driver.find_element_by_css_selector(lg_welcome_header).text
+
+            list_actual4 = [title_humax_wifi_app_2, title_summary_3]
+            list_expected4 = ['HUMAX Wi-Fi App', 'Summary']
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4.1 Check order of page wizard with Repeater mode Mesh mode. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4.1  Check order of page wizard with Repeater mode Mesh mode. '
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
+            list_step_fail.append('4.1 Assertion wong')
+
+        try:
+            # Click Let go
+            driver.find_element_by_css_selector(welcome_let_go_btn).click()
+            time.sleep(150)
+            wait_popup_disappear(driver, icon_loading)
+            wait_visible(driver, lg_page)
+            time.sleep(5)
+            save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD_1)
+            save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+            time.sleep(5)
+
+            wait_ethernet_available()
+            time.sleep(10)
+            wait_ethernet_available()
+            time.sleep(5)
+            grand_login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+
+            check_wan_mode = driver.find_element_by_css_selector(home_connection_description).text
+            check_google = check_connect_to_google()
+
+            list_actual5 = [check_wan_mode, check_google]
+            list_expected5 = ['Repeater Mode', return_true]
+            check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 5. Click Let go. Login again. Check WAN mode description. Check connect google. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 5. Click Let go. Login again. Check WAN mode description. Check connect google. '
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
+            list_step_fail.append('5. Assertion wong')
+
+        try:
+            goto_system(driver, ele_sys_winzard)
+            time.sleep(2)
+            driver.find_element_by_css_selector(welcome_start_btn).click()
+            wait_visible(driver, welcome_change_pw_fields)
+            # ===================================================
+            change_pw_fields = driver.find_elements_by_css_selector(welcome_change_pw_fields)
+
+            # A list contain values: Current Password, New Password, Retype new pw
+            ls_change_pw_value = [get_config('ACCOUNT', 'password'), NEW_PASSWORD_2, NEW_PASSWORD_2]
+            for p, v in zip(change_pw_fields, ls_change_pw_value):
+                ActionChains(driver).move_to_element(p).click().send_keys(v).perform()
+                time.sleep(0.5)
+            # Next Change pw
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+                wait_popup_disappear(driver, dialog_loading)
+            # ===================================================
+            driver.find_element_by_css_selector(ele_welcome_router_box).click()
+            time.sleep(0.5)
+            operation_block = driver.find_element_by_css_selector(ele_welcome_router_box)
+            list_options = operation_block.find_elements_by_css_selector(secure_value_in_drop_down)
+            # Choose
+            for o in list_options:
+                if o.text == 'Repeater Mode':
+                    o.click()
+                    break
+            # Apply
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+                time.sleep(3)
+                wait_popup_disappear(driver, dialog_loading)
+            time.sleep(10)
+            wait_popup_disappear(driver, icon_loading)
+            # ======================================================
+            _rows = driver.find_elements_by_css_selector(rows)
+            # Choose Network name
+            for r in _rows:
+                if r.find_element_by_css_selector(ele_network_name).text.strip() == REPEATER_THIRD_NAME:
+                    r.click()
+                    time.sleep(1)
+                    break
+            # Fill Password
+            pw_box = driver.find_element_by_css_selector(ele_input_pw)
+            ActionChains(driver).click(pw_box).send_keys(REPEATER_THIRD_PW).perform()
+            time.sleep(1)
+            wait_visible(driver, welcome_next_btn)
+            next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+            if not next_btn.get_property('disabled'):
+                next_btn.click()
+            time.sleep(3)
+
+            # Check SSID tag
+            network_name = driver.find_elements_by_css_selector('.input-wrap input[name="input-field"]')
+            check_network_name_2g = network_name[0].get_attribute('value').endswith('_Ext2G')
+            check_network_name_5g = network_name[1].get_attribute('value').endswith('_Ext5G')
+            # =============================================================
+
+            list_actual6 = [check_network_name_2g, check_network_name_5g]
+            list_expected6 = [return_true] * 2
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Run wizard again. Select Repeater -3 Party mode.'
+                f'Check network name at Reapeater setting page end with _Ext2G/_Ext5G.. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Run wizard again. Select Repeater -3 Party mode.'
+                f'Check network name at Reapeater setting page end with _Ext2G/_Ext5G. '
+                f'Actual: {str(list_actual6)}. '
+                f'Expected: {str(list_expected6)}')
+            list_step_fail.append('6. Assertion wong')
+
+        try:
+            while True:
+                time.sleep(1)
+                wait_visible(driver, welcome_next_btn)
+                next_btn = driver.find_element_by_css_selector(welcome_next_btn)
+                if not next_btn.get_property('disabled'):
+                    next_btn.click()
+                time.sleep(3)
+
+                if len(driver.find_elements_by_css_selector(welcome_let_go_btn)) > 0:
+                    break
+            time.sleep(3)
+            driver.find_element_by_css_selector(welcome_let_go_btn).click()
+            time.sleep(150)
+            # Write config
+            save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD_2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            wait_visible(driver, lg_page)
+            time.sleep(10)
+            save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+            time.sleep(3)
+            wait_ethernet_available()
+            time.sleep(3)
+            wait_ethernet_available()
+            grand_login(driver)
+            time.sleep(3)
+            wait_popup_disappear(driver, dialog_loading)
+
+            check_wan_mode_2 = driver.find_element_by_css_selector(home_connection_description).text
+
+            time.sleep(2)
+            check_google_2 = check_connect_to_google()
+
+            list_actual7 = [check_wan_mode_2, check_google_2]
+            list_expected7 = ['Repeater Mode', return_true]
+            check = assert_list(list_actual7, list_expected7)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 7. Click Let go. Check Wan mode is Repeater Mode. Check connect to Google. '
+                f'Actual: {str(list_actual7)}. '
+                f'Expected: {str(list_expected7)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 7.  Click Let go. Check Wan mode is Repeater Mode. Check connect to Google.. '
+                f'Actual: {str(list_actual7)}. '
+                f'Expected: {str(list_expected7)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('7. Assertion wong')
+        disconnect_or_connect_wan(disconnected=False)
+        self.assertListEqual(list_step_fail, [])
 
     # OK F
     def test_34_MAIN_Verification_of_setting_Bridge_Mode_via_Wizard(self):

@@ -14,9 +14,9 @@ repeater_pw = humax_0001
 repeater_name_5g = wifi_upper_16_5G!
 repeater_pw_5g = humax_0001
 
-third_party_name = DINHCONGHUONGT2
+third_party_name = wifi_third_party_2G
 third_party_pw = 12344321
-third_party_name_5g = DINHCONGHUONGT2
+third_party_name_5g = wifi_third_party_5G
 third_party_pw_5g = 12344321
 
 

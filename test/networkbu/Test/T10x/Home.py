@@ -4094,7 +4094,7 @@ class HOME(unittest.TestCase):
             list_actual3 = [host_nw_title, sub_label_text,
                             [check_conn_status, check_signal, check_nw_name, check_security, check_pw, check_bssid]]
             list_expected3 = ['Host Network',
-                              ['Connection status', 'Signal Strength', 'Network Name(SSID)', 'Security', 'Password', 'BSSID'],
+                              ['Connection status', 'Signal Strength', 'Network Name(SSID)', 'Security', 'Password', 'MAC Address'],
                               [return_true]*6]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
@@ -4764,7 +4764,6 @@ class HOME(unittest.TestCase):
                 else:
                     check_edit_btn = len(r.find_elements_by_css_selector(edit_cls)) > 0
 
-
             # Check Interface
             ls_interfaces = [i.find_element_by_css_selector(ele_ssid_cls) for i in ls_row]
             check_interfaces = all([True if i.text.startswith('Wireless') or i.text.startswith('LAN Port') else False for i in ls_interfaces])
@@ -5041,9 +5040,9 @@ class HOME(unittest.TestCase):
     #     self.def_name = get_func_name()
     #     list_step_fail = []
     #     self.list_steps = []
+    #     disconnect_or_connect_wan(disconnected=True)
     #     factory_dut()
     #
-    #     disconnect_or_connect_wan(disconnected=True)
     #     # ======================================================
     #     REPEATER_MESH_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
     #     REPEATER_MESH_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
@@ -5129,13 +5128,18 @@ class HOME(unittest.TestCase):
     #         save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD)
     #         save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
     #         time.sleep(1)
-    #         os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+    #         # os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+    #         # time.sleep(10)
+    #         # connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
+    #         # time.sleep(5)
+    #         # print(current_connected_wifi())
+    #         # driver.get('http://dearmyextender.net')
+    #         os.system(f'netsh wlan delete profile name="{REPEATER_MESH_NAME}"')
     #         time.sleep(10)
-    #         connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
+    #         wait_ethernet_available()
     #         time.sleep(5)
-    #         print(current_connected_wifi())
-    #         driver.get('http://dearmyextender.net')
-    #         time.sleep(1)
+    #         wait_ethernet_available()
+    #
     #         grand_login(driver)
     #         time.sleep(2)
     #
@@ -5144,18 +5148,20 @@ class HOME(unittest.TestCase):
     #         time.sleep(10)
     #         self.list_steps.append(
     #             f'[Pass] Precondition successfully. '
-    #             f'Set Repeater mode. Connect wifi repeater. Upto low firmware version. ')
+    #             f'Set Repeater mode. Connect wifi repeater. Up to low firmware version. ')
     #     except:
     #         self.list_steps.append(
     #             f'[Fail] Precondition Fail. '
-    #             f'Set Repeater mode. Connect wifi repeater. Upto low firmware version.  ')
+    #             f'Set Repeater mode. Connect wifi repeater. Up to low firmware version.  ')
     #         list_step_fail.append('0. Precondition wong')
     #
     #     try:
-    #
     #         UPPER_URL = get_config('REPEATER', 'url', input_data_path)
     #         UPPER_USER = get_config('REPEATER', 'user', input_data_path)
     #         UPPER_PW = get_config('REPEATER', 'pw', input_data_path)
+    #         wait_ethernet_available()
+    #         time.sleep(10)
+    #         wait_ethernet_available()
     #         grand_login(driver, url_login=UPPER_URL, user_request=UPPER_USER, pass_word=UPPER_PW)
     #         time.sleep(1)
     #
@@ -5168,7 +5174,7 @@ class HOME(unittest.TestCase):
     #         check_message = driver.find_element_by_css_selector(confirm_dialog_msg).text
     #         time.sleep(0.5)
     #         driver.find_element_by_css_selector(btn_ok).click()
-    #         time.sleep(100)
+    #         time.sleep(150)
     #
     #         list_actual1 = [check_message]
     #         list_expected1 = [exp_msg_upgrade_extender]
@@ -5185,12 +5191,11 @@ class HOME(unittest.TestCase):
     #             f'Expected: {str(list_expected1)}')
     #         list_step_fail.append('1, 2, 3. Assertion wong')
     #
-    #
     #     try:
-    #
+    #         wait_ethernet_available()
     #         time.sleep(10)
     #         # Login
-    #
+    #         wait_ethernet_available()
     #         grand_login(driver)
     #         wait_popup_disappear(driver, home_view_wrap)
     #
@@ -5206,11 +5211,13 @@ class HOME(unittest.TestCase):
     #             f'[Pass] 4, 5. Goto Extender. Goto System. Check Version is lastest. '
     #             f'Actual: {str(list_actual2)}. '
     #             f'Expected: {str(list_expected2)}')
+    #         self.list_steps.append('[END TC]')
     #     except:
     #         self.list_steps.append(
     #             f'[Fail] 4, 5.  Goto Extender. Goto System. Check Version is lastest. '
     #             f'Actual: {str(list_actual2)}. '
     #             f'Expected: {str(list_expected2)}')
+    #         self.list_steps.append('[END TC]')
     #         list_step_fail.append('4, 5. Assertion wong')
     #
     #     self.assertListEqual(list_step_fail, [])
