@@ -87,7 +87,7 @@ ms04_file_6 = network_file_6
 ms04_file_7 = network_file_7
 ms04_file_8 = network_file_8
 ms04_file_9 = network_file_9
-ms08_test_string = 123 abc DEF 000222 !@##$&* ():><??+=a,.
+ms08_test_string = 0123456789aaabbAAABB!@#$%^&*()_+
 ms10_desc_3 = 123!@ abcd #^&*
 
 

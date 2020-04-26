@@ -90,7 +90,7 @@ exp_parental_pop_up_title = 'Enter the Parental Code.'
 exp_parental_error_msg = 'Incorrect Parental Code.'
 exp_ls_service_filter_items_value = ['Social Network[1]', 'User Define[1]']
 exp_block_schedule_value = 'Only Specific Time'
-
+exp_confirm_msg_init_parental_key = 'Parental code will be initialized. Continue?\nGenerate parental code again after initialization.'
 
 # ~~~~~~~~~~~~~~~~~~~~~ Network
 exp_nw_subnet_type_c = ['255.255.255.0']

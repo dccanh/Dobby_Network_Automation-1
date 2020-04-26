@@ -50,7 +50,6 @@ class SECURITY(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         # Factory reset
-        URL_LOGIN = get_config('URL', 'url')
         # ===========================================================
         factory_dut()
         # ===========================================================
@@ -184,6 +183,8 @@ class SECURITY(unittest.TestCase):
         self.list_steps = []
         PARENTAL_CODE_KEY = get_config('SECURITY', 'parental_code')
         PARENTAL_NEW_CODE_KEY = str(random.randint(1000, 9999))
+        PARENTAL_INIT_KEY = '!@#$'
+        PARENTAL_NEW_CODE_KEY_2 = '1111'
         try:
             grand_login(driver)
 
@@ -193,12 +194,27 @@ class SECURITY(unittest.TestCase):
 
             # Input valid
             parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
-            #  New
-            ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
-            time.sleep(0.5)
-            driver.find_element_by_css_selector(btn_ok).click()
-            wait_popup_disappear(driver, dialog_loading)
-            check_page_security = len(driver.find_elements_by_css_selector(security_page)) != 0
+
+            if len(parental_field_input) > 0:
+                #  New
+                ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+            else:
+                parental_code = driver.find_element_by_css_selector(parental_code_card)
+                parental_code_select = parental_code.find_element_by_css_selector(select)
+                if not parental_code_select.find_element_by_css_selector(input).is_selected():
+                    parental_code_select.click()
+                    wait_popup_disappear(driver, dialog_loading)
+
+                    ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+                    time.sleep(0.5)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    wait_popup_disappear(driver, dialog_loading)
+
+
+            check_page_security = len(driver.find_elements_by_css_selector(security_page)) > 0
             time.sleep(1)
             check_pop_up_disable = len(driver.find_elements_by_css_selector(dialog_content)) == 0
 
@@ -216,7 +232,6 @@ class SECURITY(unittest.TestCase):
             list_step_fail.append(
                 '1,2,3. Assertion wong.')
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
         try:
             parental_code = driver.find_element_by_css_selector(parental_code_card)
             parental_input = parental_code.find_elements_by_css_selector(input)
@@ -232,15 +247,7 @@ class SECURITY(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
 
             # Refresh
-            parental_code = driver.find_element_by_css_selector(parental_code_card)
-            parental_code_btn = parental_code.find_element_by_css_selector(select)
-            parental_code_btn.click()
-            wait_popup_disappear(driver, dialog_loading)
-            # Enable
-            time.sleep(1)
-            parental_code = driver.find_element_by_css_selector(parental_code_card)
-            parental_code_btn = parental_code.find_element_by_css_selector(select)
-            parental_code_btn.click()
+            driver.refresh()
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             # Input valid
@@ -251,7 +258,7 @@ class SECURITY(unittest.TestCase):
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
-            check_page_security = len(driver.find_elements_by_css_selector(security_page)) != 0
+            check_page_security = len(driver.find_elements_by_css_selector(security_page)) > 0
             time.sleep(3)
             # Save to config file
             save_config(config_path, 'SECURITY', 'parental_code', PARENTAL_NEW_CODE_KEY)
@@ -263,15 +270,134 @@ class SECURITY(unittest.TestCase):
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Change Parental code: Check Security page displayed. '
+                f'[Pass] 4, 5. Change Parental code: Check Security page displayed. '
                 f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4, 5. Change Parental code: Check Security page displayed. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            list_step_fail.append('4, 5. Assertion wong.')
+
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
+        try:
+            parental_code = driver.find_element_by_css_selector(parental_code_card)
+            parental_input = parental_code.find_elements_by_css_selector(input)
+
+
+            parental_code_select = parental_code.find_element_by_css_selector(select)
+            if parental_code_select.find_element_by_css_selector(input).is_selected():
+                parental_code_select.click()
+                wait_popup_disappear(driver, dialog_loading)
+
+            check_parental_code_disabled = parental_code_select.find_element_by_css_selector(input).is_selected()
+
+            list_actual6 = [check_parental_code_disabled]
+            list_expected6 = [return_false]
+            check = assert_list(list_actual6, list_expected6)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 6. Disable Parental code: Check Parental Code disabled. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 6. Disable Parental code: Check Parental Code disabled. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+            list_step_fail.append('6. Assertion wong.')
+
+
+        try:
+            parental_code = driver.find_element_by_css_selector(parental_code_card)
+            parental_code_select = parental_code.find_element_by_css_selector(select)
+            if not parental_code_select.find_element_by_css_selector(input).is_selected():
+                parental_code_select.click()
+                wait_popup_disappear(driver, dialog_loading)
+
+            parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+            #  New
+            ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_INIT_KEY).perform()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+
+            check_popup_content= driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(1)
+
+            # Click OK
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+
+            check_create_new_parental = len(driver.find_elements_by_css_selector('#parental-create-password-id')) > 0
+
+            list_actual7 = [check_popup_content, check_create_new_parental]
+            list_expected7 = [exp_confirm_msg_init_parental_key, return_true]
+            check = assert_list(list_actual7, list_expected7)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 7. Input Init parental code. '
+                f'Check confirm message. Click OK. Check popup parental create code display. '
+                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 7. Input Init parental code. '
+                f'Check confirm message. Click OK. Check popup parental create code display. '
+                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+            list_step_fail.append('7 Assertion wong.')
+
+
+        try:
+            parental_field_input = driver.find_elements_by_css_selector(parental_popup_input)
+            #  New
+            ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_NEW_CODE_KEY_2).perform()
+            ActionChains(driver).click(parental_field_input[4]).send_keys(PARENTAL_NEW_CODE_KEY_2).perform()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            save_config(config_path, 'SECURITY', 'parental_code', PARENTAL_NEW_CODE_KEY_2)
+
+            check_dialog_parental_display = len(driver.find_elements_by_css_selector('.parental-login-dialog')) > 0
+
+            list_actual8 = [check_dialog_parental_display]
+            list_expected8 = [return_true]
+            check = assert_list(list_actual8, list_expected8)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 8. Input new parental code key. Click OK.'
+                f'Check popup login parental display. '
+                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 8. Input new parental code key. Click OK.'
+                f'Check popup login parental display. '
+                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+            list_step_fail.append('8. Assertion wong.')
+
+        try:
+            parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+            #  New
+            ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_NEW_CODE_KEY_2).perform()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+
+            check_page_security_2 = len(driver.find_elements_by_css_selector(security_page)) > 0
+
+            list_actual9 = [check_page_security_2]
+            list_expected9 = [return_true]
+            check = assert_list(list_actual9, list_expected9)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 9. Input parental code key. Click OK.'
+                f'Check Security page display. '
+                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Change Parental code: Check Security page displayed. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                f'[Fail] 9. Input parental code key. Click OK.'
+                f'Check Security page display. '
+                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
             self.list_steps.append('[END TC]')
-            list_step_fail.append('4. Assertion wong.')
+            list_step_fail.append('9. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
     # OK
@@ -1500,7 +1626,7 @@ class SECURITY(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        factory_dut()
+        # factory_dut()
         # ===============================================================
         PARENTAL_CODE_KEY = get_config('SECURITY', 'parental_code')
         DESC_VALUE = 'Test01'
@@ -1515,21 +1641,23 @@ class SECURITY(unittest.TestCase):
         try:
             grand_login(driver)
 
-            # Goto media share USB
-            goto_menu(driver, security_tab, security_filtering_tab)
-            wait_popup_disappear(driver, dialog_loading)
-
-            # Input valid
-            # parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
-            # if len(parental_field_input) > 0:
-            #     #  New
-            #     ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
-            #     time.sleep(0.5)
-            #     driver.find_element_by_css_selector(btn_ok).click()
-            #     wait_popup_disappear(driver, dialog_loading)
-
-            # driver.find_element_by_css_selector(security_filtering_tab).click()
-            # wait_popup_disappear(driver, dialog_loading)
+            try:
+                goto_menu(driver, security_tab, security_filtering_tab)
+            except:
+                parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+                PARENTAL_CODE_KEY = get_config('SECURITY', 'parental_code')
+                if len(parental_field_input) > 0:
+                    #  New
+                    ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+                    time.sleep(0.5)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    parental_code = driver.find_element_by_css_selector(parental_code_card)
+                    parental_code_select = parental_code.find_element_by_css_selector(select)
+                    if parental_code_select.find_element_by_css_selector(input).is_selected():
+                        parental_code_select.click()
+                        wait_popup_disappear(driver, dialog_loading)
+                    goto_menu(driver, security_tab, security_filtering_tab)
 
             check_title = driver.find_element_by_css_selector(ele_title_page).text
 
@@ -1640,21 +1768,23 @@ class SECURITY(unittest.TestCase):
         try:
             grand_login(driver)
 
-            # Goto media share USB
-            goto_menu(driver, security_tab, security_filtering_tab)
-            wait_popup_disappear(driver, dialog_loading)
-
-            # # Input valid
-            # parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
-            # if len(parental_field_input) > 0:
-            #     #  New
-            #     ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
-            #     time.sleep(0.5)
-            #     driver.find_element_by_css_selector(btn_ok).click()
-            #     wait_popup_disappear(driver, dialog_loading)
-            #
-            # driver.find_element_by_css_selector(security_filtering_tab).click()
-            # wait_popup_disappear(driver, dialog_loading)
+            try:
+                goto_menu(driver, security_tab, security_filtering_tab)
+            except:
+                parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+                PARENTAL_CODE_KEY = get_config('SECURITY', 'parental_code')
+                if len(parental_field_input) > 0:
+                    #  New
+                    ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+                    time.sleep(0.5)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    parental_code = driver.find_element_by_css_selector(parental_code_card)
+                    parental_code_select = parental_code.find_element_by_css_selector(select)
+                    if parental_code_select.find_element_by_css_selector(input).is_selected():
+                        parental_code_select.click()
+                        wait_popup_disappear(driver, dialog_loading)
+                    goto_menu(driver, security_tab, security_filtering_tab)
 
             check_title = driver.find_element_by_css_selector(ele_title_page).text
 
@@ -1767,6 +1897,7 @@ class SECURITY(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         # ===============================================================
+        PARENTAL_CODE_KEY = get_config('SECURITY', 'parental_code')
         PHYSICAL_MAC = get_value_from_ipconfig('Ethernet adapter Ethernet', 'Physical Address').replace('-', ':')
         HOST_NAME = get_value_from_ipconfig('Windows IP Configuration', 'Host Name')
         try:
@@ -1786,7 +1917,26 @@ class SECURITY(unittest.TestCase):
         try:
             grand_login(driver)
             # Goto media share USB
-            goto_menu(driver, security_tab, security_filtering_tab)
+            try:
+                goto_menu(driver, security_tab, security_filtering_tab)
+            except:
+                parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+                PARENTAL_CODE_KEY = get_config('SECURITY', 'parental_code')
+                if len(parental_field_input) > 0:
+                    #  New
+                    ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+                    time.sleep(0.5)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    parental_code = driver.find_element_by_css_selector(parental_code_card)
+                    parental_code_select = parental_code.find_element_by_css_selector(select)
+                    if parental_code_select.find_element_by_css_selector(input).is_selected():
+                        parental_code_select.click()
+                        wait_popup_disappear(driver, dialog_loading)
+                    goto_menu(driver, security_tab, security_filtering_tab)
+
+
+
             wait_popup_disappear(driver, dialog_loading)
 
             check_title = driver.find_element_by_css_selector(ele_title_page).text
@@ -1858,6 +2008,7 @@ class SECURITY(unittest.TestCase):
             time.sleep(3)
             # Connect Wifi 2.4 Ghz
             connect_wifi_by_command(wifi_2g_name, wifi_2g_pw)
+            time.sleep(5)
             # Login again
             grand_login(driver)
             goto_menu(driver, security_tab, security_filtering_tab)
@@ -1977,6 +2128,7 @@ class SECURITY(unittest.TestCase):
                 f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('9. Assertion wong.')
+
         self.assertListEqual(list_step_fail, [])
 
     def test_26_SECURITY_Delete_MAC_Filtering_rule(self):
@@ -2004,8 +2156,23 @@ class SECURITY(unittest.TestCase):
         try:
             grand_login(driver)
             # Goto media share USB
-            goto_menu(driver, security_tab, security_filtering_tab)
-            wait_popup_disappear(driver, dialog_loading)
+            try:
+                goto_menu(driver, security_tab, security_filtering_tab)
+            except:
+                parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+                PARENTAL_CODE_KEY = get_config('SECURITY', 'parental_code')
+                if len(parental_field_input) > 0:
+                    #  New
+                    ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+                    time.sleep(0.5)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    parental_code = driver.find_element_by_css_selector(parental_code_card)
+                    parental_code_select = parental_code.find_element_by_css_selector(select)
+                    if parental_code_select.find_element_by_css_selector(input).is_selected():
+                        parental_code_select.click()
+                        wait_popup_disappear(driver, dialog_loading)
+                    goto_menu(driver, security_tab, security_filtering_tab)
 
             check_title = driver.find_element_by_css_selector(ele_title_page).text
 
@@ -2154,8 +2321,23 @@ class SECURITY(unittest.TestCase):
         try:
             grand_login(driver)
             # Goto media share USB
-            goto_menu(driver, security_tab, security_selfcheck_tab)
-            wait_popup_disappear(driver, dialog_loading)
+            try:
+                goto_menu(driver, security_tab, security_filtering_tab)
+            except:
+                parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+                PARENTAL_CODE_KEY = get_config('SECURITY', 'parental_code')
+                if len(parental_field_input) > 0:
+                    #  New
+                    ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+                    time.sleep(0.5)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    parental_code = driver.find_element_by_css_selector(parental_code_card)
+                    parental_code_select = parental_code.find_element_by_css_selector(select)
+                    if parental_code_select.find_element_by_css_selector(input).is_selected():
+                        parental_code_select.click()
+                        wait_popup_disappear(driver, dialog_loading)
+                    goto_menu(driver, security_tab, security_filtering_tab)
 
             check_title = driver.find_element_by_css_selector(ele_title_page).text
 

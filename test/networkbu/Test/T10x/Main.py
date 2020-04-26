@@ -1190,73 +1190,77 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+    def test_14_MAIN_Verify_the_time_out_operation(self):
+        self.key = 'MAIN_14'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        try:
+            grand_login(driver)
+            self.list_steps.append('[Pass] Login successfully')
+        except:
+            self.list_steps.append('[Fail] Login fail')
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            goto_menu(driver, network_tab, network_internet_tab)
+            # Wait 20 mins
+            sleep_time = 20 * 60
+            time.sleep(sleep_time)
+            time.sleep(1)
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            msg_time_out = driver.find_elements_by_css_selector(content)
+            if len(msg_time_out) > 0:
+                msg_time_out_text = msg_time_out[0].text
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(3)
+            else:
+                msg_time_out_text = 'No popup appear'
+            # Click ok
+            # Lg is display
+            check_lg_page = len(driver.find_elements_by_css_selector(lg_page)) > 0
+            list_actual1 = [msg_time_out_text, check_lg_page]
+            list_expected1 = [exp_time_out_msg, return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1. Time out: Check msg time out, Login page is displayed'
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Time out: Check msg time out, Login page is displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            grand_login(driver)
+            sleep_time = 20 * 60
+            time.sleep(sleep_time)
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            # Click cancel
+            time.sleep(2)
+            msg_time_out_pop = len(driver.find_elements_by_css_selector(content)) == 0
+            list_actual2 = [msg_time_out_pop]
+            list_expected2 = [return_true]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2. Wait in Home page: After 20 mins. Check popup time out do not appear. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Wait in Home page: After 20 mins. Check popup time out do not appear.'
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('2. Assertion wong')
+        self.assertListEqual(list_step_fail, [])
 
-    # def test_14_MAIN_Verify_the_time_out_operation(self):
-    #     self.key = 'MAIN_14'
-    #     driver = self.driver
-    #     self.def_name = get_func_name()
-    #     list_step_fail = []
-    #     self.list_steps = []
-    #     try:
-    #         grand_login(driver)
-    #         self.list_steps.append('[Pass] Login successfully')
-    #     except:
-    #         self.list_steps.append('[Fail] Login fail')
-    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #     try:
-    #         # Wait 20 mins
-    #         sleep_time = 20*60
-    #         time.sleep(sleep_time)
-    #         goto_menu(driver, network_tab, network_internet_tab)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #
-    #         msg_time_out = driver.find_element_by_css_selector(content).text
-    #
-    #         # Click ok
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         time.sleep(3)
-    #         # Home is display
-    #         check_home = driver.find_element_by_css_selector(home_view_wrap).is_displayed()
-    #
-    #         list_actual1 = [msg_time_out, check_home]
-    #         list_expected1 = [exp_time_out_msg, return_true]
-    #         check = assert_list(list_actual1, list_expected1)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             '[Pass] 1. Time out: Check msg time out, home page is displayed')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 1. Time out: Check msg time out, home page is displayed. '
-    #             f'Actual: {str(list_actual1)}. '
-    #             f'Expected: {str(list_expected1)}')
-    #         list_step_fail.append('1. Assertion wong')
-    #
-    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #     try:
-    #         grand_login(driver)
-    #         sleep_time = 20 * 60
-    #         time.sleep(sleep_time)
-    #         # Click cancel
-    #         check_login_page = driver.find_element_by_css_selector(lg_page).is_displayed()
-    #
-    #         list_actual2 = [check_login_page]
-    #         list_expected2 = [return_true]
-    #         check = assert_list(list_actual2, list_expected2)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             '[Pass] 2. Click Logout >Ok: Check login page is displayed. '
-    #             f'Actual: {str(list_actual2)}. '
-    #             f'Expected: {str(list_expected2)}')
-    #         self.list_steps.append('[END TC]')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 2. Click Logout >Ok: Check login page is displayed. '
-    #             f'Actual: {str(list_actual2)}. '
-    #             f'Expected: {str(list_expected2)}')
-    #         self.list_steps.append('[END TC]')
-    #         list_step_fail.append('2. Assertion wong')
-    #
-    #     self.assertListEqual(list_step_fail, [])
     def test_15_MAIN_Check_Explorer_Browser_behavior(self):
         self.key = 'MAIN_15'
         driver = self.driver
@@ -6914,7 +6918,7 @@ class MAIN(unittest.TestCase):
 
             list_actual4 = [detect_parental_control, detect_security_check, detect_vpn_server]
             list_expected4 = [('SECURITY', 'Parental Control'),
-                              ('SECURITY', 'Security Self-Check'),
+                              ('SECURITY', 'Security check'),
                               ('SECURITY', 'VPN')]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
@@ -8294,7 +8298,12 @@ class MAIN(unittest.TestCase):
         url_login = get_config('URL', 'url')
         user_request = get_config('ACCOUNT', 'user')
         pass_word = get_config('ACCOUNT', 'password')
-        # save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+        # Disconenct WAN
+        disconnect_or_connect_wan(disconnected=True)
+        grand_login(driver)
+        goto_menu(driver, network_tab, network_operationmode_tab)
+        connect_repeater_mode(driver)
+        wait_ethernet_available()
         # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Get and write URL
@@ -8373,21 +8382,12 @@ class MAIN(unittest.TestCase):
 
         try:
             # Connect wifi
-            URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
-            new_2g_wf_name = api_change_wifi_setting(URL_2g)
+            wifi_name_mesh_2g = get_config('REPEATER', 'repeater_name', input_data_path)
+            wifi_pw_mesh_2g = get_config('REPEATER', 'repeater_pw', input_data_path)
+            connect_wifi_by_command(wifi_name_mesh_2g, wifi_pw_mesh_2g)
             time.sleep(10)
-            write_data_to_xml(wifi_default_file_path, new_name=new_2g_wf_name)
-            time.sleep(3)
-            os.system(f'netsh wlan delete profile name="{new_2g_wf_name}"')
-            time.sleep(3)
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
-            time.sleep(5)
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(3)
-
-            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
-            time.sleep(10)
 
             check_connected_2g_name = current_connected_wifi()
             driver.get(url_login)
@@ -8395,7 +8395,7 @@ class MAIN(unittest.TestCase):
             check_lg_page_2g = len(driver.find_elements_by_css_selector(lg_page)) > 0
 
             list_actual5 = [check_connected_2g_name, check_lg_page_2g]
-            list_expected5 = [new_2g_wf_name, return_true]
+            list_expected5 = [wifi_name_mesh_2g, return_true]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -8411,18 +8411,9 @@ class MAIN(unittest.TestCase):
         try:
             os.system('netsh wlan disconnect')
             # Connect wifi
-            URL_5g = get_config('URL', 'url') + '/api/v1/wifi/1/ssid/0'
-            new_5g_wf_name = api_change_wifi_setting(URL_5g)
-            time.sleep(10)
-            write_data_to_xml(wifi_default_file_path, new_name=new_5g_wf_name)
-            time.sleep(3)
-            os.system(f'netsh wlan delete profile name="{new_5g_wf_name}"')
-            time.sleep(3)
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
-            time.sleep(5)
-
-            os.system(f'netsh wlan connect ssid="{new_5g_wf_name}" name="{new_5g_wf_name}"')
+            wifi_name_mesh_5g = get_config('REPEATER', 'repeater_name_5g', input_data_path)
+            wifi_pw_mesh_5g = get_config('REPEATER', 'repeater_pw_5g', input_data_path)
+            connect_wifi_by_command(wifi_name_mesh_5g, wifi_pw_mesh_5g)
             time.sleep(10)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
@@ -8433,7 +8424,7 @@ class MAIN(unittest.TestCase):
             check_lg_page_5g = len(driver.find_elements_by_css_selector(lg_page)) > 0
 
             list_actual6 = [check_connected_5g_name, check_lg_page_5g]
-            list_expected6 = [new_5g_wf_name, return_true]
+            list_expected6 = [wifi_name_mesh_5g, return_true]
             check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -8447,7 +8438,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append(
                 '6. Assertion wong.')
             self.list_steps.append('[END TC]')
-
+        disconnect_or_connect_wan(disconnected=False)
         self.assertListEqual(list_step_fail, [])
 
     def test_82_MAIN_Verification_of_Repeater_Mode_Third_Party_menu_tree(self):

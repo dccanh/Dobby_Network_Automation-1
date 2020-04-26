@@ -55,7 +55,7 @@ class NON_FUNCTION(unittest.TestCase):
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         except:
             # Connect by wifi if internet is down to handle exception for PPPoE
-            os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
+            connect_wifi_by_command('HVNWifi', 'Wifihvn12@!')
             time.sleep(1)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
@@ -999,112 +999,112 @@ class NON_FUNCTION(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    # def test_15_NON_FUNC_Extender_Aging_Wireless_5GHz(self):
-    #     self.key = 'NON_FUNCTION_15'
-    #     driver = self.driver
-    #     self.def_name = get_func_name()
-    #     list_step_fail = []
-    #     self.list_steps = []
-    #     # ===========================================================
-    #     grand_login(driver)
-    #     time.sleep(2)
-    #     goto_menu(driver, network_tab, network_operationmode_tab)
-    #
-    #     upper_5g_name = get_config('REPEATER', 'repeater_name_5g', input_data_path)
-    #     upper_5g_pw = get_config('REPEATER', 'repeater_pw_5g', input_data_path)
-    #     # connect_repeater_mode(driver, REPEATER_UPPER=upper_5g_name, PW=upper_5g_pw)
-    #     scan_wifi_repeater_mode(driver, upper_5g_name, upper_5g_pw)
-    #     # ===========================================================
-    #
-    #     PING_ADDRESS = '192.168.1.1'
-    #     # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
-    #     YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
-    #     try:
-    #         ping_result = 0.0
-    #
-    #         def thread_ping():
-    #             global ping_result
-    #             ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
-    #
-    #         count_interrupt = 0
-    #
-    #         def thread_youtube():
-    #             global count_interrupt, live_time
-    #             # ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
-    #             # if ping_result['packet_loss_rate'] != 100.0:
-    #             time.sleep(2)
-    #             driver.get(YOUTUBE_URL)
-    #             time.sleep(5)
-    #
-    #             video_form = len(driver.find_elements_by_css_selector(ele_playing))
-    #
-    #             count_video = 0
-    #             while video_form == 0:
-    #                 time.sleep(1)
-    #                 video_form = len(driver.find_elements_by_css_selector(ele_playing))
-    #                 # print(count_video)
-    #                 count_video += 1
-    #                 if count_video >= 30:
-    #                     live_time = 0
-    #                     break
-    #             time.sleep(3)
-    #             live_time = 0
-    #             while live_time <= PING_TIMES:
-    #                 buff_time = len(driver.find_elements_by_css_selector(ele_buffering))
-    #                 time.sleep(1)
-    #                 live_time += 1
-    #                 print('Live time ' + str(live_time))
-    #                 if buff_time == 1:
-    #                     count_interrupt += 1
-    #
-    #         thread1 = threading.Thread(target=thread_ping)
-    #         thread2 = threading.Thread(target=thread_youtube)
-    #         thread1.start()
-    #         thread2.start()
-    #
-    #         c = 0
-    #         while thread1.is_alive():
-    #             print(str(thread1.is_alive()) + ' th1 - ' + str(c))
-    #             time.sleep(1)
-    #             c += 1
-    #
-    #         c, in_video_interface = 0, False
-    #         while thread2.is_alive():
-    #             print(str(thread2.is_alive()) + ' th2 - ' + str(c))
-    #             video_form = len(driver.find_elements_by_css_selector(ele_playing))
-    #             if video_form > 0:
-    #                 in_video_interface = True
-    #             time.sleep(1)
-    #             c += 1
-    #         time.sleep(2)
-    #
-    #         # list_actual2 = [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]
-    #         # list_expected2 = [return_true] * 3
-    #
-    #         list_actual1 = [[ping_result <= 1.0], [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]]
-    #         list_expected1 = [[return_true],  [return_true] * 3]
-    #         check = assert_list(list_actual1, list_expected1)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
-    #             f'Loss rate {str(ping_result)} '
-    #             f'on {str(PING_TIMES)} seconds. '
-    #             f'Check Youtube live stream: interrupt times =0, run enough time and in playing video mode. '
-    #             f'Actual: {str(list_actual1)}. '
-    #             f'Expected: {str(list_expected1)}')
-    #         self.list_steps.append('[END TC]')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 1, 2. Check Ping {PING_ADDRESS}'
-    #             f'Loss rate {str(ping_result)}'
-    #             f' on {str(PING_TIMES)} seconds. '
-    #             f'Check Youtube live stream: interrupt times =0, run enough time and in playing video mode. '
-    #             f'Actual: {str(list_actual1)}. '
-    #             f'Expected: {str(list_expected1)}')
-    #         self.list_steps.append('[END TC]')
-    #         list_step_fail.append('1, 2. Assertion wong')
-    #
-    #     self.assertListEqual(list_step_fail, [])
+    def test_15_NON_FUNC_Extender_Aging_Wireless_5GHz(self):
+        self.key = 'NON_FUNCTION_15'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # ===========================================================
+        grand_login(driver)
+        time.sleep(2)
+        goto_menu(driver, network_tab, network_operationmode_tab)
+
+        upper_5g_name = get_config('REPEATER', 'repeater_name_5g', input_data_path)
+        upper_5g_pw = get_config('REPEATER', 'repeater_pw_5g', input_data_path)
+        # connect_repeater_mode(driver, REPEATER_UPPER=upper_5g_name, PW=upper_5g_pw)
+        scan_wifi_repeater_mode(driver, upper_5g_name, upper_5g_pw)
+        # ===========================================================
+
+        PING_ADDRESS = '192.168.1.1'
+        # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
+        YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
+        try:
+            ping_result = 0.0
+
+            def thread_ping():
+                global ping_result
+                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
+
+            count_interrupt = 0
+
+            def thread_youtube():
+                global count_interrupt, live_time
+                # ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
+                # if ping_result['packet_loss_rate'] != 100.0:
+                time.sleep(2)
+                driver.get(YOUTUBE_URL)
+                time.sleep(5)
+
+                video_form = len(driver.find_elements_by_css_selector(ele_playing))
+
+                count_video = 0
+                while video_form == 0:
+                    time.sleep(1)
+                    video_form = len(driver.find_elements_by_css_selector(ele_playing))
+                    # print(count_video)
+                    count_video += 1
+                    if count_video >= 30:
+                        live_time = 0
+                        break
+                time.sleep(3)
+                live_time = 0
+                while live_time <= PING_TIMES:
+                    buff_time = len(driver.find_elements_by_css_selector(ele_buffering))
+                    time.sleep(1)
+                    live_time += 1
+                    print('Live time ' + str(live_time))
+                    if buff_time == 1:
+                        count_interrupt += 1
+
+            thread1 = threading.Thread(target=thread_ping)
+            thread2 = threading.Thread(target=thread_youtube)
+            thread1.start()
+            thread2.start()
+
+            c = 0
+            while thread1.is_alive():
+                print(str(thread1.is_alive()) + ' th1 - ' + str(c))
+                time.sleep(1)
+                c += 1
+
+            c, in_video_interface = 0, False
+            while thread2.is_alive():
+                print(str(thread2.is_alive()) + ' th2 - ' + str(c))
+                video_form = len(driver.find_elements_by_css_selector(ele_playing))
+                if video_form > 0:
+                    in_video_interface = True
+                time.sleep(1)
+                c += 1
+            time.sleep(2)
+
+            # list_actual2 = [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]
+            # list_expected2 = [return_true] * 3
+
+            list_actual1 = [[ping_result <= 1.0], [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]]
+            list_expected1 = [[return_true],  [return_true] * 3]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Check Ping {PING_ADDRESS}; '
+                f'Loss rate {str(ping_result)} '
+                f'on {str(PING_TIMES)} seconds. '
+                f'Check Youtube live stream: interrupt times =0, run enough time and in playing video mode. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Check Ping {PING_ADDRESS}'
+                f'Loss rate {str(ping_result)}'
+                f' on {str(PING_TIMES)} seconds. '
+                f'Check Youtube live stream: interrupt times =0, run enough time and in playing video mode. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('1, 2. Assertion wong')
+
+        self.assertListEqual(list_step_fail, [])
 
     def test_48_MAIN_System_Router_mode_Check_Manual_Firmware_Update_operation(self):
         self.key = 'MAIN_48'
@@ -1442,41 +1442,7 @@ class NON_FUNCTION(unittest.TestCase):
         file_no_format = 'wifi_default_file.xml'
         firmware_40012 = 't10x_fullimage_4.00.12_rev11.img'
         detect_firmware_version(self.driver)
-        # try:
-        #     grand_login(driver)
-        #     time.sleep(1)
-        #
-        #     pre_firmware_version = driver.find_element_by_css_selector(ele_home_info_firm_version).text
-        #     if not pre_firmware_version.endswith(expected_firmware_30012):
-        #         driver.find_element_by_css_selector(system_btn).click()
-        #         time.sleep(1)
-        #         driver.find_element_by_css_selector(ele_sys_firmware_update).click()
-        #         time.sleep(1)
-        #         os.chdir(files_path)
-        #         firmware_30012_path = os.path.join(os.getcwd(), firmware_30012)
-        #         driver.find_element_by_css_selector(ele_choose_firmware_file).send_keys(firmware_30012_path)
-        #         driver.find_element_by_css_selector(apply).click()
-        #         time.sleep(1)
-        #         if len(driver.find_elements_by_css_selector(ele_choose_firmware_select)) > 0:
-        #             driver.find_element_by_css_selector(ele_choose_firmware_select).click()
-        #         time.sleep(0.5)
-        #         driver.find_element_by_css_selector(btn_ok).click()
-        #         time.sleep(0.5)
-        #         if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
-        #             driver.find_element_by_css_selector(btn_ok).click()
-        #         time.sleep(0.5)
-        #         wait_popup_disappear(driver, dialog_loading)
-        #         wait_visible(driver, content)
-        #         driver.find_element_by_css_selector(btn_ok).click()
-        #         time.sleep(1)
-        #
-        #     self.list_steps.append(
-        #         f'[Pass] 0. Precondition goto firm 3.00.12 success. ')
-        # except:
-        #     self.list_steps.append(
-        #         f'[Fail] 0. Precondition goto firm 3.00.12 fail. ')
-        #     list_step_fail.append('0. Assertion wong')
-
+        wait_ethernet_available()
         try:
             grand_login(driver)
             time.sleep(1)
@@ -1777,8 +1743,36 @@ class NON_FUNCTION(unittest.TestCase):
         url_login = get_config('URL', 'url')
         user_request = get_config('ACCOUNT', 'user')
         pass_word = get_config('ACCOUNT', 'password')
-        save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+        # save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
         detect_firmware_version(self.driver)
+
+        grand_login(driver)
+        time.sleep(1)
+        goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+
+        block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
+        wifi_name_2g = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
+        wifi_pw_2g = wireless_check_pw_eye(driver, block_2g, change_pw=False)
+
+        block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
+        wifi_name_5g = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
+        wifi_pw_5g = wireless_check_pw_eye(driver, block_5g, change_pw=False)
+
+
+        goto_menu(driver, network_tab, network_operationmode_tab)
+        # Click to Bridge mode
+        if not driver.find_element_by_css_selector(ele_bridge_mode_input).is_selected():
+            driver.find_element_by_css_selector(ele_select_bridge_mode).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(apply).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            # wait_ping('dearmyextender.net')
+            time.sleep(3)
+            save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
         # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Get and write URL
@@ -1856,31 +1850,20 @@ class NON_FUNCTION(unittest.TestCase):
                 '4. Assertion wong.')
 
         try:
-            # Connect wifi
-            URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
-            new_2g_wf_name = api_change_wifi_setting(URL_2g)
+            connect_wifi_by_command(wifi_name_2g, wifi_pw_2g)
             time.sleep(10)
-            write_data_to_xml(wifi_default_file_path, new_name=new_2g_wf_name)
-            time.sleep(3)
-            os.system(f'netsh wlan delete profile name="{new_2g_wf_name}"')
-            time.sleep(3)
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
-            time.sleep(5)
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(3)
 
-            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
-            time.sleep(10)
-
-
             check_connected_2g_name = current_connected_wifi()
+
+            time.sleep(15)
             driver.get(url_login)
             time.sleep(2)
             check_lg_page_2g = len(driver.find_elements_by_css_selector(lg_page)) > 0
 
             list_actual5 = [check_connected_2g_name, check_lg_page_2g]
-            list_expected5 = [new_2g_wf_name, return_true]
+            list_expected5 = [wifi_name_2g, return_true]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -1895,30 +1878,22 @@ class NON_FUNCTION(unittest.TestCase):
 
         try:
             # Connect wifi
-            URL_5g = get_config('URL', 'url') + '/api/v1/wifi/1/ssid/0'
-            new_5g_wf_name = api_change_wifi_setting(URL_5g)
-            time.sleep(10)
-            write_data_to_xml(wifi_default_file_path, new_name=new_5g_wf_name)
-            time.sleep(3)
-            os.system(f'netsh wlan delete profile name="{new_5g_wf_name}"')
-            time.sleep(3)
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
-            time.sleep(5)
-
-            os.system(f'netsh wlan connect ssid="{new_5g_wf_name}" name="{new_5g_wf_name}"')
+            connect_wifi_by_command(wifi_name_5g, wifi_pw_5g)
             time.sleep(10)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(3)
             check_connected_5g_name = current_connected_wifi()
+            time.sleep(15)
             driver.get(url_login)
             time.sleep(2)
             check_lg_page_5g = len(driver.find_elements_by_css_selector(lg_page)) > 0
 
             list_actual6 = [check_connected_5g_name, check_lg_page_5g]
-            list_expected6 = [new_5g_wf_name, return_true]
+            list_expected6 = [wifi_name_5g, return_true]
             check = assert_list(list_actual6, list_expected6)
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 '[Pass] 6. Check Connect wifi 5g. Check login page displayed. '
@@ -1932,10 +1907,10 @@ class NON_FUNCTION(unittest.TestCase):
                 '6. Assertion wong.')
             self.list_steps.append('[END TC]')
         # ================================================================
-        factory_dut()
-        save_config(config_path, 'URL', 'url', get_config('URL', 'sub_url'))
-        # ================================================================
-        detect_firmware_version(driver)
+        # factory_dut()
+        # save_config(config_path, 'URL', 'url', get_config('URL', 'sub_url'))
+        # # ================================================================
+        # detect_firmware_version(driver)
 
         self.assertListEqual(list_step_fail, [])
 
@@ -1945,8 +1920,24 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
         detect_firmware_version(self.driver)
+
+        grand_login(driver)
+        time.sleep(1)
+        goto_menu(driver, network_tab, network_operationmode_tab)
+        # Click to Bridge mode
+        if not driver.find_element_by_css_selector(ele_bridge_mode_input).is_selected():
+            driver.find_element_by_css_selector(ele_select_bridge_mode).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(apply).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+
+            time.sleep(3)
+            save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
         # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             grand_login(driver)

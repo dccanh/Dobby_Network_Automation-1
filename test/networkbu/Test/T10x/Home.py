@@ -3984,7 +3984,7 @@ class HOME(unittest.TestCase):
 
             time.sleep(1)
             grand_login(driver)
-            time.sleep(2)
+            # time.sleep(2)
             goto_menu(driver, network_tab, network_operationmode_tab)
             connect_repeater_mode(driver)
             time.sleep(3)
@@ -4689,7 +4689,7 @@ class HOME(unittest.TestCase):
             time.sleep(2)
             goto_menu(driver, network_tab, network_operationmode_tab)
             connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
-
+            wait_ethernet_available()
             # Verify_connect successfully
             URL_LOGIN = get_config('URL', 'url')
             _URL_API = URL_LOGIN + '/api/v1/wifi/0/ssid/0'
@@ -4717,6 +4717,7 @@ class HOME(unittest.TestCase):
             list_step_fail.append('0. Precondition wong')
 
         try:
+            wait_ethernet_available()
             # Input data of Upper
             url_upper = get_config('REPEATER', 'url', input_data_path)
             user_upper = get_config('REPEATER', 'user', input_data_path)

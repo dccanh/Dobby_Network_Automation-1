@@ -3202,7 +3202,7 @@ class NETWORK(unittest.TestCase):
             sys_button_text = [i.text for i in driver.find_elements_by_css_selector(ele_sys_list_button)]
 
             list_actual6 = sorted(sys_button_text)
-            list_expected6 = sorted(['Language', 'Firmware Update', 'Change Password', 'Backup/Restore',
+            list_expected6 = sorted(['Language', 'Firmware Update', 'Change Password', 'Back Up/Restore',
                               'Restart/Factory Reset', 'Power Saving Mode', 'LED Mode', 'Date/Time', 'Wizard'])
             check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
@@ -3770,7 +3770,7 @@ class NETWORK(unittest.TestCase):
                                       "meshIcon": True,
                                       "active": True,
                                       "description": exp_repeater_mode_description}
-            expected_access_point_mode = {"name": "AP Mode",
+            expected_access_point_mode = {"name": "Access Point Mode",
                                           "meshIcon": True,
                                           "active": False,
                                           "description": exp_access_point_mode_description}

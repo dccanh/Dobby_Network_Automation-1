@@ -786,10 +786,14 @@ class MEDIASHARE(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
+        TEST_STRING_ID = 'Test01!'
         TEST_STRING = get_config('MEDIA_SHARE', 'ms08_test_string', input_data_path)
         KEY_WORDS = ['admin', 'Admin', 'root', 'Anonymous']
-
+        ID_1 = '01234567890123456789012345678901'
+        ID_2 = '012345678901234567890123456789012'
+        PASSWORD_1 = '01234567890123456789012345678901'
+        PASSWORD_2 = '012345678901234567890123456789012'
+        LIST_ACCOUNT_ADD = [['Test02!', 'abc2'], ['Test03!', 'abc3'], ['Test04!', 'abc4'], ['Test05!', 'abc5']]
         try:
             grand_login(driver)
             time.sleep(2)
@@ -798,61 +802,174 @@ class MEDIASHARE(unittest.TestCase):
             goto_menu(driver, media_share_tab, media_share_usb_tab)
             time.sleep(2)
             wait_popup_disappear(driver, dialog_loading)
+
+            check_title = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual1 = [check_title]
+            list_expected1 = ['Media Share > USB']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Goto Media Share > USB. Check title page. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Goto Media Share > USB. Check title page. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            list_step_fail.append('1, 2. Assertion wrong.')
+
+
+        try:
             # Network block
             account_setting_block = driver.find_element_by_css_selector(account_setting_card)
+            while len(account_setting_block.find_elements_by_css_selector(delete_cls)) > 0:
+                account_setting_block.find_element_by_css_selector(delete_cls).click()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
 
             # Click Add 1
             account_setting_block.find_element_by_css_selector(add_class).click()
-            time.sleep(2)
+            time.sleep(1)
 
+            check_id_holder = account_setting_block.find_element_by_css_selector('.id input').get_attribute(
+                'placeholder')
+            check_pw_holder = account_setting_block.find_element_by_css_selector('.password input').get_attribute(
+                'placeholder')
+
+            list_actual3 = [check_id_holder, check_pw_holder]
+            list_expected3 = ['Enter the ID', 'Enter the Password']
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Check place holder of ID and password in Account Settings. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Check place holder of ID and password in Account Settings. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wrong.')
+
+        try:
             # Edit mode
             edit_field = account_setting_block.find_element_by_css_selector(edit_mode)
             time.sleep(1)
             id_field = edit_field.find_element_by_css_selector(id_cls)
             id_value = id_field.find_element_by_css_selector(input)
             ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL+'a').key_up(
-                Keys.CONTROL).send_keys(TEST_STRING).perform()
+                Keys.CONTROL).send_keys(ID_1).perform()
             time.sleep(2)
+
+            password_field = edit_field.find_element_by_css_selector(password_cls)
+            password_value = password_field.find_element_by_css_selector(input)
+            ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                Keys.CONTROL).send_keys(PASSWORD_1).perform()
+            # Verify
+
+            id_account_1 = edit_field.find_element_by_css_selector('.id input').get_attribute('value')
+            time.sleep(3)
+            pw_eye = edit_field.find_element_by_css_selector(password_eye)
+            act = ActionChains(driver)
+            act.click_and_hold(pw_eye)
+            time.sleep(2)
+            pw_account_1 = edit_field.find_element_by_css_selector('.password input').get_attribute('value')
+            time.sleep(1)
+            act.release(pw_eye)
+            act.perform()
+            # ===================================================================================
+            edit_field = account_setting_block.find_element_by_css_selector(edit_mode)
+            time.sleep(1)
+            id_field = edit_field.find_element_by_css_selector(id_cls)
+            id_value = id_field.find_element_by_css_selector(input)
+            ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL + 'a').key_up(
+                Keys.CONTROL).send_keys(ID_2).perform()
+            time.sleep(2)
+
+            password_field = edit_field.find_element_by_css_selector(password_cls)
+            password_value = password_field.find_element_by_css_selector(input)
+            ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                Keys.CONTROL).send_keys(PASSWORD_2).perform()
+            # Verify
+
+            id_account_2 = edit_field.find_element_by_css_selector('.id input').get_attribute('value')
+            time.sleep(3)
+            pw_eye = edit_field.find_element_by_css_selector(password_eye)
+            act = ActionChains(driver)
+            act.click_and_hold(pw_eye)
+            time.sleep(2)
+            pw_account_2 = edit_field.find_element_by_css_selector('.password input').get_attribute('value')
+            time.sleep(1)
+            act.release(pw_eye)
+            act.perform()
+
+            list_actual4 = [[id_account_1, pw_account_1], [id_account_2, pw_account_2]]
+            list_expected4 = [[ID_1[:32], PASSWORD_1[:32]], [ID_2[:32], PASSWORD_2[:32]]]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Input ID and Password 32 chars. Check.'
+                f'Input ID and Password 33 chars. Check. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail]4. Input ID and Password 32 chars. Check.'
+                f'Input ID and Password 33 chars. Check. '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wrong.')
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            # Edit mode
+            edit_field = account_setting_block.find_element_by_css_selector(edit_mode)
+
+            id_field = edit_field.find_element_by_css_selector(id_cls)
+            id_value = id_field.find_element_by_css_selector(input)
+            ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                Keys.CONTROL).send_keys(TEST_STRING_ID).perform()
+            time.sleep(1)
             password_field = edit_field.find_element_by_css_selector(password_cls)
             password_value = password_field.find_element_by_css_selector(input)
             ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
                 Keys.CONTROL).send_keys(TEST_STRING).perform()
-            time.sleep(2)
-            driver.find_element_by_css_selector(btn_save).click()
+            time.sleep(0.5)
+
+            account_setting_block.find_element_by_css_selector(btn_save).click()
             time.sleep(1)
             account_setting_block.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(0.4)
-            # Verify
+
+            # ================================================
             ls_account = account_setting_block.find_elements_by_css_selector(rows)
             verify_just_created_rows = ls_account[-1]
-            id_account = verify_just_created_rows.find_element_by_css_selector(id_cls).text
+            id_account_3 = verify_just_created_rows.find_element_by_css_selector(id_cls).text
             time.sleep(3)
             pw_eye = verify_just_created_rows.find_element_by_css_selector(password_eye)
             act = ActionChains(driver)
             act.click_and_hold(pw_eye)
             time.sleep(2)
-            pw_account = verify_just_created_rows.find_elements_by_css_selector(input_pw)[-1].get_attribute('value')
+            pw_account_3 = verify_just_created_rows.find_elements_by_css_selector(input_pw)[-1].get_attribute('value')
             time.sleep(1)
             act.release(pw_eye)
             act.perform()
 
-            list_actual1 = [id_account, pw_account]
-            list_expected1 = [TEST_STRING[:32], TEST_STRING[:32]]
-            check = assert_list(list_actual1, list_expected1)
+            list_actual5 = [id_account_3, pw_account_3]
+            list_expected5 = [TEST_STRING_ID, TEST_STRING]
+            check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1,2. Add an account: Check ID and Password is 32 chars. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                f'[Pass] 5. Input ID and Password normally. Save > Apply'
+                f'Check add successfully. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2. Add an account: Check ID and Password is 32 chars. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
-            list_step_fail.append(
-                '1,2. Assertion wong.')
+                f'[Fail]  5. Input ID and Password normally. Save > Apply'
+                f'Check add successfully. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+            list_step_fail.append('5. Assertion wong.')
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
         try:
             # Click Add 1
             account_setting_block.find_element_by_css_selector(add_class).click()
@@ -864,28 +981,31 @@ class MEDIASHARE(unittest.TestCase):
             id_field = edit_field.find_element_by_css_selector(id_cls)
             id_value = id_field.find_element_by_css_selector(input)
             ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                Keys.CONTROL).send_keys(TEST_STRING).perform()
+                Keys.CONTROL).send_keys(TEST_STRING_ID).perform()
             time.sleep(1)
             password_field = edit_field.find_element_by_css_selector(password_cls)
             password_value = password_field.find_element_by_css_selector(input)
             ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
                 Keys.CONTROL).send_keys(TEST_STRING).perform()
             time.sleep(0.5)
-            error_msg = account_setting_block.find_element_by_css_selector(error_message).text
+            error_msg_1 = account_setting_block.find_element_by_css_selector(error_message).text
 
-            list_actual2 = [error_msg]
-            list_expected2 = [exp_account_id_exist]
-            check = assert_list(list_actual2, list_expected2)
-            driver.find_element_by_css_selector(btn_cancel).click()
-            time.sleep(0.1)
+            time.sleep(1)
+            # Click Cancel
+            account_setting_block.find_element_by_css_selector(btn_cancel).click()
+
+            list_actual6 = [error_msg_1]
+            list_expected6 = [exp_account_id_exist]
+            check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
-            self.list_steps.append(f'[Pass] 3. Change same ID: Check error message. '
-                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            self.list_steps.append(
+                f'[Pass] 6. Change same ID: Check error message. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Change same ID: Check error message. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
-            list_step_fail.append('3. Assertion wong.')
+                f'[Fail] 6. Change same ID: Check error message. '
+                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+            list_step_fail.append('6. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
         try:
@@ -910,21 +1030,24 @@ class MEDIASHARE(unittest.TestCase):
             time.sleep(0.5)
             error_msg_2 = account_setting_block.find_element_by_css_selector(error_message).text
 
-            list_actual3 = [error_msg_2]
-            list_expected3 = [exp_account_null_id]
-            check = assert_list(list_actual3, list_expected3)
-            driver.find_element_by_css_selector(btn_cancel).click()
-            time.sleep(0.1)
+            time.sleep(1)
+            # Click Cancel
+            account_setting_block.find_element_by_css_selector(btn_cancel).click()
+
+            list_actual7 = [error_msg_2]
+            list_expected7 = [exp_account_null_id]
+            check = assert_list(list_actual7, list_expected7)
             self.assertTrue(check["result"])
-            self.list_steps.append(f'[Pass] 4. Check Add New account with empty ID: Check error message. '
-                                   f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            self.list_steps.append(
+                f'[Pass] 7. Check Add New account with empty ID: Check error message. '
+                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Check Add New account with empty ID: Check error message. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
-            list_step_fail.append('4. Assertion wong.')
+                f'[Fail] 7. Check Add New account with empty ID: Check error message. '
+                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+            list_step_fail.append('7. Assertion wong.')
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 8
         try:
             account_setting_block.find_element_by_css_selector(add_class).click()
             time.sleep(0.2)
@@ -953,24 +1076,27 @@ class MEDIASHARE(unittest.TestCase):
             time.sleep(0.5)
             check_key_words = all(check_key_words)
 
-            list_actual4 = [check_key_words]
-            list_expected4 = [return_true]
-            check = assert_list(list_actual4, list_expected4)
-            driver.find_element_by_css_selector(btn_cancel).click()
-            time.sleep(0.5)
+            time.sleep(1)
+            # Click Cancel
+            account_setting_block.find_element_by_css_selector(btn_cancel).click()
+
+            list_actual8 = [check_key_words]
+            list_expected8 = [return_true]
+            check = assert_list(list_actual8, list_expected8)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 5. Check Add KeyWords: Check error msg key words not available. '
-                                   f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            self.list_steps.append(
+                f'[Pass] 8. Check Add KeyWords: Check error msg key words not available. '
+                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
         except:
             self.list_steps.append(
-                f'[Fail] 5. Check Add KeyWords: Check error msg key words not available. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
-            list_step_fail.append('5. Assertion wong.')
+                f'[Fail] 8. Check Add KeyWords: Check error msg key words not available. '
+                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+            list_step_fail.append('8. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
         try:
-            ls_account = len(account_setting_block.find_elements_by_css_selector(rows))
-            for i in range(ls_account, 5):
+            # ls_account = len(account_setting_block.find_elements_by_css_selector(rows))
+            for i in LIST_ACCOUNT_ADD:
                 # Click Add 1
                 account_setting_block.find_element_by_css_selector(add_class).click()
                 time.sleep(0.2)
@@ -981,31 +1107,32 @@ class MEDIASHARE(unittest.TestCase):
                 id_field = edit_field.find_element_by_css_selector(id_cls)
                 id_value = id_field.find_element_by_css_selector(input)
                 ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                    Keys.CONTROL).send_keys(str(i)).perform()
+                    Keys.CONTROL).send_keys(i[0]).perform()
                 time.sleep(0.2)
 
                 password_field = edit_field.find_element_by_css_selector(password_cls)
                 password_value = password_field.find_element_by_css_selector(input)
                 ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys(
-                    'a').key_up(Keys.CONTROL).send_keys(str(i)).perform()
+                    'a').key_up(Keys.CONTROL).send_keys(i[1]).perform()
                 time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_save).click()
                 time.sleep(0.2)
             ls_account = len(account_setting_block.find_elements_by_css_selector(rows))
 
-            list_actual5 = [ls_account]
-            list_expected5 = [5]
-            check = assert_list(list_actual5, list_expected5)
+            list_actual9 = [ls_account]
+            list_expected9 = [5]
+            check = assert_list(list_actual9, list_expected9)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 6. Add max rule: Check max rule. '
-                                   f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+            self.list_steps.append(
+                f'[Pass] 9. Add max rule: Check max rule. '
+                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 6. Add max rule: Check max rule. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                f'[Fail] 9. Add max rule: Check max rule. '
+                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
             self.list_steps.append('[END TC]')
-            list_step_fail.append('6. Assertion wong.')
+            list_step_fail.append('9. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
     # OK F
