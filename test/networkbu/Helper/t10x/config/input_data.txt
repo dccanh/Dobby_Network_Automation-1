@@ -119,7 +119,6 @@ nw_51_new_ssid_5g = Wireless Network Name 5G
 
 [WIRELESS]
 wl02_ssid_name =  123!@ abcd #^&*()+_-={}[]|456:78
-wl04_google_url = http://google.com
 wl04_security_type = WPA2-PSK
 wl04_pw_3 = 12345
 wl04_pw_4 = 123!@ abcd #^*()+_-={}[]|456:789.?`$%\;,/123!@ abcd #^*()+_-={}[]|456:789.?`$%\,/
@@ -146,7 +145,7 @@ wl07_pw_3 = 123
 wl07_pw_4 = 123!@aA123@!aA1
 wl07_pw_5 = 1234567890aaaaaAAAAA123aaabbb
 
-wl16_ssid_test = 123!@ abcd #^*()+_-={}[]|456:789.?`$%\;
+wl16_ssid_test = 1234567890aaaaaaaaaA!@#$%^_*()123
 
 wl19_google_url = http://google.com
 wl19_security_type = WPA2-PSK

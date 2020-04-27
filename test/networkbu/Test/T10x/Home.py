@@ -28,7 +28,7 @@ class HOME(unittest.TestCase):
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         except:
             # Connect by wifi if internet is down to handle exception for PPPoE
-            os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
+            connect_wifi_by_command('HVNWifi', 'Wifihvn12@!')
             time.sleep(1)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))

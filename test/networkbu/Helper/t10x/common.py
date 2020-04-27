@@ -1615,13 +1615,16 @@ def get_ip_port_filtering_table(driver):
     return table_value
 
 
-def connect_wifi_by_command(wifi_name, wifi_pw):
-    write_data_to_xml(wifi_default_file_path, new_name=wifi_name, new_pw=wifi_pw)
+def connect_wifi_by_command(wifi_name, wifi_pw, xml_file=wifi_default_file_path):
+    if xml_file == wifi_none_secure_path:
+        write_data_to_none_secure_xml(xml_file, new_name=wifi_name)
+    else:
+        write_data_to_xml(xml_file, new_name=wifi_name, new_pw=wifi_pw)
     time.sleep(1)
     os.system(f'netsh wlan delete profile name="{wifi_name}"')
     time.sleep(0.5)
     # Connect Default 2GHz
-    os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+    os.system(f'netsh wlan add profile filename="{xml_file}"')
     time.sleep(0.5)
     os.system(f'netsh wlan connect ssid="{wifi_name}" name="{wifi_name}"')
     time.sleep(10)

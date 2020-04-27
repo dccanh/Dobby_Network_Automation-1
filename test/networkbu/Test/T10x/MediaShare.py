@@ -30,7 +30,7 @@ class MEDIASHARE(unittest.TestCase):
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         except:
             # Connect by wifi if internet is down to handle exception for PPPoE
-            os.system('netsh wlan connect ssid=HVNWifi name=HVNWifi')
+            connect_wifi_by_command('HVNWifi', 'Wifihvn12@!')
             time.sleep(1)
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
@@ -1145,13 +1145,33 @@ class MEDIASHARE(unittest.TestCase):
 
         TEST_STRING = str(random.randint(10, 100))
         TEST_STRING_EDIT = str(random.randint(1, 10))
-
+        EDIT_ID = 'Test06!'
+        EDIT_PW = 'abc12345'
         try:
             grand_login(driver)
             time.sleep(2)
+
             # Goto media share USB
             goto_menu(driver, media_share_tab, media_share_usb_tab)
+            time.sleep(2)
             wait_popup_disappear(driver, dialog_loading)
+
+            check_title = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual1 = [check_title]
+            list_expected1 = ['Media Share > USB']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Goto Media Share > USB. Check title page. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Goto Media Share > USB. Check title page. '
+                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            list_step_fail.append('1, 2. Assertion wrong.')
+
+        try:
             time.sleep(5)
             # Network block
             account_setting_block = driver.find_element_by_css_selector(account_setting_card)
@@ -1195,15 +1215,20 @@ class MEDIASHARE(unittest.TestCase):
             password_field = edit_field.find_element_by_css_selector(password_cls)
             password_value = password_field.find_element_by_css_selector(input)
             ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                Keys.CONTROL).send_keys(TEST_STRING_EDIT).perform()
+                Keys.CONTROL).send_keys(EDIT_PW).perform()
             time.sleep(1)
             id_field = edit_field.find_element_by_css_selector(id_cls)
             id_value = id_field.find_element_by_css_selector(input)
             ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                Keys.CONTROL).send_keys(TEST_STRING_EDIT).perform()
+                Keys.CONTROL).send_keys(EDIT_ID).perform()
 
-            driver.find_element_by_css_selector(btn_save).click()
+            account_setting_block.find_element_by_css_selector(btn_save).click()
             time.sleep(1)
+            if account_setting_block.find_element_by_css_selector(apply).is_displayed():
+                account_setting_block.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(1)
 
             ls_account = account_setting_block.find_elements_by_css_selector(rows)
             verify_id_account = ls_account[index_chosen].find_element_by_css_selector(id_cls).text
@@ -1217,19 +1242,18 @@ class MEDIASHARE(unittest.TestCase):
             act.release(pw_eye)
             act.perform()
 
-            list_actual1 = [verify_id_account, verify_pw_account]
-            list_expected1 = [TEST_STRING_EDIT, TEST_STRING_EDIT]
-            check = assert_list(list_actual1, list_expected1)
+            list_actual3 = [verify_id_account, verify_pw_account]
+            list_expected3 = [EDIT_ID, EDIT_PW]
+            check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1. Edit an random account: ID and PW changed. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                f'[Pass] 3. Edit an random account: ID and PW changed. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1. Edit an random account: ID and PW changed. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
-            list_step_fail.append(
-                '1. Assertion wong.')
+                f'[Fail] 3. Edit an random account: ID and PW changed. '
+                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            list_step_fail.append('3. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2
         try:
@@ -1237,6 +1261,33 @@ class MEDIASHARE(unittest.TestCase):
             # Click Edit
             ls_account[index_chosen].find_element_by_css_selector(delete_cls).click()
             time.sleep(0.5)
+            check_confirm_msg_1 = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(1)
+            check_popup_close = len(driver.find_elements_by_css_selector(content)) == 0
+            check_usb_page = len(driver.find_elements_by_css_selector(usb_class)) > 0
+
+            list_actual4 = [check_confirm_msg_1, check_popup_close, check_usb_page]
+            list_expected4 = ['Do you want to delete this item?', True, True]
+            check = assert_list(list_actual4, list_expected4)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 4. Click Delete. '
+                f'Check Confirm message. Click Cancel. Check Popup disappear. Check USB page display '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 4. Click Delete. '
+                f'Check Confirm message. Click Cancel. Check Popup disappear. Check USB page display '
+                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            list_step_fail.append('4. Assertion wong.')
+
+
+        try:
+            ls_account[index_chosen].find_element_by_css_selector(delete_cls).click()
+            time.sleep(0.5)
+            check_confirm_msg_2 = driver.find_element_by_css_selector(confirm_dialog_msg).text
+            time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver,dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
@@ -1246,20 +1297,22 @@ class MEDIASHARE(unittest.TestCase):
             ls_account_id = [i.find_element_by_css_selector(id_cls).text for i in ls_account]
             check_delete = verify_id_account not in ls_account_id
 
-            list_actual2 = [check_delete]
-            list_expected2 = [True]
-            check = assert_list(list_actual2, list_expected2)
+            list_actual5 = [check_confirm_msg_2, check_delete]
+            list_expected5 = ['Do you want to delete this item?', True]
+            check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2. Delete a rule: Check that rule not in list account. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                f'[Pass] 5. Delete a rule: '
+                f'Check Confirm message and Check that rule not in list account. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Delete a rule: Check that rule not in list account. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                f'[Fail] 5. Delete a rule: '
+                f'Check Confirm message and Check that rule not in list account. '
+                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
-            list_step_fail.append('2. Assertion wong.')
+            list_step_fail.append('5. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
     # OK
@@ -1290,67 +1343,69 @@ class MEDIASHARE(unittest.TestCase):
 
             network_table = network_block.find_elements_by_css_selector(tbody)
             if len(network_table) == 0:
-                # Click Add 1
-                network_block.find_element_by_css_selector(add_class).click()
-                time.sleep(0.2)
-                # Edit mode
-                edit_field = network_block.find_element_by_css_selector(edit_mode)
-                # Description
-                description_field = edit_field.find_element_by_css_selector(description)
-                description_field.find_element_by_css_selector(input).send_keys(DESCRIPTION_3)
-                # Folder path
-                path_field = edit_field.find_element_by_css_selector(path)
-                path_field.find_element_by_css_selector(input).click()
-                time.sleep(0.5)
-                # Choose path
-                driver.find_element_by_css_selector(tree_icon).click()
-                time.sleep(0.2)
-                ls_path_lv1 = driver.find_elements_by_css_selector(path_name_lv1)
-                for o in ls_path_lv1:
-                    if o.text == PATH_FILE_1:
-                        ActionChains(driver).move_to_element(o).click().perform()
-                        break
-                # OK
-                driver.find_element_by_css_selector(btn_ok).click()
-                # Permission
-                per_write = edit_field.find_element_by_css_selector(permission_write_check_box)
-                if not per_write.is_selected():
-                    driver.find_element_by_css_selector(permission_write_check_box_radio).click()
-                # Save
-                driver.find_element_by_css_selector(btn_save).click()
-                wait_popup_disappear(driver, dialog_loading)
-                driver.find_element_by_css_selector(apply).click()
-                wait_popup_disappear(driver, dialog_loading)
-                driver.find_element_by_css_selector(btn_ok).click()
-                wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+                add_a_usb_network_folder(driver, DESCRIPTION_3, PATH_FILE_1, WRITE=True)
+            #     # Click Add 1
+            #     network_block.find_element_by_css_selector(add_class).click()
+            #     time.sleep(0.2)
+            #     # Edit mode
+            #     edit_field = network_block.find_element_by_css_selector(edit_mode)
+            #     # Description
+            #     description_field = edit_field.find_element_by_css_selector(description)
+            #     description_field.find_element_by_css_selector(input).send_keys(DESCRIPTION_3)
+            #     # Folder path
+            #     path_field = edit_field.find_element_by_css_selector(path)
+            #     path_field.find_element_by_css_selector(input).click()
+            #     time.sleep(0.5)
+            #     # Choose path
+            #     driver.find_element_by_css_selector(tree_icon).click()
+            #     time.sleep(0.2)
+            #     ls_path_lv1 = driver.find_elements_by_css_selector(path_name_lv1)
+            #     for o in ls_path_lv1:
+            #         if o.text == PATH_FILE_1:
+            #             ActionChains(driver).move_to_element(o).click().perform()
+            #             break
+            #     # OK
+            #     driver.find_element_by_css_selector(btn_ok).click()
+            #     # Permission
+            #     per_write = edit_field.find_element_by_css_selector(permission_write_check_box)
+            #     if not per_write.is_selected():
+            #         driver.find_element_by_css_selector(permission_write_check_box_radio).click()
+            #     # Save
+            #     driver.find_element_by_css_selector(btn_save).click()
+            #     wait_popup_disappear(driver, dialog_loading)
+            #     driver.find_element_by_css_selector(apply).click()
+            #     wait_popup_disappear(driver, dialog_loading)
+            #     driver.find_element_by_css_selector(btn_ok).click()
+            #     wait_popup_disappear(driver, dialog_loading)
+            # time.sleep(1)
             # Account block
             account_setting_block = driver.find_element_by_css_selector(account_setting_card)
 
             ls_account = len(account_setting_block.find_elements_by_css_selector(rows))
             if ls_account == 0:
+                add_a_usb_account_setting(driver, 'Test06!', 'abc12345')
                 # Click Add 1
-                account_setting_block.find_element_by_css_selector(add_class).click()
-                time.sleep(0.2)
-                # Edit mode
-                edit_field = account_setting_block.find_element_by_css_selector(edit_mode)
-                time.sleep(1)
-                id_field = edit_field.find_element_by_css_selector(id_cls)
-                id_value = id_field.find_element_by_css_selector(input)
-                ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                    Keys.CONTROL).send_keys(TEST_STRING).perform()
-                time.sleep(1)
-                password_field = edit_field.find_element_by_css_selector(password_cls)
-                password_value = password_field.find_element_by_css_selector(input)
-                ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
-                    Keys.CONTROL).send_keys(TEST_STRING).perform()
-                time.sleep(2)
-                driver.find_element_by_css_selector(btn_save).click()
-                time.sleep(1)
-                account_setting_block.find_element_by_css_selector(apply).click()
-                wait_popup_disappear(driver, dialog_loading)
-                driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(0.4)
+                # account_setting_block.find_element_by_css_selector(add_class).click()
+                # time.sleep(0.2)
+                # # Edit mode
+                # edit_field = account_setting_block.find_element_by_css_selector(edit_mode)
+                # time.sleep(1)
+                # id_field = edit_field.find_element_by_css_selector(id_cls)
+                # id_value = id_field.find_element_by_css_selector(input)
+                # ActionChains(driver).move_to_element(id_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                #     Keys.CONTROL).send_keys('Test06!').perform()
+                # time.sleep(1)
+                # password_field = edit_field.find_element_by_css_selector(password_cls)
+                # password_value = password_field.find_element_by_css_selector(input)
+                # ActionChains(driver).move_to_element(password_value).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                #     Keys.CONTROL).send_keys('abc12345').perform()
+                # time.sleep(2)
+                # driver.find_element_by_css_selector(btn_save).click()
+                # time.sleep(1)
+                # account_setting_block.find_element_by_css_selector(apply).click()
+                # wait_popup_disappear(driver, dialog_loading)
+                # driver.find_element_by_css_selector(btn_ok).click()
+                # time.sleep(0.4)
 
             # Verify
             ls_account = account_setting_block.find_elements_by_css_selector(rows)
@@ -1457,11 +1512,11 @@ class MEDIASHARE(unittest.TestCase):
 
             # Click Edit
             random_account.find_element_by_css_selector(edit_cls).click()
-
+            time.sleep(1)
             check_edit_when_on_server = False
             if len(driver.find_elements_by_css_selector(complete_dialog_msg)) > 0:
                 check_edit_when_on_server = True
-                time.sleep(5)
+                time.sleep(1)
                 edit_confirm_msg = driver.find_element_by_css_selector(complete_dialog_msg).text
                 time.sleep(1)
                 driver.find_element_by_css_selector(btn_ok).click()
