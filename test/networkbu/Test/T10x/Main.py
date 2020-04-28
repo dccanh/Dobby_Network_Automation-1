@@ -4769,8 +4769,8 @@ class MAIN(unittest.TestCase):
         self.assertListEqual(list_step_fail, [])
 
     # OK
-    def test_38_MAIN_Wizard_Summary(self):
-        self.key = 'MAIN_38'
+    def test_39_MAIN_Wizard_Summary(self):
+        self.key = 'MAIN_39'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []

@@ -1350,7 +1350,7 @@ class NETWORK(unittest.TestCase):
                             break
                     break
 
-            exp_primary_1 = 'USB'
+            exp_primary_1 = 'USB Broadband'
             exp_primary_2 = 'Ethernet'
             exp_primary_3 = 'Ethernet'
             list_actual = [check_primary_1, check_primary_2, check_primary_3]

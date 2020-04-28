@@ -128,8 +128,8 @@ class WIRELESS(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_03_WIRELESS_Verification_of_the_setting_WPA2_PSK_Password(self):
-        self.key = 'WIRELESS_04'
+    def test_03_WIRELESS_Verification_of_Security_settings(self):
+        self.key = 'WIRELESS_03'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []

@@ -122,7 +122,7 @@ convert_module = {
 }
 
 root = Tk()
-root.title(f"HVN NETWORK AUTOMATION TOOL")
+root.title(f"NETWORK AUTOMATION TOOL")
 root.iconbitmap(icon_path)
 
 img = Image.open('./Image/humax-logo-01.png')
@@ -131,8 +131,8 @@ label = Label(root, image=photo)
 label.image = photo
 label.place(x=2, y=0)
 
-titleLabel = Label(root, text="HVN NETWORK AUTOMATION TOOL", font="Verdana 13")
-titleLabel.place(x=140, y=0)
+titleLabel = Label(root, text="NETWORK AUTOMATION TOOL", font="Verdana 13")
+titleLabel.place(x=150, y=0)
 
 img_down = Image.open('./Image/down-icon.png')
 photo_down = ImageTk.PhotoImage(img_down)
@@ -554,7 +554,16 @@ def abort():
     threadAbort.start()
     # exit_Btn()
 
-factoryButton = Button(root, text=" Factory", command=lambda: factory_dut(), height=20, width=80, borderwidth=4, image=photo_run, compound=LEFT)
+
+def factory():
+    print(cusPort4.get())
+    save_config(config_path, 'GENERAL', 'serial_number', cusNumber.get())
+    save_config(config_path, 'CONSOLE', 'serial_port', cusPort4.get())
+    time.sleep(3)
+    factory_dut()
+
+
+factoryButton = Button(root, text=" Factory", command=factory, height=20, width=80, borderwidth=4, image=photo_run, compound=LEFT)
 factoryButton.place(x=140, y=370)
 
 
