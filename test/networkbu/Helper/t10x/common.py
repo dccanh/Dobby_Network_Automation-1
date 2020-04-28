@@ -1893,3 +1893,25 @@ def scan_wifi_repeater_mode_table(driver):
         row_data = [i.text for i in r.find_elements_by_css_selector('.col')]
         table.append(row_data)
     return table
+
+
+def interface_connect_disconnect(interface, _status):
+    """
+    :param interface: Ethernet or Wi-Fi
+    :param _status: enable or disable
+    :return:
+    """
+    # Correct params
+    if interface.lower() == 'ethernet':
+        interface = 'Ethernet'
+    elif interface.lower() in ['wifi', 'wi-fi']:
+        interface = 'Wi-Fi'
+    if _status.lower() in ['disable', 'disabled']:
+        _status = 'disable'
+        sleep_time = 5
+    elif _status.lower() in ['enable', 'enabled']:
+        _status = 'enable'
+        sleep_time = 10
+
+    os.system(f'python {nw_interface_path} -i {interface} -a {_status}')
+    time.sleep(sleep_time)

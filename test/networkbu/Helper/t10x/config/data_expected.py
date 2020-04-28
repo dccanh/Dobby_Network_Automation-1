@@ -70,7 +70,7 @@ exp_dialog_add_same_ssid = 'The Network Name(SSID) already exists. Enter another
 exp_wl_default_pw = '00000000'
 exp_short_pw_error_msg = "That's too short."
 exp_wps_red_message = "If both Hide SSIDs on both wireless networks are set to on, WPS is disabled."
-exp_wps_error_msg = 'The WPS button works only when Security is None, WPA2-PSK, WPA2 / WPA-PSK. Please check the security type of 2.4GHz and 5GHz'
+exp_wps_error_msg = 'The WPS button works only when Security is None, WPA2-PSK, WPA2/WPA-PSK. Check the security type of 2.4GHz and 5GHz.'
 
 # ~~~~~~~~~~~~~~~~~~~~~~ Media share
 exp_nw_folder_exist = 'The same network folder exists.'

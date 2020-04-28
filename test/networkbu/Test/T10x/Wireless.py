@@ -2783,8 +2783,6 @@ class WIRELESS(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
-        URL_LOGIN = get_config('URL', 'url')
         # ===========================================================
         factory_dut()
         # ===========================================================
@@ -2927,7 +2925,6 @@ class WIRELESS(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         # ==========================================================================
-        GOOGLE_URL = get_config('WIRELESS', 'wl19_google_url', input_data_path)
         SECURITY_TYPE = get_config('WIRELESS', 'wl19_security_type', input_data_path)
         PASSWORD_SHORT_STR = get_config('WIRELESS', 'wl19_pw_short', input_data_path)
         PASSWORD_LONG_STR = get_config('WIRELESS', 'wl19_pw_long', input_data_path)
@@ -3085,43 +3082,22 @@ class WIRELESS(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~ 5
         try:
-
-            write_data_to_xml(wifi_default_file_path,
-                              new_name=default_ssid_2g_value,
-                              new_pw=new_pw_2g,
-                              new_secure='WPA2PSK')
-            time.sleep(3)
-            os.system(f'netsh wlan delete profile name="{default_ssid_2g_value}"')
-            time.sleep(3)
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            # Disconnect Ethernet
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(5)
-            os.system(f'netsh wlan connect ssid="{default_ssid_2g_value}" name="{default_ssid_2g_value}"')
-            time.sleep(10)
-            check_connected_2g_name = current_connected_wifi()
+
+            check_connected_2g_name = connect_wifi_by_command(default_ssid_2g_value, new_pw_2g)
             # Google
-            driver.get(GOOGLE_URL)
-            time.sleep(10)
-            check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
+            check_2g = check_connect_to_google()
+
+            os.system(f'netsh wlan disconnect')
+            time.sleep(3)
 
             # 5G Connect wifi
-            write_data_to_xml(wifi_default_file_path,
-                              new_name=default_ssid_5g_value,
-                              new_pw=new_pw_5g,
-                              new_secure='WPA2PSK')
-            time.sleep(3)
-            os.system(f'netsh wlan delete profile name="{default_ssid_5g_value}"')
-            time.sleep(3)
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
-            time.sleep(5)
-            os.system(f'netsh wlan connect ssid="{default_ssid_5g_value}" name="{default_ssid_5g_value}"')
-            time.sleep(10)
-            check_connected_5g_name = current_connected_wifi()
+            check_connected_5g_name = connect_wifi_by_command(default_ssid_5g_value, new_pw_5g)
             # Google
-            driver.get(GOOGLE_URL)
-            time.sleep(10)
-            check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
+            check_5g = check_connect_to_google()
+
             os.system('netsh wlan disconnect')
             time.sleep(3)
 
@@ -3129,6 +3105,8 @@ class WIRELESS(unittest.TestCase):
             list_expected3 = [default_ssid_2g_value, return_true, default_ssid_5g_value, return_true]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
+            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            time.sleep(10)
             self.list_steps.append(
                 f'[Pass] 5. Connect Wifi 2G -> Check connect 2G wifi and access Google successfully. '
                 f'Connect Wifi 5G -> Check connect 2G wifi and access Google successfully. '
@@ -5165,6 +5143,17 @@ class WIRELESS(unittest.TestCase):
         try:
             grand_login(driver)
             wait_popup_disappear(driver, dialog_loading)
+
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+
+            block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
+            block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
+
+            get_2g_name = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
+            get_5g_name = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
+            get_2g_pw = wireless_check_pw_eye(driver, block_2g, change_pw=False)
+            get_5g_pw = wireless_check_pw_eye(driver, block_5g, change_pw=False)
+
             goto_menu(driver, advanced_tab, advanced_wireless_tab)
 
             page_title_text = driver.find_element_by_css_selector(ele_title_page).text
@@ -5193,7 +5182,7 @@ class WIRELESS(unittest.TestCase):
                     default_wireless_mode_text = default_wireless_mode.text.lower()
                     # Get total supported modes
                     default_wireless_mode.click()
-
+                    time.sleep(1)
                     dropdown_values = v.find_elements_by_css_selector(secure_value_in_drop_down)
                     dropdown_values_text = [i.get_attribute('option-value') for i in dropdown_values]
                     for o in dropdown_values:
@@ -5208,11 +5197,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(1)
             _res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
             time.sleep(2)
-
             api_wl_mode = _res['basic']['wirelessMode']
 
-            list_expected3 = [default_wireless_mode_text, dropdown_values_text]
-            list_actual3 = [api_wl_mode, ['802.11b', '802.11b+g', '802.11b+g+n']]
+            list_actual3 = [default_wireless_mode_text, dropdown_values_text]
+            list_expected3 = [api_wl_mode, ['802.11b', '802.11b+g', '802.11b+g+n']]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -5252,19 +5240,29 @@ class WIRELESS(unittest.TestCase):
             time.sleep(1)
             _res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
             time.sleep(2)
-
             api_wl_mode_4 = _res['basic']['wirelessMode']
 
-            list_actual4 = [default_wireless_mode_text_4]
-            list_expected4 = [api_wl_mode_4]
+            # Connect to google
+            interface_connect_disconnect('Ethernet', 'Disable')
+            check_2g_wifi_connect = connect_wifi_by_command(get_2g_name, get_2g_pw)
+            check_2g_google_connect = check_connect_to_google()
+
+            interface_connect_disconnect('Ethernet', 'Enable')
+            os.system('netsh wlan disconnect')
+            time.sleep(5)
+
+            list_actual4 = [default_wireless_mode_text_4, [check_2g_wifi_connect, check_2g_google_connect]]
+            list_expected4 = [api_wl_mode_4, [get_2g_name, True]]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 4. Change Wireless Mode to 802.11b. Check change successfully. '
+                f'Check Can connect Wifi then check connect to google. '
                 f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
         except:
             self.list_steps.append(
                 f'[Fail] 4. Change Wireless Mode to 802.11b. Check change successfully. '
+                f'Check Can connect Wifi then check connect to google. '
                 f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
             list_step_fail.append('4. Assertion wong.')
 
@@ -5310,19 +5308,29 @@ class WIRELESS(unittest.TestCase):
             time.sleep(1)
             _res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
             time.sleep(2)
-
             api_wl_mode_5 = _res['basic']['wirelessMode']
 
-            list_actual5 = [default_wireless_mode_text_5]
-            list_expected5 = [api_wl_mode_5]
+            # Connect to google
+            interface_connect_disconnect('Ethernet', 'Disable')
+            check_2g_wifi_connect = connect_wifi_by_command(get_2g_name, get_2g_pw)
+            check_2g_google_connect = check_connect_to_google()
+
+            interface_connect_disconnect('Ethernet', 'Enable')
+            os.system('netsh wlan disconnect')
+            time.sleep(5)
+
+            list_actual5 = [default_wireless_mode_text_5, [check_2g_wifi_connect, check_2g_google_connect]]
+            list_expected5 = [api_wl_mode_5, [get_2g_name, True]]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 5. Change Wireless Mode to 802.11b+g. Check change successfully. '
+                f'Check Can connect Wifi then check connect to google. '
                 f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
         except:
             self.list_steps.append(
                 f'[Fail] 5. Change Wireless Mode to 802.11b+g. Check change successfully. '
+                f'Check Can connect Wifi then check connect to google. '
                 f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
             list_step_fail.append('5. Assertion wong.')
 
@@ -5368,20 +5376,30 @@ class WIRELESS(unittest.TestCase):
             time.sleep(1)
             _res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
             time.sleep(2)
-
             api_wl_mode_6 = _res['basic']['wirelessMode']
 
-            list_actual6 = [default_wireless_mode_text_6]
-            list_expected6 = [api_wl_mode_6]
+            # Connect to google
+            interface_connect_disconnect('Ethernet', 'Disable')
+            check_2g_wifi_connect = connect_wifi_by_command(get_2g_name, get_2g_pw)
+            check_2g_google_connect = check_connect_to_google()
+
+            interface_connect_disconnect('Ethernet', 'Enable')
+            os.system('netsh wlan disconnect')
+            time.sleep(5)
+
+            list_actual6 = [default_wireless_mode_text_6, [check_2g_wifi_connect, check_2g_google_connect]]
+            list_expected6 = [api_wl_mode_6, [get_2g_name, True]]
             check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 6. Change Wireless Mode to 802.11b+g+n. Check change successfully. '
+                f'Check Can connect Wifi then check connect to google. '
                 f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 f'[Fail] 6. Change Wireless Mode to 802.11b+g+n. Check change successfully. '
+                f'Check Can connect Wifi then check connect to google. '
                 f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('6. Assertion wong.')
@@ -7956,17 +7974,17 @@ class WIRELESS(unittest.TestCase):
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4, 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
+                f'[Pass] 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
                 f'Check can not connect to Wifi. '
                 f'Actual: {str(list_actual4)}. '
                 f'Expected: {str(list_expected4)}')
         except:
             self.list_steps.append(
-                f'[Fail] 4, 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
+                f'[Fail] 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
                 f'Check can not connect to Wifi. '
                 f'Actual: {str(list_actual4)}. '
                 f'Expected: {str(list_expected4)}')
-            list_step_fail.append('4, 5. Assertion wong.')
+            list_step_fail.append('5. Assertion wong.')
 
         try:
             os.system('netsh wlan delete profile name=*')
@@ -8241,13 +8259,17 @@ class WIRELESS(unittest.TestCase):
 
         try:
             goto_menu(driver, wireless_tab, wireless_wps_tab)
+            time.sleep(1)
+            if driver.find_element_by_css_selector('.de-active-wps-button').is_displayed():
+                driver.find_element_by_css_selector('.de-active-wps-button').click()
+                wait_popup_disappear(driver, dialog_loading)
 
             driver.find_element_by_css_selector(ele_wps_button).click()
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(10)
-            check_timmer = driver.find_element_by_css_selector(ele_wps_status).text
+            check_timer = driver.find_element_by_css_selector(ele_wps_status).text
 
-            list_actual5 = [check_timmer]
+            list_actual5 = [check_timer]
             list_expected5 = ['WPS Operating… Wait 120 seconds.']
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
@@ -8263,9 +8285,10 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('5. Assertion wong.')
 
         try:
-
-            time.sleep(10)
+            interface_connect_disconnect('Ethernet', 'disable')
+            time.sleep(1)
             check_2g_connected = connect_wifi_by_command(wifi_2g_name, '')
+            interface_connect_disconnect('Ethernet', 'enable')
 
             list_actual6 = [check_2g_connected]
             list_expected6 = [wifi_2g_name]
@@ -8284,16 +8307,20 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('6. Assertion wong.')
 
         try:
+            os.system('netsh wlan disconnect')
+            time.sleep(5)
             goto_menu(driver, wireless_tab, wireless_wps_tab)
-            driver.find_element_by_css_selector('.de-active-wps-button').click()
-            wait_popup_disappear(driver, dialog_loading)
+
+            if driver.find_element_by_css_selector('.de-active-wps-button').is_displayed():
+                driver.find_element_by_css_selector('.de-active-wps-button').click()
+                wait_popup_disappear(driver, dialog_loading)
 
             driver.find_element_by_css_selector(ele_wps_button).click()
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(10)
-            check_timmer_2 = driver.find_element_by_css_selector(ele_wps_status).text
+            check_timer_2 = driver.find_element_by_css_selector(ele_wps_status).text
 
-            list_actual7 = [check_timmer_2]
+            list_actual7 = [check_timer_2]
             list_expected7 = ['WPS Operating… Wait 120 seconds.']
             check = assert_list(list_actual7, list_expected7)
             self.assertTrue(check["result"])
@@ -8309,14 +8336,15 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('7. Assertion wong.')
 
         try:
-
-            time.sleep(10)
+            interface_connect_disconnect('Ethernet', 'disable')
             check_5g_connected = connect_wifi_by_command(wifi_5g_name, '')
+            interface_connect_disconnect('Ethernet', 'enable')
+            os.system('netsh wlan disconnect')
+            time.sleep(5)
 
             list_actual8 = [check_5g_connected]
             list_expected8 = [wifi_5g_name]
             check = assert_list(list_actual8, list_expected8)
-
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 8. Client connect 5G wifi without PW. Check current connected. '
@@ -8454,13 +8482,15 @@ class WIRELESS(unittest.TestCase):
 
         try:
             goto_menu(driver, wireless_tab, wireless_wps_tab)
-
+            if driver.find_element_by_css_selector('.de-active-wps-button').is_displayed():
+                driver.find_element_by_css_selector('.de-active-wps-button').click()
+                wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(ele_wps_button).click()
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(10)
-            check_timmer = driver.find_element_by_css_selector(ele_wps_status).text
+            check_timer = driver.find_element_by_css_selector(ele_wps_status).text
 
-            list_actual5 = [check_timmer]
+            list_actual5 = [check_timer]
             list_expected5 = ['WPS Operating… Wait 120 seconds.']
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
@@ -8476,14 +8506,15 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('5. Assertion wong.')
 
         try:
-
-            time.sleep(15)
+            interface_connect_disconnect('Ethernet', 'disable')
+            time.sleep(1)
             check_2g_connected = connect_wifi_by_command(wifi_2g_name, '')
+
+            interface_connect_disconnect('Ethernet', 'enable')
 
             list_actual6 = [check_2g_connected]
             list_expected6 = [wifi_2g_name]
             check = assert_list(list_actual6, list_expected6)
-
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 6. Client connect 2G wifi without PW. Check current connected. '
@@ -8497,16 +8528,19 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('6. Assertion wong.')
 
         try:
+            os.system('netsh wlan disconnect')
+            time.sleep(2)
             goto_menu(driver, wireless_tab, wireless_wps_tab)
-            driver.find_element_by_css_selector('.de-active-wps-button').click()
-            wait_popup_disappear(driver, dialog_loading)
+            if driver.find_element_by_css_selector('.de-active-wps-button').is_displayed():
+                driver.find_element_by_css_selector('.de-active-wps-button').click()
+                wait_popup_disappear(driver, dialog_loading)
 
             driver.find_element_by_css_selector(ele_wps_button).click()
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(10)
-            check_timmer_2 = driver.find_element_by_css_selector(ele_wps_status).text
+            check_timer_2 = driver.find_element_by_css_selector(ele_wps_status).text
 
-            list_actual7 = [check_timmer_2]
+            list_actual7 = [check_timer_2]
             list_expected7 = ['WPS Operating… Wait 120 seconds.']
             check = assert_list(list_actual7, list_expected7)
             self.assertTrue(check["result"])
@@ -8522,14 +8556,18 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('7. Assertion wong.')
 
         try:
+            interface_connect_disconnect('Ethernet', 'disable')
+            time.sleep(5)
 
-            time.sleep(10)
             check_5g_connected = connect_wifi_by_command(wifi_5g_name, '')
+
+            interface_connect_disconnect('Ethernet', 'enable')
+            os.system('netsh wlan disconnect')
+
 
             list_actual8 = [check_5g_connected]
             list_expected8 = [wifi_5g_name]
             check = assert_list(list_actual8, list_expected8)
-
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 8. Client connect 5G wifi without PW. Check current connected. '
@@ -8545,8 +8583,8 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('8. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
 
-    def test_34_WIRELESS_Verification_of_WPS_operation_WPA2_WPA_PSK(self):
-        self.key = 'WIRELESS_34'
+    def test_35_WIRELESS_Verification_of_WPS_operation_None_Security(self):
+        self.key = 'WIRELESS_35'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
@@ -8667,7 +8705,9 @@ class WIRELESS(unittest.TestCase):
 
         try:
             goto_menu(driver, wireless_tab, wireless_wps_tab)
-
+            if driver.find_element_by_css_selector('.de-active-wps-button').is_displayed():
+                driver.find_element_by_css_selector('.de-active-wps-button').click()
+                wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(ele_wps_button).click()
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(10)
@@ -8689,19 +8729,11 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('5. Assertion wong.')
 
         try:
-
-            time.sleep(15)
-            write_data_to_none_secure_xml(wifi_none_secure_path, new_name=wifi_2g_name)
+            interface_connect_disconnect('Ethernet', 'disable')
             time.sleep(1)
-            os.system(f'netsh wlan delete profile name="{wifi_2g_name}"')
-            time.sleep(0.5)
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
-            time.sleep(0.5)
-            os.system(f'netsh wlan connect ssid="{wifi_2g_name}" name="{wifi_2g_name}"')
-            time.sleep(15)
+            check_2g_connected = connect_wifi_by_command(wifi_2g_name, '', xml_file=wifi_none_secure_path)
 
-            check_2g_connected = current_connected_wifi()
+            interface_connect_disconnect('Ethernet', 'enable')
 
             list_actual6 = [check_2g_connected]
             list_expected6 = [wifi_2g_name]
@@ -8720,9 +8752,12 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('6. Assertion wong.')
 
         try:
+            os.system('netsh wlan disconnect')
+            time.sleep(5)
             goto_menu(driver, wireless_tab, wireless_wps_tab)
-            driver.find_element_by_css_selector('.de-active-wps-button').click()
-            wait_popup_disappear(driver, dialog_loading)
+            if driver.find_element_by_css_selector('.de-active-wps-button').is_displayed():
+                driver.find_element_by_css_selector('.de-active-wps-button').click()
+                wait_popup_disappear(driver, dialog_loading)
 
             driver.find_element_by_css_selector(ele_wps_button).click()
             wait_popup_disappear(driver, dialog_loading)
@@ -8745,18 +8780,12 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('7. Assertion wong.')
 
         try:
-
-            time.sleep(10)
-            write_data_to_none_secure_xml(wifi_none_secure_path, new_name=wifi_5g_name)
+            interface_connect_disconnect('Ethernet', 'disable')
             time.sleep(1)
-            os.system(f'netsh wlan delete profile name="{wifi_5g_name}"')
-            time.sleep(0.5)
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{wifi_none_secure_path}"')
-            time.sleep(0.5)
-            os.system(f'netsh wlan connect ssid="{wifi_5g_name}" name="{wifi_5g_name}"')
-            time.sleep(15)
-            check_5g_connected = current_connected_wifi()
+            check_5g_connected = connect_wifi_by_command(wifi_5g_name, '', xml_file=wifi_none_secure_path)
+
+            interface_connect_disconnect('Ethernet', 'enable')
+            os.system('netsh wlan disconnect')
 
             list_actual8 = [check_5g_connected]
             list_expected8 = [wifi_5g_name]
@@ -8774,7 +8803,7 @@ class WIRELESS(unittest.TestCase):
                 f'Expected: {str(list_expected8)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('8. Assertion wong.')
-        factory_dut()
+
         self.assertListEqual(list_step_fail, [])
 
 if __name__ == '__main__':
