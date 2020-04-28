@@ -555,15 +555,19 @@ def abort():
     # exit_Btn()
 
 
-def factory():
+def _factory():
     print(cusPort4.get())
     save_config(config_path, 'GENERAL', 'serial_number', cusNumber.get())
     save_config(config_path, 'CONSOLE', 'serial_port', cusPort4.get())
-    time.sleep(3)
-    factory_dut()
+    time.sleep(5)
+    a = get_config(config_path, "CONSOLE", "serial_port")
+    print(a)
+    theadFactory = threading.Thread(target=lambda: factory_dut())
+    theadFactory.start()
+    # factory_dut()
 
 
-factoryButton = Button(root, text=" Factory", command=factory, height=20, width=80, borderwidth=4, image=photo_run, compound=LEFT)
+factoryButton = Button(root, text=" Factory", command=_factory, height=20, width=80, borderwidth=4, image=photo_run, compound=LEFT)
 factoryButton.place(x=140, y=370)
 
 
