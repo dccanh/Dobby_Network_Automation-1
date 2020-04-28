@@ -13,8 +13,7 @@ def get_config(section, option):
         return config.get(str(section).upper(), option)
     else:
         return
-serial = get_config("CONSOLE", "serial_port")
-baud_rate = get_config("CONSOLE", "baud_rate")
+
 SecureCRT_file = "C:\Program Files\VanDyke Software\SecureCRT\SecureCRT.exe"
 script_path = crt_run_command
 
@@ -25,6 +24,8 @@ if b'SecureCRT.exe' in ls:
     os.system("taskkill /f /im SecureCRT.exe")
 
 def run_cmd(cmd, _file):
+    serial = get_config("CONSOLE", "serial_port")
+    baud_rate = get_config("CONSOLE", "baud_rate")
     cmd = str("\""+ SecureCRT_file + "\"" + " /ARG \"" + cmd + "\" /ARG \"" + _file + "\" /SCRIPT \"" + script_path + "\" /SERIAL "+serial+" /BAUD "+baud_rate)
     os.popen(cmd)
 # cmd = "capitest get Device.Users.User.2. leaf"

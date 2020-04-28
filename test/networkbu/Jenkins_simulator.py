@@ -559,7 +559,7 @@ def _factory():
     print(cusPort4.get())
     save_config(config_path, 'GENERAL', 'serial_number', cusNumber.get())
     save_config(config_path, 'CONSOLE', 'serial_port', cusPort4.get())
-    time.sleep(5)
+    time.sleep(1)
     a = get_config(config_path, "CONSOLE", "serial_port")
     print(a)
     theadFactory = threading.Thread(target=lambda: factory_dut())
