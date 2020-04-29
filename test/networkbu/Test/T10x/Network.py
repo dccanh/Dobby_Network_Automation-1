@@ -3911,7 +3911,7 @@ class NETWORK(unittest.TestCase):
         #
         REPEATER_MESH_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
         REPEATER_MESH_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
-        connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
+        # connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
         URL_UPPER = get_config('REPEATER', 'url', input_data_path)
         USER_UPPER = get_config('REPEATER', 'user', input_data_path)
         PW_UPPER = get_config('REPEATER', 'pw', input_data_path)

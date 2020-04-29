@@ -1251,12 +1251,24 @@ def detect_firmware_version(driver):
         driver.find_element_by_css_selector(el_lg_pw_down_firm).send_keys(pass_word)
         time.sleep(1)
         driver.find_element_by_css_selector(el_lg_button_down_firm).click()
+        time.sleep(1)
+        policy_popup = driver.find_elements_by_css_selector('#privacy-policy-dialogue [name="privacyPolicyForm"]')
+        if len(policy_popup) > 0:
+            policy_popup[0].find_element_by_css_selector('p+p+p+p').location_once_scrolled_into_view
+            time.sleep(1)
+            driver.find_element_by_css_selector(ele_privacy_agree).click()
+            time.sleep(5)
+            driver.get(url_login+'/homepage')
+            time.sleep(10)
+        if len(driver.find_elements_by_css_selector('.fancybox-skin .new-version')) > 0:
+            driver.find_element_by_css_selector('.fancybox-skin .btn-cancel').click()
         wait_visible(driver, el_home_wrap_down_firm)
         time.sleep(3)
         # ==============================================================================================
         driver.find_element_by_css_selector('#system_menu_popup').click()
         time.sleep(1)
         driver.find_element_by_css_selector('#wrap_system_menu [ng-click="openUpgradePopup()"]').click()
+        time.sleep(3)
         os.chdir(files_path)
         firmware_30012_path = os.path.join(os.getcwd(), 't10x_fullimage_3.00.12_rev11.img')
         os.chdir(test_t10x_path)
@@ -1271,11 +1283,11 @@ def detect_firmware_version(driver):
             driver.find_element_by_css_selector('.custom-radio:nth-child(2) span').click()
         time.sleep(0.5)
         driver.find_element_by_css_selector('.fancybox-opened [ng-click="confirmChange()"]').click()
-        time.sleep(150)
+        time.sleep(100)
         wait_visible(driver, '.fancybox-opened [ng-click="$parent.completedOk()"]')
         time.sleep(1)
         driver.find_element_by_css_selector('.fancybox-opened [ng-click="$parent.completedOk()"]').click()
-        time.sleep(60)
+        wait_ethernet_available()
 
 
 def scan_wifi_repeater_mode(driver, wifi_name, wifi_pw):

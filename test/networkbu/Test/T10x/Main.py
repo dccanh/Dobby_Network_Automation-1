@@ -65,7 +65,7 @@ class MAIN(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
+        detect_firmware_version(driver)
         # ~~~~~~~~~~~~~~~~~~~~~~ Get info URL, ACCOUNT ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Get and write URL
@@ -235,6 +235,7 @@ class MAIN(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~ Change Language
         try:
+            wait_ethernet_available()
             # Goto Homepage
             grand_login(driver)
             time.sleep(1)
@@ -283,6 +284,7 @@ class MAIN(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Again
         try:
+            wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
 
@@ -300,6 +302,7 @@ class MAIN(unittest.TestCase):
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(3)
+            wait_ethernet_available()
             check_login_page = len(driver.find_elements_by_css_selector(lg_page)) > 0
 
             list_actual3 = [check_login_page]
@@ -612,10 +615,9 @@ class MAIN(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        url_login = get_config('URL', 'url')
-        NEW_PASSWORD = 'Dinhcongcanh1'
         # ===========================================================
         factory_dut()
+        wait_ethernet_available()
         # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             login(driver)
@@ -4960,11 +4962,10 @@ class MAIN(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        url_login = get_config('URL', 'url')
         # ===========================================================
         factory_dut()
         # ===========================================================
-
+        wait_ethernet_available()
         try:
             grand_login(driver)
             time.sleep(1)
