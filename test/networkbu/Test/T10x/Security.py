@@ -27,7 +27,9 @@ class SECURITY(unittest.TestCase):
         try:
             end_time = datetime.now()
             duration = str((end_time - self.start_time))
+            connect_wifi_by_command('HVNWifi', 'Wifihvn12@!')
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+            os.system('netsh wlan disconnect')
         except:
             # Connect by wifi if internet is down to handle exception for PPPoE
             connect_wifi_by_command('HVNWifi', 'Wifihvn12@!')
@@ -49,8 +51,7 @@ class SECURITY(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        # Factory reset
-        # ===========================================================
+
         factory_dut()
         # ===========================================================
         PARENTAL_CODE_KEY = '1234'
@@ -543,11 +544,11 @@ class SECURITY(unittest.TestCase):
             # driver.find_element_by_css_selector(btn_ok).click()
             # wait_popup_disappear(driver, dialog_loading)
 
-            check_page_security = driver.find_element_by_css_selector(security_page).is_displayed()
             time.sleep(3)
-            check_pop_up_disable = len(driver.find_elements_by_css_selector(dialog_content)) == 0
+            check_page_security_2 = driver.find_element_by_css_selector(security_page).is_displayed()
+            check_pop_up_disable_2 = len(driver.find_elements_by_css_selector(dialog_content)) == 0
 
-            list_actual4 = [check_page_security, check_pop_up_disable]
+            list_actual4 = [check_page_security_2, check_pop_up_disable_2]
             list_expected4 = [return_true, return_true]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
@@ -2137,6 +2138,7 @@ class SECURITY(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        factory_dut()
         PHYSICAL_MAC = get_value_from_ipconfig('Ethernet adapter Ethernet', 'Physical Address').replace('-', ':')
         HOST_NAME = get_value_from_ipconfig('Windows IP Configuration', 'Host Name')
         try:
@@ -2223,9 +2225,10 @@ class SECURITY(unittest.TestCase):
         try:
             # Disconnect Ethernet
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-            time.sleep(3)
+            time.sleep(5)
             # Connect Wifi 2.4 Ghz
             connect_wifi_by_command(wifi_2g_name, wifi_2g_pw)
+            time.sleep(5)
             # Login again
             grand_login(driver)
             goto_menu(driver, security_tab, security_filtering_tab)
@@ -2295,6 +2298,9 @@ class SECURITY(unittest.TestCase):
 
             list_actual4 = [remain_row]
             list_expected4 = [0]
+            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
+            time.sleep(10)
+
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -2318,6 +2324,7 @@ class SECURITY(unittest.TestCase):
         self.list_steps = []
         NEW_PW_1 = '1qaz'
         NEW_PW_2 = 'abc123@'
+        factory_dut()
         try:
             grand_login(driver)
             # Goto media share USB

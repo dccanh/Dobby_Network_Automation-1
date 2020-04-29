@@ -43,6 +43,7 @@ class NON_FUNCTION(unittest.TestCase):
             check_enable_ethernet()
             self.driver = webdriver.Chrome(driver_path)
             self.driver.maximize_window()
+            os.system('netsh wlan delete profile name=*')
         except:
             self.tearDown()
             raise
@@ -908,7 +909,7 @@ class NON_FUNCTION(unittest.TestCase):
         upper_2g_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
         connect_repeater_mode(driver, REPEATER_UPPER=upper_2g_name, PW=upper_2g_pw)
         # ===========================================================
-
+        wait_ethernet_available()
         PING_ADDRESS = '192.168.1.1'
         # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
         YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
@@ -925,7 +926,7 @@ class NON_FUNCTION(unittest.TestCase):
                 global count_interrupt, live_time
                 # ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
                 # if ping_result['packet_loss_rate'] != 100.0:
-                time.sleep(2)
+                time.sleep(5)
                 driver.get(YOUTUBE_URL)
                 time.sleep(5)
 
@@ -971,9 +972,6 @@ class NON_FUNCTION(unittest.TestCase):
                 c += 1
             time.sleep(2)
 
-            # list_actual2 = [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]
-            # list_expected2 = [return_true] * 3
-
             list_actual1 = [[ping_result <= 1.0], [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]]
             list_expected1 = [[return_true],  [return_true] * 3]
             check = assert_list(list_actual1, list_expected1)
@@ -1008,14 +1006,14 @@ class NON_FUNCTION(unittest.TestCase):
         # ===========================================================
         grand_login(driver)
         time.sleep(2)
-        goto_menu(driver, network_tab, network_operationmode_tab)
-
+        goto_menu(driver, wireless_tab, wireless_repeater_setting_tab)
+        wait_popup_disappear(driver, dialog_loading)
         upper_5g_name = get_config('REPEATER', 'repeater_name_5g', input_data_path)
         upper_5g_pw = get_config('REPEATER', 'repeater_pw_5g', input_data_path)
         # connect_repeater_mode(driver, REPEATER_UPPER=upper_5g_name, PW=upper_5g_pw)
         scan_wifi_repeater_mode(driver, upper_5g_name, upper_5g_pw)
         # ===========================================================
-
+        wait_ethernet_available()
         PING_ADDRESS = '192.168.1.1'
         # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
         YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
@@ -1032,7 +1030,7 @@ class NON_FUNCTION(unittest.TestCase):
                 global count_interrupt, live_time
                 # ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
                 # if ping_result['packet_loss_rate'] != 100.0:
-                time.sleep(2)
+                time.sleep(5)
                 driver.get(YOUTUBE_URL)
                 time.sleep(5)
 
@@ -1112,45 +1110,9 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        factory_dut()
         detect_firmware_version(driver)
-        # try:
-        #     grand_login(driver)
-        #     time.sleep(1)
-        #
-        #     pre_firmware_version = driver.find_element_by_css_selector(ele_home_info_firm_version).text
-        #     if not pre_firmware_version.endswith(expected_firmware_30012):
-        #
-        #         driver.find_element_by_css_selector(system_btn).click()
-        #         time.sleep(1)
-        #         driver.find_element_by_css_selector(ele_sys_firmware_update).click()
-        #         time.sleep(1)
-        #
-        #         os.chdir(files_path)
-        #         firmware_40012_path = os.path.join(os.getcwd(), 't10x_fullimage_3.00.12_rev11.img')
-        #         driver.find_element_by_css_selector(ele_choose_firmware_file).send_keys(firmware_40012_path)
-        #         os.chdir(test_t10x_path)
-        #         driver.find_element_by_css_selector(apply).click()
-        #         time.sleep(1)
-        #         if len(driver.find_elements_by_css_selector(ele_choose_firmware_select)) > 0:
-        #             driver.find_element_by_css_selector(ele_choose_firmware_select).click()
-        #         time.sleep(0.5)
-        #         driver.find_element_by_css_selector(btn_ok).click()
-        #         time.sleep(0.5)
-        #         if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
-        #             driver.find_element_by_css_selector(btn_ok).click()
-        #         time.sleep(0.5)
-        #         wait_popup_disappear(driver, dialog_loading)
-        #         wait_visible(driver, content)
-        #         driver.find_element_by_css_selector(btn_ok).click()
-        #         time.sleep(1)
-        #
-        #     self.list_steps.append(
-        #         f'[Pass] 0. Precondition goto firm 3.00.12 success. ')
-        # except:
-        #     self.list_steps.append(
-        #         f'[Fail] 0. Precondition goto firm 3.00.12 fail. ')
-        #     list_step_fail.append('0. Assertion wong')
-
+        wait_ethernet_available()
         try:
             grand_login(driver)
             time.sleep(1)
@@ -1162,11 +1124,11 @@ class NON_FUNCTION(unittest.TestCase):
             popup_sub_title = driver.find_element_by_css_selector(sub_title_popup_cls).text
 
             list_actual1 = [popup_title, popup_sub_title]
-            list_expected1 = ['Firmware Update', exp_sub_title_update_firmware]
+            list_expected1 = ['Update', exp_sub_title_update_firmware]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1. Goto firmware update. Check title and subtitle of popup'
+                f'[Pass] 1. Goto firmware update. Check title and subtitle of popup. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
         except:
@@ -1210,7 +1172,9 @@ class NON_FUNCTION(unittest.TestCase):
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.5)
+
             wait_popup_disappear(driver, dialog_loading)
+            wait_ethernet_available()
             wait_visible(driver, content)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
@@ -1262,43 +1226,9 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        detect_firmware_version(self.driver)
-        # try:
-        #     grand_login(driver)
-        #     time.sleep(1)
-        #
-        #     pre_firmware_version = driver.find_element_by_css_selector(ele_home_info_firm_version).text
-        #     if not pre_firmware_version.endswith(expected_firmware_30012):
-        #         driver.find_element_by_css_selector(system_btn).click()
-        #         time.sleep(1)
-        #         driver.find_element_by_css_selector(ele_sys_firmware_update).click()
-        #         time.sleep(1)
-        #         os.chdir(files_path)
-        #         firmware_30012_path = os.path.join(os.getcwd(), 't10x_fullimage_3.00.12_rev11.img')
-        #         driver.find_element_by_css_selector(ele_choose_firmware_file).send_keys(firmware_30012_path)
-        #         os.chdir(test_t10x_path)
-        #         driver.find_element_by_css_selector(apply).click()
-        #         time.sleep(1)
-        #         if len(driver.find_elements_by_css_selector(ele_choose_firmware_select)) > 0:
-        #             driver.find_element_by_css_selector(ele_choose_firmware_select).click()
-        #         time.sleep(0.5)
-        #         driver.find_element_by_css_selector(btn_ok).click()
-        #         time.sleep(0.5)
-        #         if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
-        #             driver.find_element_by_css_selector(btn_ok).click()
-        #         time.sleep(0.5)
-        #         wait_popup_disappear(driver, dialog_loading)
-        #         wait_visible(driver, content)
-        #         driver.find_element_by_css_selector(btn_ok).click()
-        #         time.sleep(1)
-        #
-        #     self.list_steps.append(
-        #         f'[Pass] 0. Precondition goto firm 3.00.12 success. ')
-        # except:
-        #     self.list_steps.append(
-        #         f'[Fail] 0. Precondition goto firm 3.00.12 fail. ')
-        #     list_step_fail.append('0. Assertion wong')
-
+        factory_dut()
+        detect_firmware_version(driver)
+        wait_ethernet_available()
         try:
             grand_login(driver)
             time.sleep(1)
@@ -1368,6 +1298,7 @@ class NON_FUNCTION(unittest.TestCase):
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            wait_ethernet_available()
             wait_visible(driver, content)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
@@ -1436,12 +1367,13 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        factory_dut()
         # ======================================
         firmware_40011 = 't5_t7_t9_fullimage_4.00.11_rev25.img'
         firmware_30012 = 't10x_fullimage_3.00.12_rev11.img'
         file_no_format = 'wifi_default_file.xml'
         firmware_40012 = 't10x_fullimage_4.00.12_rev11.img'
-        detect_firmware_version(self.driver)
+        detect_firmware_version(driver)
         wait_ethernet_available()
         try:
             grand_login(driver)
@@ -1511,6 +1443,7 @@ class NON_FUNCTION(unittest.TestCase):
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.5)
+            wait_ethernet_available()
             wait_visible(driver, dialog_content)
             time.sleep(1)
             cpt_popup_msg = driver.find_element_by_css_selector(complete_dialog_msg).text
@@ -1551,6 +1484,7 @@ class NON_FUNCTION(unittest.TestCase):
                 driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.5)
             wait_popup_disappear(driver, dialog_loading)
+            wait_ethernet_available()
             wait_visible(driver, content)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
@@ -1583,7 +1517,9 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        detect_firmware_version(self.driver)
+        factory_dut()
+        detect_firmware_version(driver)
+        wait_ethernet_available()
         try:
             grand_login(driver)
             time.sleep(1)
@@ -1743,8 +1679,8 @@ class NON_FUNCTION(unittest.TestCase):
         url_login = get_config('URL', 'url')
         user_request = get_config('ACCOUNT', 'user')
         pass_word = get_config('ACCOUNT', 'password')
-        # save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
-        detect_firmware_version(self.driver)
+
+        detect_firmware_version(driver)
 
         grand_login(driver)
         time.sleep(1)
@@ -1920,7 +1856,8 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        detect_firmware_version(self.driver)
+        factory_dut()
+        detect_firmware_version(driver)
 
         grand_login(driver)
         time.sleep(1)
@@ -1938,6 +1875,7 @@ class NON_FUNCTION(unittest.TestCase):
 
             time.sleep(3)
             save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+        wait_ethernet_available()
         # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             grand_login(driver)

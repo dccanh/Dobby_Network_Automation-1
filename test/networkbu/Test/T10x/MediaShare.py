@@ -48,15 +48,11 @@ class MEDIASHARE(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        # factory_dut()
         # ========================================================================
-        URL_API = get_config('URL', 'url') + '/api/v1/mediashare/usb'
-        _METHOD = 'GET'
-        _USER = get_config('ACCOUNT', 'user')
-        _PW = get_config('ACCOUNT', 'password')
-        _BODY = ''
+
         try:
             grand_login(driver)
-            time.sleep(5)
             # Goto media share USB
             goto_menu(driver, media_share_tab, media_share_usb_tab)
             time.sleep(3)
@@ -74,6 +70,11 @@ class MEDIASHARE(unittest.TestCase):
                 dict_usb = {'id': int(id), "name": name}
                 web_list_usb.append(dict_usb)
             # API
+            URL_API = get_config('URL', 'url') + '/api/v1/mediashare/usb'
+            _METHOD = 'GET'
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            _BODY = ''
             _TOKEN = get_token(_USER, _PW)
             _res = call_api(URL_API, _METHOD, _BODY, _TOKEN)
 
@@ -1880,7 +1881,7 @@ class MEDIASHARE(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        # factory_dut()
+
         try:
             grand_login(driver)
             time.sleep(2)
@@ -1923,6 +1924,8 @@ class MEDIASHARE(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(1)
+            driver.refresh()
+            time.sleep(5)
             # =====================================================
             add_a_usb_network_folder(driver,
                                      DESC_VALUE='Test123',

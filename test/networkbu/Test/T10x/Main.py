@@ -3674,7 +3674,7 @@ class MAIN(unittest.TestCase):
             check_change_pw_display = driver.find_element_by_css_selector(lg_welcome_header).text
 
             list_actual1 = [check_change_pw_display]
-            list_expected1 = ['Change Password']
+            list_expected1 = ['Change Login Password']
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(

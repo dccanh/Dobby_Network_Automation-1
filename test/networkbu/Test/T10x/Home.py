@@ -47,13 +47,7 @@ class HOME(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
-        URL_LOGIN = get_config('URL', 'url')
-        USER_LOGIN = get_config('ACCOUNT', 'user')
-        PW_LOGIN = get_config('ACCOUNT', 'password')
-        URL_API = URL_LOGIN + '/api/v1/network/wan/0'
-        METHOD = 'GET'
-        BODY = None
+        factory_dut()
 
         try:
             grand_login(driver)
@@ -70,7 +64,7 @@ class HOME(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
                 time.sleep(5)
             time.sleep(5)
-            driver.get(URL_LOGIN + homepage)
+            goto_menu(driver, home_tab, 0)
             wait_popup_disappear(driver, dialog_loading)
 
             # Click icons Internet connection
@@ -91,6 +85,12 @@ class HOME(unittest.TestCase):
                                     "dnsServer1": "DNS Server 1",
                                     "dnsServer2": "DNS Server 2"}
             # Handle API
+            URL_LOGIN = get_config('URL', 'url')
+            USER_LOGIN = get_config('ACCOUNT', 'user')
+            PW_LOGIN = get_config('ACCOUNT', 'password')
+            URL_API = URL_LOGIN + '/api/v1/network/wan/0'
+            METHOD = 'GET'
+            BODY = None
             _token = get_token(USER_LOGIN, PW_LOGIN)
             time.sleep(1)
             # Call API
@@ -3778,7 +3778,7 @@ class HOME(unittest.TestCase):
         self.list_steps = []
         save_config(config_path, 'URL', 'url', 'http://192.168.1.1')
         URL_LOGIN = get_config('URL', 'url')
-        factory_dut()
+        # factory_dut()
         try:
             # ===================================================================
             URL_DISCONNECT_WAN = URL_LOGIN + '/api/v1/network/wan/0/disconnect'

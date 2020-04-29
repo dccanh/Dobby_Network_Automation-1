@@ -1627,7 +1627,7 @@ def connect_wifi_by_command(wifi_name, wifi_pw, xml_file=wifi_default_file_path)
     os.system(f'netsh wlan add profile filename="{xml_file}"')
     time.sleep(0.5)
     os.system(f'netsh wlan connect ssid="{wifi_name}" name="{wifi_name}"')
-    time.sleep(10)
+    time.sleep(15)
     return current_connected_wifi()
 
 
@@ -1884,6 +1884,53 @@ def add_a_default_guest_network(driver, block):
     wait_popup_disappear(driver, dialog_loading)
     time.sleep(0.5)
     return wl_2g_ssid
+
+
+def add_a_full_guest_network(driver, block, SECURE, ENCRYPT='', KEY_TYPE='', _PW=''):
+    block.find_element_by_css_selector(add_class).click()
+    time.sleep(0.5)
+    # Check Default Value
+    edit_block = driver.find_elements_by_css_selector(wl_primary_card)[0]
+    # Settings
+    time.sleep(0.5)
+    wl_ssid = wireless_get_default_ssid(edit_block, 'Network Name(SSID)')
+    time.sleep(0.5)
+    if SECURE == 'NONE':
+        wireless_change_choose_option(edit_block, secure_value_field, SECURE)
+        wifi_pw = ''
+        time.sleep(0.5)
+    elif SECURE == 'WPA2-PSK':
+        wireless_change_choose_option(edit_block, secure_value_field, SECURE)
+        time.sleep(0.5)
+        wifi_pw = wireless_check_pw_eye(driver, edit_block, change_pw=False)
+        time.sleep(0.5)
+    elif SECURE == 'WPA2/WPA-PSK':
+        wireless_change_choose_option(edit_block, secure_value_field, SECURE)
+        if ENCRYPT != '':
+            wireless_change_choose_option(edit_block, encryption_value_field, ENCRYPT)
+            time.sleep(0.5)
+        if _PW != '':
+            wireless_check_pw_eye(driver, edit_block, change_pw=True, new_pw=_PW)
+        time.sleep(0.5)
+        wifi_pw = wireless_check_pw_eye(driver, edit_block, change_pw=False)
+        time.sleep(0.5)
+    else:
+        wireless_change_choose_option(edit_block, secure_value_field, SECURE)
+        time.sleep(0.5)
+        if ENCRYPT != '':
+            wireless_change_choose_option(edit_block, encryption_value_field, ENCRYPT)
+            time.sleep(0.5)
+        if KEY_TYPE != '':
+            wireless_change_choose_option(edit_block, key_type_value_field, KEY_TYPE)
+            time.sleep(0.5)
+
+        wifi_pw = wireless_check_pw_eye(driver, edit_block, change_pw=True, new_pw=_PW)
+        time.sleep(0.5)
+
+    edit_block.find_element_by_css_selector(apply).click()
+    wait_popup_disappear(driver, dialog_loading)
+    time.sleep(0.5)
+    return {"name": wl_ssid, "password": wifi_pw}
 
 
 def scan_wifi_repeater_mode_table(driver):
