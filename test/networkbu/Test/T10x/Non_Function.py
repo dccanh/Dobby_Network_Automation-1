@@ -908,8 +908,13 @@ class NON_FUNCTION(unittest.TestCase):
         upper_2g_name = get_config('REPEATER', 'repeater_name', input_data_path)
         upper_2g_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
         connect_repeater_mode(driver, REPEATER_UPPER=upper_2g_name, PW=upper_2g_pw)
-        # ===========================================================
         wait_ethernet_available()
+        # ===========================================================
+        wifi = connect_wifi_by_command(upper_2g_name, upper_2g_pw)
+        interface_connect_disconnect('Ethernet', 'disable')
+
+        print(wifi)
+
         PING_ADDRESS = '192.168.1.1'
         # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
         YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
