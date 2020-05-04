@@ -938,19 +938,19 @@ def abort():
 
 
 def _factory():
-    factoryButton.configure(text=" Factoring")
+    # factoryButton.configure(text=" Factoring")
     # print(cusPort4.get())
     # save_config(config_path, 'GENERAL', 'serial_number', cusNumber.get())
     save_config(config_path, 'CONSOLE', 'serial_port', cusPort4.get())
     # time.sleep(1)
     # a = get_config(config_path, "CONSOLE", "serial_port")
-    # factory_dut()
+    factory_dut()
     time.sleep(5)
 
     # print(a)
     # theadFactory = threading.Thread(target=lambda: time.sleep(10) )
     # theadFactory.start()
-    factoryButton.configure(text=" Factory")
+    # factoryButton.configure(text=" Factory")
     # factory_dut()
 
 
