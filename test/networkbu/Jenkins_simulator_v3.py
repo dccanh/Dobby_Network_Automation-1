@@ -316,7 +316,7 @@ def _repeaterSetting():
 
     frame = Frame(window, relief=RAISED)
     frame.pack(fill=BOTH, expand=True)
-    c0, c1, c2, c3, c4, c5, c6, c7, c8 = 30, 90, 140, 190, 240, 290, 340, 390, 440
+    c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11 = 65, 95, 125, 155, 185, 215, 300, 330, 360, 390, 420, 450
 
     label_MeshTitle = Label(window, text="\t\tMesh - Upper Router", font="Verdana 9")
     label_MeshTitle.place(x=15, y=10)
@@ -325,20 +325,20 @@ def _repeaterSetting():
     label_MeshLogin.place(x=15, y=40)
 
     label_MeshLgID = Label(window, text="\tID:")
-    label_MeshLgID.place(x=15, y=65)
+    label_MeshLgID.place(x=15, y=c0)
 
     label_MeshLgPassword = Label(window, text="\tPassword:")
-    label_MeshLgPassword.place(x=15, y=95)
+    label_MeshLgPassword.place(x=15, y=c1)
 
     label_MeshName_2g = Label(window, text="2G\tSSID:")
-    label_MeshName_2g.place(x=15, y=125)
+    label_MeshName_2g.place(x=15, y=c2)
     label_MeshPW_2g = Label(window, text="\tPassword:")
-    label_MeshPW_2g.place(x=15, y=155)
+    label_MeshPW_2g.place(x=15, y=c3)
 
     label_MeshName_5g = Label(window, text="5G\tSSID:")
-    label_MeshName_5g.place(x=15, y=185)
+    label_MeshName_5g.place(x=15, y=c4)
     label_MeshPW_5g = Label(window, text="\tPassword:")
-    label_MeshPW_5g.place(x=15, y=215)
+    label_MeshPW_5g.place(x=15, y=c5)
 
     label= Label(window, text="---------------------------------------------" * 2)
     label.place(x=15, y=230)
@@ -347,23 +347,23 @@ def _repeaterSetting():
     label_PartyTitle.place(x=15, y=250)
 
     label_PartyLogin = Label(window, text="WEB UI Login:")
-    label_PartyLogin.place(x=15, y=290-15)
+    label_PartyLogin.place(x=15, y=275)
 
     label_PartyLgID = Label(window, text="\tID:")
-    label_PartyLgID.place(x=15, y=315-15)
+    label_PartyLgID.place(x=15, y=c6)
 
     label_PartyLgPassword = Label(window, text="\tPassword:")
-    label_PartyLgPassword.place(x=15, y=345-15)
+    label_PartyLgPassword.place(x=15, y=c7)
 
     label_PartyName_2g = Label(window, text="2G\tSSID:")
-    label_PartyName_2g.place(x=15, y=375-15)
+    label_PartyName_2g.place(x=15, y=c8)
     label_PartyPW_2g = Label(window, text="\tPassword:")
-    label_PartyPW_2g.place(x=15, y=405-15)
+    label_PartyPW_2g.place(x=15, y=c9)
 
     label_PartyName_5g = Label(window, text="5G\tSSID:")
-    label_PartyName_5g.place(x=15, y=435-15)
+    label_PartyName_5g.place(x=15, y=c10)
     label_PartyPW_5g = Label(window, text="\tPassword:")
-    label_PartyPW_5g.place(x=15, y=475-15)
+    label_PartyPW_5g.place(x=15, y=c11)
 
 
     # label_Upper_pw = Label(window, text="Upper Login Password:")
@@ -396,59 +396,75 @@ def _repeaterSetting():
     # label_ThPartyPW_5g.place(x=15, y=c8)
     #
     # previous_upper_pw = get_config(input_data_path, 'REPEATER', 'pw')
-    # previous_mesh2g_name = get_config(input_data_path, 'REPEATER', 'repeater_name')
-    # previous_mesh2g_pw = get_config(input_data_path, 'REPEATER', 'repeater_pw')
-    # previous_mesh5g_name = get_config(input_data_path, 'REPEATER', 'repeater_name_5g')
-    # previous_mesh5g_pw = get_config(input_data_path, 'REPEATER', 'repeater_pw_5g')
-    # previous_thParty2g_name = get_config(input_data_path, 'REPEATER', 'third_party_name')
-    # previous_thParty2g_pw = get_config(input_data_path, 'REPEATER', 'third_party_pw')
-    # previous_thParty5g_name = get_config(input_data_path, 'REPEATER', 'third_party_name_5g')
-    # previous_thParty5g_pw = get_config(input_data_path, 'REPEATER', 'third_party_pw_5g')
-    #
-    #
-    # Module0 = StringVar()
-    # Module1 = StringVar()
-    # Module2 = StringVar()
-    # Module3 = StringVar()
-    # Module4 = StringVar()
-    # Module5 = StringVar()
-    # Module6 = StringVar()
-    # Module7 = StringVar()
-    # Module8 = StringVar()
-    #
-    # cus0 = Entry(window, textvariable=Module0)
-    # cus1 = Entry(window, textvariable=Module1)
-    # cus2 = Entry(window, textvariable=Module2)
-    # cus3 = Entry(window, textvariable=Module3)
-    # cus4 = Entry(window, textvariable=Module4)
-    # cus5 = Entry(window, textvariable=Module5)
-    # cus6 = Entry(window, textvariable=Module6)
-    # cus7 = Entry(window, textvariable=Module7)
-    # cus8 = Entry(window, textvariable=Module8)
-    #
-    # for m, l, c, p in zip([Module0, Module1, Module2, Module3, Module4, Module5, Module6, Module7, Module8],
-    #                 [cus0, cus1, cus2, cus3, cus4, cus5, cus6, cus7, cus8],
-    #                 [c0, c1, c2, c3, c4, c5, c6, c7, c8],
-    #                 [previous_upper_pw,
-    #                  previous_mesh2g_name, previous_mesh2g_pw,
-    #                  previous_mesh5g_name, previous_mesh5g_pw,
-    #                  previous_thParty2g_name, previous_thParty2g_pw,
-    #                  previous_thParty5g_name, previous_thParty5g_pw]):
-    #     m.set(p)
-    #     l.pack()
-    #     l.place(x=150, y=c, height=25, width=310)
+    previous_meshLogin_name = get_config(input_data_path, 'REPEATER', 'user')
+    previous_meshLogin_pw = get_config(input_data_path, 'REPEATER', 'pw')
+    previous_mesh2g_name = get_config(input_data_path, 'REPEATER', 'repeater_name')
+    previous_mesh2g_pw = get_config(input_data_path, 'REPEATER', 'repeater_pw')
+    previous_mesh5g_name = get_config(input_data_path, 'REPEATER', 'repeater_name_5g')
+    previous_mesh5g_pw = get_config(input_data_path, 'REPEATER', 'repeater_pw_5g')
 
+    previous_thPartyLogin_name = get_config(input_data_path, 'REPEATER', 'third_party_login_user')
+    previous_thPartyLogin_pw = get_config(input_data_path, 'REPEATER', 'third_party_login_pw')
+    previous_thParty2g_name = get_config(input_data_path, 'REPEATER', 'third_party_name')
+    previous_thParty2g_pw = get_config(input_data_path, 'REPEATER', 'third_party_pw')
+    previous_thParty5g_name = get_config(input_data_path, 'REPEATER', 'third_party_name_5g')
+    previous_thParty5g_pw = get_config(input_data_path, 'REPEATER', 'third_party_pw_5g')
+
+    #
+    Module0 = StringVar()
+    Module1 = StringVar()
+    Module2 = StringVar()
+    Module3 = StringVar()
+    Module4 = StringVar()
+    Module5 = StringVar()
+    Module6 = StringVar()
+    Module7 = StringVar()
+    Module8 = StringVar()
+    Module9 = StringVar()
+    Module10 = StringVar()
+    Module11 = StringVar()
+
+
+    cus0 = Entry(window, textvariable=Module0)
+    cus1 = Entry(window, textvariable=Module1)
+    cus2 = Entry(window, textvariable=Module2)
+    cus3 = Entry(window, textvariable=Module3)
+    cus4 = Entry(window, textvariable=Module4)
+    cus5 = Entry(window, textvariable=Module5)
+    cus6 = Entry(window, textvariable=Module6)
+    cus7 = Entry(window, textvariable=Module7)
+    cus8 = Entry(window, textvariable=Module8)
+    cus9 = Entry(window, textvariable=Module9)
+    cus10 = Entry(window, textvariable=Module10)
+    cus11 = Entry(window, textvariable=Module11)
+
+    for m, l, c, p in zip([Module0, Module1, Module2, Module3, Module4, Module5, Module6, Module7, Module8, Module9, Module10, Module11],
+                    [cus0, cus1, cus2, cus3, cus4, cus5, cus6, cus7, cus8, cus9, cus10, cus11],
+                    [c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11],
+                    [previous_meshLogin_name, previous_meshLogin_pw,
+                     previous_mesh2g_name, previous_mesh2g_pw,
+                     previous_mesh5g_name, previous_mesh5g_pw,
+                     previous_thPartyLogin_name, previous_thPartyLogin_pw,
+                     previous_thParty2g_name, previous_thParty2g_pw,
+                     previous_thParty5g_name, previous_thParty5g_pw]):
+        m.set(p)
+        l.pack()
+        l.place(x=135, y=c, height=25, width=330)
 
     def _saveBtn():
-        save_config(input_data_path, 'REPEATER', 'pw', cus0.get())
-        save_config(input_data_path, 'REPEATER', 'repeater_name', cus1.get())
-        save_config(input_data_path, 'REPEATER', 'repeater_pw', cus2.get())
-        save_config(input_data_path, 'REPEATER', 'repeater_name_5g', cus3.get())
-        save_config(input_data_path, 'REPEATER', 'repeater_pw_5g', cus4.get())
-        save_config(input_data_path, 'REPEATER', 'third_party_name', cus5.get())
-        save_config(input_data_path, 'REPEATER', 'third_party_pw', cus6.get())
-        save_config(input_data_path, 'REPEATER', 'third_party_name_5g', cus7.get())
-        save_config(input_data_path, 'REPEATER', 'third_party_pw_5g', cus8.get())
+        save_config(input_data_path, 'REPEATER', 'user', cus0.get())
+        save_config(input_data_path, 'REPEATER', 'pw', cus1.get())
+        save_config(input_data_path, 'REPEATER', 'repeater_name', cus2.get())
+        save_config(input_data_path, 'REPEATER', 'repeater_pw', cus3.get())
+        save_config(input_data_path, 'REPEATER', 'repeater_name_5g', cus4.get())
+        save_config(input_data_path, 'REPEATER', 'repeater_pw_5g', cus5.get())
+
+        save_config(input_data_path, 'REPEATER', 'third_party_login_user', cus6.get())
+        save_config(input_data_path, 'REPEATER', 'third_party_login_pw', cus7.get())
+        save_config(input_data_path, 'REPEATER', 'third_party_name', cus8.get())
+        save_config(input_data_path, 'REPEATER', 'third_party_pw', cus9.get())
+        save_config(input_data_path, 'REPEATER', 'third_party_name_5g', cus10.get())
+        save_config(input_data_path, 'REPEATER', 'third_party_pw_5g', cus11.get())
         window.destroy()
         repeaterSettingBtn.configure(state='normal')
 
