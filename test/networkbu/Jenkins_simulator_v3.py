@@ -311,83 +311,132 @@ def _repeaterSetting():
     window = Toplevel(root)
     window.geometry(f"500x550+{str(now_x+50)}+{now_y+50}")
     window.resizable(0, 0)
-    window.title("Repeater Setting")
+    window.title("Upper Router Settings")
     window.iconbitmap(icon_path)
 
     frame = Frame(window, relief=RAISED)
     frame.pack(fill=BOTH, expand=True)
     c0, c1, c2, c3, c4, c5, c6, c7, c8 = 30, 90, 140, 190, 240, 290, 340, 390, 440
-    label_Upper_pw = Label(window, text="Upper Login Password:")
-    label_Upper_pw.place(x=15, y=c0)
+
+    label_MeshTitle = Label(window, text="\t\tMesh - Upper Router", font="Verdana 9")
+    label_MeshTitle.place(x=15, y=10)
+
+    label_MeshLogin = Label(window, text="WEB UI Login:")
+    label_MeshLogin.place(x=15, y=40)
+
+    label_MeshLgID = Label(window, text="\tID:")
+    label_MeshLgID.place(x=15, y=65)
+
+    label_MeshLgPassword = Label(window, text="\tPassword:")
+    label_MeshLgPassword.place(x=15, y=95)
+
+    label_MeshName_2g = Label(window, text="2G\tSSID:")
+    label_MeshName_2g.place(x=15, y=125)
+    label_MeshPW_2g = Label(window, text="\tPassword:")
+    label_MeshPW_2g.place(x=15, y=155)
+
+    label_MeshName_5g = Label(window, text="5G\tSSID:")
+    label_MeshName_5g.place(x=15, y=185)
+    label_MeshPW_5g = Label(window, text="\tPassword:")
+    label_MeshPW_5g.place(x=15, y=215)
+
     label= Label(window, text="---------------------------------------------" * 2)
-    label.place(x=15, y=70)
+    label.place(x=15, y=230)
+
+    label_PartyTitle = Label(window, text="\t\tThird Party - Upper Router", font="Verdana 9")
+    label_PartyTitle.place(x=15, y=250)
+
+    label_PartyLogin = Label(window, text="WEB UI Login:")
+    label_PartyLogin.place(x=15, y=290-15)
+
+    label_PartyLgID = Label(window, text="\tID:")
+    label_PartyLgID.place(x=15, y=315-15)
+
+    label_PartyLgPassword = Label(window, text="\tPassword:")
+    label_PartyLgPassword.place(x=15, y=345-15)
+
+    label_PartyName_2g = Label(window, text="2G\tSSID:")
+    label_PartyName_2g.place(x=15, y=375-15)
+    label_PartyPW_2g = Label(window, text="\tPassword:")
+    label_PartyPW_2g.place(x=15, y=405-15)
+
+    label_PartyName_5g = Label(window, text="5G\tSSID:")
+    label_PartyName_5g.place(x=15, y=435-15)
+    label_PartyPW_5g = Label(window, text="\tPassword:")
+    label_PartyPW_5g.place(x=15, y=475-15)
 
 
-    label_MeshName_2g = Label(window, text="Mesh SSID 2G:")
-    label_MeshName_2g.place(x=15, y=c1)
-    label_MeshPW_2g = Label(window, text="Mesh Password 2G:")
-    label_MeshPW_2g.place(x=15, y=c2)
-
-    label_MeshName_5g = Label(window, text="Mesh SSID 5G:")
-    label_MeshName_5g.place(x=15, y=c3)
-    label_MeshPW_5g = Label(window, text="Mesh SSID 5G:")
-    label_MeshPW_5g.place(x=15, y=c4)
-
-    label = Label(window, text="---------------------------------------------" * 2)
-    label.place(x=15, y=270)
-
-    label_ThPartyName_2g = Label(window, text="Third Party SSID 2G:")
-    label_ThPartyName_2g.place(x=15, y=c5)
-    label_ThPartyPW_2g = Label(window, text="Third Party Password 2G:")
-    label_ThPartyPW_2g.place(x=15, y=c6)
-
-    label_ThPartyName_5g = Label(window, text="Third Party SSID 5G:")
-    label_ThPartyName_5g.place(x=15, y=c7)
-    label_ThPartyPW_5g = Label(window, text="Third Party Password 5G:")
-    label_ThPartyPW_5g.place(x=15, y=c8)
-
-    previous_upper_pw = get_config(input_data_path, 'REPEATER', 'pw')
-    previous_mesh2g_name = get_config(input_data_path, 'REPEATER', 'repeater_name')
-    previous_mesh2g_pw = get_config(input_data_path, 'REPEATER', 'repeater_pw')
-    previous_mesh5g_name = get_config(input_data_path, 'REPEATER', 'repeater_name_5g')
-    previous_mesh5g_pw = get_config(input_data_path, 'REPEATER', 'repeater_pw_5g')
-    previous_thParty2g_name = get_config(input_data_path, 'REPEATER', 'third_party_name')
-    previous_thParty2g_pw = get_config(input_data_path, 'REPEATER', 'third_party_pw')
-    previous_thParty5g_name = get_config(input_data_path, 'REPEATER', 'third_party_name_5g')
-    previous_thParty5g_pw = get_config(input_data_path, 'REPEATER', 'third_party_pw_5g')
-
-
-    Module0 = StringVar()
-    Module1 = StringVar()
-    Module2 = StringVar()
-    Module3 = StringVar()
-    Module4 = StringVar()
-    Module5 = StringVar()
-    Module6 = StringVar()
-    Module7 = StringVar()
-    Module8 = StringVar()
-
-    cus0 = Entry(window, textvariable=Module0)
-    cus1 = Entry(window, textvariable=Module1)
-    cus2 = Entry(window, textvariable=Module2)
-    cus3 = Entry(window, textvariable=Module3)
-    cus4 = Entry(window, textvariable=Module4)
-    cus5 = Entry(window, textvariable=Module5)
-    cus6 = Entry(window, textvariable=Module6)
-    cus7 = Entry(window, textvariable=Module7)
-    cus8 = Entry(window, textvariable=Module8)
-
-    for m, l, c, p in zip([Module0, Module1, Module2, Module3, Module4, Module5, Module6, Module7, Module8],
-                    [cus0, cus1, cus2, cus3, cus4, cus5, cus6, cus7, cus8],
-                    [c0, c1, c2, c3, c4, c5, c6, c7, c8],
-                    [previous_upper_pw,
-                     previous_mesh2g_name, previous_mesh2g_pw,
-                     previous_mesh5g_name, previous_mesh5g_pw,
-                     previous_thParty2g_name, previous_thParty2g_pw,
-                     previous_thParty5g_name, previous_thParty5g_pw]):
-        m.set(p)
-        l.pack()
-        l.place(x=150, y=c, height=25, width=310)
+    # label_Upper_pw = Label(window, text="Upper Login Password:")
+    # label_Upper_pw.place(x=15, y=c0)
+    # label= Label(window, text="---------------------------------------------" * 2)
+    # label.place(x=15, y=70)
+    #
+    #
+    # label_MeshName_2g = Label(window, text="Mesh SSID 2G:")
+    # label_MeshName_2g.place(x=15, y=c1)
+    # label_MeshPW_2g = Label(window, text="Mesh Password 2G:")
+    # label_MeshPW_2g.place(x=15, y=c2)
+    #
+    # label_MeshName_5g = Label(window, text="Mesh SSID 5G:")
+    # label_MeshName_5g.place(x=15, y=c3)
+    # label_MeshPW_5g = Label(window, text="Mesh SSID 5G:")
+    # label_MeshPW_5g.place(x=15, y=c4)
+    #
+    # label = Label(window, text="---------------------------------------------" * 2)
+    # label.place(x=15, y=270)
+    #
+    # label_ThPartyName_2g = Label(window, text="Third Party SSID 2G:")
+    # label_ThPartyName_2g.place(x=15, y=c5)
+    # label_ThPartyPW_2g = Label(window, text="Third Party Password 2G:")
+    # label_ThPartyPW_2g.place(x=15, y=c6)
+    #
+    # label_ThPartyName_5g = Label(window, text="Third Party SSID 5G:")
+    # label_ThPartyName_5g.place(x=15, y=c7)
+    # label_ThPartyPW_5g = Label(window, text="Third Party Password 5G:")
+    # label_ThPartyPW_5g.place(x=15, y=c8)
+    #
+    # previous_upper_pw = get_config(input_data_path, 'REPEATER', 'pw')
+    # previous_mesh2g_name = get_config(input_data_path, 'REPEATER', 'repeater_name')
+    # previous_mesh2g_pw = get_config(input_data_path, 'REPEATER', 'repeater_pw')
+    # previous_mesh5g_name = get_config(input_data_path, 'REPEATER', 'repeater_name_5g')
+    # previous_mesh5g_pw = get_config(input_data_path, 'REPEATER', 'repeater_pw_5g')
+    # previous_thParty2g_name = get_config(input_data_path, 'REPEATER', 'third_party_name')
+    # previous_thParty2g_pw = get_config(input_data_path, 'REPEATER', 'third_party_pw')
+    # previous_thParty5g_name = get_config(input_data_path, 'REPEATER', 'third_party_name_5g')
+    # previous_thParty5g_pw = get_config(input_data_path, 'REPEATER', 'third_party_pw_5g')
+    #
+    #
+    # Module0 = StringVar()
+    # Module1 = StringVar()
+    # Module2 = StringVar()
+    # Module3 = StringVar()
+    # Module4 = StringVar()
+    # Module5 = StringVar()
+    # Module6 = StringVar()
+    # Module7 = StringVar()
+    # Module8 = StringVar()
+    #
+    # cus0 = Entry(window, textvariable=Module0)
+    # cus1 = Entry(window, textvariable=Module1)
+    # cus2 = Entry(window, textvariable=Module2)
+    # cus3 = Entry(window, textvariable=Module3)
+    # cus4 = Entry(window, textvariable=Module4)
+    # cus5 = Entry(window, textvariable=Module5)
+    # cus6 = Entry(window, textvariable=Module6)
+    # cus7 = Entry(window, textvariable=Module7)
+    # cus8 = Entry(window, textvariable=Module8)
+    #
+    # for m, l, c, p in zip([Module0, Module1, Module2, Module3, Module4, Module5, Module6, Module7, Module8],
+    #                 [cus0, cus1, cus2, cus3, cus4, cus5, cus6, cus7, cus8],
+    #                 [c0, c1, c2, c3, c4, c5, c6, c7, c8],
+    #                 [previous_upper_pw,
+    #                  previous_mesh2g_name, previous_mesh2g_pw,
+    #                  previous_mesh5g_name, previous_mesh5g_pw,
+    #                  previous_thParty2g_name, previous_thParty2g_pw,
+    #                  previous_thParty5g_name, previous_thParty5g_pw]):
+    #     m.set(p)
+    #     l.pack()
+    #     l.place(x=150, y=c, height=25, width=310)
 
 
     def _saveBtn():
@@ -415,17 +464,17 @@ def _repeaterSetting():
 
 
 basicSettingBtn = Button(root, text="   Basic", height=20, width=150, borderwidth=4, image=photo_setting,
-                       compound=LEFT, command= lambda: _basicSetting())
+                       compound=LEFT, command=lambda: _basicSetting())
 basicSettingBtn.place(x=140, y=190)
 
-repeaterSettingBtn = Button(root, text="   Repeater", height=20, width=150, borderwidth=4, image=photo_setting_2,
-                       compound=LEFT, command= lambda: _repeaterSetting())
+repeaterSettingBtn = Button(root, text="   Upper Router", height=20, width=150, borderwidth=4, image=photo_setting_2,
+                       compound=LEFT, command=lambda: _repeaterSetting())
 repeaterSettingBtn.place(x=310, y=190)
 
 
 cusPort4 = StringVar(None)
-# choices = serial_ports()
-choices = ['COM1']
+choices = serial_ports()
+# choices = ['COM1']
 cusPort4.set(choices[0])
 port4 = OptionMenu(root, cusPort4, *choices)
 port4.place(x=140, y=140, height=30, width=330)
@@ -464,15 +513,15 @@ check8.place(x=140 + 2 * 100, y=270 + 60)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-CreateToolTip(checkA, f"All: {str(get_num_test_case_module()['All'])}")
-CreateToolTip(check0, f"Main: {str(get_num_test_case_module()['Main'])}")
-CreateToolTip(check1, f"Home: {str(get_num_test_case_module()['Home'])}")
-CreateToolTip(check2, f"Wireless: {str(get_num_test_case_module()['Wireless'])}")
-CreateToolTip(check3, f"Network: {str(get_num_test_case_module()['Network'])}")
-CreateToolTip(check5, f"MediaShare: {str(get_num_test_case_module()['MediaShare'])}")
-CreateToolTip(check6, f"Security: {str(get_num_test_case_module()['Security'])}")
-CreateToolTip(check7, f"Advanced: {str(get_num_test_case_module()['Advanced'])}")
-CreateToolTip(check8, f"Non_Function: {str(get_num_test_case_module()['Non_Function'])}")
+CreateToolTip(checkA, f" {str(get_num_test_case_module()['All'])} TCs")
+CreateToolTip(check0, f" {str(get_num_test_case_module()['Main'])} TCs")
+CreateToolTip(check1, f" {str(get_num_test_case_module()['Home'])} TCs")
+CreateToolTip(check2, f" {str(get_num_test_case_module()['Wireless'])} TCs")
+CreateToolTip(check3, f" {str(get_num_test_case_module()['Network'])} TCs")
+CreateToolTip(check5, f" {str(get_num_test_case_module()['MediaShare'])} TCs")
+CreateToolTip(check6, f" {str(get_num_test_case_module()['Security'])} TCs")
+CreateToolTip(check7, f" {str(get_num_test_case_module()['Advanced'])} TCs")
+CreateToolTip(check8, f" {str(get_num_test_case_module()['Non_Function'])} TCs")
 
 
 linkLabel = Label(root, text="")
@@ -592,13 +641,13 @@ def detect_run_testcase(progress_bar):
                         print(f'cd Test/T10x &&  python {m}')
                         os.system(f'cd Test/T10x &&  python {m}')
                         progress_percent = int(((convert_module[module].index(module) + 1) / len(convert_module[module])) * 100)
-                        progress_bar.configure(text=f'{str(progress_percent)} %')
+                        progress_bar.configure(text=f' {str(progress_percent)} %')
                     break
                 else:
                     print(f'cd Test/T10x &&  python {convert_module[module]}')
                     os.system(f'cd Test/T10x &&  python {convert_module[module]}')
                     progress_percent = int(((convert_module[module].index(module) + 1) / len(convert_module[module])) * 100)
-                    progress_bar.configure(text=f'{str(progress_percent)} %')
+                    progress_bar.configure(text=f' {str(progress_percent)} %')
 
         print('cd Test/T10x && python After_test.py')
         os.system('cd Test/T10x && python After_test.py')
@@ -644,7 +693,7 @@ def _runBtn():
         for i in range(int(loopBox.get())):
             print(f'\n**************\n_- Run times {str(i + 1)} -_\n')
 
-            progress_bar.configure(text=f' 0%')
+            progress_bar.configure(text=f' 0')
             detect_run_testcase(progress_bar)
         # time = datetime.now()
         # time_str = time.strftime('%d %b, %Y %H:%M:%S')
