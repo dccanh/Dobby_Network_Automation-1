@@ -1288,6 +1288,7 @@ def detect_firmware_version(driver):
         time.sleep(1)
         driver.find_element_by_css_selector('.fancybox-opened [ng-click="$parent.completedOk()"]').click()
         wait_ethernet_available()
+        wait_ethernet_available()
 
 
 def scan_wifi_repeater_mode(driver, wifi_name, wifi_pw):
@@ -1316,12 +1317,13 @@ def scan_wifi_repeater_mode(driver, wifi_name, wifi_pw):
     save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
 
 
-def connect_repeater_mode(driver, REPEATER_UPPER='', PW=''):
+def connect_repeater_mode(driver, REPEATER_UPPER='', PW='', force=False):
     if REPEATER_UPPER == '':
         REPEATER_UPPER = get_config('REPEATER', 'repeater_name', input_data_path)
     if PW == '':
         PW = get_config('REPEATER', 'repeater_pw', input_data_path)
-    if not driver.find_element_by_css_selector(ele_repeater_mode_input).is_selected():
+
+    if (driver.find_element_by_css_selector(ele_repeater_mode_input).is_selected() is False and force is False) or (force is True):
         driver.find_element_by_css_selector(ele_select_repeater_mode).click()
         time.sleep(0.5)
         driver.find_element_by_css_selector(apply).click()
@@ -1345,7 +1347,7 @@ def connect_repeater_mode(driver, REPEATER_UPPER='', PW=''):
         wait_popup_disappear(driver, icon_loading)
         time.sleep(1)
         wait_popup_disappear(driver, icon_loading)
-        wait_visible(driver, lg_page)
+        wait_ethernet_available()
     save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
 
 

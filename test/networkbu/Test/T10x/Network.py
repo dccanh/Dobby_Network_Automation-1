@@ -4151,7 +4151,7 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_46_NETWORK_Repeater_Security_WPA2_WPA_PSK(self):
+    def test_R3_46_NETWORK_Repeater_Security_WPA2_WPA_PSK(self):
         self.key = 'NETWORK_46'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4324,7 +4324,7 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_47_NETWORK_Repeater_Security_WPA2_PSK(self):
+    def test_R2_47_NETWORK_Repeater_Security_WPA2_PSK(self):
         self.key = 'NETWORK_47'
         driver = self.driver
         self.def_name = get_func_name()
@@ -4493,180 +4493,180 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    # def test_46_1_49_NETWORK_Repeater_Security_None(self):
-    #     self.key = 'NETWORK_49'
-    #     driver = self.driver
-    #     self.def_name = get_func_name()
-    #     list_step_fail = []
-    #     self.list_steps = []
-    #     # ===========================================================
-    #     # disconnect_or_connect_wan(disconnected=True)
-    #     grand_login(driver)
-    #     time.sleep(2)
-    #     goto_menu(driver, network_tab, network_operationmode_tab)
-    #     time.sleep(1)
-    #     wait_popup_disappear(driver, dialog_loading)
-    #     connect_repeater_mode(driver)
-    #     wait_ethernet_available()
-    #     time.sleep(5)
-    #     REPEATER_MESH_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
-    #     REPEATER_MESH_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
-    #     # connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
-    #     URL_UPPER = get_config('REPEATER', 'url', input_data_path)
-    #     USER_UPPER = get_config('REPEATER', 'user', input_data_path)
-    #     PW_UPPER = get_config('REPEATER', 'pw', input_data_path)
-    #     os.system(f'netsh wlan delete profile name="{REPEATER_MESH_NAME}"')
-    #     time.sleep(10)
-    #     #
-    #     grand_login(driver, URL_UPPER, USER_UPPER, PW_UPPER)
-    #     goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
-    #     wait_popup_disappear(driver, dialog_loading)
-    #
-    #     block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
-    #     wl_2g_ssid = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
-    #     wireless_change_choose_option(driver, secure_value_field, 'NONE')
-    #     # wireless_change_choose_option(driver, encryption_value_field, 'AES')
-    #     # wl_2g_pw = wireless_check_pw_eye(driver, block_2g, change_pw=False)
-    #     # Apply
-    #     if block_2g.find_element_by_css_selector(apply).is_displayed():
-    #         block_2g.find_element_by_css_selector(apply).click()
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(0.5)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         time.sleep(0.5)
-    #
-    #     block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
-    #     wl_5g_ssid = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
-    #     wireless_change_choose_option(block_5g, secure_value_field, 'NONE')
-    #     # wireless_change_choose_option(block_5g, encryption_value_field, 'AES')
-    #     # wl_5g_pw = wireless_check_pw_eye(driver, block_5g, change_pw=False)
-    #     # Apply
-    #     if block_5g.find_element_by_css_selector(apply).is_displayed():
-    #         block_5g.find_element_by_css_selector(apply).click()
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         time.sleep(0.5)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         time.sleep(0.5)
-    #
-    #     # ===========================================================
-    #
-    #     try:
-    #         wait_ethernet_available()
-    #         time.sleep(10)
-    #         grand_login(driver)
-    #         time.sleep(1)
-    #         goto_menu(driver, network_tab, network_operationmode_tab)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         driver.find_element_by_css_selector(ele_select_repeater_mode).click()
-    #         time.sleep(0.5)
-    #         driver.find_element_by_css_selector(apply).click()
-    #         time.sleep(0.5)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         _rows = driver.find_elements_by_css_selector(rows)
-    #         # Choose Network name
-    #         for r in _rows:
-    #             if r.find_element_by_css_selector(ele_network_name).text.strip() == wl_2g_ssid:
-    #                 r.click()
-    #                 break
-    #         # # Fill Password
-    #         # pw_box = driver.find_element_by_css_selector(ele_input_pw)
-    #         # ActionChains(driver).click(pw_box).send_keys(wl_2g_pw).perform()
-    #         # time.sleep(1)
-    #         # Apply
-    #         driver.find_element_by_css_selector(ele_apply_highlight).click()
-    #         time.sleep(0.5)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         time.sleep(100)
-    #         wait_popup_disappear(driver, icon_loading)
-    #         time.sleep(1)
-    #         wait_popup_disappear(driver, icon_loading)
-    #         wait_visible(driver, lg_page)
-    #
-    #         wait_ethernet_available()
-    #         time.sleep(10)
-    #         time.sleep(5)
-    #         check_connect_web_2 = check_connect_to_web_admin_page()
-    #         check_connect_google_2 = check_connect_to_google()
-    #         # print(requests.get('http://dearmyextender.net').status_code)
-    #         # print(requests.get('http://google.com').status_code)
-    #
-    #         list_actual1 = [check_connect_web_2, check_connect_google_2]
-    #         list_expected1 = [return_true] * 2
-    #         check = assert_list(list_actual1, list_expected1)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 1, 2. Change Security to WPA2-PSK of 2G. '
-    #             f'Check connect to WEB and connect to Google. '
-    #             f'Actual: {str(list_actual1)}. '
-    #             f'Expected: {str(list_expected1)}')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 1, 2. Change Security to WPA2-PSK of 5G. '
-    #             f'Check connect to WEB and connect to Google. '
-    #             f'Actual: {str(list_actual1)}. '
-    #             f'Expected: {str(list_expected1)}')
-    #         list_step_fail.append('1, 2. Assertion wong')
-    #
-    #     try:
-    #         wait_ethernet_available()
-    #         time.sleep(10)
-    #         grand_login(driver)
-    #         time.sleep(1)
-    #         goto_menu(driver, network_tab, network_operationmode_tab)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         driver.find_element_by_css_selector(ele_select_repeater_mode).click()
-    #         time.sleep(0.5)
-    #         driver.find_element_by_css_selector(apply).click()
-    #         time.sleep(0.5)
-    #         wait_popup_disappear(driver, dialog_loading)
-    #         _rows = driver.find_elements_by_css_selector(rows)
-    #         # Choose Network name
-    #         for r in _rows:
-    #             if r.find_element_by_css_selector(ele_network_name).text.strip() == wl_5g_ssid:
-    #                 r.click()
-    #                 break
-    #         # # Fill Password
-    #         # pw_box = driver.find_element_by_css_selector(ele_input_pw)
-    #         # ActionChains(driver).click(pw_box).send_keys(wl_5g_pw).perform()
-    #         # time.sleep(1)
-    #         # Apply
-    #         driver.find_element_by_css_selector(ele_apply_highlight).click()
-    #         time.sleep(0.5)
-    #         driver.find_element_by_css_selector(btn_ok).click()
-    #         time.sleep(100)
-    #         wait_popup_disappear(driver, icon_loading)
-    #         time.sleep(1)
-    #         wait_popup_disappear(driver, icon_loading)
-    #         wait_visible(driver, lg_page)
-    #         time.sleep(10)
-    #         wait_ethernet_available()
-    #         time.sleep(10)
-    #         time.sleep(5)
-    #         time.sleep(20)
-    #         # check_connect_web_5 = requests.get('http://dearmyextender.net').status_code
-    #         # check_connect_google_5 = requests.get('http://google.com').status_code
-    #         check_connect_web_5 = check_connect_to_web_admin_page()
-    #         check_connect_google_5 = check_connect_to_google()
-    #         list_actual3 = [check_connect_web_5, check_connect_google_5]
-    #         list_expected3 = [return_true] * 2
-    #         check = assert_list(list_actual3, list_expected3)
-    #         self.assertTrue(check["result"])
-    #         self.list_steps.append(
-    #             f'[Pass] 3. Change Security to WPA2-PSK of 5G. '
-    #             f'Check connect to WEB and connect to Google. '
-    #             f'Actual: {str(list_actual3)}. '
-    #             f'Expected: {str(list_expected3)}')
-    #         self.list_steps.append('[END TC]')
-    #     except:
-    #         self.list_steps.append(
-    #             f'[Fail] 3. Change Security to WPA2-PSK of 5G. '
-    #             f'Check connect to WEB and connect to Google. '
-    #             f'Actual: {str(list_actual3)}. '
-    #             f'Expected: {str(list_expected3)}')
-    #         self.list_steps.append('[END TC]')
-    #         list_step_fail.append('3. Assertion wong')
-    #
-    #     self.assertListEqual(list_step_fail, [])
+    def test_R1_49_NETWORK_Repeater_Security_None(self):
+        self.key = 'NETWORK_49'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # ===========================================================
+        # disconnect_or_connect_wan(disconnected=True)
+        grand_login(driver)
+        time.sleep(2)
+        goto_menu(driver, network_tab, network_operationmode_tab)
+        time.sleep(1)
+        wait_popup_disappear(driver, dialog_loading)
+        connect_repeater_mode(driver)
+        wait_ethernet_available()
+        time.sleep(5)
+        REPEATER_MESH_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
+        REPEATER_MESH_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
+        # connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
+        URL_UPPER = get_config('REPEATER', 'url', input_data_path)
+        USER_UPPER = get_config('REPEATER', 'user', input_data_path)
+        PW_UPPER = get_config('REPEATER', 'pw', input_data_path)
+        os.system(f'netsh wlan delete profile name="{REPEATER_MESH_NAME}"')
+        time.sleep(10)
+        #
+        grand_login(driver, URL_UPPER, USER_UPPER, PW_UPPER)
+        goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+        wait_popup_disappear(driver, dialog_loading)
+
+        block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
+        wl_2g_ssid = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
+        wireless_change_choose_option(driver, secure_value_field, 'NONE')
+        # wireless_change_choose_option(driver, encryption_value_field, 'AES')
+        # wl_2g_pw = wireless_check_pw_eye(driver, block_2g, change_pw=False)
+        # Apply
+        if block_2g.find_element_by_css_selector(apply).is_displayed():
+            block_2g.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.5)
+
+        block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
+        wl_5g_ssid = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
+        wireless_change_choose_option(block_5g, secure_value_field, 'NONE')
+        # wireless_change_choose_option(block_5g, encryption_value_field, 'AES')
+        # wl_5g_pw = wireless_check_pw_eye(driver, block_5g, change_pw=False)
+        # Apply
+        if block_5g.find_element_by_css_selector(apply).is_displayed():
+            block_5g.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(0.5)
+
+        # ===========================================================
+
+        try:
+            wait_ethernet_available()
+            time.sleep(10)
+            grand_login(driver)
+            time.sleep(1)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(ele_select_repeater_mode).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(apply).click()
+            time.sleep(0.5)
+            wait_popup_disappear(driver, dialog_loading)
+            _rows = driver.find_elements_by_css_selector(rows)
+            # Choose Network name
+            for r in _rows:
+                if r.find_element_by_css_selector(ele_network_name).text.strip() == wl_2g_ssid:
+                    r.click()
+                    break
+            # # Fill Password
+            # pw_box = driver.find_element_by_css_selector(ele_input_pw)
+            # ActionChains(driver).click(pw_box).send_keys(wl_2g_pw).perform()
+            # time.sleep(1)
+            # Apply
+            driver.find_element_by_css_selector(ele_apply_highlight).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(100)
+            wait_popup_disappear(driver, icon_loading)
+            time.sleep(1)
+            wait_popup_disappear(driver, icon_loading)
+            wait_visible(driver, lg_page)
+
+            wait_ethernet_available()
+            time.sleep(10)
+            time.sleep(5)
+            check_connect_web_2 = check_connect_to_web_admin_page()
+            check_connect_google_2 = check_connect_to_google()
+            # print(requests.get('http://dearmyextender.net').status_code)
+            # print(requests.get('http://google.com').status_code)
+
+            list_actual1 = [check_connect_web_2, check_connect_google_2]
+            list_expected1 = [return_true] * 2
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Change Security to WPA2-PSK of 2G. '
+                f'Check connect to WEB and connect to Google. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Change Security to WPA2-PSK of 5G. '
+                f'Check connect to WEB and connect to Google. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1, 2. Assertion wong')
+
+        try:
+            wait_ethernet_available()
+            time.sleep(10)
+            grand_login(driver)
+            time.sleep(1)
+            goto_menu(driver, network_tab, network_operationmode_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(ele_select_repeater_mode).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(apply).click()
+            time.sleep(0.5)
+            wait_popup_disappear(driver, dialog_loading)
+            _rows = driver.find_elements_by_css_selector(rows)
+            # Choose Network name
+            for r in _rows:
+                if r.find_element_by_css_selector(ele_network_name).text.strip() == wl_5g_ssid:
+                    r.click()
+                    break
+            # # Fill Password
+            # pw_box = driver.find_element_by_css_selector(ele_input_pw)
+            # ActionChains(driver).click(pw_box).send_keys(wl_5g_pw).perform()
+            # time.sleep(1)
+            # Apply
+            driver.find_element_by_css_selector(ele_apply_highlight).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(100)
+            wait_popup_disappear(driver, icon_loading)
+            time.sleep(1)
+            wait_popup_disappear(driver, icon_loading)
+            wait_visible(driver, lg_page)
+            time.sleep(10)
+            wait_ethernet_available()
+            time.sleep(10)
+            time.sleep(5)
+            time.sleep(20)
+            # check_connect_web_5 = requests.get('http://dearmyextender.net').status_code
+            # check_connect_google_5 = requests.get('http://google.com').status_code
+            check_connect_web_5 = check_connect_to_web_admin_page()
+            check_connect_google_5 = check_connect_to_google()
+            list_actual3 = [check_connect_web_5, check_connect_google_5]
+            list_expected3 = [return_true] * 2
+            check = assert_list(list_actual3, list_expected3)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 3. Change Security to WPA2-PSK of 5G. '
+                f'Check connect to WEB and connect to Google. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 3. Change Security to WPA2-PSK of 5G. '
+                f'Check connect to WEB and connect to Google. '
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('3. Assertion wong')
+
+        self.assertListEqual(list_step_fail, [])
 
     def test_51_NETWORK_Verify_Bridge_Mode_operation(self):
         self.key = 'NETWORK_51'
@@ -5074,7 +5074,8 @@ class NETWORK(unittest.TestCase):
             network_name = driver.find_elements_by_css_selector('.input-wrap input[name="input-field"]')
             check_network_name_2g = network_name[0].get_attribute('value')
             check_network_name_5g = network_name[1].get_attribute('value')
-            expected_check_network_name_2g = THIRD_PARTY_NAME+'_Ext2G'
+            expected_check_network_name_2g = THIRD_PARTY_NAME
+            # expected_check_network_name_2g = THIRD_PARTY_NAME + '_Ext2G'
             expected_check_network_name_5g = THIRD_PARTY_NAME+'_Ext5G'
             check_same_pw = driver.find_element_by_css_selector(ele_wizard_check_same_pw_input).is_selected()
 
@@ -5400,7 +5401,8 @@ class NETWORK(unittest.TestCase):
             check_network_name_2g = network_name[0].get_attribute('value')
             check_network_name_5g = network_name[1].get_attribute('value')
             expected_check_network_name_2g = THIRD_PARTY_NAME_5G+'_Ext2G'
-            expected_check_network_name_5g = THIRD_PARTY_NAME_5G+'_Ext5G'
+            expected_check_network_name_5g = THIRD_PARTY_NAME_5G
+            # expected_check_network_name_5g = THIRD_PARTY_NAME_5G + '_Ext5G'
             check_same_pw = driver.find_element_by_css_selector(ele_wizard_check_same_pw_input).is_selected()
 
             list_actual3 = [title_popup, check_network_name_2g, check_network_name_5g, check_same_pw]

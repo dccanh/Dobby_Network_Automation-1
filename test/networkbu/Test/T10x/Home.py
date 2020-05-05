@@ -949,6 +949,7 @@ class HOME(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
 

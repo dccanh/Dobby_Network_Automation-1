@@ -212,7 +212,7 @@ class MAIN(unittest.TestCase):
             driver.find_element_by_css_selector(btn_ok).click()
             # Wait until dialog loading disappear
             time.sleep(1)
-
+            wait_popup_disappear(driver, icon_loading)
             check_time_out = wait_popup_disappear(driver, dialog_loading)
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
@@ -236,6 +236,13 @@ class MAIN(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~ Change Language
         try:
             wait_ethernet_available()
+
+            filename_2 = 'account2.txt'
+            command_2 = 'capitest get Device.Users.User.2. leaf'
+            run_cmd(command_2, filename_2)
+            time.sleep(10)
+            url_login = get_config('URL', 'url')
+            get_result_command_from_server_api(url_login, filename_2)
             # Goto Homepage
             grand_login(driver)
             time.sleep(1)
@@ -298,11 +305,12 @@ class MAIN(unittest.TestCase):
             driver.find_element_by_css_selector(btn_ok).click()
             # Wait until dialog loading disappear
             wait_popup_disappear(driver, dialog_loading)
-            wait_popup_disappear(driver, dialog_loading)
+
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(3)
             wait_ethernet_available()
+            wait_popup_disappear(driver, dialog_loading)
             check_login_page = len(driver.find_elements_by_css_selector(lg_page)) > 0
 
             list_actual3 = [check_login_page]
@@ -321,6 +329,15 @@ class MAIN(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~ Change Language and verify
         try:
+            filename_2 = 'account2.txt'
+            command_2 = 'capitest get Device.Users.User.2. leaf'
+            run_cmd(command_2, filename_2)
+            time.sleep(10)
+            url_login = get_config('URL', 'url')
+            # url = url_login + '/' + filename_2
+            # _res = requests.get(url)
+            # Get account information from web server and write to config.txt
+            get_result_command_from_server_api(url_login, filename_2)
             # Goto Homepage
             time.sleep(5)
             grand_login(driver)
@@ -646,7 +663,7 @@ class MAIN(unittest.TestCase):
             time.sleep(2)
             check_ota_auto_update(driver)
 
-            wait_visible(driver, home_view_wrap)
+            # wait_visible(driver, home_view_wrap)
             time.sleep(5)
             check_home_displayed = driver.find_element_by_css_selector(home_view_wrap).is_displayed()
 
@@ -1192,76 +1209,76 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_14_MAIN_Verify_the_time_out_operation(self):
-        self.key = 'MAIN_14'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-        try:
-            grand_login(driver)
-            self.list_steps.append('[Pass] Login successfully')
-        except:
-            self.list_steps.append('[Fail] Login fail')
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        try:
-            goto_menu(driver, network_tab, network_internet_tab)
-            # Wait 20 mins
-            sleep_time = 20 * 60
-            time.sleep(sleep_time)
-            time.sleep(1)
-            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
-            wait_popup_disappear(driver, dialog_loading)
-            msg_time_out = driver.find_elements_by_css_selector(content)
-            if len(msg_time_out) > 0:
-                msg_time_out_text = msg_time_out[0].text
-                driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(3)
-            else:
-                msg_time_out_text = 'No popup appear'
-            # Click ok
-            # Lg is display
-            check_lg_page = len(driver.find_elements_by_css_selector(lg_page)) > 0
-            list_actual1 = [msg_time_out_text, check_lg_page]
-            list_expected1 = [exp_time_out_msg, return_true]
-            check = assert_list(list_actual1, list_expected1)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                '[Pass] 1. Time out: Check msg time out, Login page is displayed'
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
-        except:
-            self.list_steps.append(
-                f'[Fail] 1. Time out: Check msg time out, Login page is displayed. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
-            list_step_fail.append('1. Assertion wong')
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        try:
-            grand_login(driver)
-            sleep_time = 20 * 60
-            time.sleep(sleep_time)
-            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
-            # Click cancel
-            time.sleep(2)
-            msg_time_out_pop = len(driver.find_elements_by_css_selector(content)) == 0
-            list_actual2 = [msg_time_out_pop]
-            list_expected2 = [return_true]
-            check = assert_list(list_actual2, list_expected2)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                '[Pass] 2. Wait in Home page: After 20 mins. Check popup time out do not appear. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                f'[Fail] 2. Wait in Home page: After 20 mins. Check popup time out do not appear.'
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
-            self.list_steps.append('[END TC]')
-            list_step_fail.append('2. Assertion wong')
-        self.assertListEqual(list_step_fail, [])
+    # def test_14_MAIN_Verify_the_time_out_operation(self):
+    #     self.key = 'MAIN_14'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     try:
+    #         grand_login(driver)
+    #         self.list_steps.append('[Pass] Login successfully')
+    #     except:
+    #         self.list_steps.append('[Fail] Login fail')
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         goto_menu(driver, network_tab, network_internet_tab)
+    #         # Wait 20 mins
+    #         sleep_time = 20 * 60
+    #         time.sleep(sleep_time)
+    #         time.sleep(1)
+    #         goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         msg_time_out = driver.find_elements_by_css_selector(content)
+    #         if len(msg_time_out) > 0:
+    #             msg_time_out_text = msg_time_out[0].text
+    #             driver.find_element_by_css_selector(btn_ok).click()
+    #             time.sleep(3)
+    #         else:
+    #             msg_time_out_text = 'No popup appear'
+    #         # Click ok
+    #         # Lg is display
+    #         check_lg_page = len(driver.find_elements_by_css_selector(lg_page)) > 0
+    #         list_actual1 = [msg_time_out_text, check_lg_page]
+    #         list_expected1 = [exp_time_out_msg, return_true]
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             '[Pass] 1. Time out: Check msg time out, Login page is displayed'
+    #             f'Actual: {str(list_actual1)}. '
+    #             f'Expected: {str(list_expected1)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 1. Time out: Check msg time out, Login page is displayed. '
+    #             f'Actual: {str(list_actual1)}. '
+    #             f'Expected: {str(list_expected1)}')
+    #         list_step_fail.append('1. Assertion wong')
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         grand_login(driver)
+    #         sleep_time = 20 * 60
+    #         time.sleep(sleep_time)
+    #         goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+    #         # Click cancel
+    #         time.sleep(2)
+    #         msg_time_out_pop = len(driver.find_elements_by_css_selector(content)) == 0
+    #         list_actual2 = [msg_time_out_pop]
+    #         list_expected2 = [return_true]
+    #         check = assert_list(list_actual2, list_expected2)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             '[Pass] 2. Wait in Home page: After 20 mins. Check popup time out do not appear. '
+    #             f'Actual: {str(list_actual2)}. '
+    #             f'Expected: {str(list_expected2)}')
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 2. Wait in Home page: After 20 mins. Check popup time out do not appear.'
+    #             f'Actual: {str(list_actual2)}. '
+    #             f'Expected: {str(list_expected2)}')
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('2. Assertion wong')
+    #     self.assertListEqual(list_step_fail, [])
 
     def test_15_MAIN_Check_Explorer_Browser_behavior(self):
         self.key = 'MAIN_15'
@@ -5193,10 +5210,9 @@ class MAIN(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        url_login = get_config('URL', 'url')
 
         # ===========================================================
-        factory_dut()
+        # factory_dut()
 
         try:
             grand_login(driver)
@@ -5222,26 +5238,40 @@ class MAIN(unittest.TestCase):
             num_of_language = len(ls_option)
 
             # Random
-            random_option = random.choice(ls_option)
-            random_option_text = random_option.text
-            random_option.click()
+            # random_option = random.choice(ls_option)
+            # random_option_text = random_option.text
+            # random_option.click()
 
-            mapping_language = {
-                'English': 'WELCOME!',
-                'Deutsch': 'WILLKOMMEN!',
-                'ไทย': 'ยินดีต้อนรับ!',
-                'Tiếng Việt': 'CHÀO MỪNG!',
-                'Portuguese': 'BEM-VINDA!',
-                '日本語': 'ようこそ!',
-                '한국어': '환영합니다!',
-                'العربية': 'أهلاً بك!',
-                'فارسی': 'خوش آمدید!'
-            }
-            expected_language = mapping_language[random_option_text]
-            actual_option_selected = driver.find_element_by_css_selector(ele_time_content).text
 
-            list_actual3 = [check_icon_tooltip, popup_title, num_of_language, actual_option_selected]
-            list_expected3 = ['System', 'Language', 18, random_option_text, expected_language]
+
+
+            mapping_language = [
+                ['English', 'WELCOME!'],
+                ['Deutsch', 'WILLKOMMEN!'],
+                ['ไทย', 'ยินดีต้อนรับ!'],
+                ['Tiếng Việt', 'CHÀO MỪNG!'],
+                ['Portuguese', 'BEM-VINDA!'],
+                ['日本語', 'ようこそ!'],
+                ['한국어', '환영합니다!'],
+                ['العربية', 'أهلاً بك!'],
+                ['فارسی', 'خوش آمدید!']
+            ]
+            ls_value = list()
+            for i in range(len(ls_option)):
+                language_text = ls_option[i].text
+                ls_option[i].click()
+                time.sleep(1)
+
+                actual_option_selected = driver.find_element_by_css_selector(ele_time_content).text
+                ls_value.append([language_text, actual_option_selected])
+                popup.find_element_by_css_selector(arrow_down_cls).click()
+                time.sleep(0.5)
+
+            # expected_language = mapping_language[random_option_text]
+            # actual_option_selected = driver.find_element_by_css_selector(ele_time_content).text
+
+            list_actual3 = [check_icon_tooltip, popup_title, ls_value]
+            list_expected3 = ['System', 'Language', 18, mapping_language]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -5385,16 +5415,18 @@ class MAIN(unittest.TestCase):
 
                 list_actual4 = [check_popup_confirm, check_in_login_page]
                 list_expected4 = [return_true]*2
-
+            else:
+                list_actual4 =[check_popup_confirm]
+                list_expected4 = [return_true]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 7. Re-do step 2-5 Check popup confirm appear. '
+                f'[Pass] 7. Re-do step 2-5 Check popup confirm displayed. '
                 f'Actual: {str(list_actual4)}. '
                 f'Expected: {str(list_expected4)}')
         except:
             self.list_steps.append(
-                f'[Fail] 7. Redo step 2-5 Check popup confirm appear'
+                f'[Fail] 7. Redo step 2-5 Check popup confirm displayed'
                 f'Actual: {str(list_actual4)}. '
                 f'Expected: {str(list_expected4)}')
             list_step_fail.append('7. Assertion wong')
@@ -7216,7 +7248,7 @@ class MAIN(unittest.TestCase):
             # Actions Systems > Change PW
             system_button = driver.find_element_by_css_selector(system_btn)
             ActionChains(driver).move_to_element(system_button).click().perform()
-            time.sleep(0.2)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(ele_sys_date_time).click()
             time.sleep(1)
 
@@ -7238,7 +7270,7 @@ class MAIN(unittest.TestCase):
 
             ntp = driver.find_element_by_css_selector(ele_ntp_cls)
             check_ntp_label = ntp.find_element_by_css_selector(label_name_in_2g).text
-
+            time.sleep(3)
             ntp_server = driver.find_element_by_css_selector(ele_npt_server_cls)
             check_ntp_server_label = [i.text for i in ntp_server.find_elements_by_css_selector(ele_index_cls)]
             check_ntp_server_desc = [i.text for i in ntp_server.find_elements_by_css_selector(description)]
@@ -7319,7 +7351,7 @@ class MAIN(unittest.TestCase):
         self.assertListEqual(list_step_fail, [])
 
     # =======================================================REPEATER MODE=============================================
-    def test_55_MAIN_System_Extender_mode_Check_Manual_Firmware_Update_operation(self):
+    def test_R_55_MAIN_System_Extender_mode_Check_Manual_Firmware_Update_operation(self):
         self.key = 'MAIN_55'
         driver = self.driver
         self.def_name = get_func_name()
@@ -7329,10 +7361,13 @@ class MAIN(unittest.TestCase):
         # ===========================================================
         grand_login(driver)
         goto_menu(driver, network_tab, network_operationmode_tab)
-        connect_repeater_mode(driver)
+        connect_repeater_mode(driver, force=True)
+        wait_popup_disappear(driver, icon_loading)
         # ===========================================================
 
         try:
+            time.sleep(25)
+            wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
             driver.find_element_by_css_selector(system_btn).click()
@@ -7342,17 +7377,25 @@ class MAIN(unittest.TestCase):
             popup_title = driver.find_element_by_css_selector(ele_check_for_update_title).text
             popup_sub_title = driver.find_element_by_css_selector(sub_title_popup_cls).text
 
-            list_actual1 = [popup_title, popup_sub_title]
-            list_expected1 = ['Firmware Update', exp_sub_title_update_firmware]
+            dialog = driver.find_element_by_css_selector(dialog_content)
+            list_labels = dialog.find_elements_by_css_selector('.wrap-label')
+            list_labels_text = [l.text for l in list_labels]
+            expected_list_label = ['Model Name', 'Current Version', 'Build Time', 'Auto Update', 'Manual Update']
+            btn_apply_text = dialog.find_element_by_css_selector(apply).text
+
+            list_actual1 = [popup_title, popup_sub_title, list_labels_text, btn_apply_text]
+            list_expected1 = ['Firmware Update', exp_sub_title_update_firmware, expected_list_label, 'Update']
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1. Goto firmware update. Check title and subtitle of popup'
+                f'[Pass] 1. Goto firmware update. Check title and subtitle of popup. '
+                f'Check list labels display. Check button update text.'
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 1. Goto firmware update. Check title and subtitle of popup. '
+                f'Check list labels display. Check button update text. '
                 f'Actual: {str(list_actual1)}. '
                 f'Expected: {str(list_expected1)}')
             list_step_fail.append('1. Assertion wong')
@@ -7441,7 +7484,7 @@ class MAIN(unittest.TestCase):
         change_firmware_version(driver, version='t10x_fullimage_3.00.12_rev11.img')
         self.assertListEqual(list_step_fail, [])
 
-    def test_56_MAIN_System_Extender_mode_Check_Manual_downgrade_firmware(self):
+    def test_R_56_MAIN_System_Extender_mode_Check_Manual_downgrade_firmware(self):
         self.key = 'MAIN_56'
         driver = self.driver
         self.def_name = get_func_name()
@@ -7449,15 +7492,16 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
 
         detect_firmware_version(driver)
-
-
         # ===========================================================
         grand_login(driver)
         goto_menu(driver, network_tab, network_operationmode_tab)
-        connect_repeater_mode(driver)
+        connect_repeater_mode(driver, force=True)
+        wait_popup_disappear(driver, icon_loading)
         # ===========================================================
 
         try:
+            time.sleep(20)
+            wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
             driver.find_element_by_css_selector(system_btn).click()
@@ -7522,7 +7566,7 @@ class MAIN(unittest.TestCase):
             wait_visible(driver, content)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
-
+            wait_popup_disappear(driver, icon_loading)
             check_login_page = len(driver.find_elements_by_css_selector(lg_page)) > 0
 
             list_actual4 = [check_login_page]
@@ -7541,6 +7585,8 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('3, 4. Assertion wong')
 
         try:
+            time.sleep(50)
+            wait_ethernet_available()
             url_login = get_config('URL', 'url')
             user_request = get_config('ACCOUNT', 'user')
             pass_word = get_config('ACCOUNT', 'password')
@@ -7557,11 +7603,11 @@ class MAIN(unittest.TestCase):
             driver.find_element_by_css_selector(el_lg_button_down_firm).click()
             wait_visible(driver, el_home_wrap_down_firm)
             time.sleep(3)
-
+            wait_ethernet_available()
             firmware_version = driver.find_element_by_css_selector(ele_home_info_old_firm_version).text
             check_firmware = True if firmware_version.endswith(expected_firmware_30005) else False
             print(check_firmware)
-
+            wait_ethernet_available()
             list_actual5 = [check_firmware]
             list_expected5 = [return_true]
             check = assert_list(list_actual5, list_expected5)
@@ -7582,12 +7628,13 @@ class MAIN(unittest.TestCase):
         detect_firmware_version(driver)
         self.assertListEqual(list_step_fail, [])
 
-    def test_57_MAIN_System_Extender_mode_Check_the_exception_message_when_firmware_update(self):
+    def test_R_57_MAIN_System_Extender_mode_Check_the_exception_message_when_firmware_update(self):
         self.key = 'MAIN_57'
         driver = self.driver
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        detect_firmware_version(driver)
         # save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
         file_no_format = 'wifi_default_file.xml'
         # ===========================================================
@@ -7595,9 +7642,11 @@ class MAIN(unittest.TestCase):
         time.sleep(2)
         goto_menu(driver, network_tab, network_operationmode_tab)
         time.sleep(2)
-        connect_repeater_mode(driver)
+        connect_repeater_mode(driver, force=True)
         # ===========================================================
         try:
+            time.sleep(30)
+            wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
             driver.find_element_by_css_selector(system_btn).click()
@@ -7699,7 +7748,8 @@ class MAIN(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(1)
+            time.sleep(20)
+            wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
             firmware_version = driver.find_element_by_css_selector(ele_home_info_firm_version)
@@ -7726,7 +7776,7 @@ class MAIN(unittest.TestCase):
         change_firmware_version(driver)
         self.assertListEqual(list_step_fail, [])
 
-    def test_59_MAIN_System_Extender_mode_Check_firmware_upgrade_when_disconnected_internet(self):
+    def test_R_59_MAIN_System_Extender_mode_Check_firmware_upgrade_when_disconnected_internet(self):
         self.key = 'MAIN_59'
         driver = self.driver
         self.def_name = get_func_name()
@@ -7734,11 +7784,12 @@ class MAIN(unittest.TestCase):
         self.list_steps = []
         # save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
         # ===========================================================
+        detect_firmware_version(driver)
         grand_login(driver)
         time.sleep(2)
         goto_menu(driver, network_tab, network_operationmode_tab)
         time.sleep(2)
-        connect_repeater_mode(driver)
+        connect_repeater_mode(driver, force=True)
         # ===========================================================
 
         try:
@@ -7771,6 +7822,8 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('0. Assertion wong')
 
         try:
+            time.sleep(20)
+            wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
 
@@ -7847,7 +7900,7 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_83_MAIN_Verification_of_Repeater_Mesh_Menu_Tree(self):
+    def test_R_83_MAIN_Verification_of_Repeater_Mesh_Menu_Tree(self):
         self.key = 'MAIN_83'
         driver = self.driver
         self.def_name = get_func_name()
@@ -7963,7 +8016,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('6. Assertion wong')
         self.assertListEqual(list_step_fail, [])
 
-    def test_85_MAIN_Verification_of_Login_page_on_Extender_mode(self):
+    def test_R_85_MAIN_Verification_of_Login_page_on_Extender_mode(self):
         self.key = 'MAIN_85'
         driver = self.driver
         self.def_name = get_func_name()
@@ -8115,7 +8168,7 @@ class MAIN(unittest.TestCase):
         disconnect_or_connect_wan(disconnected=False)
         self.assertListEqual(list_step_fail, [])
 
-    def test_82_MAIN_Verification_of_Repeater_Mode_Third_Party_menu_tree(self):
+    def test_R_82_MAIN_Verification_of_Repeater_Mode_Third_Party_menu_tree(self):
         self.key = 'MAIN_82'
         driver = self.driver
         self.def_name = get_func_name()

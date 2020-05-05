@@ -50,10 +50,12 @@ class ADVANCED(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        URL_LOGIN = url_login = get_config('URL', 'url')
-        URL_LOGIN_HTTPS = URL_LOGIN.replace('http', 'https')
+        DEFAULT_GATEWAY = get_value_from_ipconfig('Ethernet adapter Ethernet', 'Default Gateway')
+        DEFAULT_GATEWAY_HTTP = 'http://'+DEFAULT_GATEWAY
+        DEFAULT_GATEWAY_HTTPS = 'https://' + DEFAULT_GATEWAY
+        # URL_LOGIN_HTTPS = URL_LOGIN.replace('http', 'https')
         # ===========================================================
-        factory_dut()
+        # factory_dut()
         # ===========================================================
 
         try:
@@ -80,8 +82,8 @@ class ADVANCED(unittest.TestCase):
             local_val = options_left.find_elements_by_css_selector(advanced_extra_info)[0].text
             remote_val = options_left.find_elements_by_css_selector(advanced_extra_info)[1].text
 
-            exp_local = 'Local Access'+URL_LOGIN+','
-            exp_remote = 'Remote Access-'
+            exp_local = 'Local Access: '+DEFAULT_GATEWAY_HTTP+','
+            exp_remote = 'Remote Access: -'
 
             list_actual1 = [local_val, remote_val]
             list_expected1 = [exp_local, exp_remote]
@@ -108,8 +110,8 @@ class ADVANCED(unittest.TestCase):
             local_val = options_left.find_elements_by_css_selector(advanced_extra_info)[0].text
             remote_val = options_left.find_elements_by_css_selector(advanced_extra_info)[1].text
 
-            exp_local = 'Local Access'+URL_LOGIN+', '+URL_LOGIN_HTTPS+':'+http_port
-            exp_remote = 'Remote Access-'
+            exp_local = 'Local Access: '+DEFAULT_GATEWAY_HTTP+', '+DEFAULT_GATEWAY_HTTPS+':'+http_port
+            exp_remote = 'Remote Access: -'
 
             list_actual2 = [local_val, remote_val]
             list_expected2 = [exp_local, exp_remote]
@@ -136,8 +138,8 @@ class ADVANCED(unittest.TestCase):
             local_val = options_left.find_elements_by_css_selector(advanced_extra_info)[0].text
             remote_val = options_left.find_elements_by_css_selector(advanced_extra_info)[1].text
 
-            exp_local = 'Local Access' + URL_LOGIN + ','
-            exp_remote = 'Remote Access-'
+            exp_local = 'Local Access: ' + DEFAULT_GATEWAY_HTTP + ','
+            exp_remote = 'Remote Access: -'
 
             list_actual3 = [local_val, remote_val]
             list_expected3 = [exp_local, exp_remote]
@@ -164,8 +166,8 @@ class ADVANCED(unittest.TestCase):
             local_val = options_left.find_elements_by_css_selector(advanced_extra_info)[0].text
             remote_val = options_left.find_elements_by_css_selector(advanced_extra_info)[1].text
 
-            exp_local = 'Local Access' + URL_LOGIN + ','
-            exp_remote = 'Remote Access' + 'http://' + wan_ip + ':' + remote_port
+            exp_local = 'Local Access: ' + DEFAULT_GATEWAY_HTTP + ','
+            exp_remote = 'Remote Access: ' + 'http://' + wan_ip + ':' + remote_port
 
             list_actual4 = [local_val, remote_val]
             list_expected4 = [exp_local, exp_remote]
@@ -191,8 +193,8 @@ class ADVANCED(unittest.TestCase):
             local_val = options_left.find_elements_by_css_selector(advanced_extra_info)[0].text
             remote_val = options_left.find_elements_by_css_selector(advanced_extra_info)[1].text
 
-            exp_local = 'Local Access' + URL_LOGIN + ','
-            exp_remote = 'Remote Access-'
+            exp_local = 'Local Access: ' + DEFAULT_GATEWAY_HTTP + ','
+            exp_remote = 'Remote Access: -'
 
             list_actual5 = [local_val, remote_val]
             list_expected5 = [exp_local, exp_remote]
@@ -223,8 +225,8 @@ class ADVANCED(unittest.TestCase):
             local_val = options_left.find_elements_by_css_selector(advanced_extra_info)[0].text
             remote_val = options_left.find_elements_by_css_selector(advanced_extra_info)[1].text
 
-            exp_local = 'Local Access' + URL_LOGIN + ', ' + URL_LOGIN_HTTPS + ':' + http_port
-            exp_remote = 'Remote Access' + 'https://' + wan_ip + ':' + remote_port
+            exp_local = 'Local Access: ' + DEFAULT_GATEWAY_HTTP + ', ' + DEFAULT_GATEWAY_HTTPS + ':' + http_port
+            exp_remote = 'Remote Access: ' + 'https://' + wan_ip + ':' + remote_port
 
             list_actual6 = [local_val, remote_val]
             list_expected6 = [exp_local, exp_remote]

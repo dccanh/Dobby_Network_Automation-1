@@ -1008,17 +1008,24 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        factory_dut()
         # ===========================================================
         grand_login(driver)
         time.sleep(2)
-        goto_menu(driver, wireless_tab, wireless_repeater_setting_tab)
+        goto_menu(driver, network_tab, network_operationmode_tab)
         wait_popup_disappear(driver, dialog_loading)
         upper_5g_name = get_config('REPEATER', 'repeater_name_5g', input_data_path)
         upper_5g_pw = get_config('REPEATER', 'repeater_pw_5g', input_data_path)
-        # connect_repeater_mode(driver, REPEATER_UPPER=upper_5g_name, PW=upper_5g_pw)
-        scan_wifi_repeater_mode(driver, upper_5g_name, upper_5g_pw)
+        connect_repeater_mode(driver, REPEATER_UPPER=upper_5g_name, PW=upper_5g_pw)
+        # scan_wifi_repeater_mode(driver, upper_5g_name, upper_5g_pw)
         # ===========================================================
         wait_ethernet_available()
+
+        wifi = connect_wifi_by_command(upper_5g_name, upper_5g_pw)
+        interface_connect_disconnect('Ethernet', 'disable')
+
+        print(wifi)
+
         PING_ADDRESS = '192.168.1.1'
         # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
         YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
@@ -2270,6 +2277,78 @@ class NON_FUNCTION(unittest.TestCase):
             self.list_steps.append('[END TC]')
             list_step_fail.append('9. Assertion wong')
 
+        self.assertListEqual(list_step_fail, [])
+
+
+    def test_14_MAIN_Verify_the_time_out_operation(self):
+        self.key = 'MAIN_14'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        try:
+            grand_login(driver)
+            self.list_steps.append('[Pass] Login successfully')
+        except:
+            self.list_steps.append('[Fail] Login fail')
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            goto_menu(driver, network_tab, network_internet_tab)
+            # Wait 20 mins
+            sleep_time = 20 * 60
+            time.sleep(sleep_time)
+            time.sleep(1)
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            msg_time_out = driver.find_elements_by_css_selector(content)
+            if len(msg_time_out) > 0:
+                msg_time_out_text = msg_time_out[0].text
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(3)
+            else:
+                msg_time_out_text = 'No popup appear'
+            # Click ok
+            # Lg is display
+            check_lg_page = len(driver.find_elements_by_css_selector(lg_page)) > 0
+            list_actual1 = [msg_time_out_text, check_lg_page]
+            list_expected1 = [exp_time_out_msg, return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1. Time out: Check msg time out, Login page is displayed'
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Time out: Check msg time out, Login page is displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            grand_login(driver)
+            sleep_time = 20 * 60
+            time.sleep(sleep_time)
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            # Click cancel
+            time.sleep(2)
+            msg_time_out_pop = len(driver.find_elements_by_css_selector(content)) == 0
+            list_actual2 = [msg_time_out_pop]
+            list_expected2 = [return_true]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 2. Wait in Home page: After 20 mins. Check popup time out do not appear. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Wait in Home page: After 20 mins. Check popup time out do not appear.'
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append('2. Assertion wong')
         self.assertListEqual(list_step_fail, [])
 if __name__ == '__main__':
     unittest.main()
