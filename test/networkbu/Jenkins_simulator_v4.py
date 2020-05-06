@@ -53,7 +53,7 @@ class CreateToolTip(object):
 config_path = './Config/t10x/config.txt'
 testcase_data_path = './Image/testcase_data.txt'
 icon_path = './Image/icon_2_VZm_icon.ico'
-
+# testcase_runtime_data_path = './Image/testcase_runtime_data.txt'
 
 def serial_ports():
     if sys.platform.startswith('win'):
@@ -105,6 +105,9 @@ def delete_report_offline():
     Delete before run a section.
     """
     import openpyxl
+    ls = subprocess.check_output('tasklist')
+    if b'EXCEL.EXE' in ls:
+        os.system("taskkill /f /im EXCEL.EXE")
     excel_file = report_offline_path
     wb = openpyxl.load_workbook(excel_file)
     ws = wb.active
@@ -160,6 +163,38 @@ def get_num_test_case_module():
                    + len(list(config.items('MEDIASHARE')))
                    + len(list(config.items('ADVANCED')))
             }
+
+def get_runtime_test_module():
+    import math
+    config = configparser.RawConfigParser()
+    config.read(testcase_runtime_data_path)
+    dict_time = dict()
+    for s in config.sections():
+        module_time = 0
+        for i in config.items(s):
+            module_time += int(i[1])
+        dict_time.update({s: math.ceil(module_time/60)})
+    dict_time.update({'ALL': sum(list(dict_time.values()))})
+    return dict_time
+
+
+def get_runtime_test_case(list_individual_tc):
+    config = configparser.RawConfigParser()
+    config.read(testcase_runtime_data_path)
+    _indiv_total_time = 0
+    print(list_individual_tc)
+    if len(list_individual_tc)>0:
+
+        for _indiv in list_individual_tc:
+            print(_indiv)
+            for s in config.sections():
+                check_tc = get_config(testcase_runtime_data_path, s, _indiv)
+                if check_tc is not None:
+                    _indiv_total_time += int(check_tc)
+
+        return f'Estimate run time {str(round(_indiv_total_time / 60, 1))} minutes.'
+    return f'Estimate run time 0 minute'
+
 
 
 convert_module = {
@@ -236,10 +271,20 @@ model = OptionMenu(root, cusModel, *choices)
 model.place(x=140, y=90, height=30, width=330)
 model['background'] = 'white'
 
-
+FACTORY_TIME = 200
 
 def _basicSetting():
-    basicSettingBtn.configure(state='disabled')
+    basicSettingBtn['state'] = DISABLED
+    repeaterSettingBtn['state'] = DISABLED
+    runButton['state'] = DISABLED
+    manualButton['state'] = DISABLED
+    abortButton['state'] = DISABLED
+    advanceButton['state'] = DISABLED
+    basicSettingBtn['state'] = DISABLED
+    repeaterSettingBtn['state'] = DISABLED
+    factoryButton['state'] = DISABLED
+
+
 
     config = configparser.RawConfigParser()
     config.read(testcase_data_path)
@@ -247,14 +292,14 @@ def _basicSetting():
     now_y = root.winfo_y()
     window = Toplevel(root)
 
-    window.geometry(f"400x150+{str(now_x+50)}+{now_y+50}")
+    window.geometry(f"400x200+{str(now_x+50)}+{now_y+50}")
     window.resizable(0, 0)
     window.title("Basic Setting")
     window.iconbitmap(icon_path)
 
     frame = Frame(window, relief=RAISED)
     frame.pack(fill=BOTH, expand=True)
-
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     labelSerialNumber = Label(window, text="Serial Number:")
     labelSerialNumber.place(x=15, y=30)
 
@@ -263,17 +308,29 @@ def _basicSetting():
     ModuleNumber.set(previous_number)
     number = Entry(window, textvariable=ModuleNumber)
     number.pack()
-    number.place(x=110, y=30, height=25, width=270)
+    number.place(x=115, y=30, height=25, width=265)
 
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    labelAgging = Label(window, text="Aging Time(sec):")
+    labelAgging.place(x=15, y=70)
+
+    ModuleAging = StringVar()
+    previous_AgingTime = get_config(input_data_path, 'NON_FUNCTION', 'nf_ping_time')
+    ModuleAging.set(previous_AgingTime)
+    _aging = Entry(window, textvariable=ModuleAging)
+    _aging.pack()
+    _aging.place(x=115, y=70, height=25, width=265)
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     labelReportPath = Label(window, text="Report Directory:")
-    labelReportPath.place(x=15, y=70)
+    labelReportPath.place(x=15, y=110)
 
     ModulePath = StringVar()
     previous_path = get_config(config_path, 'REPORT', 'report_path')
     ModulePath.set(previous_path)
     _path = Entry(window, textvariable=ModulePath)
     _path.pack()
-    _path.place(x=110, y=70, height=25, width=270)
+    _path.place(x=115, y=110, height=25, width=265)
 
     def _saveFolder():
         folder_path = filedialog.askdirectory()
@@ -282,20 +339,39 @@ def _basicSetting():
 
     BrowBtn = Button(window, text="...", width=15, command=_saveFolder, background='white')
     BrowBtn.pack()
-    BrowBtn.place(x=360, y=70, height=25, width=20)
+    BrowBtn.place(x=360, y=110, height=25, width=20)
 
     def _saveBtn():
         save_config(config_path, 'GENERAL', 'serial_number', number.get())
         save_config(config_path, 'REPORT', 'report_path', _path.get())
+        save_config(input_data_path, 'NON_FUNCTION', 'nf_ping_time', _aging.get())
         window.destroy()
-        basicSettingBtn.configure(state='normal')
+        # basicSettingBtn.configure(state='normal')
+        basicSettingBtn['state'] = NORMAL
+        repeaterSettingBtn['state'] = NORMAL
+        runButton['state'] = NORMAL
+        manualButton['state'] = NORMAL
+        abortButton['state'] = NORMAL
+        advanceButton['state'] = NORMAL
+        basicSettingBtn['state'] = NORMAL
+        repeaterSettingBtn['state'] = NORMAL
+        factoryButton['state'] = NORMAL
 
-    OKBtn = Button(window, text="Save", width=15, command=_saveBtn)
-    OKBtn.pack(anchor='center', padx=5, pady=10)
+    SaveBtn = Button(window, text="Save", width=15, command=_saveBtn)
+    SaveBtn.pack(anchor='center', padx=5, pady=10)
 
     def on_closing():
         # Destroy window and enable Manual button
-        basicSettingBtn.configure(state='normal')
+        # basicSettingBtn.configure(state='normal')
+        basicSettingBtn['state'] = NORMAL
+        repeaterSettingBtn['state'] = NORMAL
+        runButton['state'] = NORMAL
+        manualButton['state'] = NORMAL
+        abortButton['state'] = NORMAL
+        advanceButton['state'] = NORMAL
+        basicSettingBtn['state'] = NORMAL
+        repeaterSettingBtn['state'] = NORMAL
+        factoryButton['state'] = NORMAL
         window.destroy()
     window.protocol("WM_DELETE_WINDOW", on_closing)
     window.mainloop()
@@ -529,15 +605,15 @@ check8.place(x=140 + 2 * 100, y=270 + 60)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-CreateToolTip(checkA, f" {str(get_num_test_case_module()['All'])} TCs")
-CreateToolTip(check0, f" {str(get_num_test_case_module()['Main'])} TCs")
-CreateToolTip(check1, f" {str(get_num_test_case_module()['Home'])} TCs")
-CreateToolTip(check2, f" {str(get_num_test_case_module()['Wireless'])} TCs")
-CreateToolTip(check3, f" {str(get_num_test_case_module()['Network'])} TCs")
-CreateToolTip(check5, f" {str(get_num_test_case_module()['MediaShare'])} TCs")
-CreateToolTip(check6, f" {str(get_num_test_case_module()['Security'])} TCs")
-CreateToolTip(check7, f" {str(get_num_test_case_module()['Advanced'])} TCs")
-CreateToolTip(check8, f" {str(get_num_test_case_module()['Non_Function'])} TCs")
+CreateToolTip(checkA, f" {str(get_num_test_case_module()['All'])} TCs ~ {str(get_runtime_test_module()['ALL'])} minutes")
+CreateToolTip(check0, f" {str(get_num_test_case_module()['Main'])} TCs ~ {str(get_runtime_test_module()['MAIN'])} minutes")
+CreateToolTip(check1, f" {str(get_num_test_case_module()['Home'])} TCs ~ {str(get_runtime_test_module()['HOME'])} minutes")
+CreateToolTip(check2, f" {str(get_num_test_case_module()['Wireless'])} TCs ~ {str(get_runtime_test_module()['WIRELESS'])} minutes")
+CreateToolTip(check3, f" {str(get_num_test_case_module()['Network'])} TCs ~ {str(get_runtime_test_module()['NETWORK'])} minutes")
+CreateToolTip(check5, f" {str(get_num_test_case_module()['MediaShare'])} TCs ~ {str(get_runtime_test_module()['MEDIASHARE'])} minutes")
+CreateToolTip(check6, f" {str(get_num_test_case_module()['Security'])} TCs ~ {str(get_runtime_test_module()['SECURITY'])} minutes")
+CreateToolTip(check7, f" {str(get_num_test_case_module()['Advanced'])} TCs ~ {str(get_runtime_test_module()['ADVANCED'])} minutes")
+CreateToolTip(check8, f" {str(get_num_test_case_module()['Non_Function'])} TCs ~ {str(get_runtime_test_module()['NON_FUNCTION'])} minutes")
 
 
 linkLabel = Label(root, text="")
@@ -548,6 +624,7 @@ ls_tc = StringVar()
 lstc_box = Entry(root, textvariable=ls_tc, state=DISABLED)
 lstc_box.pack()
 lstc_box.place(x=140, y=440, height=25, width=330)
+
 
 def cls():
     lstc_box.configure(state=NORMAL)
@@ -590,6 +667,9 @@ bar = Progressbar(root, length=total_percent, style="black.Horizontal.TProgressb
 bar['value'] = 1
 bar.place(x=300, y=535)
 
+progress_bar = Label(root)
+progress_bar.place(x=318, y=510)
+
 
 def _advanceBtn():
     global MakeReport
@@ -623,12 +703,15 @@ def check_all_module():
 
 
 def all_module_checked():
-    check = all([m.get() for m in [Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]])
+    list_module = [Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]
+    check = all([m.get() for m in list_module])
     if check:
         cusModuleAll.set(True)
     else:
         cusModuleAll.set(False)
-
+    # for m in list_module:
+    #     if m.get():
+    #         cls()
 
 def find_chosen_module():
     list_modules = [cusModuleAll, Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]  # , Module4
@@ -674,6 +757,7 @@ def detect_run_testcase(progress_bar):
         # print(list_run)
         for r in list_run:
             print(f'cd Test/T10x &&  python {convert_module[r[0]]} {r[0]}.{r[1]}')
+            time.sleep(1.5)
             os.system(f'cd Test/T10x &&  python {convert_module[r[0]]} {r[0]}.{r[1]}')
             time.sleep(0.3)
             progress_percent = int(((list_run.index(r) + 1) / len(list_run)) * 100)
@@ -716,15 +800,15 @@ def _runBtn():
     if warning():
         delete_report_offline()
 
-        progress_bar = Label(root)
-        progress_bar.place(x=318, y=510)
+        # progress_bar = Label(root)
+        # progress_bar.place(x=318, y=510)
 
         linkLabel.configure(text='< << Click here to go to report page >> >', fg='blue', anchor="center")
         linkLabel.pack()
         linkLabel.place(x=180, y=410)
         linkLabel.bind("<Button-1>", lambda e: callback("https://docs.google.com/spreadsheets/d/1kliw4-QTK4g3iz8fpbiyo-62L1dZZa5mCRTTMkBaLu4/edit?pli=1#gid=0"))
 
-        mergeButton.configure(text=' Playing', image=photo_playing, state=DISABLED)
+        runButton.configure(text=' Playing', image=photo_playing, state=DISABLED)
 
         for i in range(int(loopBox.get())):
             print(f'\n**************\n_- Run times {str(i + 1)} -_\n')
@@ -736,16 +820,20 @@ def _runBtn():
         # time_str = time.strftime('%d %b, %Y %H:%M:%S')
         # progress_bar.configure(text=f' DONE: {time_str}')
         manualButton.configure(state=NORMAL)
-        mergeButton.configure(text=' Run', image=photo_run, state=NORMAL)
+        runButton.configure(text=' Run', image=photo_run, state=NORMAL)
 
         stage1.configure(state=NORMAL)
         model.configure(state=NORMAL)
-        # numberl.configure(state=NORMAL)
+
+        # After Run. Set all module is uncheck
+        list_module = [cusModuleAll, Module0, Module1, Module2, Module3, Module5, Module6, Module7, Module8]
+        for m in list_module:
+            m.set(False)
+        cls()
     else:
         manualButton.configure(state=NORMAL)
         stage1.configure(state=NORMAL)
         model.configure(state=NORMAL)
-        # numberl.configure(state=NORMAL)
 
 
 
@@ -814,6 +902,7 @@ def _manualBtn():
 
         def warning2(number_chosen_tc):
             OKBtn.configure(state='disable')
+
             return messagebox.showinfo('Notice', f'Save {str(number_chosen_tc)} choices successfully')
 
         def _okBtn():
@@ -827,6 +916,8 @@ def _manualBtn():
             individual_tc_string = ';'.join(individual_tc)
 
             if warning2(len(individual_tc)):
+                indiv_tooltip = get_runtime_test_case(list_individual_tc=individual_tc)
+                CreateToolTip(lstc_box, indiv_tooltip)
                 ls_tc.set(individual_tc_string)
                 window.destroy()
                 manualButton.configure(state='normal')
@@ -958,35 +1049,75 @@ def abort():
     # exit_Btn()
 
 
-def _factory():
-    # factoryButton.configure(text=" Factoring")
-    # print(cusPort4.get())
-    # save_config(config_path, 'GENERAL', 'serial_number', cusNumber.get())
-    save_config(config_path, 'CONSOLE', 'serial_port', cusPort4.get())
-    # time.sleep(1)
-    # a = get_config(config_path, "CONSOLE", "serial_port")
-    factory_dut()
-    time.sleep(5)
-
-    # print(a)
-    # theadFactory = threading.Thread(target=lambda: time.sleep(10) )
-    # theadFactory.start()
-    # factoryButton.configure(text=" Factory")
-    # factory_dut()
 
 
-factoryButton = Button(root, text=" Factory", command=_factory, height=20, width=80, borderwidth=4, image=photo_loading, compound=LEFT)
+
+def _realcallback2():
+    progress.configure(text='Progress:')
+    runButton['state'] = NORMAL
+    manualButton['state'] = NORMAL
+    abortButton['state'] = NORMAL
+    advanceButton['state'] = NORMAL
+    basicSettingBtn['state'] = NORMAL
+    repeaterSettingBtn['state'] = NORMAL
+    for c in [checkA, check0, check1, check2, check3, check5, check6, check7, check8]:
+        c.config(state=NORMAL)
+    progress_bar.configure(text=f' ')
+    bar['value'] = 1
+
+def _callback():
+    root.after(500, _realcallback1)
+    root.after(1_000, lambda: factory())
+    root.after(FACTORY_TIME*1_000+3_000, _realcallback2)
+
+def _realcallback1():
+    progress.configure(text='Factoring ...')
+    runButton['state'] = DISABLED
+    manualButton['state'] = DISABLED
+    abortButton['state'] = DISABLED
+    advanceButton['state'] = DISABLED
+    basicSettingBtn['state'] = DISABLED
+    repeaterSettingBtn['state'] = DISABLED
+    for c in [checkA, check0, check1, check2, check3, check5, check6, check7, check8]:
+        c.config(state=DISABLED)
+
+def factory_bar(factory_time=FACTORY_TIME):
+    bar['value'] = 1
+    count = 1
+    while count < factory_time:
+        count += 1
+        time.sleep(1)
+        factory_percent = int(count * 100 / factory_time)
+        print('Percent ' + str(factory_percent))
+        bar['value'] = factory_percent
+
+        progress_bar.configure(text=f' {str(factory_time-count)} seconds left.')
+    progress_bar.configure(text=f' Finish factory.')
+
+def factory():
+    os.system('netsh wlan disconnect')
+    # theadFactoryCommand = threading.Thread(target=lambda: factory_dut())
+    # theadFactoryCommand.start()
+    theadFactoryBar = threading.Thread(target=lambda: factory_bar())
+    theadFactoryBar.start()
+
+
+factoryButton = Button(root, text=" Factory", command=lambda: _callback(), height=20, width=80, borderwidth=4, image=photo_loading,
+                       compound=LEFT)
 factoryButton.place(x=140, y=370)
+CreateToolTip(factoryButton, f" Estimate {str(FACTORY_TIME)} seconds. ")
 
+runButton = Button(root, text=" Run", command=run, height=20, width=80, borderwidth=4, image=photo_run, compound=LEFT)
+runButton.place(x=250, y=370)
 
-mergeButton = Button(root, text=" Run", command=run, height=20, width=80, borderwidth=4, image=photo_run, compound=LEFT)
-mergeButton.place(x=250, y=370)
 advanceButton = Button(root, text=" More", command=_advanceBtn, height=20, width=80, borderwidth=4, image=photo_down,
                        compound=LEFT)
 advanceButton.place(x=360, y=370)
+
 manualButton = Button(root, text=" Manual", command=_manualBtn, height=20, width=80, borderwidth=4, image=photo_manual,
                       compound=LEFT)
 manualButton.place(x=250, y=470)
+
 abortButton = Button(root, text=" Abort", command=abort, height=20, width=80, borderwidth=4, image=photo_abort,
                      compound=LEFT)
 abortButton.place(x=360, y=470)

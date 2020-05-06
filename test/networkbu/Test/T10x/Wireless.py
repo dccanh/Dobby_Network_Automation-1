@@ -41,6 +41,10 @@ class WIRELESS(unittest.TestCase):
             os.system('netsh wlan disconnect')
             time.sleep(1)
         write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        save_duration_time(test_case_key=self.key,
+                           test_case_name=self.def_name,
+                           test_case_steps=self.list_steps,
+                           start_time=self.start_time)
         self.driver.quit()
     # OK
     def test_02_WIRELESS_Verification_of_the_Wifi_On_off_operation(self):
@@ -2661,10 +2665,9 @@ class WIRELESS(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        # Factory reset
 
         # ===========================================================
-        # factory_dut()
+        factory_dut()
         # ===========================================================
         SSID_TEST = get_config('WIRELESS', 'wl16_ssid_test', input_data_path)
         SSID_2G_DEFAULT_START = 'HUMAX_Guest_2G!_'
@@ -2673,7 +2676,6 @@ class WIRELESS(unittest.TestCase):
 
         try:
             grand_login(driver)
-
             time.sleep(1)
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_guestnetwork_tab)

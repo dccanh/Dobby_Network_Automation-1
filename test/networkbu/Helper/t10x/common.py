@@ -2,31 +2,32 @@
 # -*- coding: utf-8 -*-
 import os, sys
 sys.path.append('../../')
-import openpyxl
-import time
+import sys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
+
 import random
-import subprocess
-import datetime
+
 import json
-import requests
+
 import gspread
-import configparser
-import pyodbc
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
-from datetime import datetime
-from datetime import date
-from faker import Faker
-from Helper.t10x.config.read_config import *
+# from datetime import datetime
+# from datetime import date
+# from faker import Faker
+# from Helper.t10x.config.read_config import *
 from Helper.t10x.config.elements import *
 from Helper.t10x.config.captcha import *
-import base64
+# import base64
 from oauth2client.service_account import ServiceAccountCredentials
-from Helper.t10x.ls_path import *
+# from Helper.t10x.ls_path import *
 from Helper.t10x.secure_crt.common import *
 import re
-import xml.etree.ElementTree as ET
+# import xml.etree.ElementTree as ET
 from winreg import *
 def save_config(config_path, section, option, value):
     config = configparser.RawConfigParser()
@@ -125,9 +126,9 @@ def write_to_excel_tmp(key, list_steps, func_name):
                 else:
                     ws.cell(row=i, column=3).value = 'PASS'
             # Fill step
-            steps = ''
-            for j in list_steps:
-                steps = steps + (str(j) + '\n')
+            steps = '\n'.join(list_steps)
+            # for j in list_steps:
+            #     steps = steps + (str(j) + '\n')
             ws.cell(row=i, column=5).value = steps
 
             # Save file
@@ -145,12 +146,13 @@ def write_ggsheet(key, list_steps, func_name, duration, time_stamp=0):
     next_row = next_available_row(sheet)
     sheet.update_acell("A{}".format(next_row), key)
     sheet.update_acell("B{}".format(next_row), func_name)
+    list_steps = '\n'.join(list_steps)
     if '[Fail]' in str(list_steps):
         sheet.update_acell("C{}".format(next_row), 'FAIL')
     else:
         # if '[END TC]' not in str(list_steps):
         if '[END TC]' not in list_steps:
-            list_steps.append('Can not execute next step ...')
+            list_steps += ('\nCan not execute next step ...')
             sheet.update_acell("C{}".format(next_row), 'FAIL')
         else:
             sheet.update_acell("C{}".format(next_row), 'PASS')
@@ -372,6 +374,11 @@ def login(driver, url_login='', user_request='', pass_word=''):
     time.sleep(1)
     driver.get(url_login)
     time.sleep(2)
+    if driver.current_url == 'http://ww38.dearmyextender.net/':
+        save_config(config_path, 'URL', 'url', 'http://dearmyrouter.net')
+        url_login = get_config('URL', 'url')
+        driver.get(url_login)
+
     driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
     time.sleep(1)
     driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
@@ -1251,7 +1258,7 @@ def detect_firmware_version(driver):
         driver.find_element_by_css_selector(el_lg_pw_down_firm).send_keys(pass_word)
         time.sleep(1)
         driver.find_element_by_css_selector(el_lg_button_down_firm).click()
-        time.sleep(1)
+        time.sleep(5)
         policy_popup = driver.find_elements_by_css_selector('#privacy-policy-dialogue [name="privacyPolicyForm"]')
         if len(policy_popup) > 0:
             policy_popup[0].find_element_by_css_selector('p+p+p+p').location_once_scrolled_into_view
@@ -1260,8 +1267,11 @@ def detect_firmware_version(driver):
             time.sleep(5)
             driver.get(url_login+'/homepage')
             time.sleep(10)
+        time.sleep(3)
         if len(driver.find_elements_by_css_selector('.fancybox-skin .new-version')) > 0:
+            time.sleep(1)
             driver.find_element_by_css_selector('.fancybox-skin .btn-cancel').click()
+            time.sleep(1)
         wait_visible(driver, el_home_wrap_down_firm)
         time.sleep(3)
         # ==============================================================================================
@@ -1409,6 +1419,7 @@ def change_firmware_version(driver, version='t10x_fullimage_3.00.12_rev11.img'):
 
     wait_popup_disappear(driver, icon_loading)
     wait_visible(driver, content)
+    wait_ethernet_available()
     driver.find_element_by_css_selector(btn_ok).click()
     time.sleep(1)
 
@@ -1976,3 +1987,134 @@ def interface_connect_disconnect(interface, _status):
 
     os.system(f'python {nw_interface_path} -i {interface} -a {_status}')
     time.sleep(sleep_time)
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Driver serve  BLOCK~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def find_element(driver_or_parent, element_locator, locator_type=By.CSS_SELECTOR, time_out_s=5) -> WebElement:
+    """
+    Find element from driver. If not found element after time out, raise time out error
+    :param driver_or_parent: selenium webdriver or parent element.
+    :param element_locator: locator - used to find the element.
+    :param locator_type: type of locator. Default is CSS.
+    :param time_out_s: time out in second to find element. Default is 5 seconds.
+    :return: WebElement
+    """
+    if driver_or_parent is None or (
+            not isinstance(driver_or_parent, WebDriver) and not isinstance(driver_or_parent, WebElement)):
+        raise TypeError("Driver must be not none and is instance of selenium webdriver or is instance of selenium webelement")
+    list_valid_locator_types = [
+        By.XPATH,
+        By.CSS_SELECTOR,
+        By.ID,
+        By.NAME,
+        By.CLASS_NAME
+    ]
+    string_to_method = {
+        By.XPATH: driver_or_parent.find_element_by_xpath,
+        By.CSS_SELECTOR: driver_or_parent.find_element_by_css_selector,
+        By.ID: driver_or_parent.find_element_by_id,
+        By.NAME: driver_or_parent.find_element_by_name,
+        By.CLASS_NAME: driver_or_parent.find_element_by_class_name
+    }
+    if locator_type is None or locator_type not in list_valid_locator_types:
+        raise TypeError(f"Locator type must be not none and in list {str(list_valid_locator_types)}.")
+
+    time_stamp_s = 0.05
+    while time_out_s >= 0:
+        try:
+            return string_to_method[locator_type](element_locator)
+        except:
+            time_out_s = time_out_s - time_stamp_s
+            time.sleep(time_stamp_s)
+    raise TimeoutError(f"Element define by '{element_locator}' is not presence after {time_out_s} seconds.")
+
+
+def find_elements(driver_or_parent, element_locator, locator_type=By.CSS_SELECTOR, time_out_s=5):
+    """
+    Find list elements from driver or parent element. If not found element after time out, raise time out error
+    :param driver_or_parent: selenium webdriver or parent element.
+    :param element_locator: locator - used to find the element.
+    :param locator_type: type of locator. Default is CSS.
+    :param time_out_s: time out in second to find element. Default is 5 seconds.
+    :return: list of WebElement
+    """
+    if driver_or_parent is None or (
+            not isinstance(driver_or_parent, WebDriver) and not isinstance(driver_or_parent, WebElement)):
+        raise TypeError("Driver must be not none and is instance of selenium webdriver or is instance of selenium webelement")
+    list_valid_locator_types = [
+        By.XPATH,
+        By.CSS_SELECTOR,
+        By.ID,
+        By.NAME,
+        By.CLASS_NAME
+    ]
+    string_to_method = {
+        By.XPATH: driver_or_parent.find_elements_by_xpath,
+        By.CSS_SELECTOR: driver_or_parent.find_elements_by_css_selector,
+        By.ID: driver_or_parent.find_elements_by_id,
+        By.NAME: driver_or_parent.find_elements_by_name,
+        By.CLASS_NAME: driver_or_parent.find_elements_by_class_name
+    }
+    if locator_type is None or locator_type not in list_valid_locator_types:
+        raise TypeError(f"Locator type must be not none and in list {str(list_valid_locator_types)}.")
+
+    time_stamp_s = 0.05
+    while time_out_s >= 0:
+        try:
+            return string_to_method[locator_type](element_locator)
+        except:
+            time_out_s = time_out_s - time_stamp_s
+            time.sleep(time_stamp_s)
+    raise TimeoutError(f"Element define by '{element_locator}' is not presence after {time_out_s} seconds.")
+
+
+def click_to_element(driver_or_parent, element_locator, locator_type=By.CSS_SELECTOR, time_out_s=5):
+    """
+    Clicks the element.
+    :param driver_or_parent: selenium webdriver or parent element.
+    :param element_locator: locator - used to find the element.
+    :param locator_type: type of locator. Default is CSS.
+    :param time_out_s: time out in second to find element. Default is 5 seconds.
+    :return:
+    """
+    element = find_element(driver_or_parent, element_locator, locator_type, time_out_s)
+    element.click()
+
+
+def is_element_displayed(driver_or_parent, element_locator, locator_type=By.CSS_SELECTOR, time_out_s=5) -> bool:
+    """
+    Whether the element is visible to a user.
+    :param driver_or_parent: selenium webdriver or parent web element.
+    :param element_locator: locator - used to find the element.
+    :param locator_type: type of locator. Default is CSS.
+    :param time_out_s: time out in second to find element. Default is 5 seconds.
+    :return:
+    """
+    try:
+        element = find_element(driver_or_parent, element_locator, locator_type, time_out_s)
+        return element.is_displayed()
+    except:
+        return False
+
+def get_part_from_key(key: str = None):
+    list_valid_part = ["MAIN", "HOME", "NETWORK", "WIRELESS", "SECURITY", "ADVANCED", "MEDIA_SHARE", "NON_FUNCTION"]
+    for part in list_valid_part:
+        if key.startswith(part):
+            return part
+    raise TypeError(f"Not valid key name. Key must start with one of following text: {','.join(list_valid_part)}")
+
+def save_duration_time(test_case_key, test_case_name, test_case_steps, start_time):
+    from datetime import datetime
+    if "[END TC]" in str(test_case_steps):
+        next_duration = (datetime.now() - start_time)
+        part = get_part_from_key(test_case_key)
+        str_current_duration = get_config(section=part, option=test_case_name, config_dir=testcase_runtime_data_path)
+        if str_current_duration is None or str_current_duration == '0':
+            duration_s = next_duration.total_seconds()
+        else:
+            current_duration = int(str_current_duration)
+            duration_s = (int(current_duration) + next_duration.total_seconds())/2
+        save_config(testcase_runtime_data_path,
+                    part,
+                    test_case_name,
+                    str(round(duration_s+0.5)))

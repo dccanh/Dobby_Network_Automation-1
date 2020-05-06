@@ -57,6 +57,10 @@ class MAIN(unittest.TestCase):
             time.sleep(1)
         write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         # write_to_excel_tmp(self.key, self.list_steps, self.def_name)
+        save_duration_time(test_case_key=self.key,
+                           test_case_name=self.def_name,
+                           test_case_steps=self.list_steps,
+                           start_time=self.start_time)
         self.driver.quit()
     # OK
     def test_04_MAIN_Verify_the_Web_UI_connection_through_Gateway_IP(self):
@@ -1756,6 +1760,125 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('5. Assertion wong')
 
         self.assertListEqual(list_step_fail, [])
+
+    # def test_19_MAIN_Check_Safari_Browser_behavior(self):
+    #     self.key = 'MAIN_19'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     url_login = get_config('URL', 'url')
+    #     user_request = get_config('ACCOUNT', 'user')
+    #     pass_word = get_config('ACCOUNT', 'password')
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         time.sleep(1)
+    #         driver.get(url_login)
+    #         time.sleep(2)
+    #
+    #         list_actual1 = [url_login + '/']
+    #         list_expected1 = [driver.current_url]
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             '[Pass] 1. Check URL Login Page in Chrome. '
+    #             f'Actual: {str(list_actual1)}. '
+    #             f'Expected: {str(list_expected1)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 1. Check URL Login Page in Chrome. '
+    #             f'Actual: {str(list_actual1)}. '
+    #             f'Expected: {str(list_expected1)}')
+    #         list_step_fail.append('1. Assertion wong')
+    #
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
+    #         time.sleep(1)
+    #         driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
+    #         time.sleep(1)
+    #         # Captcha
+    #         captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+    #         captcha_text = get_captcha_string(captcha_src)
+    #         driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+    #         time.sleep(1)
+    #
+    #         user_value = driver.find_element_by_css_selector(lg_user).get_attribute('value')
+    #         captcha_value = driver.find_element_by_css_selector(lg_captcha_box).get_attribute('value')
+    #         # Click Login
+    #         driver.find_element_by_css_selector(lg_btn_login).click()
+    #
+    #         list_actual2 = [user_value, captcha_value]
+    #         list_expected2 = [user_request, captcha_text]
+    #         check = assert_list(list_actual2, list_expected2)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 2,3. Check input correct username and captcha. '
+    #                                f'Actual: {str(list_actual2)}. '
+    #                                f'Expected: {str(list_expected2)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 2,3. Check input correct username and captcha. '
+    #             f'Actual: {str(list_actual2)}. '
+    #             f'Expected: {str(list_expected2)}')
+    #         list_step_fail.append('2,3. Assertion wong')
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(1)
+    #         # Goto Homepage
+    #         if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+    #             driver.get(url_login + homepage)
+    #             time.sleep(2)
+    #             wait_popup_disappear(driver, dialog_loading)
+    #
+    #         list_tab_text = driver.find_elements_by_css_selector(ls_tab)
+    #         list_tab_text = [i.text for i in list_tab_text]
+    #
+    #         list_actual3 = [list_tab_text]
+    #         list_expected3 = [['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE', 'QOS', 'SECURITY', 'ADVANCED']]
+    #         check = assert_list(list_actual3, list_expected3)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 4. Check Menu tree in Home page via domain address. '
+    #                                f'Actual: {str(list_actual3)}. '
+    #                                f'Expected: {str(list_expected3)}')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 4. Check Menu tree in Home page via domain address. '
+    #             f'Actual: {str(list_actual3)}. '
+    #             f'Expected: {str(list_expected3)}')
+    #         list_step_fail.append('4. Assertion wong')
+    #
+    #     try:
+    #         url_login = get_config('URL', 'url')
+    #         login(driver)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(1)
+    #         # Goto Homepage
+    #         if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+    #             driver.get(url_login + homepage)
+    #             time.sleep(2)
+    #             wait_popup_disappear(driver, dialog_loading)
+    #
+    #         list_tab_text = driver.find_elements_by_css_selector(ls_tab)
+    #         list_tab_text = [i.text for i in list_tab_text]
+    #
+    #         list_actual4 = [list_tab_text]
+    #         list_expected4 = [['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE', 'QOS', 'SECURITY', 'ADVANCED']]
+    #         check = assert_list(list_actual4, list_expected4)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 5. Check Menu tree in Home page via IP address. '
+    #                                f'Actual: {str(list_actual4)}. '
+    #                                f'Expected: {str(list_expected4)}')
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 5. Check Menu tree in Home page via IP address. '
+    #             f'Actual: {str(list_actual4)}. '
+    #             f'Expected: {str(list_expected4)}')
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('5. Assertion wong')
+    #
+    #     self.assertListEqual(list_step_fail, [])
     # OK
     def test_20_MAIN_Verify_the_Wizard_Main_page(self):
         self.key = 'MAIN_20'
@@ -7785,6 +7908,8 @@ class MAIN(unittest.TestCase):
         # save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
         # ===========================================================
         detect_firmware_version(driver)
+        time.sleep(10)
+        wait_ethernet_available()
         grand_login(driver)
         time.sleep(2)
         goto_menu(driver, network_tab, network_operationmode_tab)

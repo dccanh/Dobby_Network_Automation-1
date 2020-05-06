@@ -40,6 +40,10 @@ class MEDIASHARE(unittest.TestCase):
             os.system('netsh wlan disconnect')
             time.sleep(1)
         write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        save_duration_time(test_case_key=self.key,
+                           test_case_name=self.def_name,
+                           test_case_steps=self.list_steps,
+                           start_time=self.start_time)
         self.driver.quit()
 
     def test_02_MS_Check_USB_connection(self):
@@ -377,12 +381,37 @@ class MEDIASHARE(unittest.TestCase):
         fake = Faker()
         DESCRIPTION_4 = get_config('MEDIA_SHARE', 'ms04_desc_4', input_data_path)
         PATH_FILE_1 = get_config('MEDIA_SHARE', 'ms04_file_1', input_data_path)
+        USB_PAGE_TITLE = "Media Share > USB"
         try:
             grand_login(driver)
             time.sleep(5)
             # Goto media share USB
             goto_menu(driver, media_share_tab, media_share_usb_tab)
-            wait_popup_disappear(driver, dialog_loading)
+            # wait_popup_disappear(driver, dialog_loading)
+            is_dialog_loading_disappear = wait_popup_disappear(driver, dialog_loading)
+            is_correct_page_title = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual0 = [is_dialog_loading_disappear, is_correct_page_title]
+            list_expected0 = [True, USB_PAGE_TITLE]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Login. Goto USB page. '
+                f'Check Dialog loading is disappeared after login.'
+                f'Check title USB page:'
+                f'Actual: {str(list_actual0)}.'
+                f'Expected: {str(list_expected0)}.'
+            )
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Login. Goto USB page. '
+                f'Check Dialog loading is disappeared after login.'
+                f'Check title USB page:'
+                f'Actual: {str(list_actual0)}.'
+                f'Expected: {str(list_expected0)}.')
+            list_step_fail.append('1,2. Assertion wong.')
+
+        try:
             # Network block
             network_block = driver.find_element_by_css_selector(usb_network)
             # Before delete
@@ -484,14 +513,13 @@ class MEDIASHARE(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1,2,3,4. Check edit NW folder successfully: Result same as configuration. '
+                f'[Pass] 3,4. Check edit NW folder successfully: Result same as configuration. '
                 f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3,4. Check edit NW folder successfully: Result same as configuration. '
+                f'[Fail] 3,4. Check edit NW folder successfully: Result same as configuration. '
                 f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
-            list_step_fail.append(
-                '1,2,3,4. Assertion wong.')
+            list_step_fail.append('3,4. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
         try:
@@ -532,13 +560,37 @@ class MEDIASHARE(unittest.TestCase):
 
         ACCOUNT_FTP = 'Anonymous'
         SERVER_FTP = "FTP"
-
+        EXPECTED_SERVER_SETTING_PAGE_TITLE = "Media Share > Server Settings"
         try:
             grand_login(driver)
 
             # Goto media share USB
             goto_menu(driver, media_share_tab, media_share_server_settings_tab)
-            wait_popup_disappear(driver, dialog_loading)
+            # wait_popup_disappear(driver, dialog_loading)
+            is_dialog_loading_disappear = wait_popup_disappear(driver, dialog_loading)
+            is_correct_page_title = driver.find_element_by_css_selector(ele_title_page).text
+
+            list_actual0 = [is_dialog_loading_disappear, is_correct_page_title]
+            list_expected0 = [True, EXPECTED_SERVER_SETTING_PAGE_TITLE]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1, 2. Login. Goto USB sever setting page. '
+                f'Check Dialog loading is disappeared after login.'
+                f'Check title USB sever setting page:'
+                f'Actual: {str(list_actual0)}.'
+                f'Expected: {str(list_expected0)}.'
+            )
+        except:
+            self.list_steps.append(
+                f'[Fail] 1, 2. Login. Goto USB sever setting page. '
+                f'Check Dialog loading is disappeared after login.'
+                f'Check title USB sever setting page:'
+                f'Actual: {str(list_actual0)}.'
+                f'Expected: {str(list_expected0)}.')
+            list_step_fail.append('1,2. Assertion wong.')
+
+        try:
             # Enable FTP server
             server_ftp = driver.find_element_by_css_selector(ftp_server)
             server_ftp_btn = server_ftp.find_element_by_css_selector(select)
@@ -585,14 +637,14 @@ class MEDIASHARE(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1,2,3. Edit FTP server: Check result same as configuration. '
+                f'[Pass] 3. Edit FTP server: Check result same as configuration. '
                 f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3. Edit FTP server: Check result same as configuration. '
+                f'[Fail] 3. Edit FTP server: Check result same as configuration. '
                 f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append(
-                '1,2,3. Assertion wong.')
+                '3. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
         try:
@@ -689,7 +741,7 @@ class MEDIASHARE(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
     # OK
-    def test_11_MS_Check_mesage_when_creating_server_without_network_folder_account(self):
+    def test_11_MS_Check_message_when_creating_server_without_network_folder_account(self):
         self.key = 'MEDIA_SHARE_11'
         driver = self.driver
         self.def_name = get_func_name()
@@ -742,24 +794,41 @@ class MEDIASHARE(unittest.TestCase):
             goto_menu(driver, media_share_tab, media_share_server_settings_tab)
             wait_popup_disappear(driver, dialog_loading)
 
-            ls_card = [ftp_server,
-                       samba_server_card,
-                       dlna_server_card,
-                       dev_dav_server_card,
-                       torrent_server_card,
-                       time_machine_server_card]
-            exp_msg = [exp_server_account_warning, exp_server_folder_warning]
+            # ls_card = [ftp_server,
+            #            samba_server_card,
+            #            dlna_server_card,
+            #            dev_dav_server_card,
+            #            torrent_server_card,
+            #            time_machine_server_card]
+            # exp_msg = [exp_server_account_warning, exp_server_folder_warning]
+
+            exp_account_and_folder_msg = [exp_server_account_warning, exp_server_folder_warning]
+            exp_account_msg = [exp_server_account_warning]
+            exp_folder_msg = [exp_server_folder_warning]
+            ls_card = [{"locator": ftp_server, "messages": exp_account_and_folder_msg},
+                       {"locator": samba_server_card, "messages": exp_account_and_folder_msg},
+                       {"locator": dlna_server_card, "messages": exp_folder_msg},
+                       {"locator": dev_dav_server_card, "messages": exp_account_and_folder_msg},
+                       {"locator": torrent_server_card, "messages": exp_account_msg},
+                       {"locator": time_machine_server_card, "messages": exp_account_and_folder_msg}]
+
             _check_warning_msg = []
             for i in ls_card:
-                server = driver.find_element_by_css_selector(i)
+                # server = driver.find_element_by_css_selector(i)
+                server = driver.find_element_by_css_selector(i["locator"])
                 ActionChains(driver).move_to_element(server).perform()
                 server_btn = server.find_element_by_css_selector(select)
                 server_input = server_btn.find_element_by_css_selector(input)
                 if not server_input.is_selected():
                     server_btn.click()
-                account_warning = server.find_elements_by_css_selector(account_link_cls)
-                account_warning_text = [i.text for i in account_warning]
-                _check_warning_msg.append(exp_msg == account_warning_text)
+
+                list_warnings = server.find_elements_by_css_selector(account_link_cls)
+                list_warnings_text = [warning.text for warning in list_warnings]
+                _check_warning_msg.append(i["messages"] == list_warnings_text)
+
+                # account_warning = server.find_elements_by_css_selector(account_link_cls)
+                # account_warning_text = [i.text for i in account_warning]
+                # _check_warning_msg.append(exp_msg == account_warning_text)
 
 
             list_actual = _check_warning_msg
@@ -1327,7 +1396,7 @@ class MEDIASHARE(unittest.TestCase):
         TEST_STRING = str(random.randint(10, 100))
         TEST_STRING_EDIT = str(random.randint(1, 10))
 
-        DESCRIPTION_3 =  get_config('MEDIA_SHARE', 'ms10_desc_3', input_data_path)
+        DESCRIPTION_3 = get_config('MEDIA_SHARE', 'ms10_desc_3', input_data_path)
         PATH_FILE_1 = get_config('MEDIA_SHARE', 'ms04_file_1', input_data_path)
         fake = Faker()
         # Pre-pare precondition

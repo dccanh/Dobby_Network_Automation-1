@@ -41,6 +41,10 @@ class ADVANCED(unittest.TestCase):
             time.sleep(1)
         write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         # write_to_excel_tmp(self.key, self.list_steps, self.def_name)
+        save_duration_time(test_case_key=self.key,
+                           test_case_name=self.def_name,
+                           test_case_steps=self.list_steps,
+                           start_time=self.start_time)
         self.driver.quit()
     # OK F
     def test_08_ADVANCED_Local_Access_and_External_Access_confirmation(self):

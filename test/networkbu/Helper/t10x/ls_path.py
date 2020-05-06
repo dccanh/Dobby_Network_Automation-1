@@ -14,7 +14,7 @@ wifi_5g_path = os.path.join(config_dir, "wifi5g.xml")
 driver_path = os.path.join(root_dir, "Driver", "chromedriver.exe")
 driver_firefox_path = os.path.join(root_dir, "Driver", "geckodriver.exe")
 # driver_edge_path = os.path.join(root_dir, "Driver", "MicrosoftWebDriver.exe")
-driver_edge_path = os.path.join(root_dir, "Driver", "msedgedriver.exe.exe")
+driver_edge_path = os.path.join(root_dir, "Driver", "msedgedriver.exe")
 driver_safari_path = os.path.join(root_dir, "Driver", "SafariDriver.safariextz")
 explorer_driver_path = os.path.join(root_dir, "Driver", "IEDriverServer.exe")
 
@@ -49,3 +49,4 @@ report_offline_path = os.path.join(root_dir, "Report", "T10X", "T10x_report_auto
 
 image_path = os.path.join(root_dir, "Image")
 run_image_photo = os.path.join(image_path, 'run.png')
+testcase_runtime_data_path = os.path.join(root_dir, "Image","testcase_runtime_data.txt")

@@ -39,6 +39,10 @@ class HOME(unittest.TestCase):
             time.sleep(1)
         write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         # write_to_excel_tmp(self.key, self.list_steps, self.def_name)
+        save_duration_time(test_case_key=self.key,
+                           test_case_name=self.def_name,
+                           test_case_steps=self.list_steps,
+                           start_time=self.start_time)
         self.driver.quit()
     # OK
     def test_01_HOME_Check_Internet_Image_Operation_when_Dual_WAN_is_off(self):
@@ -4938,7 +4942,7 @@ class HOME(unittest.TestCase):
 
             list_actual4 = [ls_label, get_connection_type, check_card_title, check_icon_more]
             list_expected4 = [['WAN Type', 'Connection Type', 'WAN IP Address', 'Subnet Mask',
-                               'Gateway', 'DNS Server 1', 'DNS Server 1'], 'PPPoE', 'Internet', True
+                               'Gateway', 'DNS Server 1', 'DNS Server 2'], 'PPPoE', 'Internet', True
                               ]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])

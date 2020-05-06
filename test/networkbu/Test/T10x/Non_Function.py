@@ -66,6 +66,10 @@ class NON_FUNCTION(unittest.TestCase):
             os.system('netsh wlan disconnect')
             time.sleep(1)
         write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        save_duration_time(test_case_key=self.key,
+                           test_case_name=self.def_name,
+                           test_case_steps=self.list_steps,
+                           start_time=self.start_time)
         self.driver.quit()
 
     def test_02_NON_FUNC_Dynamic_Wired_Ping_Aging_INTERGRATION_WITH_05(self):
@@ -1116,6 +1120,97 @@ class NON_FUNCTION(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+    def test_45_HOME_Verification_of_Network_Map_WAN_information(self):
+        self.key = 'HOME_45'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        factory_dut()
+        detect_firmware_version(driver)
+
+        grand_login(driver)
+        time.sleep(1)
+        goto_menu(driver, network_tab, network_operationmode_tab)
+        # Click to Bridge mode
+        if not driver.find_element_by_css_selector(ele_bridge_mode_input).is_selected():
+            driver.find_element_by_css_selector(ele_select_bridge_mode).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(apply).click()
+            time.sleep(0.5)
+            driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
+            save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+        wait_ethernet_available()
+        # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
+        try:
+            time.sleep(20)
+            wait_ethernet_available()
+            grand_login(driver)
+            time.sleep(2)
+            policy_popup = len(driver.find_elements_by_css_selector(lg_privacy_policy_pop)) > 0
+            welcome_popup = len(driver.find_elements_by_css_selector(lg_welcome_header)) > 0
+            home_view = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            check_tab_true = False
+            if any([policy_popup, welcome_popup, home_view]):
+                check_tab_true = True
+
+            list_actual1 = [check_tab_true]
+            list_expected1 = [return_true]
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login Web UI successfully. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login Web UI successfully. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            driver.find_element_by_css_selector(home_img_connection).click()
+            time.sleep(1)
+            check_bridge_mode = driver.find_element_by_css_selector(home_connection_mode).text
+            check_ip_assigned = driver.find_element_by_css_selector(home_conection_img_wan_ip).text != '0.0.0.0'
+
+            wan_card = driver.find_elements_by_css_selector(ele_wan_block)[0]
+            list_label = [i.text for i in wan_card.find_elements_by_css_selector(label_name_in_2g)]
+
+            expected_label = ['Connection Status',
+                              'Connection Type',
+                              'IP Address',
+                              'Subnet Mask',
+                              'Gateway',
+                              'DNS Server 1',
+                              'DNS Server 2',
+                              'MAC Address']
+
+            list_actual2 = [check_bridge_mode, check_ip_assigned, list_label]
+            list_expected2 = ['Bridge Mode', return_true, expected_label]
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2. Check Bridge Mode, IP address assigned different 0.0.0.0. '
+                f'Check list label displayed. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check Bridge Mode, IP address assigned different 0.0.0.0. '
+                f'Check list label displayed. '
+                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            list_step_fail.append('2. Assertion wong.')
+            self.list_steps.append('[END TC]')
+
+        self.assertListEqual(list_step_fail, [])
+
     def test_48_MAIN_System_Router_mode_Check_Manual_Firmware_Update_operation(self):
         self.key = 'MAIN_48'
         driver = self.driver
@@ -1242,6 +1337,8 @@ class NON_FUNCTION(unittest.TestCase):
         detect_firmware_version(driver)
         wait_ethernet_available()
         try:
+            time.sleep(20)
+            wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
             driver.find_element_by_css_selector(system_btn).click()
@@ -1300,6 +1397,7 @@ class NON_FUNCTION(unittest.TestCase):
             list_step_fail.append('2. Assertion wong')
 
         try:
+            os.system('netsh wlan delete profile name=*')
             driver.find_element_by_css_selector(apply).click()
             time.sleep(1)
             if len(driver.find_elements_by_css_selector(ele_choose_firmware_select)) > 0:
@@ -1314,7 +1412,7 @@ class NON_FUNCTION(unittest.TestCase):
             wait_visible(driver, content)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
-
+            wait_ethernet_available()
             check_login_page = len(driver.find_elements_by_css_selector(lg_page)) > 0
 
             list_actual4 = [check_login_page]
@@ -1340,7 +1438,9 @@ class NON_FUNCTION(unittest.TestCase):
             call_api_login_old_firmware(user_request, pass_word)
             user_request = get_config('ACCOUNT', 'user')
             pass_word = get_config('ACCOUNT', 'password')
-            time.sleep(1)
+            time.sleep(20)
+
+            wait_ethernet_available()
             driver.get(url_login)
             time.sleep(2)
             driver.find_element_by_css_selector(el_lg_user_down_firm).send_keys(user_request)
@@ -1359,18 +1459,18 @@ class NON_FUNCTION(unittest.TestCase):
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Login again. Check firmware version end with {expected_firmware_40012}. '
+                f'[Pass] 5. Login again. Check firmware version end with {expected_firmware_30005}. '
                 f'Actual: {str(list_actual5)}. '
                 f'Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 5. Login again. Check firmware version end with {expected_firmware_40012}. '
+                f'[Fail] 5. Login again. Check firmware version end with {expected_firmware_30005}. '
                 f'Actual: {str(list_actual5)}. '
                 f'Expected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong')
-
+        detect_firmware_version(driver)
         self.assertListEqual(list_step_fail, [])
 
     def test_51_MAIN_System_Router_mode_Check_the_exception_message_when_firmware_update(self):
@@ -1379,7 +1479,7 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        factory_dut()
+        # factory_dut()
         # ======================================
         firmware_40011 = 't5_t7_t9_fullimage_4.00.11_rev25.img'
         firmware_30012 = 't10x_fullimage_3.00.12_rev11.img'
@@ -1388,6 +1488,8 @@ class NON_FUNCTION(unittest.TestCase):
         detect_firmware_version(driver)
         wait_ethernet_available()
         try:
+            time.sleep(20)
+            wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
             driver.find_element_by_css_selector(system_btn).click()
@@ -1413,11 +1515,12 @@ class NON_FUNCTION(unittest.TestCase):
             list_step_fail.append('1. Assertion wong')
 
         try:
+            time.sleep(5)
             os.chdir(files_path)
             no_format_path = os.path.join(os.getcwd(), file_no_format)
             driver.find_element_by_css_selector(ele_choose_firmware_file).send_keys(no_format_path)
             # Check firmware btn activated
-
+            time.sleep(1)
             error_warning = driver.find_element_by_css_selector(err_dialog_msg_cls).text
             driver.find_element_by_css_selector(btn_ok).click()
 
@@ -1437,11 +1540,12 @@ class NON_FUNCTION(unittest.TestCase):
             list_step_fail.append('2. Assertion wong')
 
         try:
+            time.sleep(2)
             os.chdir(files_path)
             firmware_40011_path = os.path.join(os.getcwd(), firmware_40011)
             driver.find_element_by_css_selector(ele_choose_firmware_file).send_keys(firmware_40011_path)
             # Check firmware btn activated
-
+            time.sleep(0.5)
             manual_update_value = driver.find_element_by_css_selector(el_firmware_manual_box_value).text
 
             driver.find_element_by_css_selector(apply).click()
@@ -1455,12 +1559,14 @@ class NON_FUNCTION(unittest.TestCase):
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.5)
-            wait_ethernet_available()
-            wait_visible(driver, dialog_content)
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(5)
+            wait_popup_disappear(driver, icon_loading)
+
             cpt_popup_msg = driver.find_element_by_css_selector(complete_dialog_msg).text
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(1)
+            time.sleep(2)
+
             popup = driver.find_element_by_css_selector(dialog_content)
             popup_title2 = popup.find_element_by_css_selector(ele_check_for_update_title).text
 
@@ -1480,6 +1586,7 @@ class NON_FUNCTION(unittest.TestCase):
             list_step_fail.append('3. Assertion wong')
 
         try:
+            time.sleep(2)
             os.chdir(files_path)
             firmware_40012_path = os.path.join(os.getcwd(), firmware_40012)
             driver.find_element_by_css_selector(ele_choose_firmware_file).send_keys(firmware_40012_path)
@@ -1494,13 +1601,17 @@ class NON_FUNCTION(unittest.TestCase):
             time.sleep(0.5)
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(0.5)
+            time.sleep(30)
             wait_popup_disappear(driver, dialog_loading)
-            wait_ethernet_available()
+            wait_popup_disappear(driver, icon_loading)
             wait_visible(driver, content)
+            wait_popup_disappear(driver, icon_loading)
+            wait_ethernet_available()
+            time.sleep(5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
-
+            wait_ethernet_available()
+            grand_login(driver)
             firmware_version = driver.find_element_by_css_selector(ele_home_info_firm_version).text
             check_firmware = True if firmware_version.endswith(expected_firmware_40012) else False
 
@@ -1520,7 +1631,7 @@ class NON_FUNCTION(unittest.TestCase):
                 f'Expected: {str(list_expected4)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong')
-        detect_firmware_version(driver)
+        change_firmware_version(driver)
         self.assertListEqual(list_step_fail, [])
 
     def test_84_MAIN_Verification_of_Bridge_mode_Menu_Tree(self):
@@ -1533,6 +1644,8 @@ class NON_FUNCTION(unittest.TestCase):
         detect_firmware_version(driver)
         wait_ethernet_available()
         try:
+            time.sleep(20)
+            wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
 
@@ -1691,8 +1804,9 @@ class NON_FUNCTION(unittest.TestCase):
         url_login = get_config('URL', 'url')
         user_request = get_config('ACCOUNT', 'user')
         pass_word = get_config('ACCOUNT', 'password')
-
+        factory_dut()
         detect_firmware_version(driver)
+        wait_ethernet_available()
 
         grand_login(driver)
         time.sleep(1)
@@ -1720,9 +1834,12 @@ class NON_FUNCTION(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             # wait_ping('dearmyextender.net')
             time.sleep(3)
+            wait_ethernet_available()
             save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
         # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
+            time.sleep(20)
+            wait_ethernet_available()
             # Get and write URL
             driver.get(url_login)
             wait_popup_disappear(driver, dialog_loading)
@@ -1805,10 +1922,7 @@ class NON_FUNCTION(unittest.TestCase):
 
             check_connected_2g_name = current_connected_wifi()
 
-            time.sleep(15)
-            driver.get(url_login)
-            time.sleep(2)
-            check_lg_page_2g = len(driver.find_elements_by_css_selector(lg_page)) > 0
+            check_lg_page_2g = check_connect_to_web_admin_page()
 
             list_actual5 = [check_connected_2g_name, check_lg_page_2g]
             list_expected5 = [wifi_name_2g, return_true]
@@ -1829,13 +1943,10 @@ class NON_FUNCTION(unittest.TestCase):
             connect_wifi_by_command(wifi_name_5g, wifi_pw_5g)
             time.sleep(10)
 
-            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+            # os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(3)
             check_connected_5g_name = current_connected_wifi()
-            time.sleep(15)
-            driver.get(url_login)
-            time.sleep(2)
-            check_lg_page_5g = len(driver.find_elements_by_css_selector(lg_page)) > 0
+            check_lg_page_5g = check_connect_to_web_admin_page()
 
             list_actual6 = [check_connected_5g_name, check_lg_page_5g]
             list_expected6 = [wifi_name_5g, return_true]
@@ -1862,95 +1973,7 @@ class NON_FUNCTION(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_45_HOME_Verification_of_Network_Map_WAN_information(self):
-        self.key = 'HOME_45'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-        factory_dut()
-        detect_firmware_version(driver)
 
-        grand_login(driver)
-        time.sleep(1)
-        goto_menu(driver, network_tab, network_operationmode_tab)
-        # Click to Bridge mode
-        if not driver.find_element_by_css_selector(ele_bridge_mode_input).is_selected():
-            driver.find_element_by_css_selector(ele_select_bridge_mode).click()
-            time.sleep(0.5)
-            driver.find_element_by_css_selector(apply).click()
-            time.sleep(0.5)
-            driver.find_element_by_css_selector(btn_ok).click()
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            wait_popup_disappear(driver, dialog_loading)
-
-            time.sleep(3)
-            save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
-        wait_ethernet_available()
-        # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
-        try:
-            grand_login(driver)
-            time.sleep(2)
-            policy_popup = len(driver.find_elements_by_css_selector(lg_privacy_policy_pop)) > 0
-            welcome_popup = len(driver.find_elements_by_css_selector(lg_welcome_header)) > 0
-            home_view = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
-
-            check_tab_true = False
-            if any([policy_popup, welcome_popup, home_view]):
-                check_tab_true = True
-
-            list_actual1 = [check_tab_true]
-            list_expected1 = [return_true]
-            check = assert_list(list_actual1, list_expected1)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                f'[Pass] 1. Login Web UI successfully. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
-        except:
-            self.list_steps.append(
-                f'[Fail] 1. Login Web UI successfully. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
-            list_step_fail.append('1. Assertion wong')
-
-        try:
-            driver.find_element_by_css_selector(home_img_connection).click()
-            time.sleep(1)
-            check_bridge_mode = driver.find_element_by_css_selector(home_connection_mode).text
-            check_ip_assigned = driver.find_element_by_css_selector(home_conection_img_wan_ip).text != '0.0.0.0'
-
-            wan_card = driver.find_elements_by_css_selector(ele_wan_block)[0]
-            list_label = [i.text for i in wan_card.find_elements_by_css_selector(label_name_in_2g)]
-
-            expected_label = ['Connection Status',
-                              'Connection Type',
-                              'IP Address',
-                              'Subnet Mask',
-                              'Gateway',
-                              'DNS Server 1',
-                              'DNS Server 2',
-                              'MAC Address']
-
-            list_actual2 = [check_bridge_mode, check_ip_assigned, list_label]
-            list_expected2 = ['Bridge Mode', return_true, expected_label]
-            check = assert_list(list_actual2, list_expected2)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                f'[Pass] 2. Check Bridge Mode, IP address assigned different 0.0.0.0. '
-                f'Check list label displayed. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                f'[Fail] 2. Check Bridge Mode, IP address assigned different 0.0.0.0. '
-                f'Check list label displayed. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
-            list_step_fail.append('2. Assertion wong.')
-            self.list_steps.append('[END TC]')
-
-        self.assertListEqual(list_step_fail, [])
 
     def test_65_MAIN_System_Verification_of_Restart_Factory_Reset_operation(self):
         self.key = 'MAIN_65'
@@ -1965,6 +1988,8 @@ class NON_FUNCTION(unittest.TestCase):
         SSID_2G_NEW = get_config('MAIN', 'main65_ssid_2g_new', input_data_path)
         WL_PW_2G = get_config('MAIN', 'main65_wl_pw_2g', input_data_path)
         try:
+            time.sleep(20)
+            wait_ethernet_available()
             grand_login(driver)
             # Change login password
             system_button = driver.find_element_by_css_selector(system_btn)

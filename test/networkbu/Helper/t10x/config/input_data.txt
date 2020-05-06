@@ -7,24 +7,21 @@ youtube_url = http://youtube.com
 url = http://dearmyrouter.net
 user = admin
 pw = abc123
-
 repeater_model = HUMAX_T10X
 repeater_name = wifi_upper_16_2G!
 repeater_pw = humax_0001
 repeater_name_5g = wifi_upper_16_5G!
 repeater_pw_5g = humax_0001
-
+third_party_login_user = admin
+third_party_login_pw = abc123
 third_party_name = wifi_third_party_2G
 third_party_pw = 12344321
 third_party_name_5g = wifi_third_party_5G
 third_party_pw_5g = 12344321
 
-
-
 [PPPOE]
 pppoe_user = admin
 pppoe_pw = 12345
-
 
 [MAIN]
 main5_set_language_1 = English
@@ -41,7 +38,7 @@ main_31_new_pw_1 = abc000
 main_31_new_pw_2 = abc123
 main35_new_pw = abc321
 main36_ssid_wifi_4 = (!@#^&*()+_-={}[]|:.?~`$%\;'"<>,/)
-main36_ssid_wifi_5_1 =     123
+main36_ssid_wifi_5_1 = 123
 main36_ssid_wifi_5_3 = abc123!@#$1234567890123456789012
 main36_password_4 = abc000
 main36_password_5_1 = abc111
@@ -64,13 +61,11 @@ main61_wrong_pw = wrong123
 main61_new_pw = 1234abcd
 main61_retype_new_pw = abcd1234
 
-
 [SECURITY]
 security4_social_nw = Social Network
 security4_user_define = User Define
 security4_facebook = facebook
 security4_google = google.com
-
 
 [ADVANCED]
 advanced26_mac = 12:34:56:78:AB:CD
@@ -90,13 +85,11 @@ ms04_file_9 = network_file_9
 ms08_test_string = 0123456789aaabbAAABB!@#$%^&*()_+
 ms10_desc_3 = 123!@ abcd #^&*
 
-
 [NON_FUNCTION]
 nf_ping_time = 60
 nf_ping_address = 8.8.8.8
 nf_ping_youtube = youtube.com
 nf_youtube_url = https://www.youtube.com/watch?v=e6iGJIYUroo
-
 
 [NETWORK]
 nw24_reserved_ip = 192.168.1.15
@@ -116,9 +109,8 @@ nw28_step4_ip_address = 192.168.1.90
 nw_51_new_ssid_2g = Wireless Network Name 2G
 nw_51_new_ssid_5g = Wireless Network Name 5G
 
-
 [WIRELESS]
-wl02_ssid_name =  123!@ abcd #^&*()+_-={}[]|456:78
+wl02_ssid_name = 123!@ abcd #^&*()+_-={}[]|456:78
 wl04_security_type = WPA2-PSK
 wl04_pw_3 = 12345
 wl04_pw_4 = 123!@ abcd #^*()+_-={}[]|456:789.?`$%\;,/123!@ abcd #^*()+_-={}[]|456:789.?`$%\,/
@@ -126,7 +118,6 @@ wl05_google_url = http://google.com
 wl05_security_type = WPA2/WPA-PSK
 wl05_pw_3 = 12345
 wl05_pw_4 = 123!@ abcd #^*()+_-={}[]|456:789.?`$%\;,/123!@ abcd #^*()+_-={}[]|456:789.?`$%\,/
-
 wl08_google_url = http://google.com
 wl08_security_type = WEP
 wl08_encryption_type = WEP64
@@ -135,7 +126,6 @@ wl08_key_type_2 = Hexadecimal
 wl08_pw_3 = 123
 wl08_pw_4 = 123@!12
 wl08_pw_5 = @!a1b2c3d4e5@!
-
 wl07_google_url = http://google.com
 wl07_security_type = WEP
 wl07_encryption_type = WEP128
@@ -144,19 +134,15 @@ wl07_key_type_2 = Hexadecimal
 wl07_pw_3 = 123
 wl07_pw_4 = 123!@aA123@!aA1
 wl07_pw_5 = 1234567890aaaaaAAAAA123aaabbb
-
 wl16_ssid_test = 1234567890aaaaaaaaaA!@#$%^_*()123
-
 wl19_google_url = http://google.com
 wl19_security_type = WPA2-PSK
 wl19_pw_short = 123$%
 wl19_pw_long = 123!@ abcd #^*()+_-={}[]|456:789.?`$%,/123!@ abcd #^*()+_-={}[]|456:789.?`$%,/
-
 wl20_google_url = http://google.com
 wl20_security_type = WPA2/WPA-PSK
 wl20_pw_short = 123$%
 wl20_pw_long = 123!@ abcd #^*()+_-={}[]|456:789.?`$%,/123!@ abcd #^*()+_-={}[]|456:789.?`$%20
-
 wl23_google_url = http://google.com
 wl23_security_type = WEP
 wl23_encryption_type = WEP64
@@ -165,7 +151,6 @@ wl23_key_type_2 = Hexadecimal
 wl23_pw_3 = 123
 wl23_pw_4 = 123@!12
 wl23_pw_5 = @!a1b2c3d4e5@!
-
 wl24_google_url = http://google.com
 wl24_security_type = WEP
 wl24_encryption_type = WEP128
@@ -174,5 +159,5 @@ wl24_key_type_2 = Hexadecimal
 wl24_pw_3 = 123
 wl24_pw_4 = 123!@aA123@!aA1
 wl24_pw_5 = 1234567890aaaaaAAAAA123aaabbb
-
 wl36_pw = 123@!12
+

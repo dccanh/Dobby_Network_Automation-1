@@ -39,6 +39,10 @@ class NETWORK(unittest.TestCase):
             # Connect by LAN again
             os.system('netsh wlan disconnect')
             time.sleep(1)
+        save_duration_time(test_case_key=self.key,
+                           test_case_name=self.def_name,
+                           test_case_steps=self.list_steps,
+                           start_time=self.start_time)
         write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         # write_to_excel_tmp(self.key, self.list_steps, self.def_name)
         self.driver.quit()
@@ -2838,10 +2842,11 @@ class NETWORK(unittest.TestCase):
 
             time.sleep(0.2)
             reserved_ip_block.find_element_by_css_selector(apply).click()
-            time.sleep(1)
+            time.sleep(0.5)
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
-
+            time.sleep(1)
             # Get info of first row
             first_row = reserved_ip_block.find_elements_by_css_selector(rows)[0]
             mac_address = first_row.find_element_by_css_selector(mac_desc_cls).text
@@ -3117,10 +3122,12 @@ class NETWORK(unittest.TestCase):
         grand_login(driver)
         time.sleep(2)
         goto_menu(driver, network_tab, network_operationmode_tab)
-        connect_repeater_mode(driver)
+        connect_repeater_mode(driver, force=True)
         # ===========================================================
 
         try:
+            time.sleep(20)
+            wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
             # Check Home screen displayed
@@ -3231,8 +3238,6 @@ class NETWORK(unittest.TestCase):
         # ===========================================================
         disconnect_or_connect_wan(disconnected=True)
         factory_dut()
-
-
         # ======================================================
         REPEATER_MESH_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
         REPEATER_MESH_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
@@ -3305,6 +3310,7 @@ class NETWORK(unittest.TestCase):
 
         try:
             time.sleep(5)
+            wait_popup_disappear(dialog_loading)
             _rows = driver.find_elements_by_css_selector(rows)
             # Choose Network name
             for r in _rows:
@@ -3337,19 +3343,17 @@ class NETWORK(unittest.TestCase):
             driver.find_element_by_css_selector(welcome_let_go_btn).click()
             time.sleep(100)
             wait_popup_disappear(driver, icon_loading)
+            wait_ethernet_available()
             save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD)
             save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
             time.sleep(5)
-            connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
-            driver.refresh()
-
-
+            # connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
             time.sleep(10)
+            wait_ethernet_available()
             grand_login(driver)
             wait_popup_disappear(driver, dialog_loading)
             check_home_page = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
             check_google = check_connect_to_google()
-
 
             list_actual3 = [check_home_page, check_google]
             list_expected3 = [return_true] * 2
@@ -3379,7 +3383,7 @@ class NETWORK(unittest.TestCase):
                 if l.text == 'Security':
                     nw_security = v.text
                     break
-
+            time.sleep(2)
             list_actual6 = [nw_name_value, nw_security]
             list_expected6 = [REPEATER_MESH_NAME, get_security]
             check = assert_list(list_actual6, list_expected6)
@@ -3908,6 +3912,7 @@ class NETWORK(unittest.TestCase):
         time.sleep(2)
         goto_menu(driver, network_tab, network_operationmode_tab)
         connect_repeater_mode(driver)
+        wait_ethernet_available()
         #
         REPEATER_MESH_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
         REPEATER_MESH_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
@@ -3916,6 +3921,7 @@ class NETWORK(unittest.TestCase):
         USER_UPPER = get_config('REPEATER', 'user', input_data_path)
         PW_UPPER = get_config('REPEATER', 'pw', input_data_path)
         #
+        wait_ethernet_available()
         grand_login(driver, URL_UPPER, USER_UPPER, PW_UPPER)
         goto_menu(driver, wireless_tab, wireless_guestnetwork_tab)
         wait_popup_disappear(driver, dialog_loading)
@@ -3930,7 +3936,7 @@ class NETWORK(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(0.5)
 
-
+        wait_ethernet_available()
         block_2g.find_element_by_css_selector(add_class).click()
         time.sleep(0.5)
         # Check Default Value
@@ -3940,16 +3946,17 @@ class NETWORK(unittest.TestCase):
         PW_NEW_WIFI = '12345'
         edit_2g_block = driver.find_elements_by_css_selector(wl_primary_card)[0]
         edit_2g_block.find_element_by_css_selector(ele_input_pw).send_keys(PW_NEW_WIFI)
-
+        wait_ethernet_available()
         # Apply
         edit_2g_block.find_element_by_css_selector(apply).click()
         wait_popup_disappear(driver, dialog_loading)
-
+        wait_ethernet_available()
         # ===========================================================
 
         try:
-            os.system(f'netsh wlan delete profile name="{REPEATER_MESH_NAME}"')
-            time.sleep(5)
+            os.system(f'netsh wlan delete profile name=*')
+            time.sleep(20)
+            wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
             goto_menu(driver, network_tab, network_operationmode_tab)
@@ -4126,7 +4133,7 @@ class NETWORK(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             scan_table = scan_wifi_repeater_mode_table(driver)
-
+            wait_ethernet_available()
             check_result_6 = True
             for r in scan_table:
                 if wl_2g_ssid == r[0].strip():
@@ -4174,9 +4181,11 @@ class NETWORK(unittest.TestCase):
         PW_UPPER = get_config('REPEATER', 'pw', input_data_path)
         wait_ethernet_available()
         time.sleep(5)
-        os.system(f'netsh wlan delete profile name="{REPEATER_MESH_NAME}"')
+        os.system(f'netsh wlan delete profile name=*')
         time.sleep(5)
         #
+        time.sleep(20)
+        wait_ethernet_available()
         grand_login(driver, URL_UPPER, USER_UPPER, PW_UPPER)
         goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
         wait_popup_disappear(driver, dialog_loading)
@@ -4190,22 +4199,27 @@ class NETWORK(unittest.TestCase):
         if block_2g.find_element_by_css_selector(apply).is_displayed():
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
-
+        wait_ethernet_available()
         block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
         wl_5g_ssid = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
         wireless_change_choose_option(block_5g, secure_value_field, 'WPA2/WPA-PSK')
         wireless_change_choose_option(block_5g, encryption_value_field, 'AES')
         wl_5g_pw = wireless_check_pw_eye(driver, block_5g, change_pw=True, new_pw=REPEATER_MESH_PW)
         # Apply
+        wait_ethernet_available()
         if block_5g.find_element_by_css_selector(apply).is_displayed():
             block_5g.find_element_by_css_selector(apply).click()
+            wait_ethernet_available()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
+            wait_ethernet_available()
         # ===========================================================
 
         try:
-
+            time.sleep(30)
             wait_ethernet_available()
             time.sleep(5)
             grand_login(driver)
@@ -4236,11 +4250,8 @@ class NETWORK(unittest.TestCase):
             time.sleep(1)
             wait_popup_disappear(driver, icon_loading)
             wait_visible(driver, lg_page)
-            os.system('ipconfig/release')
-            time.sleep(5)
-            os.system('ipconfig/renew')
             time.sleep(20)
-
+            wait_ethernet_available()
             check_connect_web_2 = check_connect_to_web_admin_page()
             check_connect_google_2 = check_connect_to_google()
             # print(requests.get('http://dearmyextender.net').status_code)
@@ -4264,6 +4275,7 @@ class NETWORK(unittest.TestCase):
             list_step_fail.append('1, 2. Assertion wong')
 
         try:
+            time.sleep(30)
             wait_ethernet_available()
             time.sleep(5)
             grand_login(driver)
@@ -4294,11 +4306,8 @@ class NETWORK(unittest.TestCase):
             time.sleep(1)
             wait_popup_disappear(driver, icon_loading)
             wait_visible(driver, lg_page)
-            time.sleep(10)
-            os.system('ipconfig/release')
-            time.sleep(5)
-            os.system('ipconfig/renew')
             time.sleep(20)
+            wait_ethernet_available()
             # check_connect_web_5 = requests.get('http://dearmyextender.net').status_code
             # check_connect_google_5 = requests.get('http://google.com').status_code
             check_connect_web_5 = check_connect_to_web_admin_page()
@@ -4347,6 +4356,8 @@ class NETWORK(unittest.TestCase):
         PW_UPPER = get_config('REPEATER', 'pw', input_data_path)
 
         #
+        time.sleep(20)
+        wait_ethernet_available()
         grand_login(driver, URL_UPPER, USER_UPPER, PW_UPPER)
         goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
         wait_popup_disappear(driver, dialog_loading)
@@ -4360,23 +4371,29 @@ class NETWORK(unittest.TestCase):
         if block_2g.find_element_by_css_selector(apply).is_displayed():
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
-
+        wait_ethernet_available()
         block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
         wl_5g_ssid = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
         wireless_change_choose_option(block_5g, secure_value_field, 'WPA2-PSK')
         wireless_change_choose_option(block_5g, encryption_value_field, 'AES')
         wl_5g_pw = wireless_check_pw_eye(driver, block_5g, change_pw=True, new_pw=REPEATER_MESH_PW)
         # Apply
+        wait_ethernet_available()
         if block_5g.find_element_by_css_selector(apply).is_displayed():
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            wait_ethernet_available()
             driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            wait_ethernet_available()
         # ===========================================================
 
         try:
-            os.system(f'netsh wlan delete profile name="{REPEATER_MESH_NAME}"')
-            time.sleep(5)
+            wait_ethernet_available()
+            os.system(f'netsh wlan delete profile name=*')
+            time.sleep(20)
             wait_ethernet_available()
             time.sleep(5)
             grand_login(driver)
@@ -4432,6 +4449,7 @@ class NETWORK(unittest.TestCase):
             list_step_fail.append('1, 2. Assertion wong')
 
         try:
+            time.sleep(30)
             wait_ethernet_available()
             time.sleep(5)
             grand_login(driver)
@@ -4515,8 +4533,9 @@ class NETWORK(unittest.TestCase):
         URL_UPPER = get_config('REPEATER', 'url', input_data_path)
         USER_UPPER = get_config('REPEATER', 'user', input_data_path)
         PW_UPPER = get_config('REPEATER', 'pw', input_data_path)
-        os.system(f'netsh wlan delete profile name="{REPEATER_MESH_NAME}"')
+        os.system(f'netsh wlan delete profile name=*')
         time.sleep(10)
+        wait_ethernet_available()
         #
         grand_login(driver, URL_UPPER, USER_UPPER, PW_UPPER)
         goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
@@ -4534,25 +4553,24 @@ class NETWORK(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.5)
-
+        wait_ethernet_available()
         block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
         wl_5g_ssid = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
         wireless_change_choose_option(block_5g, secure_value_field, 'NONE')
-        # wireless_change_choose_option(block_5g, encryption_value_field, 'AES')
-        # wl_5g_pw = wireless_check_pw_eye(driver, block_5g, change_pw=False)
-        # Apply
+        wait_ethernet_available()
         if block_5g.find_element_by_css_selector(apply).is_displayed():
             block_5g.find_element_by_css_selector(apply).click()
+            wait_ethernet_available()
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.5)
-
+            wait_ethernet_available()
         # ===========================================================
 
         try:
+            time.sleep(20)
             wait_ethernet_available()
-            time.sleep(10)
             grand_login(driver)
             time.sleep(1)
             goto_menu(driver, network_tab, network_operationmode_tab)
@@ -4608,8 +4626,8 @@ class NETWORK(unittest.TestCase):
             list_step_fail.append('1, 2. Assertion wong')
 
         try:
+            time.sleep(20)
             wait_ethernet_available()
-            time.sleep(10)
             grand_login(driver)
             time.sleep(1)
             goto_menu(driver, network_tab, network_operationmode_tab)
@@ -4638,13 +4656,9 @@ class NETWORK(unittest.TestCase):
             time.sleep(1)
             wait_popup_disappear(driver, icon_loading)
             wait_visible(driver, lg_page)
-            time.sleep(10)
-            wait_ethernet_available()
-            time.sleep(10)
-            time.sleep(5)
             time.sleep(20)
-            # check_connect_web_5 = requests.get('http://dearmyextender.net').status_code
-            # check_connect_google_5 = requests.get('http://google.com').status_code
+            wait_ethernet_available()
+
             check_connect_web_5 = check_connect_to_web_admin_page()
             check_connect_google_5 = check_connect_to_google()
             list_actual3 = [check_connect_web_5, check_connect_google_5]
