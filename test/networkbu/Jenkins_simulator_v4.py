@@ -1096,8 +1096,8 @@ def factory_bar(factory_time=FACTORY_TIME):
 
 def factory():
     os.system('netsh wlan disconnect')
-    # theadFactoryCommand = threading.Thread(target=lambda: factory_dut())
-    # theadFactoryCommand.start()
+    theadFactoryCommand = threading.Thread(target=lambda: factory_dut())
+    theadFactoryCommand.start()
     theadFactoryBar = threading.Thread(target=lambda: factory_bar())
     theadFactoryBar.start()
 

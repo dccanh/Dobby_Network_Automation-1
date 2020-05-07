@@ -2261,6 +2261,15 @@ class NON_FUNCTION(unittest.TestCase):
             list_step_fail.append('8. Assertion wong')
 
         try:
+            wait_ethernet_available()
+
+            filename_2 = 'account2.txt'
+            command_2 = 'capitest get Device.Users.User.2. leaf'
+            run_cmd(command_2, filename_2)
+            time.sleep(10)
+            url_login = get_config('URL', 'url')
+            get_result_command_from_server_api(url_login, filename_2)
+            wait_ethernet_available()
             grand_login(driver)
             # Wireless > Primary Network
             goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
@@ -2304,6 +2313,131 @@ class NON_FUNCTION(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
+    def test_R_59_MAIN_System_Extender_mode_Check_firmware_upgrade_when_disconnected_internet(self):
+        self.key = 'MAIN_59'
+        driver = self.driver
+        self.def_name = get_func_name()
+        list_step_fail = []
+        self.list_steps = []
+        # save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+        # ===========================================================
+        detect_firmware_version(driver)
+        time.sleep(10)
+        wait_ethernet_available()
+        grand_login(driver)
+        time.sleep(2)
+        goto_menu(driver, network_tab, network_operationmode_tab)
+        time.sleep(2)
+        connect_repeater_mode(driver, force=True)
+        # ===========================================================
+
+        try:
+            # URL_LOGIN = get_config('URL', 'url')
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            # Call API disconnect WAN
+            URL_DISCONNECT_WAN = 'http://192.168.1.1' + '/api/v1/network/wan/0/disconnect'
+            _METHOD = 'POST'
+            _TOKEN = call_api_login(_USER, _PW, url='http://dearmyrouter.net')["accessToken"]
+            _BODY = ''
+
+            # res_data = call_api(URL_DISCONNECT_WAN, _METHOD, _BODY, _TOKEN)
+            headers = {
+                "content-type": "application/json",
+                "content-language": "en",
+                "access-token": _TOKEN
+            }
+            res_data = send_request(URL_DISCONNECT_WAN, _METHOD, headers, _BODY)
+            time.sleep(300)
+            list_actual0 = [res_data.status_code]
+            list_expected0 = [200]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'API Disconnect WAN Success. Check Status code. ')
+        except:
+            self.list_steps.append(
+                f'Disconnect WAN Fail. Check Status code. ')
+            list_step_fail.append('0. Assertion wong')
+
+        try:
+            time.sleep(20)
+            wait_ethernet_available()
+            grand_login(driver)
+            time.sleep(1)
+
+            # System > Firmware
+            driver.find_element_by_css_selector(system_btn).click()
+            time.sleep(0.2)
+            driver.find_element_by_css_selector(ele_sys_firmware_update).click()
+            time.sleep(1)
+
+            # Check pop up firmware update display
+            check_pop_firmware_display = driver.find_element_by_css_selector(ele_check_for_update_title).text
+
+            list_actual1 = [check_pop_firmware_display]
+            list_expected1 = ['Firmware Update']
+            check = assert_list(list_actual1, list_expected1)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                '[Pass] 1. Login > System > Firmware. Check name of popup displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login > System > Firmware. Check name of popup displayed. '
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
+            list_step_fail.append('1. Assertion wong')
+
+        try:
+            message = driver.find_element_by_css_selector(ele_firm_update_msg).text
+
+            list_actual2 = [message]
+            list_expected2 = ['Internet disconnected']
+            check = assert_list(list_actual2, list_expected2)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 2. Check Message shown in pop up firmware update. '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+        except:
+            self.list_steps.append(
+                f'[Fail] 2. Check Message shown in pop up firmware update '
+                f'Actual: {str(list_actual2)}. '
+                f'Expected: {str(list_expected2)}')
+            self.list_steps.append('[END TC]')
+            list_step_fail.append(f'[Fail] 2. Check Message shown in pop up firmware update '
+                                  f'Actual: {str(list_actual2)}. '
+                                  f'Expected: {str(list_expected2)}')
+
+        try:
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
+            # Call API disconnect WAN
+            URL_DISCONNECT_WAN = 'http://192.168.1.1' + '/api/v1/network/wan/0/disconnect'
+            _METHOD = 'POST'
+            _TOKEN = call_api_login(_USER, _PW, url='http://dearmyrouter.net')["accessToken"]
+            _BODY = ''
+            headers = {
+                "content-type": "application/json",
+                "content-language": "en",
+                "access-token": _TOKEN
+            }
+            res_data = send_request(URL_DISCONNECT_WAN, _METHOD, headers, _BODY)
+            time.sleep(300)
+            list_actual0 = [res_data.status_code]
+            list_expected0 = [200]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'API Connect WAN Success After test. Check Status code. ')
+        except:
+            self.list_steps.append(
+                f'Connect WAN Fail After test. Check Status code. ')
+
+        self.assertListEqual(list_step_fail, [])
 
     def test_14_MAIN_Verify_the_time_out_operation(self):
         self.key = 'MAIN_14'
@@ -2375,5 +2509,7 @@ class NON_FUNCTION(unittest.TestCase):
             self.list_steps.append('[END TC]')
             list_step_fail.append('2. Assertion wong')
         self.assertListEqual(list_step_fail, [])
+
+
 if __name__ == '__main__':
     unittest.main()

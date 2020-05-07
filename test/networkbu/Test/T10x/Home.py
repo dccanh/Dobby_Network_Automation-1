@@ -1647,18 +1647,19 @@ class HOME(unittest.TestCase):
         except:
             os.system('pip install selenium-wire')
             from seleniumwire import webdriver
-        driver2 = webdriver.Chrome(driver_path)  # open chrome
-        driver2.maximize_window()
+        driver3 = webdriver.Chrome(driver_path)  # open chrome
+        driver3.maximize_window()
         try:
-            grand_login(driver2)
+            grand_login(driver3)
             time.sleep(1)
             # CLick Wireless Image
-            driver2.find_element_by_css_selector(home_img_lan_connection).click()
+            driver3.find_element_by_css_selector(home_img_lan_connection).click()
             time.sleep(2)
-            cpu_block = driver2.find_element_by_css_selector(ele_cpu_card)
+            cpu_block = driver3.find_element_by_css_selector(ele_cpu_card)
             cpu_core_1_label = cpu_block.find_element_by_css_selector('.text-1').text
             cpu_core_2_label = cpu_block.find_element_by_css_selector('.text-2').text
             cpu_chart_displayed = len(cpu_block.find_elements_by_css_selector('#cpu-chart')) > 0
+            time.sleep(2)
             # Get information API
             URL_LOGIN = get_config('URL', 'url')
             _URL_API = URL_LOGIN + '/api/v1/gateway/statuses/cpuUsage'
@@ -1667,7 +1668,7 @@ class HOME(unittest.TestCase):
             _USER = get_config('ACCOUNT', 'user')
             _PW = get_config('ACCOUNT', 'password')
             _TOKEN = get_token(_USER, _PW)
-
+            time.sleep(1)
             res2 = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
             check_has_key = [
                 res2[0].get('name') == 'Core 1',
@@ -1680,7 +1681,6 @@ class HOME(unittest.TestCase):
                             check_has_key]
             list_expected1 = [['Core1', 'Core2', return_true],
                               [return_true] * 4]
-
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -1696,20 +1696,25 @@ class HOME(unittest.TestCase):
 
         try:
             check_request_update = False
-            del driver2.requests
+            time.sleep(1)
+            del driver3.requests
             while True:
-                _tmp_rq = driver2.requests
+                _tmp_rq = driver3.requests
+                print(_tmp_rq)
                 _tmp_rq_path = [r.path for r in _tmp_rq if r.path == _URL_API]
                 if len(_tmp_rq_path) > 0:
                     time.sleep(2)
-                    _tmp_rq_after = driver2.requests
+                    _tmp_rq_after = driver3.requests
+                    print(_tmp_rq_after)
                     _tmp_rq_after_path = [r.path for r in _tmp_rq_after if r.path == _URL_API]
-                    if _tmp_rq_path.count(_URL_API) + 1 == _tmp_rq_after_path.count(_URL_API):
+                    if (_tmp_rq_after_path.count(_URL_API) - _tmp_rq_path.count(_URL_API)) >= 1:
                         check_request_update = True
                     break
-            driver2.quit()
+            time.sleep(1)
             list_actual2 = [check_request_update]
             list_expected2 = [return_true]
+            driver3.quit()
+            time.sleep(1)
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(

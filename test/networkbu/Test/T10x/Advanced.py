@@ -638,111 +638,111 @@ class ADVANCED(unittest.TestCase):
     #         list_step_fail.append('3. Assertion wong.')
     #     self.assertListEqual(list_step_fail, [])
     # OK
-    def test_31_ADVANCED_Confirm_Port_Forwarding_Delete(self):
-        self.key = 'ADVANCED_31'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-
-        URL_LOGIN = get_config('URL', 'url')
-        SERVICE_TEST = 'admin'
-        IP_ADDRESS_TEST = '192.168.1.3'
-        IP_ADDRESS_SPLIT = IP_ADDRESS_TEST.split('.')[-1]
-        START_END_1 = '100 - 200'
-        START_END_1_SPLIT = START_END_1.split(' - ')
-        START_END_2 = '201 - 250'
-        START_END_2_SPLIT = START_END_2.split(' - ')
-        PROTOCOL_TYPE = 'TCP'
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        try:
-            # Login
-            grand_login(driver)
-
-
-            # Goto Advanced > WoL
-            goto_menu(driver, advanced_tab, advanced_portforwarding_tab)
-            wait_popup_disappear(driver, dialog_loading)
-
-            port_forwarding_block = driver.find_element_by_css_selector(port_forwarding_card)
-            if len(port_forwarding_block.find_elements_by_css_selector(rows)) == 0:
-                # Click Add button to change setting
-                port_forwarding_block.find_element_by_css_selector(add_class).click()
-                time.sleep(1)
-                edit_field = port_forwarding_block.find_element_by_css_selector(edit_mode)
-                # Fill Service type
-                service_type = edit_field.find_element_by_css_selector(service_type_cls)
-                service_type.find_element_by_css_selector(input).send_keys(SERVICE_TEST)
-                # IP address
-                ip_address = edit_field.find_element_by_css_selector(ip_address_col_cls)
-                ip_address_box = ip_address.find_element_by_css_selector(input)
-                ActionChains(driver).move_to_element(ip_address_box).click().key_down(Keys.CONTROL+'a').\
-                    key_up(Keys.CONTROL).send_keys(IP_ADDRESS_SPLIT).perform()
-                # Local Port
-                local_port = edit_field.find_element_by_css_selector(local_port_cls)
-                local_port_input = local_port.find_elements_by_css_selector(input)
-                for i, v in zip(local_port_input, START_END_1_SPLIT):
-                    i.clear()
-                    i.send_keys(v)
-                # External Port
-                external_port = edit_field.find_element_by_css_selector(external_port_cls)
-                external_port_input = external_port.find_elements_by_css_selector(input)
-                for i, v in zip(external_port_input, START_END_1_SPLIT):
-                    i.clear()
-                    i.send_keys(v)
-                # Protocol
-                protocol_box = edit_field.find_element_by_css_selector(protocol_col_cls)
-                protocol_box.find_element_by_css_selector(option_select).click()
-                time.sleep(0.2)
-                ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
-                for o in ls_option:
-                    if o.text == PROTOCOL_TYPE:
-                        o.click()
-                        time.sleep(1)
-                        break
-
-                port_forwarding_block.find_element_by_css_selector(btn_save).click()
-                time.sleep(0.5)
-                # Apply
-                port_forwarding_block.find_element_by_css_selector(apply).click()
-                wait_popup_disappear(driver, dialog_loading)
-                driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(1)
-
-            list_rows = port_forwarding_block.find_elements_by_css_selector(rows)
-            before_delete = len(list_rows)
-            random_rows = random.choice(list_rows)
-            # Verify Last row information
-            act_service_type = random_rows.find_element_by_css_selector(service_type_cls).text
-            act_ip_address = random_rows.find_element_by_css_selector(ip_address_col_cls).text
-            act_local_port = random_rows.find_element_by_css_selector(local_port_cls).text
-            act_external_port = random_rows.find_element_by_css_selector(external_port_cls).text
-            act_protocol = random_rows.find_element_by_css_selector(protocol_col_cls).text
-
-            random_rows.find_element_by_css_selector(delete_cls).click()
-            time.sleep(0.5)
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(0.5)
-            wait_popup_disappear(driver, dialog_loading)
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(0.5)
-            after_delete = len(port_forwarding_block.find_elements_by_css_selector(rows))
-            list_actual = [before_delete-1]
-            list_expected = [after_delete]
-            check = assert_list(list_actual, list_expected)
-            self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Delete rule successfully.'
-                                   f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                f'[Fail] 1. Delete rule successfully. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-            self.list_steps.append('[END TC]')
-            list_step_fail.append(
-                '1. Assertion wong.')
-
-        self.assertListEqual(list_step_fail, [])
+    # def test_31_ADVANCED_Confirm_Port_Forwarding_Delete(self):
+    #     self.key = 'ADVANCED_31'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #
+    #     URL_LOGIN = get_config('URL', 'url')
+    #     SERVICE_TEST = 'admin'
+    #     IP_ADDRESS_TEST = '192.168.1.3'
+    #     IP_ADDRESS_SPLIT = IP_ADDRESS_TEST.split('.')[-1]
+    #     START_END_1 = '100 - 200'
+    #     START_END_1_SPLIT = START_END_1.split(' - ')
+    #     START_END_2 = '201 - 250'
+    #     START_END_2_SPLIT = START_END_2.split(' - ')
+    #     PROTOCOL_TYPE = 'TCP'
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         # Login
+    #         grand_login(driver)
+    #
+    #
+    #         # Goto Advanced > WoL
+    #         goto_menu(driver, advanced_tab, advanced_portforwarding_tab)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #
+    #         port_forwarding_block = driver.find_element_by_css_selector(port_forwarding_card)
+    #         if len(port_forwarding_block.find_elements_by_css_selector(rows)) == 0:
+    #             # Click Add button to change setting
+    #             port_forwarding_block.find_element_by_css_selector(add_class).click()
+    #             time.sleep(1)
+    #             edit_field = port_forwarding_block.find_element_by_css_selector(edit_mode)
+    #             # Fill Service type
+    #             service_type = edit_field.find_element_by_css_selector(service_type_cls)
+    #             service_type.find_element_by_css_selector(input).send_keys(SERVICE_TEST)
+    #             # IP address
+    #             ip_address = edit_field.find_element_by_css_selector(ip_address_col_cls)
+    #             ip_address_box = ip_address.find_element_by_css_selector(input)
+    #             ActionChains(driver).move_to_element(ip_address_box).click().key_down(Keys.CONTROL+'a').\
+    #                 key_up(Keys.CONTROL).send_keys(IP_ADDRESS_SPLIT).perform()
+    #             # Local Port
+    #             local_port = edit_field.find_element_by_css_selector(local_port_cls)
+    #             local_port_input = local_port.find_elements_by_css_selector(input)
+    #             for i, v in zip(local_port_input, START_END_1_SPLIT):
+    #                 i.clear()
+    #                 i.send_keys(v)
+    #             # External Port
+    #             external_port = edit_field.find_element_by_css_selector(external_port_cls)
+    #             external_port_input = external_port.find_elements_by_css_selector(input)
+    #             for i, v in zip(external_port_input, START_END_1_SPLIT):
+    #                 i.clear()
+    #                 i.send_keys(v)
+    #             # Protocol
+    #             protocol_box = edit_field.find_element_by_css_selector(protocol_col_cls)
+    #             protocol_box.find_element_by_css_selector(option_select).click()
+    #             time.sleep(0.2)
+    #             ls_option = driver.find_elements_by_css_selector(active_drop_down_values)
+    #             for o in ls_option:
+    #                 if o.text == PROTOCOL_TYPE:
+    #                     o.click()
+    #                     time.sleep(1)
+    #                     break
+    #
+    #             port_forwarding_block.find_element_by_css_selector(btn_save).click()
+    #             time.sleep(0.5)
+    #             # Apply
+    #             port_forwarding_block.find_element_by_css_selector(apply).click()
+    #             wait_popup_disappear(driver, dialog_loading)
+    #             driver.find_element_by_css_selector(btn_ok).click()
+    #             time.sleep(1)
+    #
+    #         list_rows = port_forwarding_block.find_elements_by_css_selector(rows)
+    #         before_delete = len(list_rows)
+    #         random_rows = random.choice(list_rows)
+    #         # Verify Last row information
+    #         act_service_type = random_rows.find_element_by_css_selector(service_type_cls).text
+    #         act_ip_address = random_rows.find_element_by_css_selector(ip_address_col_cls).text
+    #         act_local_port = random_rows.find_element_by_css_selector(local_port_cls).text
+    #         act_external_port = random_rows.find_element_by_css_selector(external_port_cls).text
+    #         act_protocol = random_rows.find_element_by_css_selector(protocol_col_cls).text
+    #
+    #         random_rows.find_element_by_css_selector(delete_cls).click()
+    #         time.sleep(0.5)
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(0.5)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(0.5)
+    #         after_delete = len(port_forwarding_block.find_elements_by_css_selector(rows))
+    #         list_actual = [before_delete-1]
+    #         list_expected = [after_delete]
+    #         check = assert_list(list_actual, list_expected)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append('[Pass] 1. Delete rule successfully.'
+    #                                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] 1. Delete rule successfully. '
+    #             f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append(
+    #             '1. Assertion wong.')
+    #
+    #     self.assertListEqual(list_step_fail, [])
     # OK
     def test_35_ADVANCED_Edit_Confirm_Delete_Port_Triggering(self):
         self.key = 'ADVANCED_35'
