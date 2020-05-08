@@ -41,7 +41,7 @@ class WIRELESS(unittest.TestCase):
             os.system('netsh wlan disconnect')
             time.sleep(1)
         write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        save_duration_time(test_case_key=self.key,
+        save_duration_time(test_case_key=type(self).__name__,
                            test_case_name=self.def_name,
                            test_case_steps=self.list_steps,
                            start_time=self.start_time)
@@ -138,7 +138,7 @@ class WIRELESS(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
+        # factory_dut()
         try:
             grand_login(driver)
             time.sleep(2)
@@ -170,6 +170,7 @@ class WIRELESS(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
         try:
             os.system(f'netsh wlan disconnect')
+            os.system(f'netsh wlan delete profile name=*')
             wireless_change_choose_option(block_2g, secure_value_field, 'NONE')
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
@@ -195,14 +196,17 @@ class WIRELESS(unittest.TestCase):
             time.sleep(5)
             # NONE 2G
             connect_wifi_by_command(wifi_name_2g, '', xml_file=wifi_none_secure_path)
-            time.sleep(2)
+            wait_wifi_available()
             check_none_2g = current_connected_wifi()
+            print(check_none_2g)
             check_none_2g_google = check_connect_to_google()
             # Disconnect
             os.system(f'netsh wlan disconnect')
             time.sleep(2)
             # NONE 5G
-            check_none_5g = connect_wifi_by_command(wifi_name_5g, '', xml_file=wifi_none_secure_path)
+            connect_wifi_by_command(wifi_name_5g, '', xml_file=wifi_none_secure_path)
+            wait_wifi_available()
+            check_none_5g = current_connected_wifi()
             check_none_5g_google = check_connect_to_google()
 
             list_actual3 = [[check_none_2g, check_none_2g_google], [check_none_5g, check_none_5g_google]]
@@ -224,6 +228,7 @@ class WIRELESS(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
         try:
+            os.system(f'netsh wlan delete profile name=*')
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
             time.sleep(10)
             os.system(f'netsh wlan disconnect')
@@ -2938,7 +2943,7 @@ class WIRELESS(unittest.TestCase):
 
             check_title_page = driver.find_element_by_css_selector(ele_title_page).text
             list_actual1 = [check_title_page]
-            list_expected1 = ['Wireless > Primary Network']
+            list_expected1 = ['Wireless > Guest Network']
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -7710,17 +7715,17 @@ class WIRELESS(unittest.TestCase):
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4, 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
+                f'[Pass] 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
                 f'Check can not connect to Wifi '
                 f'Actual: {str(list_actual4)}. '
                 f'Expected: {str(list_expected4)}')
         except:
             self.list_steps.append(
-                f'[Fail] 4, 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
+                f'[Fail] 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
                 f'Check can not connect to Wifi. '
                 f'Actual: {str(list_actual4)}. '
                 f'Expected: {str(list_expected4)}')
-            list_step_fail.append('4, 5. Assertion wong.')
+            list_step_fail.append('5. Assertion wong.')
 
         try:
             os.system('netsh wlan delete profile name=*')

@@ -69,8 +69,11 @@ def write_to_excel(key, list_steps, func_name, duration, time_stamp=0):
         os.system("taskkill /f /im EXCEL.EXE")
 
     excel_file = report_offline_path
+    #
+    # from datetime import datetime
+    # unix_string = datetime.today().strftime('%Y-%m-%d_%H_%M_%S')
+    # customize_report_path = os.path.join(get_config('REPORT', 'report_path'), f"Report_automation_{unix_string}.xlsx")
     wb = openpyxl.load_workbook(excel_file)
-    # wb.active = 2
     ws = wb.active
 
     for i in range(2, ws.max_row + 2):
@@ -99,6 +102,7 @@ def write_to_excel(key, list_steps, func_name, duration, time_stamp=0):
             ws.cell(row=1, column=5).value = get_config('REPORT', 'sheet_name')
             # Save file
             wb.save(excel_file)
+            # wb.save(customize_report_path)
             break
 
 def write_to_excel_tmp(key, list_steps, func_name):
@@ -1124,6 +1128,17 @@ def wait_ethernet_available():
             return False
 
 
+def wait_wifi_available():
+    count = 0
+    while True:
+        time.sleep(1)
+        count += 1
+        res = get_value_from_ipconfig('Wireless LAN adapter Wi-Fi', 'IPv4 Address')
+        if res != 'Block or field error.':
+            return True
+        if (count % 20) == 0:
+            return False
+
 
 def goto_system(driver, element_option):
     driver.find_element_by_css_selector(system_btn).click()
@@ -1652,7 +1667,7 @@ def connect_wifi_by_command(wifi_name, wifi_pw, xml_file=wifi_default_file_path)
     os.system(f'netsh wlan add profile filename="{xml_file}"')
     time.sleep(0.5)
     os.system(f'netsh wlan connect ssid="{wifi_name}" name="{wifi_name}"')
-    time.sleep(15)
+    wait_wifi_available()
     return current_connected_wifi()
 
 
@@ -2097,7 +2112,7 @@ def is_element_displayed(driver_or_parent, element_locator, locator_type=By.CSS_
         return False
 
 def get_part_from_key(key: str = None):
-    list_valid_part = ["MAIN", "HOME", "NETWORK", "WIRELESS", "SECURITY", "ADVANCED", "MEDIA_SHARE", "NON_FUNCTION"]
+    list_valid_part = ["MAIN", "HOME", "NETWORK", "WIRELESS", "SECURITY", "ADVANCED", "MEDIASHARE", "NON_FUNCTION"]
     for part in list_valid_part:
         if key.startswith(part):
             return part

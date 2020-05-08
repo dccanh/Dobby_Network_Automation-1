@@ -40,7 +40,7 @@ class MEDIASHARE(unittest.TestCase):
             os.system('netsh wlan disconnect')
             time.sleep(1)
         write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        save_duration_time(test_case_key=self.key,
+        save_duration_time(test_case_key=type(self).__name__,
                            test_case_name=self.def_name,
                            test_case_steps=self.list_steps,
                            start_time=self.start_time)

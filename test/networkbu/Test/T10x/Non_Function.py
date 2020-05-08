@@ -66,7 +66,7 @@ class NON_FUNCTION(unittest.TestCase):
             os.system('netsh wlan disconnect')
             time.sleep(1)
         write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        save_duration_time(test_case_key=self.key,
+        save_duration_time(test_case_key=type(self).__name__,
                            test_case_name=self.def_name,
                            test_case_steps=self.list_steps,
                            start_time=self.start_time)
@@ -194,26 +194,32 @@ class NON_FUNCTION(unittest.TestCase):
 
         URL_LOGIN = get_config('URL', 'url')
         # ===========================================================
-        factory_dut()
+        # factory_dut()
         # ===========================================================
         PING_ADDRESS = get_config('NON_FUNCTION', 'nf_ping_address', input_data_path)
         PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
         YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
 
         try:
-            new_2g_wf_name = api_change_wifi_setting(URL_2g)
-            time.sleep(10)
-            write_data_to_xml(wifi_default_file_path, new_name=new_2g_wf_name)
-            time.sleep(3)
-            os.system(f'netsh wlan delete profile name="{new_2g_wf_name}"')
-            time.sleep(3)
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
-            time.sleep(5)
-
-            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
-            time.sleep(10)
-
+            grand_login(driver)
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            block2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
+            ssid_2g = wireless_get_default_ssid(block2g, 'Network Name(SSID)')
+            pw_2g = wireless_check_pw_eye(driver, block2g, change_pw=False)
+            # new_2g_wf_name = api_change_wifi_setting(URL_2g)
+            # time.sleep(10)
+            # write_data_to_xml(wifi_default_file_path, new_name=new_2g_wf_name)
+            # time.sleep(3)
+            # os.system(f'netsh wlan delete profile name="{new_2g_wf_name}"')
+            # time.sleep(3)
+            # # Connect Default 2GHz
+            # os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
+            # time.sleep(5)
+            #
+            # os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
+            # time.sleep(10)
+            current_connect = connect_wifi_by_command(ssid_2g, pw_2g)
+            print(current_connect)
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(3)
         except:
@@ -234,7 +240,7 @@ class NON_FUNCTION(unittest.TestCase):
                 time.sleep(2)
                 driver.get(YOUTUBE_URL)
                 time.sleep(5)
-
+                driver.get(YOUTUBE_URL)
                 video_form = len(driver.find_elements_by_css_selector(ele_playing))
 
                 count_video = 0

@@ -1,5 +1,5 @@
 [URL]
-url = http://dearmyextender.net
+url = http://dearmyrouter.net
 sub_url = http://dearmyrouter.net
 
 [ACCOUNT]
@@ -9,13 +9,15 @@ default_pw = 0001
 
 [GENERAL]
 serial_number = 0001
-stage = CL
+stage = d
 version = T10X
 model = HUMAX T10X
 wifi_ssid_2g = We Love You So Much_2G!
 wifi_ssid_5g = We Love You So Much_5G!
 wifi_pw = 1234567890aaaaaAAAAA123aaa
-module = test_78_MAIN_Verify_the_Wireless_hyperlink
+module = MAIN
+abort = 0
+firmware_version = Automation ver 1.0
 
 [CONSOLE]
 serial_port = COM1
@@ -25,5 +27,6 @@ baud_rate = 115200
 parental_code = 1111
 
 [REPORT]
-sheet_name = Cielll_Tue_T10X_2020-04-28 19:46:44
+sheet_name = fgd_T10X_2020-05-08 16:06:44
+report_path = C:/Users/Test/Desktop/New folder
 

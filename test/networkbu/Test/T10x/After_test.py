@@ -1,4 +1,4 @@
-import sys
+import sys, os
 sys.path.append('../../')
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -29,10 +29,14 @@ sheet = client.open("[DOB] Report Automation").worksheet(get_gg_sheet_name)
 table = sheet.get_all_values()
 print(table)
 
+unix_string = datetime.datetime.today().strftime('%Y-%m-%d_%H_%M_%S')
+customize_report_path = os.path.join(get_config('REPORT', 'report_path'), f"Report_automation_{unix_string}.xlsx")
+
 wb = openpyxl.load_workbook('excel_file.xlsx')
 ws = wb.active
+ws.delete_rows(6, ws.max_row)
 for r in range(5, len(table)):
     for c in range(len(table[r])):
         ws.cell(row=r+1, column=c+1).value = table[r][c]
 ws.cell(row=1, column=4).value = get_gg_sheet_name
-wb.save('excel_file.xlsx')
+wb.save(customize_report_path)

@@ -39,12 +39,12 @@ class NETWORK(unittest.TestCase):
             # Connect by LAN again
             os.system('netsh wlan disconnect')
             time.sleep(1)
-        save_duration_time(test_case_key=self.key,
+        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
+        # write_to_excel_tmp(self.key, self.list_steps, self.def_name)
+        save_duration_time(test_case_key=type(self).__name__,
                            test_case_name=self.def_name,
                            test_case_steps=self.list_steps,
                            start_time=self.start_time)
-        write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
-        # write_to_excel_tmp(self.key, self.list_steps, self.def_name)
         self.driver.quit()
 
     def test_01_NETWORK_Check_Internet_Status(self):
