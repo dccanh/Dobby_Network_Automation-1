@@ -7760,6 +7760,7 @@ class MAIN(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         detect_firmware_version(driver)
+        factory_dut()
         # save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
         file_no_format = 'wifi_default_file.xml'
         # ===========================================================

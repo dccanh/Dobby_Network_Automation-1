@@ -1088,6 +1088,7 @@ def factory_bar(factory_time=FACTORY_TIME):
     style.configure("text.Horizontal.TProgressbar", text=f' 100 %')
 
 def factory():
+    save_config(config_path, 'CONSOLE', 'serial_port', cusPort4.get())
     os.system('netsh wlan disconnect')
     interface_connect_disconnect('Ethernet', 'Enable')
     theadFactoryCommand = threading.Thread(target=lambda: factory_dut())
