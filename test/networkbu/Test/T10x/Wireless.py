@@ -141,7 +141,6 @@ class WIRELESS(unittest.TestCase):
         # factory_dut()
         try:
             grand_login(driver)
-            time.sleep(2)
 
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
@@ -171,16 +170,18 @@ class WIRELESS(unittest.TestCase):
         try:
             os.system(f'netsh wlan disconnect')
             os.system(f'netsh wlan delete profile name=*')
+
+            wireless_change_ssid_name(block_2g, "WiFi 2G Name")
             wireless_change_choose_option(block_2g, secure_value_field, 'NONE')
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
-            # block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
-            wifi_name_2g = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
-            # wifi_pw_2g = wireless_check_pw_eye(driver, block_2g, change_pw=False)
 
+            wifi_name_2g = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
+
+            wireless_change_ssid_name(block_5g, "WiFi 5G Name")
             wireless_change_choose_option(block_5g, secure_value_field, 'NONE')
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
@@ -189,7 +190,6 @@ class WIRELESS(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
 
             wifi_name_5g = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
-            # wifi_pw_5g = wireless_check_pw_eye(driver, block_5g, change_pw=False)
 
             # Disconnect
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
@@ -801,7 +801,6 @@ class WIRELESS(unittest.TestCase):
 
         try:
             grand_login(driver)
-            time.sleep(2)
 
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
@@ -860,6 +859,7 @@ class WIRELESS(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
         try:
+            wireless_change_ssid_name(block_2g, "WiFi 2G Name")
             # Change Security type
             wireless_change_choose_option(block_2g, secure_value_field, SECURITY_TYPE)
             # 2G Change password
@@ -875,6 +875,7 @@ class WIRELESS(unittest.TestCase):
             time.sleep(2)
 
             # 5G Change password
+            wireless_change_ssid_name(block_5g, "WiFi 5G Name")
             wireless_change_choose_option(block_5g, secure_value_field, SECURITY_TYPE)
             pw_5g = block_5g.find_element_by_css_selector(input_pw)
             ActionChains(driver).move_to_element(pw_5g).click().key_down(Keys.CONTROL).send_keys('a').key_up(
@@ -889,6 +890,8 @@ class WIRELESS(unittest.TestCase):
 
             pw_2g = wireless_check_pw_eye(driver, block_2g, change_pw=False)
             pw_5g = wireless_check_pw_eye(driver, block_5g, change_pw=False)
+            wifi_name_2g = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
+            wifi_name_5g = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
 
             expected_pw = PASSWORD_4[:63]
             save_config(config_path, 'GENERAL', 'wifi_pw', expected_pw)
@@ -910,7 +913,7 @@ class WIRELESS(unittest.TestCase):
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(5)
             # 2G Connect wifi
-            connect_wifi_by_command(exp_ssid_2g_default_val, pw_2g)
+            connect_wifi_by_command(wifi_name_2g, pw_2g)
             time.sleep(1)
             wifi_2g_connected = current_connected_wifi()
             # Check Connect to Google
@@ -918,7 +921,7 @@ class WIRELESS(unittest.TestCase):
 
             # 5G Connect wifi
             os.system(f'netsh wlan disconnect')
-            connect_wifi_by_command(exp_ssid_5g_default_val, pw_5g)
+            connect_wifi_by_command(wifi_name_5g, pw_5g)
             time.sleep(1)
             wifi_5g_connected = current_connected_wifi()
             # Google
@@ -930,7 +933,7 @@ class WIRELESS(unittest.TestCase):
             time.sleep(10)
 
             list_actual5 = [[wifi_2g_connected, check_2g_connect], [wifi_5g_connected, check_5g_connect]]
-            list_expected5 = [[exp_ssid_2g_default_val, return_true], [exp_ssid_5g_default_val, return_true]]
+            list_expected5 = [[wifi_name_2g, return_true], [wifi_name_5g, return_true]]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -5143,9 +5146,28 @@ class WIRELESS(unittest.TestCase):
         self.list_steps = []
         # =================================================
         PASSWORD_WL = get_config('WIRELESS', 'wl36_pw', input_data_path)
+
         try:
             grand_login(driver)
             wait_popup_disappear(driver, dialog_loading)
+            check_home = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual0 = [check_home]
+            list_expected0 = [True]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. '
+                f'\n\t - Check Login successfully. '
+                f'\nActual: {"Login Pass"}. \nExpected: {"Login Pass"}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. '
+                f'\n\t - Check Login successfully. '
+                f'\nActual: {"Login Fail"}. \nExpected: {"Login Pass"}')
+            list_step_fail.append('1. Assertion wong.')
+
+        try:
             goto_menu(driver, advanced_tab, advanced_wireless_tab)
 
             page_title_text = driver.find_element_by_css_selector(ele_title_page).text
@@ -5155,13 +5177,15 @@ class WIRELESS(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                f'[Pass] 2. Goto Advanced > Wireless. '
+                f'\n\t- Check title page. '
+                f'\nActual: {str(list_actual)}. \nExpected: {str(list_expected)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-            list_step_fail.append('1, 2. Assertion wong.')
+                f'[Fail] 2. Goto Advanced > Wireless. '
+                f'\n\t - Check title page. '
+                f'\nActual: {str(list_actual)}. \nExpected: {str(list_expected)}')
+            list_step_fail.append('2. Assertion wong.')
 
         try:
             # 2G
@@ -5208,12 +5232,16 @@ class WIRELESS(unittest.TestCase):
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Enable Radio of 2G/5G: Check Radio of 2G/5G enabled. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                f'[Pass] 3. Make sure enable Radio of 2G/5G: '
+                f'\n\t - Check Radio of 2G/5G enabled. '
+                f'\nActual: {str([f"Radio 2G is {list_actual2[0]}", f"Radio 5G {list_actual2[1]}"])}. '
+                f'\nExpected: {str(["Radio 2G enable", "Radio 5G enable"])}')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Enable Radio of 2G/5G: Check Radio of 2G/5G enabled. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                f'[Fail] 3. 3. Make sure enable Radio of 2G/5G: '
+                f'\n\t - Check Radio of 2G/5G enabled. '
+                f'\nActual: {str([f"Radio 2G is {list_actual2[0]}", f"Radio 5G {list_actual2[1]}"])}. '
+                f'\nExpected: {str(["Radio 2G enable", "Radio 5G enable"])}')
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -5263,19 +5291,22 @@ class WIRELESS(unittest.TestCase):
             list_expected4 = ['WEP'] * 2
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Change Security: Check Change successfully. '
-                                   f'Actual: {str(list_actual4)}. '
-                                   f'Expected: {str(list_expected4)}')
+            self.list_steps.append(
+                f'[Pass] 4. Change Security to WEP: '
+                f'\n\t - Check Change successfully. '
+                f'\nActual: {[f"Security 2G is {list_actual4[0]}", f"Security 5G is {list_actual4[1]}"]}. '
+                f'\nExpected: {str([f"Security 2G is WEP", f"Security 5G is WEP"])}')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Change Security: Check Change successfully. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                f'[Fail] 4. Change Security to WEP: '
+                f'\n\t - Check Change successfully. '
+                f'\nActual: {[f"Security 2G is {list_actual4[0]}", f"Security 5G is {list_actual4[1]}"]}. '
+                f'\nExpected: {str([f"Security 2G is WEP", f"Security 5G is WEP"])}')
             list_step_fail.append('4. Assertion wong.')
 
         try:
             goto_menu(driver, wireless_tab, wireless_wps_tab)
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(ele_wps_button).click()
             time.sleep(1)
             check_error_msg = driver.find_element_by_css_selector(err_dialog_msg_cls).text
@@ -5284,15 +5315,18 @@ class WIRELESS(unittest.TestCase):
             list_expected5 = [exp_wps_error_msg]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 5. Goto Wireless > WPS. Click WPS. Check confirm message. '
-                                   f'Actual: {str(list_actual5)}. '
-                                   f'Expected: {str(list_expected5)}')
+            self.list_steps.append(
+                f'[Pass] 5. Goto Wireless > WPS. Click WPS. '
+                f'\n\t - Check confirm message. '
+                f'\nActual: {str(list_actual5)}. '
+                f'\nExpected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 5. Goto Wireless > WPS. Click WPS. Check confirm message. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                f'[Fail] 5. Goto Wireless > WPS. Click WPS. '
+                f'\n\t - Check confirm message. '
+                f'\nActual: {str(list_actual5)}. '
+                f'\nExpected: {str(list_expected5)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
@@ -6156,9 +6190,28 @@ class WIRELESS(unittest.TestCase):
         _METHOD = 'GET'
         _USER = get_config('ACCOUNT', 'user')
         _PW = get_config('ACCOUNT', 'password')
+
         try:
             grand_login(driver)
             wait_popup_disappear(driver, dialog_loading)
+            check_home = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual0 = [check_home]
+            list_expected0 = [True]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. '
+                f'\n\t - Check Login successfully. '
+                f'\nActual: {"Login Pass"}. \nExpected: {"Login Pass"}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. '
+                f'\n\t - Check Login successfully. '
+                f'\nActual: {"Login Fail"}. \nExpected: {"Login Pass"}')
+            list_step_fail.append('1. Assertion wong.')
+
+        try:
             goto_menu(driver, advanced_tab, advanced_wireless_tab)
 
             page_title_text = driver.find_element_by_css_selector(ele_title_page).text
@@ -6168,13 +6221,13 @@ class WIRELESS(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
+                f'[Pass] 2. Goto Advanced > Wireless. Check title page. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
+                f'[Fail] 2. Goto Advanced > Wireless. Check title page. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-            list_step_fail.append('1, 2. Assertion wong.')
+            list_step_fail.append('2. Assertion wong.')
 
         try:
             # 2G
@@ -6589,8 +6642,6 @@ class WIRELESS(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        # =====================================================================================
-        URL_LOGIN = get_config('URL', 'url')
         # ===========================================================
         factory_dut()
         # ===========================================================
@@ -6598,10 +6649,28 @@ class WIRELESS(unittest.TestCase):
         _URL_API = get_config('URL', 'url') + '/api/v1/wifi/1/radio'
         _BODY = ''
         _METHOD = 'GET'
-
+        default_wifi_pw = f'humax_{get_config("GENERAL", "serial_number")}'
         try:
             grand_login(driver)
             wait_popup_disappear(driver, dialog_loading)
+            check_home = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+
+            list_actual0 = [check_home]
+            list_expected0 = [True]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 1. Login. '
+                f'\n\t - Check Login successfully. '
+                f'\nActual: {"Login Pass"}. \nExpected: {"Login Pass"}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 1. Login. '
+                f'\n\t - Check Login successfully. '
+                f'\nActual: {"Login Fail"}. \nExpected: {"Login Pass"}')
+            list_step_fail.append('1. Assertion wong.')
+
+        try:
             goto_menu(driver, advanced_tab, advanced_wireless_tab)
 
             page_title_text = driver.find_element_by_css_selector(ele_title_page).text
@@ -6611,13 +6680,13 @@ class WIRELESS(unittest.TestCase):
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
+                f'[Pass] 2. Goto Advanced > Wireless. Check title page. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
+                f'[Fail] 2. Goto Advanced > Wireless. Check title page. '
                 f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
-            list_step_fail.append('1, 2. Assertion wong.')
+            list_step_fail.append('2. Assertion wong.')
 
         try:
             block_5g = driver.find_element_by_css_selector(right)
@@ -6630,7 +6699,7 @@ class WIRELESS(unittest.TestCase):
                     default_wireless_mode_text = default_wireless_mode.text.lower()
                     # Get total supported modes
                     default_wireless_mode.click()
-                    time.sleep(1)
+                    time.sleep(0.5)
                     dropdown_values = v.find_elements_by_css_selector(secure_value_in_drop_down)
                     dropdown_values_text = [i.get_attribute('option-value') for i in dropdown_values]
                     for o in dropdown_values:
@@ -6638,13 +6707,13 @@ class WIRELESS(unittest.TestCase):
                             o.click()
                     break
 
-            time.sleep(1)
+            time.sleep(0.5)
             _USER = get_config('ACCOUNT', 'user')
             _PW = get_config('ACCOUNT', 'password')
             _TOKEN = get_token(_USER, _PW)
             time.sleep(1)
             _res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
-            time.sleep(2)
+            time.sleep(0.5)
 
             api_wl_mode = _res['basic']['wirelessMode']
 
@@ -6667,7 +6736,7 @@ class WIRELESS(unittest.TestCase):
             # Connect 2.4GHz wifi
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
@@ -6682,26 +6751,36 @@ class WIRELESS(unittest.TestCase):
                     default_wireless_mode_text_4 = default_wireless_mode.text.lower()
                     break
 
-            time.sleep(1)
+            time.sleep(0.5)
             _USER = get_config('ACCOUNT', 'user')
             _PW = get_config('ACCOUNT', 'password')
             _TOKEN = get_token(_USER, _PW)
-            time.sleep(1)
+            time.sleep(0.5)
             _res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
-            time.sleep(2)
+            time.sleep(1)
 
             api_wl_mode_4 = _res['basic']['wirelessMode']
 
-            list_actual4 = [default_wireless_mode_text_4]
-            list_expected4 = [api_wl_mode_4]
+            # interface_connect_disconnect('Ethernet', 'disable')
+            current_connect4 = connect_wifi_by_command(exp_ssid_5g_default_val, default_wifi_pw)
+            print(current_connect4)
+            if current_connect4 == exp_ssid_5g_default_val:
+                check_connect4 = check_connect_to_google()
+            interface_connect_disconnect('Ethernet', 'disable')
+            list_actual4 = [default_wireless_mode_text_4, check_connect4]
+            list_expected4 = [api_wl_mode_4, True]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Change Wireless Mode to 802.11a. Check change successfully. '
+                f'[Pass] 4. Change Wireless Mode to 802.11a. Then connect to wireless 5G. '
+                f'Check change successfully. '
+                f'Check connect can access to google. '
                 f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Change Wireless Mode to 802.11a. Check change successfully. '
+                f'[Fail] 4. Change Wireless Mode to 802.11a. Then connect to wireless 5G. '
+                f'Check change successfully. '
+                f'Check connect can access to google. '
                 f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
             list_step_fail.append('4. Assertion wong.')
 
@@ -6750,16 +6829,25 @@ class WIRELESS(unittest.TestCase):
 
             api_wl_mode_5 = _res['basic']['wirelessMode']
 
-            list_actual5 = [default_wireless_mode_text_5]
-            list_expected5 = [api_wl_mode_5]
+            current_connect5 = connect_wifi_by_command(exp_ssid_5g_default_val, default_wifi_pw)
+            print(current_connect5)
+            if current_connect5 == exp_ssid_5g_default_val:
+                check_connect5 = check_connect_to_google()
+
+            list_actual5 = [default_wireless_mode_text_5, check_connect5]
+            list_expected5 = [api_wl_mode_5, True]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Change Wireless Mode to 802.11a+n. Check change successfully. '
+                f'[Pass] 5. Change Wireless Mode to 802.11a+n. Then connect to wireless 5G. '
+                f'Check change successfully. '
+                f'Check connect can access to google. '
                 f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
         except:
             self.list_steps.append(
-                f'[Fail] 5. Change Wireless Mode to 802.11a+n. Check change successfully. '
+                f'[Fail] 5. Change Wireless Mode to 802.11a+n. Then connect to wireless 5G. '
+                f'Check change successfully. '
+                f'Check connect can access to google. '
                 f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
             list_step_fail.append('5. Assertion wong.')
 
@@ -6808,17 +6896,26 @@ class WIRELESS(unittest.TestCase):
 
             api_wl_mode_6 = _res['basic']['wirelessMode']
 
-            list_actual6 = [default_wireless_mode_text_6]
-            list_expected6 = [api_wl_mode_6]
+            current_connect6 = connect_wifi_by_command(exp_ssid_5g_default_val, default_wifi_pw)
+            print(current_connect6)
+            if current_connect6 == exp_ssid_5g_default_val:
+                check_connect6 = check_connect_to_google()
+            interface_connect_disconnect('Ethernet', 'enable')
+            list_actual6 = [default_wireless_mode_text_6, check_connect6]
+            list_expected6 = [api_wl_mode_6, True]
             check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Change Wireless Mode to 802.11a+n+ac. Check change successfully. '
+                f'[Pass] 6. Change Wireless Mode to 802.11a+n+ac. Then connect to wireless 5G. '
+                f'Check change successfully. '
+                f'Check connect access to google. '
                 f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 6. Change Wireless Mode to 802.11a+n+ac. Check change successfully. '
+                f'[Fail] 6. Change Wireless Mode to 802.11a+n+ac. Then connect to wireless 5G. '
+                f'Check change successfully. '
+                f'Check connect access to google. '
                 f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('6. Assertion wong.')
@@ -6865,6 +6962,15 @@ class WIRELESS(unittest.TestCase):
             wait_popup_disappear(driver, icon_loading)
 
             popup = driver.find_element_by_css_selector(dialog_content)
+            count = 0
+            while len(popup.find_elements_by_css_selector('.row-dialog table>tr')) == 1:
+                popup.find_element_by_css_selector(ele_btn_refresh).click()
+                wait_popup_disappear(driver, icon_loading)
+                count += 1
+                if len(popup.find_elements_by_css_selector('.row-dialog table>tr')) > 1:
+                    break
+                elif count == 5:
+                    break
             # Check UI
             popup_title = popup.find_element_by_css_selector(ele_scan_title).text
             popup_refresh_button = len(popup.find_elements_by_css_selector(ele_btn_refresh)) > 0
@@ -6983,7 +7089,16 @@ class WIRELESS(unittest.TestCase):
             popup.find_element_by_css_selector(ele_btn_refresh).click()
             time.sleep(1)
             wait_popup_disappear(driver, icon_loading)
-
+            popup = driver.find_element_by_css_selector(dialog_content)
+            count = 0
+            while len(popup.find_elements_by_css_selector(ele_wifi_chart_5g)) == 0:
+                popup.find_element_by_css_selector(ele_btn_refresh).click()
+                wait_popup_disappear(driver, icon_loading)
+                count += 1
+                if len(popup.find_elements_by_css_selector(ele_wifi_chart_5g)) > 0:
+                    break
+                elif count == 5:
+                    break
             check_chart_wf_refresh = len(popup.find_elements_by_css_selector(ele_wifi_chart_5g)) > 0
 
             list_actual6 = [check_chart_wf_refresh]

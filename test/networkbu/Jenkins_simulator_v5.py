@@ -373,7 +373,7 @@ def _basicSetting():
     _aging.place(x=115, y=70, height=25, width=265)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    labelReportPath = Label(window, text="Report Directory:")
+    labelReportPath = Label(window, text="Local Report:")
     labelReportPath.place(x=15, y=110)
 
     ModulePath = StringVar()
@@ -616,14 +616,14 @@ CreateToolTip(check5, f" {str(get_num_test_case_module()['MediaShare'])} TCs ~ {
 CreateToolTip(check6, f" {str(get_num_test_case_module()['Security'])} TCs ~ {str(get_runtime_test_module()['SECURITY'])} minutes")
 CreateToolTip(check7, f" {str(get_num_test_case_module()['Advanced'])} TCs ~ {str(get_runtime_test_module()['ADVANCED'])} minutes")
 CreateToolTip(check8, f" {str(get_num_test_case_module()['Non_Function'])} TCs ~ {str(get_runtime_test_module()['NON_FUNCTION'])} minutes")
-
+scrollbar = Scrollbar(root, orient=HORIZONTAL)
 
 linkLabel = Label(root, text="")
 
 labelFile6 = Label(root, text="Individual TC:")
 labelFile6.place(x=30, y=440)
 ls_tc = StringVar()
-lstc_box = Entry(root, textvariable=ls_tc, state=DISABLED)
+lstc_box = Entry(root, textvariable=ls_tc, state=DISABLED, xscrollcommand=scrollbar.set)
 lstc_box.pack()
 lstc_box.place(x=140, y=440, height=25, width=330)
 
@@ -682,6 +682,8 @@ progress_bar.place(x=318, y=510)
 
 
 
+scrollbar.place(x=140, y=463, height=10, width=330)
+scrollbar.config(command=lstc_box.xview)
 
 def check_all_module():
     if cusModuleAll.get():
@@ -789,7 +791,7 @@ def detect_run_testcase(progress_bar):
 def _runBtn():
     flow_off_field(DISABLED)
     if stage1.get() == '':
-        messagebox.showerror('Warning', ' You forgot fill Tester field.')
+        messagebox.showerror('Warning', ' Please fill in the Tester filed first.')
         flow_off_field(NORMAL)
         return
 
@@ -849,7 +851,7 @@ def _runBtn():
 
 
 def warning():
-    return messagebox.askyesno('Confirm', f'Are you sure to run?')
+    return messagebox.askyesno('Confirm', f'Are you sure to run the test suit?')
 
 
 def _manualBtn():
@@ -858,7 +860,7 @@ def _manualBtn():
 
     list_module_chosen = find_chosen_module()
     if not len(list_module_chosen):
-        messagebox.showwarning('Warning', 'You have to choose test suite first!')
+        messagebox.showwarning('Warning', 'Please choose the test suit first!')
         manualButton.configure(state=NORMAL)
     else:
 
@@ -1030,7 +1032,7 @@ def _manualBtn():
 
 def _abortBtn():
     print('Abort')
-    warning = messagebox.askokcancel('Warning!', 'Do you want to Abort this process. \n\n Wait for current testcase finish.')
+    warning = messagebox.askokcancel('Warning!', 'Are you sure to Abort this process? \n\n You should wait for current test case finish running..')
 
     if warning:
         save_config(config_path, 'GENERAL', 'abort', '0')
@@ -1053,7 +1055,7 @@ def abort():
 
 def _realcallback2():
     progress.configure(text='Progress:')
-
+    abortButton['state'] = NORMAL
     flow_off_field(NORMAL)
     for c in [checkA, check0, check1, check2, check3, check5, check6, check7, check8]:
         c.config(state=NORMAL)
@@ -1070,6 +1072,7 @@ def _Factory():
 def _realcallback1():
     progress.configure(text='Factoring ...')
     flow_off_field(DISABLED)
+    abortButton['state'] = DISABLED
     for c in [checkA, check0, check1, check2, check3, check5, check6, check7, check8]:
         c.config(state=DISABLED)
 
@@ -1108,7 +1111,7 @@ runButton.place(x=250, y=370)
 
 manualButton = Button(root, text=" Manual", command=_manualBtn, height=20, width=80, borderwidth=4, image=photo_manual,
                       compound=LEFT)
-manualButton.place(x=360, y=470)
+manualButton.place(x=360, y=475)
 
 abortButton = Button(root, text=" Abort", command=abort, height=20, width=80, borderwidth=4, image=photo_abort,
                      compound=LEFT)

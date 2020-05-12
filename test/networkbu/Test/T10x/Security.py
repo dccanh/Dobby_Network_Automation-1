@@ -77,7 +77,9 @@ class SECURITY(unittest.TestCase):
 
             parental_field_input = driver.find_elements_by_css_selector(parental_popup_input)
             #  New
+            time.sleep(0.5)
             ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+            time.sleep(0.5)
             ActionChains(driver).click(parental_field_input[4]).send_keys(PARENTAL_CODE_KEY).perform()
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
@@ -240,9 +242,10 @@ class SECURITY(unittest.TestCase):
         try:
             parental_code = driver.find_element_by_css_selector(parental_code_card)
             parental_input = parental_code.find_elements_by_css_selector(input)
-
+            time.sleep(0.5)
             # New parental code
             parental_input[1].send_keys(PARENTAL_NEW_CODE_KEY)
+            time.sleep(0.5)
             # Retype parental code
             parental_input[2].send_keys(PARENTAL_NEW_CODE_KEY)
 
@@ -283,12 +286,9 @@ class SECURITY(unittest.TestCase):
                 f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             list_step_fail.append('4, 5. Assertion wong.')
 
-
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
         try:
             parental_code = driver.find_element_by_css_selector(parental_code_card)
             parental_input = parental_code.find_elements_by_css_selector(input)
-
 
             parental_code_select = parental_code.find_element_by_css_selector(select)
             if parental_code_select.find_element_by_css_selector(input).is_selected():
@@ -309,7 +309,6 @@ class SECURITY(unittest.TestCase):
                 f'[Fail] 6. Disable Parental code: Check Parental Code disabled. '
                 f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
             list_step_fail.append('6. Assertion wong.')
-
 
         try:
             parental_code = driver.find_element_by_css_selector(parental_code_card)
@@ -349,11 +348,12 @@ class SECURITY(unittest.TestCase):
                 f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
             list_step_fail.append('7 Assertion wong.')
 
-
         try:
             parental_field_input = driver.find_elements_by_css_selector(parental_popup_input)
             #  New
+            time.sleep(0.5)
             ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_NEW_CODE_KEY_2).perform()
+            time.sleep(0.5)
             ActionChains(driver).click(parental_field_input[4]).send_keys(PARENTAL_NEW_CODE_KEY_2).perform()
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
@@ -436,8 +436,10 @@ class SECURITY(unittest.TestCase):
             parental_input = parental_code.find_elements_by_css_selector(input)
 
             # New parental code
+            time.sleep(0.5)
             parental_input[1].send_keys(PARENTAL_NEW_CODE_KEY)
             # Retype parental code
+            time.sleep(0.5)
             parental_input[2].send_keys(PARENTAL_NEW_CODE_KEY)
 
             # Apply
@@ -488,8 +490,8 @@ class SECURITY(unittest.TestCase):
             time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
-
-            check_pop_init = driver.find_element_by_css_selector(parental_pop_init_pw).is_displayed()
+            time.sleep(0.5)
+            check_pop_init = len(driver.find_elements_by_css_selector(parental_pop_init_pw))>0
 
             list_actual2 = [check_pop_init]
             list_expected2 = [return_true]
@@ -510,7 +512,9 @@ class SECURITY(unittest.TestCase):
 
             parental_field_input = driver.find_elements_by_css_selector(parental_popup_input)
             #  New
+            time.sleep(0.5)
             ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+            time.sleep(0.5)
             ActionChains(driver).click(parental_field_input[4]).send_keys(PARENTAL_CODE_KEY).perform()
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
@@ -549,7 +553,7 @@ class SECURITY(unittest.TestCase):
             # wait_popup_disappear(driver, dialog_loading)
 
             time.sleep(3)
-            check_page_security_2 = driver.find_element_by_css_selector(security_page).is_displayed()
+            check_page_security_2 = len(driver.find_elements_by_css_selector(security_page)) >0
             check_pop_up_disable_2 = len(driver.find_elements_by_css_selector(dialog_content)) == 0
 
             list_actual4 = [check_page_security_2, check_pop_up_disable_2]
@@ -717,22 +721,22 @@ class SECURITY(unittest.TestCase):
             time.sleep(5)
             try:
                 driver2.get(FACEBOOK)
-                time.sleep(10)
+                time.sleep(5)
                 fb_http_4 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
                 time.sleep(2)
 
                 driver2.get(FACEBOOK_S)
-                time.sleep(10)
+                time.sleep(5)
                 fb_https_4 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
                 time.sleep(2)
 
                 driver2.get(GOOGLE)
-                time.sleep(10)
+                time.sleep(5)
                 gg_http_4 = len(driver2.find_elements_by_css_selector(google_img)) > 0
                 time.sleep(2)
 
                 driver2.get(GOOGLE_S)
-                time.sleep(10)
+                time.sleep(5)
                 gg_https_4 = len(driver2.find_elements_by_css_selector(google_img)) > 0
                 time.sleep(2)
 
@@ -817,22 +821,22 @@ class SECURITY(unittest.TestCase):
                 time.sleep(3)
                 # ======================================================================================
                 driver2.get(FACEBOOK)
-                time.sleep(10)
+                time.sleep(5)
                 fb_http_8 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
                 time.sleep(2)
 
                 driver2.get(FACEBOOK_S)
-                time.sleep(10)
+                time.sleep(5)
                 fb_https_8 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
                 time.sleep(2)
 
                 driver2.get(GOOGLE)
-                time.sleep(10)
+                time.sleep(5)
                 gg_http_8 = len(driver2.find_elements_by_css_selector(google_img)) > 0
                 time.sleep(2)
 
                 driver2.get(GOOGLE_S)
-                time.sleep(10)
+                time.sleep(5)
                 gg_https_8 = len(driver2.find_elements_by_css_selector(google_img)) > 0
                 time.sleep(2)
 

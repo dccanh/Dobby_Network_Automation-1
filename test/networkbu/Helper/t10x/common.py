@@ -140,30 +140,57 @@ def write_to_excel_tmp(key, list_steps, func_name):
             break
 
 
+# def write_ggsheet(key, list_steps, func_name, duration, time_stamp=0):
+#     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+#     creds = ServiceAccountCredentials.from_json_keyfile_name(gg_credential_path, scope)
+#     client = gspread.authorize(creds)
+#     # sheet = client.open("[DOB] Report Automation").get_worksheet(1)
+#     get_gg_sheet_name = get_config('REPORT', 'sheet_name')
+#     sheet = client.open("[DOB] Report Automation").worksheet(get_gg_sheet_name)
+#     next_row = next_available_row(sheet)
+#     sheet.update_acell("A{}".format(next_row), key)
+#     sheet.update_acell("B{}".format(next_row), func_name)
+#     list_steps = '\n'.join(list_steps)
+#     if '[Fail]' in str(list_steps):
+#         sheet.update_acell("C{}".format(next_row), 'FAIL')
+#     else:
+#         # if '[END TC]' not in str(list_steps):
+#         if '[END TC]' not in list_steps:
+#             list_steps += ('\nCan not execute next step ...')
+#             sheet.update_acell("C{}".format(next_row), 'FAIL')
+#         else:
+#             sheet.update_acell("C{}".format(next_row), 'PASS')
+#     sheet.update_acell("D{}".format(next_row), duration)
+#     sheet.update_acell("E{}".format(next_row), str(list_steps))
+#     sheet.update_acell("H{}".format(next_row), str(time_stamp))
+
+
 def write_ggsheet(key, list_steps, func_name, duration, time_stamp=0):
+    from gspread.models import Cell
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
     creds = ServiceAccountCredentials.from_json_keyfile_name(gg_credential_path, scope)
     client = gspread.authorize(creds)
-    # sheet = client.open("[DOB] Report Automation").get_worksheet(1)
     get_gg_sheet_name = get_config('REPORT', 'sheet_name')
     sheet = client.open("[DOB] Report Automation").worksheet(get_gg_sheet_name)
     next_row = next_available_row(sheet)
-    sheet.update_acell("A{}".format(next_row), key)
-    sheet.update_acell("B{}".format(next_row), func_name)
     list_steps = '\n'.join(list_steps)
+    cells = list()
+    cells.append(Cell(int(next_row), 1, key))
+    cells.append(Cell(int(next_row), 2, func_name))
     if '[Fail]' in str(list_steps):
-        sheet.update_acell("C{}".format(next_row), 'FAIL')
+        cells.append(Cell(int(next_row), 3, 'FAIL'))
     else:
-        # if '[END TC]' not in str(list_steps):
+
         if '[END TC]' not in list_steps:
             list_steps += ('\nCan not execute next step ...')
-            sheet.update_acell("C{}".format(next_row), 'FAIL')
+            cells.append(Cell(int(next_row), 3, 'FAIL'))
         else:
-            sheet.update_acell("C{}".format(next_row), 'PASS')
-    sheet.update_acell("D{}".format(next_row), duration)
-    sheet.update_acell("E{}".format(next_row), str(list_steps))
-    sheet.update_acell("H{}".format(next_row), str(time_stamp))
 
+            cells.append(Cell(int(next_row), 3, 'PASS'))
+    cells.append(Cell(int(next_row), 4, duration))
+    cells.append(Cell(int(next_row), 5, str(list_steps)))
+    cells.append(Cell(int(next_row), 8, str(time_stamp)))
+    sheet.update_cells(cells)
 
 def assert_list(list_actual_result, list_expected_result):
     actual_fail = []
@@ -342,7 +369,7 @@ def get_result_command_from_server_api(url_ip, _name='1'):
 
     get_all_text = _res.text
     print("Status Code: " + str(_res.status_code))
-    print(get_all_text)
+    print("Your Serial Number is: " + get_config('GENERAL', 'serial_number'))
     command_result = '{' + get_all_text.split('@@@ PRINT OBJLIST START @@@')[1].split(' @@@@@@ PRINT OBJLIST END @@@@@@')[0]
     fit_result = command_result.split('},\n\t },\n }')[0]+'}}}'
 
@@ -1047,6 +1074,17 @@ def wireless_get_default_ssid(driver, label_name):
         if l.text == label_name:
             default_ssid_2g_value = f.find_element_by_css_selector(input).get_attribute('value')
             return default_ssid_2g_value
+
+def wireless_change_ssid_name(driver, new_ssid):
+    edit_2g_label = driver.find_elements_by_css_selector(label_name_in_2g)
+    edit_2g_fields = driver.find_elements_by_css_selector(wrap_input)
+    for l, f in zip(edit_2g_label, edit_2g_fields):
+        # Connection type
+        if l.text == 'Network Name(SSID)':
+            for i in range(2):
+                default_ssid_2g_value = f.find_element_by_css_selector(input)
+                default_ssid_2g_value.clear()
+                default_ssid_2g_value.send_keys(new_ssid)
 
 
 def wireless_check_pw_eye(driver, block, change_pw=False, new_pw='00000000'):

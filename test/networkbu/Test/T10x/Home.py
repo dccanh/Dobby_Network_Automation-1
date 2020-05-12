@@ -4698,7 +4698,7 @@ class HOME(unittest.TestCase):
             grand_login(driver)
             time.sleep(2)
             goto_menu(driver, network_tab, network_operationmode_tab)
-            connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
+            connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw, force=True)
             wait_ethernet_available()
             # Verify_connect successfully
             URL_LOGIN = get_config('URL', 'url')
@@ -4721,13 +4721,14 @@ class HOME(unittest.TestCase):
                 f'Expected: {str(list_expected0)}')
         except:
             self.list_steps.append(
-                f'[Faill] Precondition Fail. Check Upper name. '
+                f'[Fail] Precondition Fail. Check Upper name. '
                 f'Actual: {str(list_actual0)}. '
                 f'Expected: {str(list_expected0)}')
             list_step_fail.append('0. Precondition wong')
 
         try:
             wait_ethernet_available()
+            time.sleep(1)
             # Input data of Upper
             url_upper = get_config('REPEATER', 'url', input_data_path)
             user_upper = get_config('REPEATER', 'user', input_data_path)
@@ -4735,8 +4736,9 @@ class HOME(unittest.TestCase):
             # save_config(config_path, 'URL', 'url', url_upper)
             # save_config(config_path, 'URL', 'user', user_upper)
             # save_config(config_path, 'URL', 'password', pw_upper)
-
+            # wait_ping(url_upper)
             grand_login(driver, url_login=url_upper,user_request=user_upper, pass_word=pw_upper)
+            time.sleep(0.5)
             goto_menu(driver, home_tab, 0)
             time.sleep(1)
             # Click to Device Image
@@ -4965,9 +4967,6 @@ class HOME(unittest.TestCase):
                 f'Expected: {str(list_expected4)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('2.  Assertion wong')
-
-
-
 
         self.assertListEqual(list_step_fail, [])
 
