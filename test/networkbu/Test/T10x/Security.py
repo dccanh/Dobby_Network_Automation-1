@@ -626,33 +626,81 @@ class SECURITY(unittest.TestCase):
             edit_field.find_element_by_css_selector('.service-filter').find_element_by_css_selector(apply).click()
             time.sleep(0.5)
 
+            # ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
+            # for f in ls_service:
+            #     if f.text == SOCIAL_NW:
+            #         f.click()
+            #         break
+            #
+            # ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
+            # for s in ls_service_sub:
+            #     if s.text == FACEBOOK:
+            #         if not len(s.find_elements_by_css_selector('.selected-icon')) > 0:
+            #             s.click()
+            #             break
+            #
+            # ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
+            # for f in ls_service:
+            #     if f.text == USER_DEFINE:
+            #         f.click()
+            #         check_item_inner = driver.find_elements_by_css_selector('.child-item .item-inner')
+            #         check_item_exist = any([i.text == GOOGLE for i in check_item_inner])
+            #         if not check_item_exist:
+            #             # Add url
+            #             driver.find_element_by_css_selector(add_class).click()
+            #             f.find_element_by_css_selector(input).send_keys(GOOGLE)
+            #             time.sleep(1)
+            #             f.find_element_by_css_selector(btn_save).click()
+            #             time.sleep(1)
+            #
+            # ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
+            # for f in ls_service:
+            #     if f.text == USER_DEFINE:
+            #         f.click()
+            #         break
+            #
+            # ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
+            # for s in ls_service_sub:
+            #     if s.text == GOOGLE:
+            #         if not len(s.find_elements_by_css_selector('.selected-icon')) > 0:
+            #             s.click()
+            #             break
+
             ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
                 if f.text == SOCIAL_NW:
+                    ActionChains(driver).move_to_element(f).perform()
                     f.click()
-                    break
 
-            ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
-            for s in ls_service_sub:
-                if s.text == FACEBOOK:
-                    if not len(s.find_elements_by_css_selector('.selected-icon')) > 0:
-                        s.click()
-                        break
+                    ls_service_sub = f.find_elements_by_css_selector('.service-sub-item-wrap')
+                    for s in ls_service_sub:
+                        ActionChains(driver).move_to_element(s).perform()
+                        if s.text == 'facebook':
+                            s.click()
 
             ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
                 if f.text == USER_DEFINE:
+                    ActionChains(driver).move_to_element(f).perform()
                     f.click()
                     check_item_inner = driver.find_elements_by_css_selector('.child-item .item-inner')
-                    check_item_exist = any([i.text == GOOGLE for i in check_item_inner])
+                    ActionChains(driver).move_to_element(check_item_inner[0]).perform()
+                    time.sleep(0.5)
+                    check_item_exist = any([i.text == 'google.com' for i in check_item_inner])
+                    print(check_item_exist)
+                    time.sleep(1)
                     if not check_item_exist:
                         # Add url
                         driver.find_element_by_css_selector(add_class).click()
-                        f.find_element_by_css_selector(input).send_keys(GOOGLE)
+                        f.find_element_by_css_selector(input).send_keys('google.com')
                         time.sleep(1)
                         f.find_element_by_css_selector(btn_save).click()
-                        time.sleep(1)
-
+            ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
+            for s in ls_service_sub:
+                ActionChains(driver).move_to_element(s).perform()
+                if s.text == 'google.com':
+                    s.click()
+                    break
             # Save
             time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
@@ -700,7 +748,7 @@ class SECURITY(unittest.TestCase):
             block_schedule_value = driver.find_element_by_css_selector(block_schedule).text
 
             list_actual1 = [ls_service_filter_items_value, block_schedule_value]
-            list_expected1 = [exp_ls_service_filter_items_value, exp_block_schedule_value]
+            list_expected1 = [['Social Network[1]', 'User Define[1]'], exp_block_schedule_value]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -721,140 +769,115 @@ class SECURITY(unittest.TestCase):
             time.sleep(5)
             try:
                 driver2.get(FACEBOOK)
-                time.sleep(5)
+                time.sleep(3)
                 fb_http_4 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
-                time.sleep(2)
+                time.sleep(1)
 
                 driver2.get(FACEBOOK_S)
-                time.sleep(5)
+                time.sleep(3)
                 fb_https_4 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
-                time.sleep(2)
+                time.sleep(1)
 
                 driver2.get(GOOGLE)
-                time.sleep(5)
+                time.sleep(3)
                 gg_http_4 = len(driver2.find_elements_by_css_selector(google_img)) > 0
-                time.sleep(2)
+                time.sleep(1)
 
                 driver2.get(GOOGLE_S)
-                time.sleep(5)
+                time.sleep(3)
                 gg_https_4 = len(driver2.find_elements_by_css_selector(google_img)) > 0
-                time.sleep(2)
+                time.sleep(1)
 
                 # check_step_4 = all([i != 200 for i in [fb_http_4, fb_https_4, gg_http_4, gg_https_4]])
                 check_step_4 = [fb_http_4, fb_https_4, gg_http_4, gg_https_4]
                 # ======================================================================================
-                time.sleep(1)
-                # Disable Parental control
-                # parental_code = driver.find_element_by_css_selector(parental_code_card)
-                # parental_code_btn = parental_code.find_element_by_css_selector(select)
-                # parental_code_check = parental_code.find_element_by_css_selector(input)
-                # if parental_code_check.is_selected():
-                #     parental_code_btn.click()
-                #     time.sleep(5)
-                #     # Input valid
-                #     parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
-                #     if len(parental_field_input) > 0:
-                #         #  New
-                #         ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
-                #         time.sleep(0.5)
-                #         driver.find_element_by_css_selector(btn_ok).click()
-                #         wait_popup_disappear(driver, dialog_loading)
-                parental_control = driver.find_element_by_css_selector(ele_security_check_parental)
-                parental_control_btn = parental_control.find_element_by_css_selector(select)
-                parental_control_check = parental_control.find_element_by_css_selector(input)
-                if parental_control_check.is_selected():
-                    parental_control_btn.click()
-                    time.sleep(2)
+                parental_rule = driver.find_element_by_css_selector('tbody>tr>td.toggle-col')
+                parental_rule_btn = parental_rule.find_element_by_css_selector(select)
+                parental_rule_check = parental_rule.find_element_by_css_selector(input)
+                if parental_rule_check.is_selected():
+                    parental_rule_btn.click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    wait_popup_disappear(driver, dialog_loading)
                 else:
-                    parental_control_btn.click()
-                    time.sleep(2)
-                    parental_input_popup = driver.find_elements_by_css_selector(parental_wrap_input)
-                    if len(parental_input_popup) > 0:
-                        #  New
-                        ActionChains(driver).click(parental_input_popup[0]).send_keys(PARENTAL_CODE_KEY).perform()
-                        time.sleep(0.5)
-                        driver.find_element_by_css_selector(btn_ok).click()
-                        wait_popup_disappear(driver, dialog_loading)
-                time.sleep(3)
+                    parental_rule_btn.click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
                 # ======================================================================================
                 driver2.get(FACEBOOK)
-                time.sleep(5)
+                time.sleep(3)
                 fb_http_6 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
-                time.sleep(2)
+                time.sleep(1)
 
                 driver2.get(FACEBOOK_S)
-                time.sleep(5)
+                time.sleep(3)
                 fb_https_6 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
-                time.sleep(2)
+                time.sleep(1)
 
                 driver2.get(GOOGLE)
-                time.sleep(5)
+                time.sleep(3)
                 gg_http_6 = len(driver2.find_elements_by_css_selector(google_img)) > 0
-                time.sleep(2)
+                time.sleep(1)
 
                 driver2.get(GOOGLE_S)
-                time.sleep(5)
+                time.sleep(3)
                 gg_https_6 = len(driver2.find_elements_by_css_selector(google_img)) > 0
-                time.sleep(2)
+                time.sleep(1)
 
                 check_step_6 = [fb_http_6, fb_https_6, gg_http_6, gg_https_6]
                 # check_step_6 = all([i == 200 for i in [fb_http_6, fb_https_6, gg_http_6, gg_https_6]])
                 # ======================================================================================
-                time.sleep(1)
+
                 # Enable
-                parental_control = driver.find_element_by_css_selector(ele_security_check_parental)
-                parental_control_btn = parental_control.find_element_by_css_selector(select)
-                parental_control_check = parental_control.find_element_by_css_selector(input)
-                if parental_control_check.is_selected():
-                    parental_control_btn.click()
-                    time.sleep(2)
+                parental_rule = driver.find_element_by_css_selector('tbody>tr>td.toggle-col')
+                parental_rule_btn = parental_rule.find_element_by_css_selector(select)
+                parental_rule_check = parental_rule.find_element_by_css_selector(input)
+                if parental_rule_check.is_selected():
+                    parental_rule_btn.click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    wait_popup_disappear(driver, dialog_loading)
                 else:
-                    parental_control_btn.click()
-                    time.sleep(2)
-                    parental_input_popup = driver.find_elements_by_css_selector(parental_wrap_input)
-                    if len(parental_input_popup) > 0:
-                        #  New
-                        ActionChains(driver).click(parental_input_popup[0]).send_keys(PARENTAL_CODE_KEY).perform()
-                        time.sleep(0.5)
-                        driver.find_element_by_css_selector(btn_ok).click()
-                        wait_popup_disappear(driver, dialog_loading)
-                time.sleep(3)
+                    parental_rule_btn.click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    driver.find_element_by_css_selector(btn_ok).click()
+                    wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
                 # ======================================================================================
                 driver2.get(FACEBOOK)
-                time.sleep(5)
+                time.sleep(3)
                 fb_http_8 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
-                time.sleep(2)
+                time.sleep(1)
 
                 driver2.get(FACEBOOK_S)
-                time.sleep(5)
+                time.sleep(3)
                 fb_https_8 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
-                time.sleep(2)
+                time.sleep(1)
 
                 driver2.get(GOOGLE)
-                time.sleep(5)
+                time.sleep(3)
                 gg_http_8 = len(driver2.find_elements_by_css_selector(google_img)) > 0
-                time.sleep(2)
+                time.sleep(1)
 
                 driver2.get(GOOGLE_S)
-                time.sleep(5)
+                time.sleep(3)
                 gg_https_8 = len(driver2.find_elements_by_css_selector(google_img)) > 0
-                time.sleep(2)
+                time.sleep(1)
 
                 check_step_8 = [fb_http_8, fb_https_8, gg_http_8, gg_https_8]
-                # ======================================================================================
-                # check_step_8 = all([i != 200 for i in [fb_http_8, fb_https_8, gg_http_8, gg_https_8]])
-                time.sleep(1)
 
                 list_actual2 = [check_step_4, check_step_6, check_step_8]
                 list_expected2 = [[return_false]*4, [return_true]*4, [return_false]*4]
                 check = assert_list(list_actual2, list_expected2)
                 self.assertTrue(check["result"])
                 self.list_steps.append(
-                    f'[Pass] 4-8. -{str(i+1)}-. Check Access to FB, GG False -> True -> False. '
+                    f'[Pass] 4-8. -{str(i+1)}-. Check Access to FB, FBS, GG, GGS Enable -> Disable -> Enable Parental control. '
                     f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
             except:
                 self.list_steps.append(
-                    f'[Fail] 4-8. -{str(i+1)}-. Check Access to FB, GG False -> True -> False. '
+                    f'[Fail] 4-8. -{str(i+1)}-. Check Access to FB, FBS, GG, GGS Enable -> Disable -> Enable Parental control. '
                     f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
                 list_step_fail.append(f'4-8. -{str(i+1)}- Assertion wong.')
             driver2.quit()
@@ -911,11 +934,22 @@ class SECURITY(unittest.TestCase):
             while len(rule_block.find_elements_by_css_selector(delete_cls)) > 0:
                 rule_block.find_element_by_css_selector(delete_cls).click()
                 time.sleep(0.5)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(1)
-
+                wait_popup_disappear(driver, dialog_loading)
+            driver.refresh()
+            time.sleep(3)
+            parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+            if len(parental_field_input) > 0:
+                #  New
+                ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
             # Control Rule
             rule_block = driver.find_element_by_css_selector(parental_rule_card)
             # Click Add 1
@@ -943,36 +977,54 @@ class SECURITY(unittest.TestCase):
             edit_field.find_element_by_css_selector('.service-filter').find_element_by_css_selector(apply).click()
             time.sleep(0.5)
 
+            time.sleep(1)
             ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
                 if f.text == SOCIAL_NW:
+                    ActionChains(driver).move_to_element(f).perform()
                     f.click()
-                    break
-            sub_title = driver.find_element_by_css_selector('.sub-title').text
-            ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
-            for s in ls_service_sub:
-                if s.text == FACEBOOK:
-                    if not len(s.find_elements_by_css_selector('.selected-icon')) > 0:
-                        s.click()
 
-                else:
-                    time.sleep(0.2)
-                    s.click()
+                    ls_service_sub = f.find_elements_by_css_selector('.service-sub-item-wrap')
+                    for s in ls_service_sub:
+                        ActionChains(driver).move_to_element(s).perform()
+                        if s.text == 'facebook':
+                            s.click()
 
             ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
                 if f.text == USER_DEFINE:
+                    ActionChains(driver).move_to_element(f).perform()
                     f.click()
                     check_item_inner = driver.find_elements_by_css_selector('.child-item .item-inner')
-                    check_item_exist = any([i.text == GOOGLE for i in check_item_inner])
+                    ActionChains(driver).move_to_element(check_item_inner[0]).perform()
+                    time.sleep(0.5)
+                    check_item_exist = any([i.text == 'google.com' for i in check_item_inner])
+                    print(check_item_exist)
+                    time.sleep(1)
                     if not check_item_exist:
                         # Add url
                         driver.find_element_by_css_selector(add_class).click()
-                        f.find_element_by_css_selector(input).send_keys(GOOGLE)
+                        f.find_element_by_css_selector(input).send_keys('google.com')
                         time.sleep(1)
                         f.find_element_by_css_selector(btn_save).click()
-                        time.sleep(1)
+            ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
+            for s in ls_service_sub:
+                ActionChains(driver).move_to_element(s).perform()
+                if s.text == 'google.com':
+                    s.click()
+                    break
 
+            ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
+            for s in ls_service:
+                ActionChains(driver).move_to_element(s).perform()
+                if s.find_element_by_css_selector('span').text not in ['Social Network', 'User Define']:
+                    s.click()
+                    ls_service_sub = s.find_elements_by_css_selector('.service-sub-item-wrap')
+                    random_sub = random.choice(ls_service_sub)
+                    ActionChains(driver).move_to_element(random_sub).perform()
+                    random_sub.click()
+
+            sub_title = driver.find_element_by_css_selector('.sub-title').text
             # Save
             time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
@@ -1013,22 +1065,25 @@ class SECURITY(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
 
             time.sleep(1)
-            driver.find_element_by_css_selector('.filter-count').click()
+            # driver.find_element_by_css_selector('.filter-count').click()
             time.sleep(1)
-            number_of_total_nw = len(driver.find_elements_by_css_selector('.service-item'))
+            exp_service = ['Social Network[1]', 'User Define[1]']
+            number_of_total_nw = [i.text for i in driver.find_elements_by_css_selector('.filter-item')]
+            check_service_filter = all([i in number_of_total_nw for i in exp_service])
+
             # Check block schedule
             block_schedule_value = driver.find_elements_by_css_selector('.schedule')[-1].text
 
-            list_actual3 = [sub_title, number_of_total_nw, block_schedule_value]
-            list_expected3 = [exp_subtitle_set_website_app, 10, exp_block_schedule_value]
+            list_actual3 = [sub_title, check_service_filter, block_schedule_value]
+            list_expected3 = [exp_subtitle_set_website_app, True, exp_block_schedule_value]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Add rule: Set the Websites/Apps Sub title, number of Social NW, Block schedule text. '
+                f'[Pass] 3. Add rule: Set the Websites/Apps Sub title, Check list Social Network and User Filter, Block schedule text. '
                 f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Add rule: Set the Websites/Apps Sub title, number of Social NW, Block schedule text. '
+                f'[Fail] 3. Add rule: Set the Websites/Apps Sub title, Check list Social Network and User Filter, Block schedule text. '
                 f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             list_step_fail.append('3. Assertion wong.')
 
@@ -1039,26 +1094,26 @@ class SECURITY(unittest.TestCase):
 
         try:
             driver2 = webdriver.Chrome(driver_path)
-            time.sleep(5)
+            time.sleep(1)
             driver2.get(FACEBOOK)
-            time.sleep(10)
+            time.sleep(3)
             fb_http_4 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
-            time.sleep(2)
+            time.sleep(1)
 
             driver2.get(FACEBOOK_S)
-            time.sleep(10)
+            time.sleep(3)
             fb_https_4 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
-            time.sleep(2)
+            time.sleep(1)
 
             driver2.get(GOOGLE)
-            time.sleep(10)
+            time.sleep(3)
             gg_http_4 = len(driver2.find_elements_by_css_selector(google_img)) > 0
-            time.sleep(2)
+            time.sleep(1)
 
             driver2.get(GOOGLE_S)
-            time.sleep(10)
+            time.sleep(3)
             gg_https_4 = len(driver2.find_elements_by_css_selector(google_img)) > 0
-            time.sleep(2)
+            time.sleep(1)
 
             driver2.quit()
 
@@ -1113,24 +1168,24 @@ class SECURITY(unittest.TestCase):
         try:
             driver2 = webdriver.Chrome(driver_path)
             driver2.get(FACEBOOK)
-            time.sleep(5)
+            time.sleep(3)
             fb_http_6 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
-            time.sleep(2)
+            time.sleep(1)
 
             driver2.get(FACEBOOK_S)
-            time.sleep(5)
+            time.sleep(3)
             fb_https_6 = len(driver2.find_elements_by_css_selector(ele_verify_facebook)) > 0
-            time.sleep(2)
+            time.sleep(1)
 
             driver2.get(GOOGLE)
-            time.sleep(5)
+            time.sleep(3)
             gg_http_6 = len(driver2.find_elements_by_css_selector(google_img)) > 0
-            time.sleep(2)
+            time.sleep(1)
 
             driver2.get(GOOGLE_S)
-            time.sleep(5)
+            time.sleep(3)
             gg_https_6 = len(driver2.find_elements_by_css_selector(google_img)) > 0
-            time.sleep(2)
+            time.sleep(1)
             driver2.quit()
             list_actual6 = [fb_http_6, fb_https_6, gg_http_6, gg_https_6]
             list_expected6 = [return_true] * 4
@@ -1221,11 +1276,20 @@ class SECURITY(unittest.TestCase):
             while len(rule_block.find_elements_by_css_selector(delete_cls)) > 0:
                 rule_block.find_element_by_css_selector(delete_cls).click()
                 time.sleep(0.5)
+                wait_popup_disappear(driver, dialog_loading)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(1)
-
+                wait_popup_disappear(driver, dialog_loading)
+            driver.refresh()
+            time.sleep(3)
+            parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
+            if len(parental_field_input) > 0:
+                #  New
+                ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
             # Control Rule
             rule_block = driver.find_element_by_css_selector(parental_rule_card)
             # Click Add 1
@@ -1252,37 +1316,54 @@ class SECURITY(unittest.TestCase):
             edit_field.find_element_by_css_selector('.service-filter').find_element_by_css_selector(apply).click()
             time.sleep(0.5)
 
+            time.sleep(1)
             ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
                 if f.text == SOCIAL_NW:
+                    ActionChains(driver).move_to_element(f).perform()
                     f.click()
-                    break
-            sub_title = driver.find_element_by_css_selector('.sub-title').text
-            ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
-            for s in ls_service_sub:
-                if s.text == FACEBOOK:
-                    if not len(s.find_elements_by_css_selector('.selected-icon')) > 0:
-                        s.click()
 
-                else:
-                    time.sleep(0.2)
-                    s.click()
+                    ls_service_sub = f.find_elements_by_css_selector('.service-sub-item-wrap')
+                    for s in ls_service_sub:
+                        ActionChains(driver).move_to_element(s).perform()
+                        if s.text == 'facebook':
+                            s.click()
 
             ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
                 if f.text == USER_DEFINE:
+                    ActionChains(driver).move_to_element(f).perform()
                     f.click()
                     check_item_inner = driver.find_elements_by_css_selector('.child-item .item-inner')
-                    check_item_exist = any([i.text == GOOGLE for i in check_item_inner])
+                    ActionChains(driver).move_to_element(check_item_inner[0]).perform()
+                    time.sleep(0.5)
+                    check_item_exist = any([i.text == 'google.com' for i in check_item_inner])
+                    print(check_item_exist)
+                    time.sleep(1)
                     if not check_item_exist:
                         # Add url
                         driver.find_element_by_css_selector(add_class).click()
-                        f.find_element_by_css_selector(input).send_keys(GOOGLE)
+                        f.find_element_by_css_selector(input).send_keys('google.com')
                         time.sleep(1)
                         f.find_element_by_css_selector(btn_save).click()
-                        time.sleep(1)
+            ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
+            for s in ls_service_sub:
+                ActionChains(driver).move_to_element(s).perform()
+                if s.text == 'google.com':
+                    s.click()
+                    break
 
-            # Save
+            ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
+            for s in ls_service:
+                ActionChains(driver).move_to_element(s).perform()
+                if s.find_element_by_css_selector('span').text not in ['Social Network', 'User Define']:
+                    s.click()
+                    ls_service_sub = s.find_elements_by_css_selector('.service-sub-item-wrap')
+                    random_sub = random.choice(ls_service_sub)
+                    ActionChains(driver).move_to_element(random_sub).perform()
+                    random_sub.click()
+            sub_title = driver.find_element_by_css_selector('.sub-title').text
+
             time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
 
@@ -1321,23 +1402,26 @@ class SECURITY(unittest.TestCase):
             driver.find_element_by_css_selector(btn_save).click()
             wait_popup_disappear(driver, dialog_loading)
 
-            time.sleep(1)
-            driver.find_element_by_css_selector('.filter-count').click()
-            time.sleep(1)
-            number_of_total_nw = len(driver.find_elements_by_css_selector('.service-item'))
+
+
+            exp_service = ['Social Network[1]', 'User Define[1]']
+            number_of_total_nw = [i.text for i in driver.find_elements_by_css_selector('.filter-item')]
+            time.sleep(0.5)
+            check_service_filter = all([i in number_of_total_nw for i in exp_service])
+
             # Check block schedule
             block_schedule_value = driver.find_elements_by_css_selector('.schedule')[-1].text
 
-            list_actual3 = [sub_title, number_of_total_nw, block_schedule_value]
-            list_expected3 = [exp_subtitle_set_website_app, 10, exp_block_schedule_value]
+            list_actual3 = [sub_title, check_service_filter, block_schedule_value]
+            list_expected3 = [exp_subtitle_set_website_app, True, exp_block_schedule_value]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Add rule: Set the Websites/Apps Sub title, number of Social NW, Block schedule text. '
+                f'[Pass] 3. Add rule: Set the Websites/Apps Sub title, Check Social Network[1] and User Define[1], Block schedule text. '
                 f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Add rule: Set the Websites/Apps Sub title, number of Social NW, Block schedule text. '
+                f'[Fail] 3. Add rule: Set the Websites/Apps Sub title, Check Social Network[1] and User Define[1], Block schedule text. '
                 f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             list_step_fail.append('3. Assertion wong.')
 
@@ -1359,28 +1443,57 @@ class SECURITY(unittest.TestCase):
             edit_field.find_element_by_css_selector('.service-filter').find_element_by_css_selector(apply).click()
             time.sleep(0.5)
 
-            ls_service = driver.find_elements_by_css_selector('.service-item-wrap>.item-inner>span')
+            ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
-                if f.text == 'Social Network':
+                if len(f.find_elements_by_css_selector('.selected-icon')) > 0:
                     f.click()
-                    time.sleep(1)
-                    ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
+                    ls_service_sub = f.find_elements_by_css_selector('.service-sub-item-wrap')
                     for s in ls_service_sub:
+                        ActionChains(driver).move_to_element(s).perform()
                         if len(s.find_elements_by_css_selector('.selected-icon')) > 0:
                             s.click()
-                    break
-            ls_service = driver.find_elements_by_css_selector('.service-item-wrap>.item-inner>span')
+
+
+            ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
-                if f.text == 'Mail':
+                if f.text == USER_DEFINE:
+                    ActionChains(driver).move_to_element(f).perform()
                     f.click()
+                    check_item_inner = driver.find_elements_by_css_selector('.child-item .item-inner')
+                    ActionChains(driver).move_to_element(check_item_inner[0]).perform()
+                    time.sleep(0.5)
+                    check_item_exist = any([i.text == 'google.com' for i in check_item_inner])
+                    print(check_item_exist)
                     time.sleep(1)
-                    sub_title = driver.find_element_by_css_selector('.sub-title').text
-                    ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
-                    for s in ls_service_sub:
-                        if s.text in ['gmail', 'outlook']:
-                            if not len(s.find_elements_by_css_selector('.selected-icon')) > 0:
-                                s.click()
+                    if not check_item_exist:
+                        # Add url
+                        driver.find_element_by_css_selector(add_class).click()
+                        f.find_element_by_css_selector(input).send_keys('google.com')
+                        time.sleep(1)
+                        f.find_element_by_css_selector(btn_save).click()
+            ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
+            for s in ls_service_sub:
+                ActionChains(driver).move_to_element(s).perform()
+                if s.text == 'google.com':
+                    s.click()
                     break
+
+            time.sleep(1)
+            ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
+            for f in ls_service:
+
+                if f.find_element_by_css_selector('span').text == 'Mail':
+                    print(f.text)
+                    ActionChains(driver).move_to_element(f).perform()
+                    if len(f.find_elements_by_css_selector('.on-show')) == 0:
+                        f.click()
+                    else:
+                        ls_service_sub = f.find_elements_by_css_selector('.service-sub-item-wrap')
+                        for s in ls_service_sub:
+                            ActionChains(driver).move_to_element(s).perform()
+                            print(s.text)
+                            if s.text in ['gmail', 'outlook']:
+                                s.click()
             time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
@@ -1390,32 +1503,33 @@ class SECURITY(unittest.TestCase):
             driver.find_element_by_css_selector(f'tr:nth-child({weekday_index})>.all').click()
             time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_save).click()
             wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
 
             ls_mac_device = [i.text.splitlines()[-1] for i in driver.find_elements_by_css_selector('.name .device-item')]
             check_mac = MAC_2 in ls_mac_device
-            time.sleep(1)
-            driver.find_element_by_css_selector('.filter-count').click()
-            time.sleep(1)
-            service_filters = [i.text for i in driver.find_elements_by_css_selector('.service-item')]
+
+            exp_service = ['Mail[2]', 'User Define[1]']
+            number_of_total_nw = [i.text for i in driver.find_elements_by_css_selector('.filter-item')]
+            time.sleep(0.5)
+            check_service_filter = all([i in number_of_total_nw for i in exp_service])
             # Check block schedule
             block_schedule_value = driver.find_elements_by_css_selector('.schedule')[-1].text
 
-            list_actual4 = [check_mac, service_filters, block_schedule_value]
-            list_expected4 = [return_true, ['gmail', 'outlook'], 'Always Block']
+            list_actual4 = [check_mac, check_service_filter, block_schedule_value]
+            list_expected4 = [return_true, True, 'Always Block']
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Edit rule: Check Add other mac, 2 service filters, Text of block schedule. '
+                f'[Pass] 4. Edit rule: Check Add other mac, Check Mail[2] and User Define[1], Text of block schedule. '
                 f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Edit rule: Check Add other mac, 2 service filters, Text of block schedule. '
+                f'[Fail] 4. Edit rule: Check Add other mac, Check Mail[2] and User Define[1], Text of block schedule. '
                 f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
@@ -2337,7 +2451,7 @@ class SECURITY(unittest.TestCase):
             grand_login(driver)
             # Goto media share USB
             try:
-                goto_menu(driver, security_tab, security_filtering_tab)
+                goto_menu(driver, security_tab, security_selfcheck_tab)
             except:
                 parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
                 PARENTAL_CODE_KEY = get_config('SECURITY', 'parental_code')
@@ -2352,7 +2466,7 @@ class SECURITY(unittest.TestCase):
                     if parental_code_select.find_element_by_css_selector(input).is_selected():
                         parental_code_select.click()
                         wait_popup_disappear(driver, dialog_loading)
-                    goto_menu(driver, security_tab, security_filtering_tab)
+                    goto_menu(driver, security_tab, security_selfcheck_tab)
 
             check_title = driver.find_element_by_css_selector(ele_title_page).text
 

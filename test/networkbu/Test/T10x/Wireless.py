@@ -3126,6 +3126,7 @@ class WIRELESS(unittest.TestCase):
             while len(block_2g.find_elements_by_css_selector(delete_cls)) > 0:
                 block_2g.find_element_by_css_selector(delete_cls).click()
                 time.sleep(0.5)
+                wait_popup_disappear(driver, dialog_loading)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
                 driver.find_element_by_css_selector(btn_ok).click()
@@ -3136,6 +3137,7 @@ class WIRELESS(unittest.TestCase):
             while len(block_5g.find_elements_by_css_selector(delete_cls)) > 0:
                 block_5g.find_element_by_css_selector(delete_cls).click()
                 time.sleep(0.5)
+                wait_popup_disappear(driver, dialog_loading)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
                 driver.find_element_by_css_selector(btn_ok).click()
