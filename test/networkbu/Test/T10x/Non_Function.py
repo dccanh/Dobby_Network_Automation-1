@@ -910,6 +910,7 @@ class NON_FUNCTION(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        # factory_dut()
         # ===========================================================
         grand_login(driver)
         time.sleep(2)
@@ -917,13 +918,38 @@ class NON_FUNCTION(unittest.TestCase):
 
         upper_2g_name = get_config('REPEATER', 'repeater_name', input_data_path)
         upper_2g_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
-        connect_repeater_mode(driver, REPEATER_UPPER=upper_2g_name, PW=upper_2g_pw)
+        connect_repeater_mode(driver, REPEATER_UPPER=upper_2g_name, PW=upper_2g_pw, force=True)
         wait_ethernet_available()
+        interface_connect_disconnect('Wi-Fi', 'enable')
         # ===========================================================
-        wifi = connect_wifi_by_command(upper_2g_name, upper_2g_pw)
-        interface_connect_disconnect('Ethernet', 'disable')
-
-        print(wifi)
+        try:
+            wait_ethernet_available()
+            URL_wifi_2g = 'http://dearmyextender.net/api/v1/wifi/0/ssid/0'
+            extender_MAC = api_change_wifi_setting(URL_wifi_2g, get_only_mac=True)
+            print(extender_MAC)
+            wifi = connect_wifi_by_command(upper_2g_name, upper_2g_pw)
+            interface_connect_disconnect('Ethernet', 'disable')
+            connected_mac = get_current_wifi_MAC()
+            print(connected_mac)
+            if extender_MAC != connected_mac:
+                os.system('netsh wlan delete profile name=*')
+                wifi = connect_wifi_by_command(upper_2g_name, upper_2g_pw)
+            connected_mac = get_current_wifi_MAC()
+            print(connected_mac)
+            print(wifi)
+            list_actual0 = [connected_mac]
+            list_expected0 = [extender_MAC]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 0. Precondition. Connect wifi of Extender router 2G. '
+                f'Actual: {connected_mac}'
+                f'Expected: {extender_MAC}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 0. Precondition. Connect wifi of Extender router 2G. '
+                f'Actual: {connected_mac}'
+                f'Expected: {extender_MAC}')
 
         PING_ADDRESS = '192.168.1.1'
         # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
@@ -1027,14 +1053,41 @@ class NON_FUNCTION(unittest.TestCase):
         upper_5g_name = get_config('REPEATER', 'repeater_name_5g', input_data_path)
         upper_5g_pw = get_config('REPEATER', 'repeater_pw_5g', input_data_path)
         connect_repeater_mode(driver, REPEATER_UPPER=upper_5g_name, PW=upper_5g_pw)
-        # scan_wifi_repeater_mode(driver, upper_5g_name, upper_5g_pw)
-        # ===========================================================
         wait_ethernet_available()
 
         wifi = connect_wifi_by_command(upper_5g_name, upper_5g_pw)
         interface_connect_disconnect('Ethernet', 'disable')
 
         print(wifi)
+
+        try:
+            wait_ethernet_available()
+            URL_wifi_5g = 'http://dearmyextender.net/api/v1/wifi/1/ssid/0'
+            extender_MAC = api_change_wifi_setting(URL_wifi_5g, get_only_mac=True)
+            print(extender_MAC)
+            wifi = connect_wifi_by_command(upper_5g_name, upper_5g_pw)
+            interface_connect_disconnect('Ethernet', 'disable')
+            connected_mac = get_current_wifi_MAC()
+            print(connected_mac)
+            if extender_MAC != connected_mac:
+                os.system('netsh wlan delete profile name=*')
+                wifi = connect_wifi_by_command(upper_5g_name, upper_5g_pw)
+            connected_mac = get_current_wifi_MAC()
+            print(wifi)
+            list_actual0 = [connected_mac]
+            list_expected0 = [extender_MAC]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 0. Precondition. Connect wifi of Extender router 5G. '
+                f'Actual: {connected_mac}'
+                f'Expected: {extender_MAC}')
+        except:
+            self.list_steps.append(
+                f'[Fail] 0. Precondition. Connect wifi of Extender router 5G. '
+                f'Actual: {connected_mac}'
+                f'Expected: {extender_MAC}')
+
 
         PING_ADDRESS = '192.168.1.1'
         # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
@@ -1153,7 +1206,7 @@ class NON_FUNCTION(unittest.TestCase):
         wait_ethernet_available()
         # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            time.sleep(20)
+            # time.sleep(20)
             wait_ethernet_available()
             grand_login(driver)
             time.sleep(2)

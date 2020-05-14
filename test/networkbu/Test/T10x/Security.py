@@ -430,7 +430,7 @@ class SECURITY(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
-
+            time.sleep(0.5)
             #
             parental_code = driver.find_element_by_css_selector(parental_code_card)
             parental_input = parental_code.find_elements_by_css_selector(input)
@@ -509,10 +509,10 @@ class SECURITY(unittest.TestCase):
         try:
             parental_field_name = driver.find_elements_by_css_selector(parental_popup_label)
             ls_parental_name = [i.text for i in parental_field_name]
-
+            time.sleep(1)
             parental_field_input = driver.find_elements_by_css_selector(parental_popup_input)
             #  New
-            time.sleep(0.5)
+            time.sleep(1)
             ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
             time.sleep(0.5)
             ActionChains(driver).click(parental_field_input[4]).send_keys(PARENTAL_CODE_KEY).perform()
@@ -538,9 +538,11 @@ class SECURITY(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~ 6
         try:
+            time.sleep(0.5)
             # Input valid
             parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
             #  New
+            time.sleep(0.5)
             ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
@@ -684,7 +686,7 @@ class SECURITY(unittest.TestCase):
                     ActionChains(driver).move_to_element(f).perform()
                     f.click()
                     check_item_inner = driver.find_elements_by_css_selector('.child-item .item-inner')
-                    ActionChains(driver).move_to_element(check_item_inner[0]).perform()
+                    ActionChains(driver).move_to_element(check_item_inner[-1]).perform()
                     time.sleep(0.5)
                     check_item_exist = any([i.text == 'google.com' for i in check_item_inner])
                     print(check_item_exist)
@@ -695,6 +697,11 @@ class SECURITY(unittest.TestCase):
                         f.find_element_by_css_selector(input).send_keys('google.com')
                         time.sleep(1)
                         f.find_element_by_css_selector(btn_save).click()
+            ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
+            for f in ls_service:
+                if f.text == USER_DEFINE:
+                    ActionChains(driver).move_to_element(f).perform()
+                    f.click()
             ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
             for s in ls_service_sub:
                 ActionChains(driver).move_to_element(s).perform()

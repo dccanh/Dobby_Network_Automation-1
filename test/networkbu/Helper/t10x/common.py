@@ -511,6 +511,7 @@ def goto_menu(driver, parent_tab, child_tab):
     if child_tab != 0:
         driver.find_element_by_css_selector(child_tab).click()
         time.sleep(0.5)
+        wait_popup_disappear(driver, dialog_loading)
 
 
 def detect_current_menu(driver):
@@ -805,29 +806,32 @@ def checkIPAddress(x):
 
 def handle_winzard_welcome(driver, NEW_PASSWORD='abc123', exp_language='English'):
     exp_time_zone = '(GMT+07:00) Bangkok, Ho Chi Minh, Phnom Penh, Vientiane'
-    # Click to Language
-    driver.find_element_by_css_selector(welcome_language).click()
-    time.sleep(3)
+    if driver.find_element_by_css_selector('.language-dialog-select input').get_attribute('value') != exp_language:
+        # Click to Language
+        driver.find_element_by_css_selector(welcome_language).click()
+        time.sleep(3)
 
-    # Choose Language
-    ls_time_zone = driver.find_elements_by_css_selector(welcome_list_language)
-    for t in ls_time_zone:
-        ActionChains(driver).move_to_element(t).perform()
-        if t.text == exp_language:
-            t.click()
-            break
-    time.sleep(1)
-    # Click to time zone
-    driver.find_element_by_css_selector(welcome_time_zone).click()
-    time.sleep(1)
+        # Choose Language
+        ls_time_zone = driver.find_elements_by_css_selector(welcome_list_language)
+        for t in ls_time_zone:
+            ActionChains(driver).move_to_element(t).perform()
+            if t.text == exp_language:
+                t.click()
+                break
+        time.sleep(1)
 
-    # Choose time zone in drop down: Vn zone GMT +7
-    ls_time_zone = driver.find_elements_by_css_selector(welcome_list_time_zone)
-    for t in ls_time_zone:
-        ActionChains(driver).move_to_element(t).perform()
-        if t.text == exp_time_zone:
-            t.click()
-            break
+    if driver.find_element_by_css_selector('.datetime-dialog-select input').get_attribute('value') != exp_time_zone:
+        # Click to time zone
+        driver.find_element_by_css_selector(welcome_time_zone).click()
+        time.sleep(1)
+
+        # Choose time zone in drop down: Vn zone GMT +7
+        ls_time_zone = driver.find_elements_by_css_selector(welcome_list_time_zone)
+        for t in ls_time_zone:
+            ActionChains(driver).move_to_element(t).perform()
+            if t.text == exp_time_zone:
+                t.click()
+                break
 
     time.sleep(1)
     # Click start btn
@@ -910,7 +914,6 @@ def network_interface_action(interface='Ethernet', action='enable'):
 
 
 def api_change_wifi_setting(url_change, new_wifi_name='', get_only_mac=False, ):
-
     user = get_config('ACCOUNT', 'user')
     pw = get_config('ACCOUNT', 'password')
     token = get_token(user, pw)
@@ -1244,6 +1247,14 @@ def current_connected_wifi():
         return ifaces.decode('utf8').split('Profile                :')[1].split('Hosted')[0].strip()
     return 'WiFi is not connected'
 
+def get_current_wifi_MAC():
+    import subprocess
+    ifaces = subprocess.check_output('netsh wlan show interface mode=BSSID')
+    lines = [i.strip() for i in ifaces.decode('utf8').splitlines()]
+    mac_row = [i for i in lines if i.startswith('BSSID')]
+    if len(mac_row):
+        return mac_row[0].split('BSSID                  :')[1].strip().upper()
+    return 'Wifi is not connected'
 
 def factory_dut():
     save_config(config_path, 'URL', 'url', 'http://dearmyrouter.net')

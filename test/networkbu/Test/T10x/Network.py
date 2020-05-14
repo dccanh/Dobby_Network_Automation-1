@@ -2546,14 +2546,13 @@ class NETWORK(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        URL_LOGIN = get_config('URL', 'url')
         factory_dut()
         # ===============================================
         URL_PING_CHECK = '172.16.1.1'
         URL_B = 'http://172.16.1.1'
         EXPECTED_B_IP_ADDR = '172.16.1.10'
         MAC_2 = get_config('NETWORK', 'nw27_mac2', input_data_path)
-        IP_2 = get_config('NETWORK', 'nw27_mac2', input_data_path)
+        IP_2 = get_config('NETWORK', 'nw27_ip2', input_data_path)
 
         try:
             grand_login(driver)
@@ -2612,17 +2611,22 @@ class NETWORK(unittest.TestCase):
                     break
             lan_block.find_element_by_css_selector(submit_btn).click()
             time.sleep(0.2)
+            wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
             # wait_popup_disappear(driver, dialog_loading)
             # wait_popup_disappear(driver, dialog_loading)
-            time.sleep(120)
+            time.sleep(100)
             # wait_popup_disappear(driver, dialog_loading)
-            wait_DUT_activated(URL_PING_CHECK)
+            wait_ethernet_available()
+            # wait_popup_disappear(driver, dialog_loading)
+            wait_ethernet_available()
+            # wait_popup_disappear(driver, dialog_loading)
+            # wait_DUT_activated(URL_PING_CHECK)
             time.sleep(10)
             # wait_ping(URL_B)
             # driver.get(URL_B)
             save_config(config_path, 'URL', 'url', URL_B)
-            time.sleep(5)
+            time.sleep(1)
             grand_login(driver)
 
             goto_menu(driver, network_tab, network_lan_tab)
@@ -2647,7 +2651,6 @@ class NETWORK(unittest.TestCase):
             list_step_fail.append('2,3. Assertion wong.')
         # ===============================================
         factory_dut()
-        save_config(config_path, 'URL', 'url', 'http://192.168.1.1')
 
         self.assertListEqual(list_step_fail, [])
 
@@ -3288,8 +3291,10 @@ class NETWORK(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
             time.sleep(10)
             wait_popup_disappear(driver, icon_loading)
-
+            wait_popup_disappear(driver, '.loading-wizard')
             title_repeater_setting_1 = driver.find_element_by_css_selector(lg_welcome_header).text
+            wait_popup_disappear(driver, '.loading-wizard')
+            time.sleep(1)
             list_column = [i.text for i in driver.find_elements_by_css_selector('thead .col')]
 
             list_actual1 = [title_repeater_setting_1, list_column]
@@ -3427,13 +3432,14 @@ class NETWORK(unittest.TestCase):
             wait_ethernet_available()
             goto_menu(driver, home_tab, 0)
 
-            connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
-
+            interface_connect_disconnect('Ethernet', 'disable')
+            wifi_connect = connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
+            os.system('netsh wlan show interface mode=BSSID')
             ip_assigned = checkIPAddress(driver.find_element_by_css_selector(home_conection_img_wan_ip).text)
             check_google_2 = check_connect_to_google()
 
-            list_actual8 = [ip_assigned, check_google_2]
-            list_expected8 = [return_true] * 2
+            list_actual8 = [wifi_connect, ip_assigned, check_google_2]
+            list_expected8 = [REPEATER_MESH_NAME, return_true, return_true]
             check = assert_list(list_actual8, list_expected8)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -3513,8 +3519,9 @@ class NETWORK(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
             time.sleep(10)
             wait_popup_disappear(driver, icon_loading)
-
+            wait_popup_disappear(driver, '.loading-wizard')
             title_repeater_setting_1 = driver.find_element_by_css_selector(lg_welcome_header).text
+            wait_popup_disappear(driver, '.loading-wizard')
             list_column = [i.text for i in driver.find_elements_by_css_selector('thead .col')]
 
             list_actual1 = [title_repeater_setting_1, list_column]
@@ -3604,6 +3611,8 @@ class NETWORK(unittest.TestCase):
         try:
             # Check Network
             wireless_card = driver.find_element_by_css_selector(ele_wireless_card)
+            wireless_card.find_element_by_css_selector(ele_disconnect_device_tab).click()
+            time.sleep(0.5)
             labels = wireless_card.find_elements_by_css_selector(label_name_in_2g)
             values = wireless_card.find_elements_by_css_selector(ele_wrap_input_label)
             for l, v in zip(labels, values):
@@ -3654,13 +3663,14 @@ class NETWORK(unittest.TestCase):
             wait_ethernet_available()
             goto_menu(driver, home_tab, 0)
 
-            connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
-
+            interface_connect_disconnect('Ethernet', 'disable')
+            wifi_connect = connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
+            os.system('netsh wlan show interface mode=BSSID')
             ip_assigned = checkIPAddress(driver.find_element_by_css_selector(home_conection_img_wan_ip).text)
             check_google_2 = check_connect_to_google()
 
-            list_actual8 = [ip_assigned, check_google_2]
-            list_expected8 = [return_true] * 2
+            list_actual8 = [wifi_connect, ip_assigned, check_google_2]
+            list_expected8 = [REPEATER_MESH_NAME, return_true, return_true]
             check = assert_list(list_actual8, list_expected8)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -3916,9 +3926,10 @@ class NETWORK(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        factory_dut()
         # ===========================================================
         grand_login(driver)
-        time.sleep(2)
+        # time.sleep(2)
         goto_menu(driver, network_tab, network_operationmode_tab)
         connect_repeater_mode(driver)
         wait_ethernet_available()
@@ -3932,12 +3943,14 @@ class NETWORK(unittest.TestCase):
         #
         wait_ethernet_available()
         grand_login(driver, URL_UPPER, USER_UPPER, PW_UPPER)
+        wait_popup_disappear(driver, dialog_loading)
         goto_menu(driver, wireless_tab, wireless_guestnetwork_tab)
         wait_popup_disappear(driver, dialog_loading)
         block_2g = driver.find_elements_by_css_selector(guest_network_block)[0]
         while len(block_2g.find_elements_by_css_selector(delete_cls)) > 0:
             block_2g.find_element_by_css_selector(delete_cls).click()
             time.sleep(0.5)
+            wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(0.5)
@@ -3967,7 +3980,7 @@ class NETWORK(unittest.TestCase):
             time.sleep(20)
             wait_ethernet_available()
             grand_login(driver)
-            time.sleep(1)
+            # time.sleep(1)
             goto_menu(driver, network_tab, network_operationmode_tab)
             time.sleep(1)
             # Select Repeater mode
@@ -3975,7 +3988,8 @@ class NETWORK(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            # wait_popup_disappear(driver, dialog_loading)
+            wait_ethernet_available()
             # Click Manual scan
             driver.find_element_by_css_selector(ele_manual_scan_btn).click()
             time.sleep(0.5)
@@ -5068,7 +5082,7 @@ class NETWORK(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         # ===========================================================
-        disconnect_or_connect_wan(disconnected=True)
+        # disconnect_or_connect_wan(disconnected=True)
         factory_dut()
         # ======================================================
         THIRD_PARTY_NAME = get_config('REPEATER', 'third_party_name', input_data_path)
@@ -5117,8 +5131,9 @@ class NETWORK(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
             time.sleep(10)
             wait_popup_disappear(driver, icon_loading)
-
+            wait_popup_disappear(driver, '.loading-wizard')
             title_repeater_setting_1 = driver.find_element_by_css_selector(lg_welcome_header).text
+            wait_popup_disappear(driver, '.loading-wizard')
             list_column = [i.text for i in driver.find_elements_by_css_selector('thead .col')]
 
             list_actual1 = [title_repeater_setting_1, list_column]
@@ -5228,6 +5243,7 @@ class NETWORK(unittest.TestCase):
             wait_popup_disappear(driver, icon_loading)
             # load_content = driver.find_element_by_css_selector(content).text
             time.sleep(100)
+            wait_ethernet_available()
             wait_popup_disappear(driver, icon_loading)
             save_config(config_path, 'ACCOUNT', 'password', NEW_PASSWORD)
             save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
@@ -5350,10 +5366,11 @@ class NETWORK(unittest.TestCase):
                 f'Actual: {str(list_actual8)}. '
                 f'Expected: {str(list_expected8)}')
             list_step_fail.append('8. Assertion wong')
+
         try:
             interface_connect_disconnect('Ethernet', 'disable')
             connect_wifi_by_command(check_network_name_2g, THIRD_PARTY_PW)
-            time.sleep(5)
+            os.system('netsh wlan show interface mode=BSSID')
             goto_menu(driver, home_tab, 0)
 
             ip_assigned = checkIPAddress(driver.find_element_by_css_selector(home_conection_img_wan_ip).text)
@@ -5380,7 +5397,7 @@ class NETWORK(unittest.TestCase):
                 f'Expected: {str(list_expected9)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('9. Assertion wong')
-        disconnect_or_connect_wan(disconnected=False)
+        # disconnect_or_connect_wan(disconnected=False)
 
         self.assertListEqual(list_step_fail, [])
 
@@ -5391,7 +5408,7 @@ class NETWORK(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         # ===========================================================
-        disconnect_or_connect_wan(disconnected=True)
+        # disconnect_or_connect_wan(disconnected=True)
         factory_dut()
 
 
@@ -5443,8 +5460,9 @@ class NETWORK(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
             time.sleep(10)
             wait_popup_disappear(driver, icon_loading)
-
+            wait_popup_disappear(driver, '.loading-wizard')
             title_repeater_setting_1 = driver.find_element_by_css_selector(lg_welcome_header).text
+            wait_popup_disappear(driver, '.loading-wizard')
             list_column = [i.text for i in driver.find_elements_by_css_selector('thead .col')]
 
             list_actual1 = [title_repeater_setting_1, list_column]
@@ -5705,7 +5723,7 @@ class NETWORK(unittest.TestCase):
                 f'Expected: {str(list_expected9)}')
             self.list_steps.append('[END TC]')
             list_step_fail.append('9. Assertion wong')
-        disconnect_or_connect_wan(disconnected=False)
+        # disconnect_or_connect_wan(disconnected=False)
 
         self.assertListEqual(list_step_fail, [])
 

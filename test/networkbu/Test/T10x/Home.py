@@ -2430,31 +2430,21 @@ class HOME(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
-        current_pw = get_config('ACCOUNT', 'password')
+        # URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
+        # current_pw = get_config('ACCOUNT', 'password')
+        factory_dut()
 
-        # Disconnect Wireless, connect LAN
-        try:
-            os.system(f'netsh wlan disconnect')
-            time.sleep(5)
-
-            self.list_steps.append('[Pass] Precondition Successfully.')
-        except:
-            self.list_steps.append('[Fail] Precondition Fail')
-            list_step_fail.append('Assertion wong.')
-
-        # Check popup appear after click Edit
         try:
             grand_login(driver)
 
             # CLick Device Image
             driver.find_element_by_css_selector(home_img_device_connection).click()
-            time.sleep(2)
+            # time.sleep(2)
             wait_popup_disappear(driver, dialog_loading)
 
             # Click Edit
             driver.find_element_by_css_selector(edit_cls).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
 
             check_dialog_display = len(driver.find_elements_by_css_selector(dialog_content)) > 0
 
@@ -2462,9 +2452,10 @@ class HOME(unittest.TestCase):
             list_expected1 = [return_true]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Click Edit; Check popup display.'
-                                   f'Actual: {str(list_actual1)}. '
-                                   f'Expected: {str(list_expected1)}')
+            self.list_steps.append(
+                f'[Pass] 2. Click Edit; Check popup display.'
+                f'Actual: {str(list_actual1)}. '
+                f'Expected: {str(list_expected1)}')
         except:
             self.list_steps.append(
                 f'[Fail] 2. Click Edit; Check popup display. '
@@ -2520,10 +2511,11 @@ class HOME(unittest.TestCase):
             list_expected3 = [exp_confirm_msg_add_resserve_ip, return_true, return_true]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
-                                   'Click add again -> Click OK -> Check add icon change to delete icon'
-                                   f'Actual: {str(list_actual3)}. '
-                                   f'Expected: {str(list_expected3)}')
+            self.list_steps.append(
+                f'[Pass] 3. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
+                f'Click add again -> Click OK -> Check add icon change to delete icon'
+                f'Actual: {str(list_actual3)}. '
+                f'Expected: {str(list_expected3)}')
         except:
             self.list_steps.append(
                 f'[Fail] 3. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
@@ -2558,9 +2550,10 @@ class HOME(unittest.TestCase):
             list_expected4 = [return_true]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Add reserved IP -> Check add successfully in Network Lan'
-                                   f'Actual: {str(list_actual4)}. '
-                                   f'Expected: {str(list_expected4)}')
+            self.list_steps.append(
+                f'[Pass] 4. Add reserved IP -> Check add successfully in Network Lan'
+                f'Actual: {str(list_actual4)}. '
+                f'Expected: {str(list_expected4)}')
         except:
             self.list_steps.append(
                 f'[Fail] 4. Add reserved IP -> Check add successfully in Network Lan'
@@ -2570,14 +2563,14 @@ class HOME(unittest.TestCase):
 
         # Delete Reserved IP, Check delete in Network LAN
         try:
-            time.sleep(3)
+            time.sleep(0.5)
             # Goto Home
             goto_menu(driver, home_tab, 0)
             time.sleep(1)
             wait_popup_disappear(driver, dialog_loading)
             # CLick Device Image
             driver.find_element_by_css_selector(home_img_device_connection).click()
-            time.sleep(2)
+            # time.sleep(2)
             wait_popup_disappear(driver, dialog_loading)
 
             # Click Edit
@@ -2613,6 +2606,7 @@ class HOME(unittest.TestCase):
 
             goto_menu(driver, network_tab, network_lan_tab)
             time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
 
             check_add_in_lan = True
             reserved_block_rows = driver.find_elements_by_css_selector(rows)
@@ -2626,9 +2620,10 @@ class HOME(unittest.TestCase):
             list_expected5 = [exp_confirm_msg_delete_resserve_ip, return_true]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 5,6,7. Delete reserved IP -> Check Delete successfully in Network Lan'
-                                   f'Actual: {str(list_actual5)}. '
-                                   f'Expected: {str(list_expected5)}')
+            self.list_steps.append(
+                f'[Pass] 5,6,7. Delete reserved IP -> Check Delete successfully in Network Lan'
+                f'Actual: {str(list_actual5)}. '
+                f'Expected: {str(list_expected5)}')
         except:
             self.list_steps.append(
                 f'[Fail] 5,6,7. Delete reserved IP -> Check Delete successfully in Network Lan'
@@ -2638,37 +2633,40 @@ class HOME(unittest.TestCase):
 
         # Connect Wifi
         try:
-            time.sleep(5)
-            new_2g_wf_name = api_change_wifi_setting(URL_2g)
-            time.sleep(3)
-            write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name, new_pw=current_pw)
-            time.sleep(3)
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
+            wifi_2g_name = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
+            wifi_2g_password = wireless_check_pw_eye(driver, block_2g, change_pw=False)
 
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
-            time.sleep(5)
-
-            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
-            time.sleep(110)
+            check_connect = connect_wifi_by_command(wifi_2g_name, wifi_2g_password)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-            time.sleep(1)
-            self.list_steps.append('[Pass] 8.0 Connect wifi Successfully.')
+            time.sleep(5)
+
+            list_actual8 = [check_connect]
+            list_expected8 = [wifi_2g_name]
+            check = assert_list(list_actual8, list_expected8)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 8.0 Connect wifi Successfully.'
+                f'Actual: {str(list_actual8)}. '
+                f'Expected: {str(list_expected8)}')
         except:
-            self.list_steps.append('[Fail] 8.0 Connect wifi Fail')
+            self.list_steps.append(
+                f'[Fail] 8.0 Connect wifi Failure.'
+                f'Actual: {str(list_actual8)}. '
+                f'Expected: {str(list_expected8)}')
             list_step_fail.append('8.0 Assertion wong.')
 
         try:
             # Refresh page
             driver.refresh()
-            time.sleep(5)
+            wait_popup_disappear(driver,dialog_loading)
 
             goto_menu(driver, home_tab, 0)
-            time.sleep(2)
             wait_popup_disappear(driver, dialog_loading)
             # CLick Device Image
             driver.find_element_by_css_selector(home_img_device_connection).click()
-            time.sleep(2)
             wait_popup_disappear(driver, dialog_loading)
 
             # Click Edit
@@ -2681,9 +2679,10 @@ class HOME(unittest.TestCase):
             list_expected8 = [return_true]
             check = assert_list(list_actual8, list_expected8)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 8.1. Click Edit; Check popup display.'
-                                   f'Actual: {str(list_actual8)}. '
-                                   f'Expected: {str(list_expected8)}')
+            self.list_steps.append(
+                f'[Pass] 8.1. Click Edit; Check popup display.'
+                f'Actual: {str(list_actual8)}. '
+                f'Expected: {str(list_expected8)}')
         except:
             self.list_steps.append(
                 f'[Fail] 8.1. Click Edit; Check popup display. '
@@ -2738,14 +2737,15 @@ class HOME(unittest.TestCase):
             list_expected9 = [exp_confirm_msg_add_resserve_ip, return_true, return_true]
             check = assert_list(list_actual9, list_expected9)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 8.2. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
-                                   'Click add again -> Click OK -> Check add icon change to delete icon'
-                                   f'Actual: {str(list_actual9)}. '
-                                   f'Expected: {str(list_expected9)}')
+            self.list_steps.append(
+                f'[Pass] 8.2. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
+                f'Click add again -> Click OK -> Check add icon change to delete icon'
+                f'Actual: {str(list_actual9)}. '
+                f'Expected: {str(list_expected9)}')
         except:
             self.list_steps.append(
                 f'[Fail] 8.2. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
-                'Click add again -> Click OK -> Check add icon change to delete icon'
+                f'Click add again -> Click OK -> Check add icon change to delete icon'
                 f'Actual: {str(list_actual9)}. '
                 f'Expected: {str(list_expected9)}')
             list_step_fail.append('8.2. Assertion wong.')
@@ -2753,7 +2753,7 @@ class HOME(unittest.TestCase):
         try:
             # Click Cancel
             driver.find_element_by_css_selector(btn_cancel).click()
-            time.sleep(1)
+            time.sleep(0.5)
             # Table first row
             first_row = driver.find_element_by_css_selector(ele_table_row)
             # Get information
@@ -2761,7 +2761,7 @@ class HOME(unittest.TestCase):
             device_ip = first_row.find_element_by_css_selector(ip_address_cls).text
 
             goto_menu(driver, network_tab, network_lan_tab)
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
 
             check_add_in_lan = False
             reserved_block_rows = driver.find_elements_by_css_selector(rows)
@@ -2775,9 +2775,10 @@ class HOME(unittest.TestCase):
             list_expected10 = [return_true]
             check = assert_list(list_actual10, list_expected10)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 8.3. Add reserved IP -> Check add successfully in Network Lan'
-                                   f'Actual: {str(list_actual10)}. '
-                                   f'Expected: {str(list_expected10)}')
+            self.list_steps.append(
+                f'[Pass] 8.3. Add reserved IP -> Check add successfully in Network Lan'
+                f'Actual: {str(list_actual10)}. '
+                f'Expected: {str(list_expected10)}')
         except:
             self.list_steps.append(
                 f'[Fail] 8.3 reserved IP -> Check add successfully in Network Lan'
@@ -2788,15 +2789,16 @@ class HOME(unittest.TestCase):
         try:
             # Goto Home
             goto_menu(driver, home_tab, 0)
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
             # CLick Device Image
             driver.find_element_by_css_selector(home_img_device_connection).click()
-            time.sleep(2)
+            # time.sleep(2)
             wait_popup_disappear(driver, dialog_loading)
 
             # Click Edit
             driver.find_element_by_css_selector(edit_cls).click()
-            time.sleep(2)
+            time.sleep(0.5)
+            wait_popup_disappear(driver, dialog_loading)
             # Click Reserved IP
             all_wrap_form = driver.find_elements_by_css_selector(home_wan_ls_fields)
             for f in all_wrap_form:
@@ -2838,10 +2840,12 @@ class HOME(unittest.TestCase):
             list_actual11 = [check_confirm_delete_msg, check_add_in_lan]
             list_expected11 = [exp_confirm_msg_delete_resserve_ip, return_true]
             check = assert_list(list_actual11, list_expected11)
+            interface_connect_disconnect('Ethernet', 'Enable')
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 8.4. Delete reserved IP -> Check Delete successfully in Network Lan'
-                                   f'Actual: {str(list_actual11)}. '
-                                   f'Expected: {str(list_expected11)}')
+            self.list_steps.append(
+                f'[Pass] 8.4. Delete reserved IP -> Check Delete successfully in Network Lan'
+                f'Actual: {str(list_actual11)}. '
+                f'Expected: {str(list_expected11)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
@@ -3621,36 +3625,38 @@ class HOME(unittest.TestCase):
         self.list_steps = []
 
         try:
-            # Connect client to DUT via wired
-            os.system(f'python {nw_interface_path} -i Ethernet -a enable')
-            time.sleep(10)
-
-            # Connect wireless
-            _user = get_config('ACCOUNT', 'user')
-            _pw = get_config('ACCOUNT', 'password')
-            _token = get_token(_user, _pw)
-            URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
-            _res = call_api(URL_2g, 'GET', '', _token)
-            ssid_2g = _res['name']
-
-            write_data_to_xml(wifi_default_file_path,
-                              new_name=ssid_2g)
+            grand_login(driver)
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
             time.sleep(1)
-            os.system(f'netsh wlan delete profile name="{ssid_2g}"')
-            time.sleep(1)
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
-            time.sleep(1)
-            os.system(f'netsh wlan connect ssid="{ssid_2g}" name="{ssid_2g}"')
-            time.sleep(10)
+            wireless_change_ssid_name(block_2g, 'Wifi_2G_SSID')
+            if block_2g.find_element_by_css_selector(apply).is_displayed():
+                block_2g.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, icon_loading)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, icon_loading)
 
+            time.sleep(0.5)
+            wifi_2g_name = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
+            print(wifi_2g_name)
+            wifi_2g_password = wireless_check_pw_eye(driver, block_2g, change_pw=False)
+            print(wifi_2g_password)
+            check_connect = connect_wifi_by_command(wifi_2g_name, wifi_2g_password)
             # Disconnect wireless
             os.system('netsh wlan disconnect')
             time.sleep(3)
 
-            self.list_steps.append('[Pass] Precondition successfully. Connect then disconnect wireless. Connect wired')
+            list_actual0 = [check_connect]
+            list_expected0 = [wifi_2g_name]
+            check = assert_list(list_actual0, list_expected0)
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                f'[Pass] 0. Precondition. '
+                f'Connect wire and wireless. Then disconnect wireless')
         except:
-            self.list_steps.append('[Fail] Precondition fail. Connect then disconnect wireless. Connect wired')
+            self.list_steps.append(
+                f'[Fail] 0. Precondition. '
+                f'Connect wire and wireless. Then disconnect wireless')
             list_step_fail.append('Assertion wong.')
 
         try:
@@ -3658,7 +3664,6 @@ class HOME(unittest.TestCase):
 
             # CLick Device Image
             driver.find_element_by_css_selector(home_img_device_connection).click()
-            time.sleep(2)
             wait_popup_disappear(driver, dialog_loading)
 
             device_img = driver.find_element_by_css_selector(home_img_device)
@@ -3717,9 +3722,10 @@ class HOME(unittest.TestCase):
             list_block_icon = disconnect_table.find_elements_by_css_selector(ele_block_button_cls)
             check_block_enable = list()
             for i in list_block_icon:
-                i.find_element_by_css_selector(select).click()
-                wait_popup_disappear(driver, icon_loading)
-                check_block_enable.append(i.find_element_by_css_selector(input).is_enabled())
+                if not i.find_element_by_css_selector(select).find_element_by_css_selector(input).is_selected():
+                    i.find_element_by_css_selector(select).click()
+                    wait_popup_disappear(driver, icon_loading)
+                    check_block_enable.append(i.find_element_by_css_selector(input).is_selected())
 
             check_block_enable = all(check_block_enable)
 
@@ -3739,31 +3745,18 @@ class HOME(unittest.TestCase):
             list_step_fail.append('4. Assertion wong.')
 
         try:
-            # Connect wireless
-            _user = get_config('ACCOUNT', 'user')
-            _pw = get_config('ACCOUNT', 'password')
-            _token = get_token(_user, _pw)
-            URL_2g = get_config('URL', 'url') + '/api/v1/wifi/0/ssid/0'
-            _res = call_api(URL_2g, 'GET', '', _token)
-            ssid_2g = _res['name']
 
-            write_data_to_xml(wifi_default_file_path,
-                              new_name=ssid_2g)
-            time.sleep(1)
-            os.system(f'netsh wlan delete profile name="{ssid_2g}"')
-            time.sleep(1)
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{wifi_default_file_path}"')
-            time.sleep(1)
-            os.system(f'netsh wlan connect ssid="{ssid_2g}" name="{ssid_2g}"')
-            time.sleep(10)
+            interface_connect_disconnect('Ethernet', 'disable')
+            get_current_wifi_name = connect_wifi_by_command(wifi_2g_name, wifi_2g_password)
+            print(get_current_wifi_name)
+            # check_gg = check_connect_to_google()
 
-            #
-            get_current_wifi_name = current_connected_wifi()
+            check_connect_wireless = get_value_from_ipconfig('Wireless LAN adapter Wi-Fi', 'IPv4 Address') == 'Block or field error.'
 
-            list_actual4 = [get_current_wifi_name]
-            list_expected4 = ['WiFi is not connected']
+            list_actual4 = [check_connect_wireless]
+            list_expected4 = [True]
             check = assert_list(list_actual4, list_expected4)
+            interface_connect_disconnect('Ethernet', 'enable')
             self.assertTrue(check["result"])
             self.list_steps.append(
                 f'[Pass] 5. Connect wireless of DUT. Check can not wireless. '
@@ -3996,36 +3989,33 @@ class HOME(unittest.TestCase):
             grand_login(driver)
             # time.sleep(2)
             goto_menu(driver, network_tab, network_operationmode_tab)
-            connect_repeater_mode(driver)
+            connect_repeater_mode(driver, repeater_name, repeater_pw)
             time.sleep(3)
-
-            # Verify_connect successfully
-            URL_LOGIN = get_config('URL', 'url')
-            _URL_API = URL_LOGIN + '/api/v1/wifi/0/ssid/0'
-            _METHOD = 'GET'
-            _BODY = ''
-            _USER = get_config('ACCOUNT', 'user')
-            _PW = get_config('ACCOUNT', 'password')
-            _TOKEN = get_token(_USER, _PW)
-            time.sleep(1)
-            res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
-            time.sleep(1)
-            list_actual0 = [res['name']]
-            list_expected0 = [repeater_name]
-            check = assert_list(list_actual0, list_expected0)
-            self.assertTrue(check["result"])
+            wait_ethernet_available()
+            # # Verify_connect successfully
+            # URL_LOGIN = get_config('URL', 'url')
+            # _URL_API = URL_LOGIN + '/api/v1/wifi/0/ssid/0'
+            # _METHOD = 'GET'
+            # _BODY = ''
+            # _USER = get_config('ACCOUNT', 'user')
+            # _PW = get_config('ACCOUNT', 'password')
+            # _TOKEN = get_token(_USER, _PW)
+            # time.sleep(1)
+            # res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
+            # time.sleep(1)
+            # list_actual0 = [res['name']]
+            # list_expected0 = [repeater_name]
+            # check = assert_list(list_actual0, list_expected0)
+            # self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] Precondition successfully. Check Upper name. '
-                f'Actual: {str(list_actual0)}. '
-                f'Expected: {str(list_expected0)}')
+                f'[Pass] Precondition change to Repeater mode. ')
         except:
             self.list_steps.append(
-                f'[Faill] Precondition Fail. Check Upper name. '
-                f'Actual: {str(list_actual0)}. '
-                f'Expected: {str(list_expected0)}')
+                f'[Fail] Precondition change to Repeater mode. ')
             list_step_fail.append('0. Precondition wong')
 
         try:
+            wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
             goto_menu(driver, home_tab, 0)
@@ -4061,12 +4051,16 @@ class HOME(unittest.TestCase):
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2.1 Click WAN image. Check WAN image highlight, Host Network table displayed. '
+                f'[Pass] 2.1 Click WAN image. '
+                f'Check WAN image highlight. '
+                f'Host Network table displayed. '
                 f'Actual: {str(list_actual2)}. '
                 f'Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
-                f'[Fail] 2.1 Click WAN image. Check WAN image highlight, Host Network table displayed. '
+                f'[Fail] 2.1 Click WAN image. '
+                f'Check WAN image highlight. '
+                f'Host Network table displayed. '
                 f'Actual: {str(list_actual2)}. '
                 f'Expected: {str(list_expected2)}')
             list_step_fail.append('2.1 Assertion wong.')
@@ -4698,7 +4692,8 @@ class HOME(unittest.TestCase):
             grand_login(driver)
             time.sleep(2)
             goto_menu(driver, network_tab, network_operationmode_tab)
-            connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw, force=True)
+            # connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw, force=True)
+            connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
             wait_ethernet_available()
             # Verify_connect successfully
             URL_LOGIN = get_config('URL', 'url')
@@ -4733,10 +4728,7 @@ class HOME(unittest.TestCase):
             url_upper = get_config('REPEATER', 'url', input_data_path)
             user_upper = get_config('REPEATER', 'user', input_data_path)
             pw_upper = get_config('REPEATER', 'pw', input_data_path)
-            # save_config(config_path, 'URL', 'url', url_upper)
-            # save_config(config_path, 'URL', 'user', user_upper)
-            # save_config(config_path, 'URL', 'password', pw_upper)
-            # wait_ping(url_upper)
+            wait_ethernet_available()
             grand_login(driver, url_login=url_upper,user_request=user_upper, pass_word=pw_upper)
             time.sleep(0.5)
             goto_menu(driver, home_tab, 0)
@@ -4795,12 +4787,12 @@ class HOME(unittest.TestCase):
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2. Check Dot icon of Mesh, Interfaces, MAC, IP, Upgrade btn, Version, Edit button displayed. '
+                '[Pass] 2. Check Dot icon of Mesh; Interfaces is Wireless and Lan Port; MAC; IP; Upgrade btn; Version; Edit button displayed. '
                 f'Actual: {str(list_actual2)}. '
                 f'Expected: {str(list_expected2)}')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Check Dot icon of Mesh, Interfaces, MAC, IP, Upgrade btn, Version, Edit button displayed. '
+                f'[Fail] 2. Check Dot icon of Mesh; Interfaces is Wireless and Lan Port; MAC; IP; Upgrade btn; Version; Edit button displayed. '
                 f'Actual: {str(list_actual2)}. '
                 f'Expected: {str(list_expected2)}')
             list_step_fail.append('2. Assertion wong.')
@@ -4976,15 +4968,16 @@ class HOME(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        REPEATER_WIFI_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
+        REPEATER_WIFI_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
         try:
             grand_login(driver)
             time.sleep(2)
             goto_menu(driver, network_tab, network_operationmode_tab)
-            connect_repeater_mode(driver)
+            connect_repeater_mode(driver, REPEATER_WIFI_NAME, REPEATER_WIFI_PW)
             time.sleep(3)
+            wait_ethernet_available()
 
-            REPEATER_WIFI_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
-            REPEATER_WIFI_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
             connect_wifi_by_command(REPEATER_WIFI_NAME, REPEATER_WIFI_PW)
             self.list_steps.append(
                 f'[Pass] Precondition successfully. Set Repeater mode. Connect wifi repeater. ')
@@ -4997,10 +4990,12 @@ class HOME(unittest.TestCase):
             UPPER_URL = get_config('REPEATER', 'url', input_data_path)
             UPPER_USER = get_config('REPEATER', 'user', input_data_path)
             UPPER_PW = get_config('REPEATER', 'pw', input_data_path)
+            wait_ethernet_available()
+            time.sleep(2)
             grand_login(driver, url_login=UPPER_URL, user_request=UPPER_USER, pass_word=UPPER_PW)
             time.sleep(1)
             driver.refresh()
-            time.sleep(5)
+            wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(home_img_device_connection).click()
             wait_popup_disappear(driver, dialog_loading)
 
@@ -5020,7 +5015,6 @@ class HOME(unittest.TestCase):
             check_device_interface = driver.find_elements_by_css_selector('.info')[2].text.startswith('LAN Port')
 
             check_label = [i.text for i in driver.find_elements_by_css_selector(label_name_in_2g)]
-
 
             list_actual1 = [check_device_name, check_device_type_image, check_device_type,
                             check_device_mac, check_device_ip, check_device_interface, check_label]
