@@ -186,7 +186,6 @@ advanced5 = test_35_ADVANCED_Edit_Confirm_Delete_Port_Triggering
 advanced6 = test_36_ADVANCED_Confirm_Delete_Port_Triggering
 advanced7 = test_47_ADVANCED_Check_Ping_test_operation
 advanced8 = test_48_ADVANCED_Check_Traceroute_operation
-advanced9 = test_48_ADVANCED_Check_Traceroute_operation
 
 [MEDIASHARE]
 mediashare2 = test_02_MS_Check_USB_connection
