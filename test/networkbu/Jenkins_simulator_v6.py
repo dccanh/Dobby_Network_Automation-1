@@ -714,8 +714,10 @@ def all_module_checked():
     check = all([m.get() for m in list_module])
     if check:
         cusModuleAll.set(True)
+        manualButton.configure(state=DISABLED)
     else:
         cusModuleAll.set(False)
+        manualButton.configure(state=NORMAL)
 
 
 def find_chosen_module():

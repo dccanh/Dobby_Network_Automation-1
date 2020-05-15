@@ -1,4 +1,5 @@
 
 if not DEFINED IS_MINIMIZED set IS_MINIMIZED=1 && start "" /min "%~dpnx0" %* && exit
-python Jenkins_simulator_v6.py
+REM python Jenkins_simulator_v6.py
+python run.py
 exit
