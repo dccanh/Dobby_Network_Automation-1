@@ -188,7 +188,7 @@ def write_ggsheet(key, list_steps, func_name, duration, time_stamp=0):
 
             cells.append(Cell(int(next_row), 3, 'PASS'))
     cells.append(Cell(int(next_row), 4, duration))
-    cells.append(Cell(int(next_row), 5, str(list_steps)))
+    cells.append(Cell(int(next_row), 5, "\n".join(list_steps)))
     cells.append(Cell(int(next_row), 8, str(time_stamp)))
     sheet.update_cells(cells)
 
@@ -2167,6 +2167,7 @@ def get_part_from_key(key: str = None):
             return part
     raise TypeError(f"Not valid key name. Key must start with one of following text: {','.join(list_valid_part)}")
 
+
 def save_duration_time(test_case_key, test_case_name, test_case_steps, start_time):
     from datetime import datetime
     if "[END TC]" in str(test_case_steps):
@@ -2182,3 +2183,74 @@ def save_duration_time(test_case_key, test_case_name, test_case_steps, start_tim
                     part,
                     test_case_name,
                     str(round(duration_s+0.5)))
+
+
+def convert_stage_of_step_to_string(value):
+    """
+    Convert stage of step to string
+    :param value:
+    :return:
+    """
+    bool_to_string = {
+        True: "[Pass]",
+        False: "[Fail]",
+    }
+    return bool_to_string[value]
+
+
+def generate_step_information(step_name, list_check_in_step, list_actual, list_expected):
+    step_status = assert_list(list_actual,list_expected)["result"]
+    step_info = f"{convert_stage_of_step_to_string(step_status)} {step_name}\n"
+    for i in range(0, len(list_check_in_step)):
+        step_info = f"{step_info}\t - {list_check_in_step[i]}\n"
+
+    step_info = f"{step_info}\tActual:\n"
+    for i in range(0, len(list_actual)):
+        if isinstance(list_actual[i], bool):
+            step_info = f"{step_info}\t - {detect_check_information(list_check_in_step[i], list_actual[i]==list_expected[i])}\n"
+        else:
+            step_info = f"{step_info}\t - {list_actual[i]}\n"
+
+    step_info = f"{step_info}\tExpected:\n"
+    for i in range(0, len(list_expected)):
+        if isinstance(list_actual[i], bool):
+            step_info = f"{step_info}\t - {detect_check_information(list_check_in_step[i], True)}\n"
+        else:
+            step_info = f"{step_info}\t - {list_expected[i]}\n"
+
+    return step_info
+
+
+def detect_check_information(checking_info: str = None, result: bool = None) -> str:
+    dict_opposite_stage = {
+        "on": "off",
+        "off": "on",
+        "check": "uncheck",
+        "enabled": "disabled",
+        "disabled": "enabled",
+        "appear": "not appear",
+        "success": "unsuccess",
+        "unsuccess": "success",
+        "connect": "not connect",
+        "not connect": "connect",
+        "contain:": "not contain:",
+        "not contain:": "contain:",
+        "kept": "not kept",
+        "not kept": "kep",
+        "is displayed": "is not displayed",
+        "is not displayed": "is displayed",
+        "existed": "not existed",
+        "not existed": "existed",
+        "correct": "not correct",
+        "not correct": "correct"
+    }
+    for key in dict_opposite_stage:
+        if checking_info.endswith(key) or \
+                ("contain:" in key and key in checking_info) or \
+                (("is displayed:" == key or "is not displayed:" == key) and key in checking_info):
+            if result:
+                return checking_info
+            else:
+                index = checking_info.rfind(key)
+                return f"{checking_info[:index]} {dict_opposite_stage[key]} {checking_info[index+len(key):]}"
+    raise TypeError(f"Not define action for step: {checking_info}")
