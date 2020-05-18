@@ -2213,7 +2213,9 @@ def generate_step_information(step_name, list_check_in_step, list_actual, list_e
 
     step_info = f"{step_info}\tExpected:\n"
     for i in range(0, len(list_expected)):
-        if isinstance(list_actual[i], bool):
+        # print(list_actual[i])
+        if isinstance(list_expected[i], bool):
+        # if isinstance(list_actual[i], bool):
             step_info = f"{step_info}\t - {detect_check_information(list_check_in_step[i], True)}\n"
         else:
             step_info = f"{step_info}\t - {list_expected[i]}\n"

@@ -3431,26 +3431,37 @@ class NETWORK(unittest.TestCase):
         try:
             wait_ethernet_available()
             goto_menu(driver, home_tab, 0)
+            URL_wifi_2g = 'http://dearmyextender.net/api/v1/wifi/0/ssid/0'
+            extender_MAC = api_change_wifi_setting(URL_wifi_2g, get_only_mac=True)
 
             interface_connect_disconnect('Ethernet', 'disable')
             wifi_connect = connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
             os.system('netsh wlan show interface mode=BSSID')
+
+            interface_connect_disconnect('Ethernet', 'disable')
+            connected_mac = get_current_wifi_MAC()
+            print(connected_mac)
+            if extender_MAC != connected_mac:
+                os.system('netsh wlan delete profile name=*')
+                wifi = connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
+            connected_mac = get_current_wifi_MAC()
+
             ip_assigned = checkIPAddress(driver.find_element_by_css_selector(home_conection_img_wan_ip).text)
             check_google_2 = check_connect_to_google()
 
-            list_actual8 = [wifi_connect, ip_assigned, check_google_2]
-            list_expected8 = [REPEATER_MESH_NAME, return_true, return_true]
+            list_actual8 = [[wifi_connect, connected_mac], ip_assigned, check_google_2]
+            list_expected8 = [[REPEATER_MESH_NAME, extender_MAC], return_true, return_true]
             check = assert_list(list_actual8, list_expected8)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8. Connect Wifi. '
+                f'[Pass] 8. Connect Wifi (Wifi name and MAC). '
                 f'Check IP assigned and can connect to google. '
                 f'Actual: {str(list_actual8)}. '
                 f'Expected: {str(list_expected8)}')
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 8. Connect Wifi. '
+                f'[Fail] 8. Connect Wifi (Wifi name and MAC). '
                 f'Check IP assigned and can connect to google. '
                 f'Actual: {str(list_actual8)}. '
                 f'Expected: {str(list_expected8)}')
@@ -3663,14 +3674,27 @@ class NETWORK(unittest.TestCase):
             wait_ethernet_available()
             goto_menu(driver, home_tab, 0)
 
+            URL_wifi_5g = 'http://dearmyextender.net/api/v1/wifi/1/ssid/0'
+            extender_MAC = api_change_wifi_setting(URL_wifi_5g, get_only_mac=True)
+            interface_connect_disconnect('Wi-Fi', 'enable')
             interface_connect_disconnect('Ethernet', 'disable')
             wifi_connect = connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
             os.system('netsh wlan show interface mode=BSSID')
+
+            interface_connect_disconnect('Ethernet', 'disable')
+            connected_mac = get_current_wifi_MAC()
+            print(connected_mac)
+            if extender_MAC != connected_mac:
+                os.system('netsh wlan delete profile name=*')
+                wifi = connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
+            connected_mac = get_current_wifi_MAC()
+
+
             ip_assigned = checkIPAddress(driver.find_element_by_css_selector(home_conection_img_wan_ip).text)
             check_google_2 = check_connect_to_google()
 
-            list_actual8 = [wifi_connect, ip_assigned, check_google_2]
-            list_expected8 = [REPEATER_MESH_NAME, return_true, return_true]
+            list_actual8 = [[wifi_connect, connected_mac], ip_assigned, check_google_2]
+            list_expected8 = [[REPEATER_MESH_NAME, extender_MAC], return_true, return_true]
             check = assert_list(list_actual8, list_expected8)
             self.assertTrue(check["result"])
             self.list_steps.append(

@@ -1606,9 +1606,10 @@ class NON_FUNCTION(unittest.TestCase):
             # Check firmware btn activated
             time.sleep(0.5)
             manual_update_value = driver.find_element_by_css_selector(el_firmware_manual_box_value).text
-
+            wait_popup_disappear(driver, icon_loading)
             driver.find_element_by_css_selector(apply).click()
             time.sleep(1)
+            wait_popup_disappear(driver, icon_loading)
             if len(driver.find_elements_by_css_selector(ele_choose_firmware_select)) > 0:
                 driver.find_element_by_css_selector(ele_choose_firmware_select).click()
             time.sleep(0.5)
@@ -1650,13 +1651,16 @@ class NON_FUNCTION(unittest.TestCase):
             firmware_40012_path = os.path.join(os.getcwd(), firmware_40012)
             driver.find_element_by_css_selector(ele_choose_firmware_file).send_keys(firmware_40012_path)
             os.chdir(test_t10x_path)
-
+            wait_popup_disappear(driver, icon_loading)
             driver.find_element_by_css_selector(apply).click()
             time.sleep(1)
             if len(driver.find_elements_by_css_selector(ele_choose_firmware_select)) > 0:
                 driver.find_element_by_css_selector(ele_choose_firmware_select).click()
+                wait_popup_disappear(driver, icon_loading)
             time.sleep(0.5)
-            driver.find_element_by_css_selector(btn_ok).click()
+            if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, icon_loading)
             time.sleep(0.5)
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()

@@ -1083,11 +1083,11 @@ def _realcallback2():
     flow_off_field(NORMAL)
     for c in [checkA, check0, check1, check2, check3, check5, check6, check7, check8]:
         c.config(state=NORMAL)
-    progress_bar.configure(text=f' ')
-    bar['value'] = 1
+    progress_bar.configure(text=f'COMPLETED')
+    # bar['value'] = 1
 
 def _Factory():
-    confirm_msg = messagebox.askyesno('Confirm factory', 'Do you want to factory set DUT?')
+    confirm_msg = messagebox.askyesno('Confirm factory', 'Do you want to factory set DUT? \nPlease make sure enable Ethernet first.')
     if confirm_msg:
         root.after(500, _realcallback1)
         root.after(1_000, lambda: factory())
@@ -1112,7 +1112,7 @@ def factory_bar(factory_time=FACTORY_TIME):
         style.configure("text.Horizontal.TProgressbar", text=f' {str(factory_percent)} %')
         progress_bar.configure(text=f' {str(factory_time-count)} seconds left.')
     progress_bar.configure(text=f' Finish factory.')
-    style.configure("text.Horizontal.TProgressbar", text=f' 0 %')
+    style.configure("text.Horizontal.TProgressbar", text=f' 100 %')
 
 def factory():
     save_config(config_path, 'CONSOLE', 'serial_port', cusPort4.get())

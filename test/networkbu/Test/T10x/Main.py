@@ -6919,7 +6919,7 @@ class MAIN(unittest.TestCase):
             # expected_language = mapping_language[random_option_text]
             # actual_option_selected = driver.find_element_by_css_selector(ele_time_content).text
 
-            list_actual3 = [check_icon_tooltip, popup_title, ls_value]
+            list_actual3 = [check_icon_tooltip, popup_title, num_of_language, ls_value]
             list_expected3 = ['System', 'Language', 18, mapping_language]
             step_1_2_3_name = "1, 2, 3. Check System tooltip, Popup Language title, number of options language, check output"
             list_check_in_step_1_2_3 = [
