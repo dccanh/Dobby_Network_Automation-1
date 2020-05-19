@@ -2244,7 +2244,9 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "existed": "not existed",
         "not existed": "existed",
         "correct": "not correct",
-        "not correct": "correct"
+        "not correct": "correct",
+        "selected": "not selected",
+        "not selected": "selected"
     }
     for key in dict_opposite_stage:
         if checking_info.endswith(key) or \
