@@ -2199,28 +2199,40 @@ def convert_stage_of_step_to_string(value):
 
 
 def generate_step_information(step_name, list_check_in_step, list_actual, list_expected):
-    step_status = assert_list(list_actual,list_expected)["result"]
+    step_status = assert_list(list_actual, list_expected)["result"]
     step_info = f"{convert_stage_of_step_to_string(step_status)} {step_name}\n"
     for i in range(0, len(list_check_in_step)):
         step_info = f"{step_info}\t - {list_check_in_step[i]}\n"
 
     step_info = f"{step_info}\tActual:\n"
     for i in range(0, len(list_actual)):
+        checking_info = remove_question_in_step_checking(list_check_in_step[i])
         if isinstance(list_actual[i], bool):
-            step_info = f"{step_info}\t - {detect_check_information(list_check_in_step[i], list_actual[i]==list_expected[i])}\n"
+            step_info = f"{step_info}\t - {detect_check_information(checking_info, list_actual[i]==list_expected[i])}\n"
         else:
-            step_info = f"{step_info}\t - {list_actual[i]}\n"
+            step_info = f"{step_info}\t - {checking_info}\n"
 
     step_info = f"{step_info}\tExpected:\n"
     for i in range(0, len(list_expected)):
-        # print(list_actual[i])
+        checking_info = remove_question_in_step_checking(list_check_in_step[i])
         if isinstance(list_expected[i], bool):
-        # if isinstance(list_actual[i], bool):
-            step_info = f"{step_info}\t - {detect_check_information(list_check_in_step[i], True)}\n"
+            step_info = f"{step_info}\t - {detect_check_information(checking_info, True)}\n"
         else:
-            step_info = f"{step_info}\t - {list_expected[i]}\n"
+            step_info = f"{step_info}\t - {checking_info}\n"
 
     return step_info
+
+
+def remove_question_in_step_checking(checking_info: str = None):
+    """
+    If step checking info include question. Remove this question
+    to make sentences more meaning
+    """
+    special_question = "Check "
+    if checking_info.startswith(special_question):
+        return checking_info[len(special_question):]
+    else:
+        return checking_info
 
 
 def detect_check_information(checking_info: str = None, result: bool = None) -> str:
