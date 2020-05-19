@@ -229,7 +229,7 @@ class NON_FUNCTION(unittest.TestCase):
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(3)
         except:
-            self.list_steps.append('[FAIL] Precondition connect 2G Wifi Fail')
+            self.list_steps.append('[Fail] Precondition connect 2G Wifi Fail')
 
         try:
             ping_result = 0.0
