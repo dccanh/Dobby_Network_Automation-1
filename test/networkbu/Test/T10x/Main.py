@@ -615,7 +615,7 @@ class MAIN(unittest.TestCase):
         try:
             step_4_name = "4. Check login Page displayed again, id, password, captcha img, captcha input field"
             list_check_in_step = [
-                "Login page is appear.",
+                "Login page is appear",
                 "User field is appear",
                 "Password field is appear",
                 "Captcha image is appear",
