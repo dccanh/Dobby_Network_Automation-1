@@ -910,6 +910,7 @@ class WIRELESS(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~ 5
         try:
+            interface_connect_disconnect('Wi-Fi', 'enable')
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(5)
             # 2G Connect wifi
@@ -3129,6 +3130,7 @@ class WIRELESS(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
                 time.sleep(1)
@@ -3138,8 +3140,10 @@ class WIRELESS(unittest.TestCase):
                 block_5g.find_element_by_css_selector(delete_cls).click()
                 time.sleep(0.5)
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
                 time.sleep(1)

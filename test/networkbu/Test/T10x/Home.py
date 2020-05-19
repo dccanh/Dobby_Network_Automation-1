@@ -4683,15 +4683,15 @@ class HOME(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        # save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
-        # save_config(config_path, 'URL', 'user', 'admin')
-        # save_config(config_path, 'URL', 'password', get_config('COMMON', 'new_pw', input_data_path))
+        factory_dut()
         try:
             repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
             repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
             grand_login(driver)
+            wait_visible(driver, home_view_wrap)
             time.sleep(2)
             goto_menu(driver, network_tab, network_operationmode_tab)
+            wait_popup_disappear(driver, dialog_loading)
             # connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw, force=True)
             connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
             wait_ethernet_available()
@@ -4938,7 +4938,7 @@ class HOME(unittest.TestCase):
 
             check_card_title = card.find_element_by_css_selector(title_tabs_cls).text
             check_icon_more = len(card.find_elements_by_css_selector(home_icon_fab)) > 0
-
+            factory_dut()
             list_actual4 = [ls_label, get_connection_type, check_card_title, check_icon_more]
             list_expected4 = [['WAN Type', 'Connection Type', 'WAN IP Address', 'Subnet Mask',
                                'Gateway', 'DNS Server 1', 'DNS Server 2'], 'PPPoE', 'Internet', True

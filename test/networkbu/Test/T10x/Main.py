@@ -1787,11 +1787,25 @@ class MAIN(unittest.TestCase):
         try:
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
+
+            # Check Privacy Policy
+            time.sleep(2)
+            policy_popup = driver.find_elements_by_css_selector(lg_privacy_policy_pop)
+            if len(policy_popup):
+                wait_popup_disappear(driver, icon_loading)
+                wait_popup_disappear(driver, icon_loading)
+                time.sleep(3)
+                ActionChains(driver).move_to_element(policy_popup[0]).click().send_keys(Keys.ARROW_DOWN).perform()
+                time.sleep(1)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(3)
+
             # Goto Homepage
             if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
                 driver.get(url_login + homepage)
                 time.sleep(2)
                 wait_popup_disappear(driver, dialog_loading)
+
 
             list_tab_text = driver.find_elements_by_css_selector(ls_tab)
             list_tab_text = [i.text for i in list_tab_text]
@@ -8582,7 +8596,7 @@ class MAIN(unittest.TestCase):
             list_expected2 = [('SECURITY', 'Firewall')]
             step_3_name = "3. Click Firewall; Check target page. "
             list_check_in_step_3 = [
-                f"After click firewal, Target page is correct"
+                f"After click firewall, Target page is correct"
             ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])

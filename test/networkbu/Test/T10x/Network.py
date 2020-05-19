@@ -3293,12 +3293,14 @@ class NETWORK(unittest.TestCase):
             # driver.get(URL_B)
             save_config(config_path, 'URL', 'url', URL_B)
             time.sleep(1)
+            wait_ethernet_available()
             grand_login(driver)
-
+            wait_popup_disappear(driver, dialog_loading)
             goto_menu(driver, network_tab, network_lan_tab)
+            wait_ethernet_available()
             wait_popup_disappear(driver, dialog_loading)
             reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
-
+            wait_popup_disappear(driver, dialog_loading)
             # Get info of first row
             first_row = reserved_ip_block.find_elements_by_css_selector(rows)[0]
             ip_addr = first_row.find_element_by_css_selector(ip_address_cls).text
@@ -4607,7 +4609,9 @@ class NETWORK(unittest.TestCase):
 
         try:
             wait_ethernet_available()
+            wait_popup_disappear(driver, dialog_loading)
             goto_menu(driver, network_tab, network_operationmode_tab)
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             check_repeater_mode = driver.find_element_by_css_selector(ele_repeater_mode_input).is_selected()
 
@@ -4642,7 +4646,8 @@ class NETWORK(unittest.TestCase):
         try:
             wait_ethernet_available()
             goto_menu(driver, home_tab, 0)
-
+            wait_popup_disappear(driver, dialog_loading)
+            wait_ethernet_available()
             URL_wifi_5g = 'http://dearmyextender.net/api/v1/wifi/1/ssid/0'
             extender_MAC = api_change_wifi_setting(URL_wifi_5g, get_only_mac=True)
             interface_connect_disconnect('Wi-Fi', 'enable')

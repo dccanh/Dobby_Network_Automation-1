@@ -1759,15 +1759,18 @@ def add_a_mac_filtering(driver, OTHER_MAC=''):
     # Select all
     mac_field = edit_field.find_element_by_css_selector(wol_mac_addr)
     mac_field.find_element_by_css_selector(input).click()
+    time.sleep(0.5)
     if OTHER_MAC == '':
         opts = mac_field.find_elements_by_css_selector(secure_value_in_drop_down)
         for i in range(len(opts) - 1):
             opts = mac_field.find_elements_by_css_selector(secure_value_in_drop_down)
             opts[0].click()
+            time.sleep(0.3)
             break
         time.sleep(1)
         time.sleep(2)
         driver.find_element_by_css_selector(btn_save).click()
+        time.sleep(0.5)
     else:
         CORRECT_OTHER_MAC = OTHER_MAC.replace(':', '')
         driver.find_element_by_css_selector('.user-define').click()
@@ -1778,8 +1781,9 @@ def add_a_mac_filtering(driver, OTHER_MAC=''):
             driver.find_element_by_css_selector(btn_save).click()
             time.sleep(0.5)
         else:
+            time.sleep(0.5)
             driver.find_element_by_css_selector('.input-cancel-button').click()
-
+            time.sleep(0.5)
             edit_field = driver.find_element_by_css_selector(edit_mode)
             mac_field = edit_field.find_element_by_css_selector(wol_mac_addr)
             mac_field.find_element_by_css_selector(input).click()
@@ -1790,15 +1794,15 @@ def add_a_mac_filtering(driver, OTHER_MAC=''):
             driver.find_element_by_css_selector('.mac-address input').send_keys(tmp_mac)
             driver.find_element_by_css_selector(btn_save).click()
             time.sleep(0.5)
-
-
     time.sleep(1)
     driver.find_element_by_css_selector(apply).click()
     time.sleep(0.5)
     driver.find_element_by_css_selector(btn_ok).click()
     wait_popup_disappear(driver, dialog_loading)
+    time.sleep(0.5)
     driver.find_element_by_css_selector(btn_ok).click()
     wait_popup_disappear(driver, dialog_loading)
+    time.sleep(0.5)
 
 def get_mac_filtering_table(driver):
     mac_block = driver.find_element_by_css_selector(ele_mac_filtering)
@@ -2260,7 +2264,12 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "selected": "not selected",
         "not selected": "selected",
         "activated": "non activated",
-        "assigned": "not accigned"
+        "assigned": "not assigned",
+        "active": "deactive",
+        "access": "not access",
+        "available": "not available",
+        "clickable": "not clickable"
+
     }
     for key in dict_opposite_stage:
         if checking_info.endswith(key) or \
