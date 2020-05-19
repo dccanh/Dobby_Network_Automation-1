@@ -188,7 +188,7 @@ def write_ggsheet(key, list_steps, func_name, duration, time_stamp=0):
 
             cells.append(Cell(int(next_row), 3, 'PASS'))
     cells.append(Cell(int(next_row), 4, duration))
-    cells.append(Cell(int(next_row), 5, str(list_steps)))
+    cells.append(Cell(int(next_row), 5, list_steps))
     cells.append(Cell(int(next_row), 8, str(time_stamp)))
     sheet.update_cells(cells)
 
