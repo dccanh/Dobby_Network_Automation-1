@@ -2258,7 +2258,9 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "correct": "not correct",
         "not correct": "correct",
         "selected": "not selected",
-        "not selected": "selected"
+        "not selected": "selected",
+        "activated": "non activated",
+        "assigned": "not accigned"
     }
     for key in dict_opposite_stage:
         if checking_info.endswith(key) or \
