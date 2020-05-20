@@ -2268,8 +2268,8 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "active": "deactive",
         "access": "not access",
         "available": "not available",
-        "clickable": "not clickable"
-
+        "clickable": "not clickable",
+        "deleted": "not deleted"
     }
     for key in dict_opposite_stage:
         if checking_info.endswith(key) or \
