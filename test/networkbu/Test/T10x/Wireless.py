@@ -268,11 +268,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_3_4 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected3[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected3[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected3[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected3[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
             check = assert_list(list_actual3, list_expected3)
@@ -346,11 +346,11 @@ class WIRELESS(unittest.TestCase):
 
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected5[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected5[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected5[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected5[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -423,11 +423,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_7_8 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected7[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected7[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected7[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected7[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -501,11 +501,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_9_10 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected9[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected9[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected9[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected9[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -616,11 +616,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_11_12 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected_11[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected_11[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected_11[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected_11[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -732,11 +732,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_13_14 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected_13[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected_13[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected_13[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected_13[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -844,11 +844,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_15_16 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected_15[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected_15[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected_15[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected_15[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -956,11 +956,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_17_18 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected_17[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected_17[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected_17[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected_17[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -1205,11 +1205,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_5 = [
                 [
                     f"Connect Wifi 2G. Connect wifi {list_expected5[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected5[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Connect wifi {list_expected5[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected5[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -1444,11 +1444,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_5 = [
                 [
                     f"Connect Wifi 2G. Connect wifi {list_expected5[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected5[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Connect wifi {list_expected5[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected5[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -1748,11 +1748,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_5 = [
                 [
                     f"Connect Wifi 2G. Connect wifi {list_expected5[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected5[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Connect wifi {list_expected5[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected5[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -2029,8 +2029,8 @@ class WIRELESS(unittest.TestCase):
 
             step_9_name = "9. Connect to Google using of  2G/5G wifi."
             list_check_in_step_9 = [
-                f"Connect to Google using of  2G wifi is {list_expected9[0]}",
-                f"Connect to Google using of  5G wifi is {list_expected9[1]}"
+                f"Connect to Google using of  2G wifi is connected",
+                f"Connect to Google using of  5G wifi is connected"
             ]
 
             check = assert_list(list_actual9, list_expected9)
@@ -2332,8 +2332,8 @@ class WIRELESS(unittest.TestCase):
 
             step_5_name = "5. Connect to Google using of  2G/5G wifi."
             list_check_in_step_5 = [
-                f"Connect to Google of  2G wifi is {list_expected5[0]}",
-                f"Connect to Google of  5G wifi is {list_expected5[1]}"
+                f"Connect to Google of  2G wifi is connected",
+                f"Connect to Google of  5G wifi is connected"
             ]
 
             check = assert_list(list_actual5, list_expected5)
@@ -2604,8 +2604,8 @@ class WIRELESS(unittest.TestCase):
 
             step_9_name = "9. Connect to Google using of  2G/5G wifi."
             list_check_in_step_9 = [
-                f"Connect to Google using of  2G wifi is {list_expected9[0]}",
-                f"Connect to Google using of  5G wifi is {list_expected9[1]}"
+                f"Connect to Google using of  2G wifi is connected",
+                f"Connect to Google using of  5G wifi is connected"
             ]
 
             check = assert_list(list_actual9, list_expected9)
@@ -2674,8 +2674,8 @@ class WIRELESS(unittest.TestCase):
 
             step_1_2_name = "1,2. Check Default Hide SSID of 2G/5G."
             list_check_in_step_1_2 = [
-                f"Default Hide SSID of 2G is {list_expected[0]}",
-                f"Default Hide SSID of 5G is {list_expected[1]}",
+                f"Default Hide SSID of 2G is connected",
+                f"Default Hide SSID of 5G is connected",
             ]
 
             check = assert_list(list_actual, list_expected)
@@ -2755,9 +2755,9 @@ class WIRELESS(unittest.TestCase):
             step_3_name = "3.Check Enable Hide SSID of 2G/5G: Check popup title, enable hide ssid."
             list_check_in_step_3 = [
                 f"Check popup title of 2G: {list_expected1[0]}",
-                f"Check enable hide ssid of 2G: {list_expected1[2]}",
+                f"Check enable hide ssid of 2G: disabled",
                 f"Check popup title of 5G: {list_expected1[1]}",
-                f"Check enable hide ssid of 5G: {list_expected1[3]}"
+                f"Check enable hide ssid of 5G: disabled"
             ]
 
             check = assert_list(list_actual1, list_expected1)
@@ -2797,7 +2797,7 @@ class WIRELESS(unittest.TestCase):
             list_expected4 = [return_true]
 
             step_4_name = "4. Scan current wifi: Check 2G and 5G not in wifi list."
-            list_check_in_step_4 = [f"Check 2G and 5G not in wifi list {list_expected4[0]}"]
+            list_check_in_step_4 = [f"Check 2G and 5G not in wifi list connected"]
 
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
@@ -2904,8 +2904,8 @@ class WIRELESS(unittest.TestCase):
 
             step_1_2_3_name = "1, 2, 3. Login. Goto Wireless > Primary. Check Default Web UI Access of 2G/5G."
             list_check_in_step_1_2_3 = [
-                f"Check Default Web UI Access of 2G is {list_expected[0]}",
-                f"Check Default Web UI Access of 5G is {list_expected[1]}"
+                f"Check Default Web UI Access of 2G is displayed",
+                f"Check Default Web UI Access of 5G is displayed"
             ]
 
             check = assert_list(list_actual, list_expected)
@@ -3131,7 +3131,7 @@ class WIRELESS(unittest.TestCase):
             list_expected1 = [return_true]
 
             step_1_2_name = "1,2. Add 7 Guest NW 2G. Check can not add more."
-            list_check_in_step_1_2 = [f"Check can not add more {list_expected1[0]}"]
+            list_check_in_step_1_2 = [f"Check can not add more correct"]
 
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
@@ -3208,7 +3208,7 @@ class WIRELESS(unittest.TestCase):
             list_expected3 = [return_true]
 
             step_3_name = "3. Connect to Google using of  2G GUEST NW wifi."
-            list_check_in_step_3 = [f"Connect to Google is {list_expected3[0]}"]
+            list_check_in_step_3 = [f"Connect to Google is connected"]
 
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
@@ -3264,7 +3264,7 @@ class WIRELESS(unittest.TestCase):
             list_expected4 = [return_true]
 
             step_4_name = "Re-do: 1,2. Add 7 Guest NW 5G. Check can not add more."
-            list_check_in_step_4 = [f"Check can not add more {list_expected4[0]}"]
+            list_check_in_step_4 = [f"Check can not add more correct"]
 
             check = assert_list(list_actua14, list_expected4)
             self.assertTrue(check["result"])
@@ -3340,7 +3340,7 @@ class WIRELESS(unittest.TestCase):
             list_expected5 = [return_true]
 
             step_5_name = "Re-do: 3. Connect to Google using of  5G GUEST NW wifi."
-            list_check_in_step_5 = [f"Connect to Google is {list_expected5[0]}"]
+            list_check_in_step_5 = [f"Connect to Google is connected"]
 
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
@@ -3427,8 +3427,8 @@ class WIRELESS(unittest.TestCase):
 
             step_1_2_name = "1,2. Check Default SSID and Changed SSID of 2G."
             list_check_in_step_1_2 = [
-                f"Check Default SSID is {list_expected1[0]}",
-                f"Check Changed SSID is {list_expected1[1]}"
+                f"Check Default SSID is correct",
+                f"Check Changed SSID is correct"
             ]
 
             check = assert_list(list_actual1, list_expected1)
@@ -3492,8 +3492,8 @@ class WIRELESS(unittest.TestCase):
 
             step_3_name = "3. Check Default SSID and Changed SSID of 5G."
             list_check_in_step_3 = [
-                f"Check Default SSID is {list_expected2[0]}",
-                f"Check Changed SSID is {list_expected2[1]}",
+                f"Check Default SSID is correct",
+                f"Check Changed SSID is correct",
             ]
 
             check = assert_list(list_actual2, list_expected2)
@@ -3762,11 +3762,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_3 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected3[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected3[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected3[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected3[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -3821,11 +3821,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_4 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected4[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected4[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected4[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected4[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -3880,11 +3880,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_5 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected5[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected5[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected5[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected5[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -3939,11 +3939,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_6 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected6[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected6[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected6[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected6[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -4057,11 +4057,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_7 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected_7[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected_7[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected_7[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected_7[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -4149,11 +4149,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_8 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected_8[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected_8[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected_8[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected_8[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google: connect"
                 ]
             ]
 
@@ -4248,11 +4248,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_9 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected_9[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected_9[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected_9[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected_9[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -4341,11 +4341,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_10 = [
                 [
                     f"Connect Wifi 2G. Change Security to {list_expected_10[0][0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected_10[0][1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                 ],
                 [
                     f"Connect Wifi 5G. Change Security to {list_expected_10[1][0]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected_10[1][1]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -4607,9 +4607,9 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_5 = [
                 [
                     f"Connect Wifi 2G. Default SSID is {list_expected3[0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected3[1]}",
+                    f"Connect Wifi 2G. Connect to Google is connected",
                     f"Connect Wifi 5G. Default SSID is {list_expected3[2]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected3[3]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -4889,9 +4889,9 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_5 = [
                 [
                     f"Connect Wifi 2G. Default SSID is {list_expected3[0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected3[1]}",
+                    f"Connect Wifi 2G. Connect to Google is connected",
                     f"Connect Wifi 5G. Default SSID is {list_expected3[2]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected3[3]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -4998,8 +4998,8 @@ class WIRELESS(unittest.TestCase):
 
             step_1_2_name = "1,2. Add a Guest 2G/5G Wireless successfully."
             list_check_in_step_1_2 = [
-                f"Add a Guest 2G Wireless is {list_expected1[0]}",
-                f"Add a Guest 5G Wireless is {list_expected1[1]}",
+                f"Add a Guest 2G Wireless is success",
+                f"Add a Guest 5G Wireless is success",
             ]
 
             check = assert_list(list_actual1, list_expected1)
@@ -5231,8 +5231,8 @@ class WIRELESS(unittest.TestCase):
 
             step_5_name = "5. Connect to Google using of  2G/5G wifi."
             list_check_in_step_5 = [
-                f"Connect to Google using 2G wifi is {list_expected5[0]}",
-                f"Connect to Google using 5G wifi is {list_expected5[1]}"
+                f"Connect to Google using 2G wifi is connected",
+                f"Connect to Google using 5G wifi is connected"
             ]
 
             check = assert_list(list_actual5, list_expected5)
@@ -5313,8 +5313,8 @@ class WIRELESS(unittest.TestCase):
 
             step_6_name = "6. Re-do Step 1, 2: Add more 2G/5G guest."
             list_check_in_step_6 = [
-                f"Add more 2G Guest is {list_expected6[0]}",
-                f"Add more 5G Guest is {list_expected6[1]}"
+                f"Add more 2G Guest is success",
+                f"Add more 5G Guest is success"
             ]
 
             check = assert_list(list_actual6, list_expected6)
@@ -5543,8 +5543,8 @@ class WIRELESS(unittest.TestCase):
 
             step_9_name = "9. Connect to Google using of  2G/5G wifi."
             list_check_in_step_9 = [
-                f"Connect to Google using 2G wifi is {list_expected9[0]}",
-                f"Connect to Google using 5G wifi is {list_expected9[1]}"
+                f"Connect to Google using 2G wifi is connected",
+                f"Connect to Google using 5G wifi is connected"
             ]
 
             check = assert_list(list_actual9, list_expected9)
@@ -5648,8 +5648,8 @@ class WIRELESS(unittest.TestCase):
 
             step_1_2_name = "1,2. Add a Guest 2G/5G Wireless successfully."
             list_check_in_step_1_2 = [
-                f"Add a Guest 2G Wireless is {list_expected1[0]}",
-                f"Add a Guest 5G Wireless is {list_expected1[1]}"
+                f"Add a Guest 2G Wireless is success",
+                f"Add a Guest 5G Wireless is success"
             ]
 
             check = assert_list(list_actual1, list_expected1)
@@ -5881,8 +5881,8 @@ class WIRELESS(unittest.TestCase):
 
             step_5_name = "5. Connect to Google using of  2G/5G wifi."
             list_check_in_step_5 = [
-                f"Connect to Google using 2G wifi is {list_expected5[0]}",
-                f"Connect to Google using 5G wifi is {list_expected5[1]}"
+                f"Connect to Google using 2G wifi is conneced",
+                f"Connect to Google using 5G wifi is conneced"
             ]
 
             check = assert_list(list_actual5, list_expected5)
@@ -5963,8 +5963,8 @@ class WIRELESS(unittest.TestCase):
 
             step_6_name = "6. Re-do Step 1, 2: Add more 2G/5G guest."
             list_check_in_step_6 = [
-                f"Add more 2G Guest is {list_expected6[0]}",
-                f"Add more 5G Guest is {list_expected6[1]}"
+                f"Add more 2G Guest is success",
+                f"Add more 5G Guest is success"
             ]
 
             check = assert_list(list_actual6, list_expected6)
@@ -6194,9 +6194,9 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_9 = [
                 [
                     f"Connect Wifi 2G. SSID of 2G wifi is {list_expected9[0]}",
-                    f"Connect Wifi 2G. Connect to Google is {list_expected9[1]}"
+                    f"Connect Wifi 2G. Connect to Google is connected"
                     f"Connect Wifi 5G. SSID of 5G wifi is  {list_expected9[2]}",
-                    f"Connect Wifi 5G. Connect to Google is {list_expected9[3]}"
+                    f"Connect Wifi 5G. Connect to Google is connected"
                 ]
             ]
 
@@ -6327,7 +6327,7 @@ class WIRELESS(unittest.TestCase):
             list_expected1 = [return_true]
 
             step_4_name = "4. Scan current wifi: Check 2G and 5G not in wifi list"
-            list_check_in_step_4 = [f"Check 2G and 5G not in wifi list is {list_expected1[0]}"]
+            list_check_in_step_4 = [f"Check 2G and 5G not in wifi list is correct"]
 
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
@@ -6455,8 +6455,8 @@ class WIRELESS(unittest.TestCase):
 
             step_5_name = "5. Connect to Google using of  2G/5G wifi."
             list_check_in_step_5 = [
-                f"Connect to Google using of  2G wifi is {list_expected5[0]}",
-                f"Connect to Google using of  5G wifi is {list_expected5[1]}"
+                f"Connect to Google using of  2G wifi is connected",
+                f"Connect to Google using of  5G wifi is connected"
             ]
 
             check = assert_list(list_actual5, list_expected5)
@@ -6603,8 +6603,8 @@ class WIRELESS(unittest.TestCase):
 
             step_3_name = "3. Make sure enable Radio of 2G/5G:"
             list_check_in_step_3 = [
-                f"Radio of 2G enabled is {list_expected2[0]}",
-                f"Radio of 5G enabled is {list_expected2[1]}"
+                f"Radio of 2G enabled is enable",
+                f"Radio of 5G enabled is enable"
             ]
 
             check = assert_list(list_actual2, list_expected2)
@@ -6823,9 +6823,9 @@ class WIRELESS(unittest.TestCase):
             step_1_4_name = "1, 2, 3, 4.Check Enable Hide SSID of 2G/5G: Check popup title, enable hide ssid."
             list_check_in_step_1_4 = [
                 f"Check popup title of 2G is {list_expected[0]}",
-                f"Check enable hide ssid of 2G is {list_expected[2]}",
+                f"Check enable hide ssid of 2G is correct",
                 f"Check popup title of 5G is {list_expected[1]}",
-                f"Check enable hide ssid of 5G is {list_expected[3]}"
+                f"Check enable hide ssid of 5G is correct"
             ]
 
             check = assert_list(list_actual, list_expected)
@@ -7178,8 +7178,8 @@ class WIRELESS(unittest.TestCase):
 
             step_5_name = "5. Check disable Radio in API and Wireless 2G have no content."
             list_check_in_step_5 = [
-                f"Radio in API: {list_expected5[0]}",
-                f"Wireless 2G have no content is {list_expected5[1]}"
+                f"Radio in API: false",
+                f"Wireless 2G have no content is correct"
             ]
 
             check = assert_list(list_actual5, list_expected5)

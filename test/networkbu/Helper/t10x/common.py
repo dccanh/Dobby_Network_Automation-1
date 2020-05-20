@@ -2245,8 +2245,10 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "appear": "not appear",
         "success": "unsuccess",
         "unsuccess": "success",
-        "connect": "not connect",
         "not connect": "connect",
+        "not connected": "connected",
+        "connect": "not connect",
+        "connected": "not connected",
         "contain:": "not contain:",
         "not contain:": "contain:",
         "kept": "not kept",
@@ -2255,8 +2257,8 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "is not displayed": "is displayed",
         "existed": "not existed",
         "not existed": "existed",
-        "correct": "not correct",
         "not correct": "correct",
+        "correct": "not correct",
         "selected": "not selected",
         "not selected": "selected"
     }
