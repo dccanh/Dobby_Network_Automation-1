@@ -2210,7 +2210,7 @@ def generate_step_information(step_name, list_check_in_step, list_actual, list_e
         if isinstance(list_actual[i], bool):
             step_info = f"{step_info}\t - {detect_check_information(checking_info, list_actual[i]==list_expected[i])}\n"
         else:
-            step_info = f"{step_info}\t - {checking_info}\n"
+            step_info = f"{step_info}\t - {list_actual[i]}\n"
 
     step_info = f"{step_info}\tExpected:\n"
     for i in range(0, len(list_expected)):
@@ -2218,7 +2218,7 @@ def generate_step_information(step_name, list_check_in_step, list_actual, list_e
         if isinstance(list_expected[i], bool):
             step_info = f"{step_info}\t - {detect_check_information(checking_info, True)}\n"
         else:
-            step_info = f"{step_info}\t - {checking_info}\n"
+            step_info = f"{step_info}\t - {list_expected[i]}\n"
 
     return step_info
 
@@ -2256,7 +2256,11 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "existed": "not existed",
         "not existed": "existed",
         "correct": "not correct",
-        "not correct": "correct"
+        "not correct": "correct",
+        "selected": "not selected",
+        "not selected": "selected",
+        "activated": "non activated",
+        "assigned": "not accigned"
     }
     for key in dict_opposite_stage:
         if checking_info.endswith(key) or \
