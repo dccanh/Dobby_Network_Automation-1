@@ -2285,10 +2285,20 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "active": "deactive",
         "access": "not access",
         "available": "not available",
-        "clickable": "not clickable"
-
+        "clickable": "not clickable",
+        "valid": "invalid",
+        "null": "not null",
+        "not null": "null",
+        "false": "true",
+        "true": "false",
+        "highlight": "not highlight",
+        "True": "False",
+        "False": "True"
     }
-    for key in dict_opposite_stage:
+    list_dict = list(dict_opposite_stage.items())
+    list_dict.sort(reverse=True)
+    sorted_opposite_stage = dict(list_dict)
+    for key in sorted_opposite_stage:
         if checking_info.endswith(key) or \
                 ("contain:" in key and key in checking_info) or \
                 (("is displayed:" == key or "is not displayed:" == key) and key in checking_info):
@@ -2296,5 +2306,5 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
                 return checking_info
             else:
                 index = checking_info.rfind(key)
-                return f"{checking_info[:index]} {dict_opposite_stage[key]} {checking_info[index+len(key):]}"
+                return f"{checking_info[:index]} {sorted_opposite_stage[key]} {checking_info[index+len(key):]}"
     raise TypeError(f"Not define action for step: {checking_info}")
