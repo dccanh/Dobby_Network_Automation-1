@@ -2755,9 +2755,9 @@ class WIRELESS(unittest.TestCase):
             step_3_name = "3.Check Enable Hide SSID of 2G/5G: Check popup title, enable hide ssid."
             list_check_in_step_3 = [
                 f"Check popup title of 2G: {list_expected1[0]}",
-                f"Check enable hide ssid of 2G: disabled",
+                f"Check hide ssid of 2G: enabled",
                 f"Check popup title of 5G: {list_expected1[1]}",
-                f"Check enable hide ssid of 5G: disabled"
+                f"Check hide ssid of 5G: enabled"
             ]
 
             check = assert_list(list_actual1, list_expected1)
@@ -2797,7 +2797,7 @@ class WIRELESS(unittest.TestCase):
             list_expected4 = [return_true]
 
             step_4_name = "4. Scan current wifi: Check 2G and 5G not in wifi list."
-            list_check_in_step_4 = [f"Check 2G and 5G not in wifi list connected"]
+            list_check_in_step_4 = [f"Check Condition '2G and 5G not in list connected wifi' is correct"]
 
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
@@ -2978,11 +2978,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_4_9 = [
                 [
                     f"Disable ethernet. Check Can connect to Wifi2G {list_expected4[0][0]}",
-                    f"Disable ethernet. Can connect to WEB UI is: {list_expected4[0][1]}"
+                    f"Check Condition 'Can connect to WEB UI' is correct"
                 ],
                 [
                     f"Enable ethernet. Disable WebUI Access. Disable ethernet. Check Can connect to Wifi2G {list_expected4[1][0]}",
-                    f"Enable ethernet. Disable WebUI Access. Disable ethernet. Can connect to WEB UI is: {list_expected4[1][1]}"
+                    f"Enable ethernet. Disable WebUI Access. Disable ethernet. Condition 'can connect to WEB UI' is not correct"
                 ]
             ]
 
@@ -3054,11 +3054,11 @@ class WIRELESS(unittest.TestCase):
             list_check_in_step_10 = [
                 [
                     f"Disable ethernet. Check Can connect to Wifi5G {list_expected5[0][0]}",
-                    f"Disable ethernet. Can connect to WEB UI is: {list_expected5[0][1]}"
+                    f"Check Condition 'Can connect to WEB UI' is correct"
                 ],
                 [
                     f"Enable ethernet. Disable WebUI Access. Disable ethernet. Check Can connect to Wifi5G {list_expected5[1][0]}",
-                    f"Enable ethernet. Disable WebUI Access. Disable ethernet. Can connect to WEB UI is: {list_expected5[1][1]}"
+                    f"Enable ethernet. Disable WebUI Access. Disable ethernet. Condition 'can connect to WEB UI' is not correct"
                 ]
             ]
 
@@ -3427,8 +3427,8 @@ class WIRELESS(unittest.TestCase):
 
             step_1_2_name = "1,2. Check Default SSID and Changed SSID of 2G."
             list_check_in_step_1_2 = [
-                f"Check Default SSID is correct",
-                f"Check Changed SSID is correct"
+                f"Check Default SSID value is start with {SSID_2G_DEFAULT_START} correct",
+                f"Check Changed SSID value is correct"
             ]
 
             check = assert_list(list_actual1, list_expected1)
@@ -3492,7 +3492,7 @@ class WIRELESS(unittest.TestCase):
 
             step_3_name = "3. Check Default SSID and Changed SSID of 5G."
             list_check_in_step_3 = [
-                f"Check Default SSID is correct",
+                f"Check Default SSID value start with {SSID_5G_DEFAULT_START} is correct",
                 f"Check Changed SSID is correct",
             ]
 
@@ -5881,8 +5881,8 @@ class WIRELESS(unittest.TestCase):
 
             step_5_name = "5. Connect to Google using of  2G/5G wifi."
             list_check_in_step_5 = [
-                f"Connect to Google using 2G wifi is conneced",
-                f"Connect to Google using 5G wifi is conneced"
+                f"Connect to Google using 2G wifi is connected",
+                f"Connect to Google using 5G wifi is connected"
             ]
 
             check = assert_list(list_actual5, list_expected5)
@@ -6503,7 +6503,7 @@ class WIRELESS(unittest.TestCase):
             list_expected0 = [True]
 
             step_1_name = "1. Login."
-            list_check_in_step_1 = [f"Check Login successfully is {list_expected0[0]}"]
+            list_check_in_step_1 = ["Check home page is displayed"]
 
             check = assert_list(list_actual0, list_expected0)
             self.assertTrue(check["result"])
@@ -6603,8 +6603,8 @@ class WIRELESS(unittest.TestCase):
 
             step_3_name = "3. Make sure enable Radio of 2G/5G:"
             list_check_in_step_3 = [
-                f"Radio of 2G enabled is enable",
-                f"Radio of 5G enabled is enable"
+                f"Radio of 2G enabled is enabled",
+                f"Radio of 5G enabled is enabled"
             ]
 
             check = assert_list(list_actual2, list_expected2)
@@ -7136,7 +7136,7 @@ class WIRELESS(unittest.TestCase):
             list_expected4 = [return_false]
 
             step_4_name = "4. Change Security: Check Change  Radio to OFF successfully."
-            list_check_in_step_4 = [f"Check Change  Radio to OFF successfully is {list_expected4[0]}"]
+            list_check_in_step_4 = ["Check Change Radio to OFF success"]
 
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
@@ -7178,7 +7178,7 @@ class WIRELESS(unittest.TestCase):
 
             step_5_name = "5. Check disable Radio in API and Wireless 2G have no content."
             list_check_in_step_5 = [
-                f"Radio in API: false",
+                f"Radio in API active: False",
                 f"Wireless 2G have no content is correct"
             ]
 
@@ -7369,7 +7369,7 @@ class WIRELESS(unittest.TestCase):
                 f"Check changed mode is {list_expected4[0]}",
                 [
                     f"Check can connect to Wifi {list_expected4[1][0]}",
-                    f"Check can connect to Google {list_expected4[1][1]}"
+                    "Check connect to Google success"
                 ]
             ]
 
@@ -7455,7 +7455,7 @@ class WIRELESS(unittest.TestCase):
                 f"Check changed mode is {list_expected5[0]}",
                 [
                     f"Check can connect to Wifi {list_expected5[1][0]}",
-                    f"Check can connect to Google {list_expected5[1][1]}"
+                    f"Check Connect to Google success"
                 ]
             ]
 
@@ -7541,7 +7541,7 @@ class WIRELESS(unittest.TestCase):
                 f"Check changed mode is {list_expected6[0]}",
                 [
                     f"Check can connect to Wifi {list_expected6[1][0]}",
-                    f"Check can connect to Google {list_expected6[1][1]}"
+                    f"Check Connect to Google success"
                 ]
             ]
 
@@ -7646,10 +7646,10 @@ class WIRELESS(unittest.TestCase):
             step_3_0_name = "3.0 Check popup scan components: Title, Refresh, List table, Chart table, Close button."
             list_check_in_step_3_0 = [
                 f"Tittle: {list_expected2[0]}",
-                f"Refresh: {list_expected2[1]}",
-                f"List table:  {list_expected2[2]}",
-                f"Chart table: {list_expected2[3]}",
-                f"Close button: {list_expected2[4]}"
+                f"Refresh is displayed",
+                f"List table is displayed",
+                f"Chart table is displayed",
+                f"Close button text is: {list_expected2[4]}"
             ]
 
             check = assert_list(list_actual2, list_expected2)
@@ -7747,8 +7747,8 @@ class WIRELESS(unittest.TestCase):
 
             step_4_name = "4. Click Refresh button. Check icon scan loading, Table list displayed."
             list_check_in_step_4 = [
-                f"Icon scan loading: {list_expected4[0]}",
-                f"Table list displayed: {list_expected4[1]}"
+                f"Check Icon scan loading appear",
+                f"Table list is displayed"
             ]
 
             check = assert_list(list_actual4, list_expected4)
@@ -7783,7 +7783,7 @@ class WIRELESS(unittest.TestCase):
             list_expected5 = [return_true]
 
             step_5_name = "5. Click Chart button. Check Graph chart displayed."
-            list_check_in_step_5 = [f"Graph chart is displayed: {list_expected5[0]}"]
+            list_check_in_step_5 = [f"Graph chart is displayed"]
 
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
@@ -7820,8 +7820,8 @@ class WIRELESS(unittest.TestCase):
 
             step_6_name = "6. Click Refresh button. Check icon scan loading, Table Graph Chart displayed."
             list_check_in_step_6 = [
-                f"Icon scan loading is displayed: {list_expected6[0]}",
-                f"Table Graph Chart is displayed: {list_expected6[1]}",
+                f"Check Icon scan loading appear",
+                f"Table Graph Chart is displayed",
             ]
 
             check = assert_list(list_actual6, list_expected6)
@@ -7857,7 +7857,7 @@ class WIRELESS(unittest.TestCase):
 
             step_7_name = "7. Click Close button. Check popup disappear, Page Advanced > Wireless display."
             list_check_in_step_7 = [
-                f"Popup disappear is {list_expected7[0]}",
+                f"Check Popup is disappear",
                 f"Page tittle is {list_expected7[1]}"
             ]
 
@@ -7917,7 +7917,7 @@ class WIRELESS(unittest.TestCase):
             list_expected0 = [True]
 
             step_1_name = "1. Login."
-            list_check_in_step_1 = [f"Login successfully is {list_expected0[0]}"]
+            list_check_in_step_1 = ["Check Login success"]
 
             check = assert_list(list_actual0, list_expected0)
             self.assertTrue(check["result"])
