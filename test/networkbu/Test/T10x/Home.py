@@ -116,17 +116,30 @@ class HOME(unittest.TestCase):
 
             list_actual = [_actual, _check]
             list_expected = [_expected, return_true]
+            step_1_2_name = "1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. "
+            list_check_in_step_1_2 = [
+                f"Check IPv4 Information is: {list_expected[0]}",
+                "Check WAN type and Connection Type list option are correct"
+            ]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
-                f'Actual: {str(list_actual)}. '
-                f'Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
-                f'Actual: {str(list_actual)}. '
-                f'Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             list_step_fail.append(
                 '1,2. Assertion wong.')
 
@@ -140,15 +153,27 @@ class HOME(unittest.TestCase):
 
             list_actual2 = [more_fab]
             list_expected2 = [return_true]
+            step_3_name = "3. Check btn + is displayed when click btn |||."
+            list_check_in_step_3 = ["Check Button more tab is appear"]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Check btn + is displayed when click btn |||. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check btn + is displayed when click btn |||. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append(
                 '3. Assertion wong.')
 
@@ -161,11 +186,18 @@ class HOME(unittest.TestCase):
 
             list_actual3 = [current_tab]
             list_expected3 = [URL_LOGIN + network_internet]
+            step_4_name = "4. Click + btn. Check re-direct Network>Internet"
+            list_check_in_step_4 = ["Get result by command success"]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 4. Click + btn. Check re-direct Network>Internet\1'
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
