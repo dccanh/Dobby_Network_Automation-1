@@ -957,319 +957,319 @@ class NON_FUNCTION(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_14_NON_FUNC_Extender_Aging_Wireless_24GHz(self):
-        self.key = 'NON_FUNCTION_14'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-        # factory_dut()
-        # ===========================================================
-        grand_login(driver)
-        time.sleep(2)
-        goto_menu(driver, network_tab, network_operationmode_tab)
-
-        upper_2g_name = get_config('REPEATER', 'repeater_name', input_data_path)
-        upper_2g_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
-        connect_repeater_mode(driver, REPEATER_UPPER=upper_2g_name, PW=upper_2g_pw, force=True)
-        wait_ethernet_available()
-        interface_connect_disconnect('Wi-Fi', 'enable')
-        # ===========================================================
-        try:
-            wait_ethernet_available()
-            URL_wifi_2g = 'http://dearmyextender.net/api/v1/wifi/0/ssid/0'
-            extender_MAC = api_change_wifi_setting(URL_wifi_2g, get_only_mac=True)
-            print(extender_MAC)
-            wifi = connect_wifi_by_command(upper_2g_name, upper_2g_pw)
-            interface_connect_disconnect('Ethernet', 'disable')
-            connected_mac = get_current_wifi_MAC()
-            print(connected_mac)
-            if extender_MAC != connected_mac:
-                os.system('netsh wlan delete profile name=*')
-                wifi = connect_wifi_by_command(upper_2g_name, upper_2g_pw)
-            connected_mac = get_current_wifi_MAC()
-            print(connected_mac)
-            print(wifi)
-            list_actual0 = [connected_mac]
-            list_expected0 = [extender_MAC]
-            step_0_name = "0. Precondition. Connect wifi of Extender router 2G. "
-            list_check_in_step_0 = [f"mac address of extender router is: {extender_MAC}"]
-
-            check = assert_list(list_actual0, list_expected0)
-            self.assertTrue(check["result"])
-
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_0_name,
-                    list_check_in_step=list_check_in_step_0,
-                    list_actual=list_actual0,
-                    list_expected=list_expected0
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_0_name,
-                    list_check_in_step=list_check_in_step_0,
-                    list_actual=list_actual0,
-                    list_expected=list_expected0
-                )
-            )
-
-        PING_ADDRESS = '192.168.1.1'
-        # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
-        YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
-        try:
-            ping_result = 0.0
-
-            def thread_ping():
-                global ping_result
-                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
-
-            count_interrupt = 0
-
-            def thread_youtube():
-                global count_interrupt, live_time
-                # ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
-                # if ping_result['packet_loss_rate'] != 100.0:
-                time.sleep(5)
-                driver.get(YOUTUBE_URL)
-                time.sleep(5)
-
-                video_form = len(driver.find_elements_by_css_selector(ele_playing))
-
-                count_video = 0
-                while video_form == 0:
-                    time.sleep(1)
-                    video_form = len(driver.find_elements_by_css_selector(ele_playing))
-                    # print(count_video)
-                    count_video += 1
-                    if count_video >= 30:
-                        live_time = 0
-                        break
-                time.sleep(3)
-                live_time = 0
-                while live_time <= PING_TIMES:
-                    buff_time = len(driver.find_elements_by_css_selector(ele_buffering))
-                    time.sleep(1)
-                    live_time += 1
-                    print('Live time ' + str(live_time))
-                    if buff_time == 1:
-                        count_interrupt += 1
-
-            thread1 = threading.Thread(target=thread_ping)
-            thread2 = threading.Thread(target=thread_youtube)
-            thread1.start()
-            thread2.start()
-
-            c = 0
-            while thread1.is_alive():
-                print(str(thread1.is_alive()) + ' th1 - ' + str(c))
-                time.sleep(1)
-                c += 1
-
-            c, in_video_interface = 0, False
-            while thread2.is_alive():
-                print(str(thread2.is_alive()) + ' th2 - ' + str(c))
-                video_form = len(driver.find_elements_by_css_selector(ele_playing))
-                if video_form > 0:
-                    in_video_interface = True
-                time.sleep(1)
-                c += 1
-            time.sleep(2)
-
-            list_actual1 = [[ping_result <= 1.0], [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]]
-            list_expected1 = [[return_true],  [return_true] * 3]
-            step_1_2_name = f'1, 2. Check Ping {PING_ADDRESS}; '
-            list_check_in_step_1_2 = [
-                "Condition 'Ping loss rate less than 1%' is correct",
-                "Condition 'Streaming should be played without interruption' is correct"
-            ]
-            check = assert_list(list_actual1, list_expected1)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_2_name,
-                    list_check_in_step=list_check_in_step_1_2,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_2_name,
-                    list_check_in_step=list_check_in_step_1_2,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-            self.list_steps.append('[END TC]')
-            list_step_fail.append('1, 2. Assertion wong')
-
-        self.assertListEqual(list_step_fail, [])
-
-    def test_15_NON_FUNC_Extender_Aging_Wireless_5GHz(self):
-        self.key = 'NON_FUNCTION_15'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-        factory_dut()
-        # ===========================================================
-        grand_login(driver)
-        time.sleep(2)
-        goto_menu(driver, network_tab, network_operationmode_tab)
-        wait_popup_disappear(driver, dialog_loading)
-        upper_5g_name = get_config('REPEATER', 'repeater_name_5g', input_data_path)
-        upper_5g_pw = get_config('REPEATER', 'repeater_pw_5g', input_data_path)
-        connect_repeater_mode(driver, REPEATER_UPPER=upper_5g_name, PW=upper_5g_pw)
-        wait_ethernet_available()
-
-        wifi = connect_wifi_by_command(upper_5g_name, upper_5g_pw)
-        interface_connect_disconnect('Ethernet', 'disable')
-
-        print(wifi)
-
-        try:
-            wait_ethernet_available()
-            URL_wifi_5g = 'http://dearmyextender.net/api/v1/wifi/1/ssid/0'
-            extender_MAC = api_change_wifi_setting(URL_wifi_5g, get_only_mac=True)
-            print(extender_MAC)
-            wifi = connect_wifi_by_command(upper_5g_name, upper_5g_pw)
-            interface_connect_disconnect('Ethernet', 'disable')
-            connected_mac = get_current_wifi_MAC()
-            print(connected_mac)
-            if extender_MAC != connected_mac:
-                os.system('netsh wlan delete profile name=*')
-                wifi = connect_wifi_by_command(upper_5g_name, upper_5g_pw)
-            connected_mac = get_current_wifi_MAC()
-            print(wifi)
-            list_actual0 = [connected_mac]
-            list_expected0 = [extender_MAC]
-            step_0_name = "0. Precondition. Connect wifi of Extender router 5G. "
-            list_check_in_step_0 = [f"Mac address of extender router is: {extender_MAC}"]
-
-            check = assert_list(list_actual0, list_expected0)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_0_name,
-                    list_check_in_step=list_check_in_step_0,
-                    list_actual=list_actual0,
-                    list_expected=list_expected0
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_0_name,
-                    list_check_in_step=list_check_in_step_0,
-                    list_actual=list_actual0,
-                    list_expected=list_expected0
-                )
-            )
-
-
-        PING_ADDRESS = '192.168.1.1'
-        # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
-        YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
-        try:
-            ping_result = 0.0
-
-            def thread_ping():
-                global ping_result
-                ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
-
-            count_interrupt = 0
-
-            def thread_youtube():
-                global count_interrupt, live_time
-                # ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
-                # if ping_result['packet_loss_rate'] != 100.0:
-                time.sleep(5)
-                driver.get(YOUTUBE_URL)
-                time.sleep(5)
-
-                video_form = len(driver.find_elements_by_css_selector(ele_playing))
-
-                count_video = 0
-                while video_form == 0:
-                    time.sleep(1)
-                    video_form = len(driver.find_elements_by_css_selector(ele_playing))
-                    # print(count_video)
-                    count_video += 1
-                    if count_video >= 30:
-                        live_time = 0
-                        break
-                time.sleep(3)
-                live_time = 0
-                while live_time <= PING_TIMES:
-                    buff_time = len(driver.find_elements_by_css_selector(ele_buffering))
-                    time.sleep(1)
-                    live_time += 1
-                    print('Live time ' + str(live_time))
-                    if buff_time == 1:
-                        count_interrupt += 1
-
-            thread1 = threading.Thread(target=thread_ping)
-            thread2 = threading.Thread(target=thread_youtube)
-            thread1.start()
-            thread2.start()
-
-            c = 0
-            while thread1.is_alive():
-                print(str(thread1.is_alive()) + ' th1 - ' + str(c))
-                time.sleep(1)
-                c += 1
-
-            c, in_video_interface = 0, False
-            while thread2.is_alive():
-                print(str(thread2.is_alive()) + ' th2 - ' + str(c))
-                video_form = len(driver.find_elements_by_css_selector(ele_playing))
-                if video_form > 0:
-                    in_video_interface = True
-                time.sleep(1)
-                c += 1
-            time.sleep(2)
-
-            # list_actual2 = [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]
-            # list_expected2 = [return_true] * 3
-
-            list_actual1 = [ping_result <= 1.0, (count_interrupt == 0) and
-                            (live_time >= PING_TIMES) and in_video_interface]
-            list_expected1 = [return_true,  return_true]
-            step_1_2_name = f'1, 2. Check Ping {PING_ADDRESS}; '
-            list_check_in_step_1_2 = [
-                "Condition 'Ping loss rate less than 1%' is correct",
-                "Condition 'Streaming should be played without interruption' is correct"
-            ]
-
-            check = assert_list(list_actual1, list_expected1)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_2_name,
-                    list_check_in_step=list_check_in_step_1_2,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_2_name,
-                    list_check_in_step=list_check_in_step_1_2,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-            self.list_steps.append('[END TC]')
-            list_step_fail.append('1, 2. Assertion wong')
-
-        self.assertListEqual(list_step_fail, [])
+    # def test_14_NON_FUNC_Extender_Aging_Wireless_24GHz(self):
+    #     self.key = 'NON_FUNCTION_14'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     # factory_dut()
+    #     # ===========================================================
+    #     grand_login(driver)
+    #     time.sleep(2)
+    #     goto_menu(driver, network_tab, network_operationmode_tab)
+    #
+    #     upper_2g_name = get_config('REPEATER', 'repeater_name', input_data_path)
+    #     upper_2g_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
+    #     connect_repeater_mode(driver, REPEATER_UPPER=upper_2g_name, PW=upper_2g_pw, force=True)
+    #     wait_ethernet_available()
+    #     interface_connect_disconnect('Wi-Fi', 'enable')
+    #     # ===========================================================
+    #     try:
+    #         wait_ethernet_available()
+    #         URL_wifi_2g = 'http://dearmyextender.net/api/v1/wifi/0/ssid/0'
+    #         extender_MAC = api_change_wifi_setting(URL_wifi_2g, get_only_mac=True)
+    #         print(extender_MAC)
+    #         wifi = connect_wifi_by_command(upper_2g_name, upper_2g_pw)
+    #         interface_connect_disconnect('Ethernet', 'disable')
+    #         connected_mac = get_current_wifi_MAC()
+    #         print(connected_mac)
+    #         if extender_MAC != connected_mac:
+    #             os.system('netsh wlan delete profile name=*')
+    #             wifi = connect_wifi_by_command(upper_2g_name, upper_2g_pw)
+    #         connected_mac = get_current_wifi_MAC()
+    #         print(connected_mac)
+    #         print(wifi)
+    #         list_actual0 = [connected_mac]
+    #         list_expected0 = [extender_MAC]
+    #         step_0_name = "0. Precondition. Connect wifi of Extender router 2G. "
+    #         list_check_in_step_0 = [f"mac address of extender router is: {extender_MAC}"]
+    #
+    #         check = assert_list(list_actual0, list_expected0)
+    #         self.assertTrue(check["result"])
+    #
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_0_name,
+    #                 list_check_in_step=list_check_in_step_0,
+    #                 list_actual=list_actual0,
+    #                 list_expected=list_expected0
+    #             )
+    #         )
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_0_name,
+    #                 list_check_in_step=list_check_in_step_0,
+    #                 list_actual=list_actual0,
+    #                 list_expected=list_expected0
+    #             )
+    #         )
+    #
+    #     PING_ADDRESS = '192.168.1.1'
+    #     # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
+    #     YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
+    #     try:
+    #         ping_result = 0.0
+    #
+    #         def thread_ping():
+    #             global ping_result
+    #             ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
+    #
+    #         count_interrupt = 0
+    #
+    #         def thread_youtube():
+    #             global count_interrupt, live_time
+    #             # ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
+    #             # if ping_result['packet_loss_rate'] != 100.0:
+    #             time.sleep(5)
+    #             driver.get(YOUTUBE_URL)
+    #             time.sleep(5)
+    #
+    #             video_form = len(driver.find_elements_by_css_selector(ele_playing))
+    #
+    #             count_video = 0
+    #             while video_form == 0:
+    #                 time.sleep(1)
+    #                 video_form = len(driver.find_elements_by_css_selector(ele_playing))
+    #                 # print(count_video)
+    #                 count_video += 1
+    #                 if count_video >= 30:
+    #                     live_time = 0
+    #                     break
+    #             time.sleep(3)
+    #             live_time = 0
+    #             while live_time <= PING_TIMES:
+    #                 buff_time = len(driver.find_elements_by_css_selector(ele_buffering))
+    #                 time.sleep(1)
+    #                 live_time += 1
+    #                 print('Live time ' + str(live_time))
+    #                 if buff_time == 1:
+    #                     count_interrupt += 1
+    #
+    #         thread1 = threading.Thread(target=thread_ping)
+    #         thread2 = threading.Thread(target=thread_youtube)
+    #         thread1.start()
+    #         thread2.start()
+    #
+    #         c = 0
+    #         while thread1.is_alive():
+    #             print(str(thread1.is_alive()) + ' th1 - ' + str(c))
+    #             time.sleep(1)
+    #             c += 1
+    #
+    #         c, in_video_interface = 0, False
+    #         while thread2.is_alive():
+    #             print(str(thread2.is_alive()) + ' th2 - ' + str(c))
+    #             video_form = len(driver.find_elements_by_css_selector(ele_playing))
+    #             if video_form > 0:
+    #                 in_video_interface = True
+    #             time.sleep(1)
+    #             c += 1
+    #         time.sleep(2)
+    #
+    #         list_actual1 = [[ping_result <= 1.0], [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]]
+    #         list_expected1 = [[return_true],  [return_true] * 3]
+    #         step_1_2_name = f'1, 2. Check Ping {PING_ADDRESS}; '
+    #         list_check_in_step_1_2 = [
+    #             "Condition 'Ping loss rate less than 1%' is correct",
+    #             "Condition 'Streaming should be played without interruption' is correct"
+    #         ]
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_2_name,
+    #                 list_check_in_step=list_check_in_step_1_2,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_2_name,
+    #                 list_check_in_step=list_check_in_step_1_2,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('1, 2. Assertion wong')
+    #
+    #     self.assertListEqual(list_step_fail, [])
+    #
+    # def test_15_NON_FUNC_Extender_Aging_Wireless_5GHz(self):
+    #     self.key = 'NON_FUNCTION_15'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     factory_dut()
+    #     # ===========================================================
+    #     grand_login(driver)
+    #     time.sleep(2)
+    #     goto_menu(driver, network_tab, network_operationmode_tab)
+    #     wait_popup_disappear(driver, dialog_loading)
+    #     upper_5g_name = get_config('REPEATER', 'repeater_name_5g', input_data_path)
+    #     upper_5g_pw = get_config('REPEATER', 'repeater_pw_5g', input_data_path)
+    #     connect_repeater_mode(driver, REPEATER_UPPER=upper_5g_name, PW=upper_5g_pw)
+    #     wait_ethernet_available()
+    #
+    #     wifi = connect_wifi_by_command(upper_5g_name, upper_5g_pw)
+    #     interface_connect_disconnect('Ethernet', 'disable')
+    #
+    #     print(wifi)
+    #
+    #     try:
+    #         wait_ethernet_available()
+    #         URL_wifi_5g = 'http://dearmyextender.net/api/v1/wifi/1/ssid/0'
+    #         extender_MAC = api_change_wifi_setting(URL_wifi_5g, get_only_mac=True)
+    #         print(extender_MAC)
+    #         wifi = connect_wifi_by_command(upper_5g_name, upper_5g_pw)
+    #         interface_connect_disconnect('Ethernet', 'disable')
+    #         connected_mac = get_current_wifi_MAC()
+    #         print(connected_mac)
+    #         if extender_MAC != connected_mac:
+    #             os.system('netsh wlan delete profile name=*')
+    #             wifi = connect_wifi_by_command(upper_5g_name, upper_5g_pw)
+    #         connected_mac = get_current_wifi_MAC()
+    #         print(wifi)
+    #         list_actual0 = [connected_mac]
+    #         list_expected0 = [extender_MAC]
+    #         step_0_name = "0. Precondition. Connect wifi of Extender router 5G. "
+    #         list_check_in_step_0 = [f"Mac address of extender router is: {extender_MAC}"]
+    #
+    #         check = assert_list(list_actual0, list_expected0)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_0_name,
+    #                 list_check_in_step=list_check_in_step_0,
+    #                 list_actual=list_actual0,
+    #                 list_expected=list_expected0
+    #             )
+    #         )
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_0_name,
+    #                 list_check_in_step=list_check_in_step_0,
+    #                 list_actual=list_actual0,
+    #                 list_expected=list_expected0
+    #             )
+    #         )
+    #
+    #
+    #     PING_ADDRESS = '192.168.1.1'
+    #     # PING_YOUTUBE = get_config('NON_FUNCTION', 'nf_ping_youtube', input_data_path)
+    #     YOUTUBE_URL = get_config('NON_FUNCTION', 'nf_youtube_url', input_data_path)
+    #     try:
+    #         ping_result = 0.0
+    #
+    #         def thread_ping():
+    #             global ping_result
+    #             ping_result = ping_to_address(PING_ADDRESS, PING_TIMES)['packet_loss_rate']
+    #
+    #         count_interrupt = 0
+    #
+    #         def thread_youtube():
+    #             global count_interrupt, live_time
+    #             # ping_result = ping_to_address(PING_YOUTUBE, PING_TIMES=1)
+    #             # if ping_result['packet_loss_rate'] != 100.0:
+    #             time.sleep(5)
+    #             driver.get(YOUTUBE_URL)
+    #             time.sleep(5)
+    #
+    #             video_form = len(driver.find_elements_by_css_selector(ele_playing))
+    #
+    #             count_video = 0
+    #             while video_form == 0:
+    #                 time.sleep(1)
+    #                 video_form = len(driver.find_elements_by_css_selector(ele_playing))
+    #                 # print(count_video)
+    #                 count_video += 1
+    #                 if count_video >= 30:
+    #                     live_time = 0
+    #                     break
+    #             time.sleep(3)
+    #             live_time = 0
+    #             while live_time <= PING_TIMES:
+    #                 buff_time = len(driver.find_elements_by_css_selector(ele_buffering))
+    #                 time.sleep(1)
+    #                 live_time += 1
+    #                 print('Live time ' + str(live_time))
+    #                 if buff_time == 1:
+    #                     count_interrupt += 1
+    #
+    #         thread1 = threading.Thread(target=thread_ping)
+    #         thread2 = threading.Thread(target=thread_youtube)
+    #         thread1.start()
+    #         thread2.start()
+    #
+    #         c = 0
+    #         while thread1.is_alive():
+    #             print(str(thread1.is_alive()) + ' th1 - ' + str(c))
+    #             time.sleep(1)
+    #             c += 1
+    #
+    #         c, in_video_interface = 0, False
+    #         while thread2.is_alive():
+    #             print(str(thread2.is_alive()) + ' th2 - ' + str(c))
+    #             video_form = len(driver.find_elements_by_css_selector(ele_playing))
+    #             if video_form > 0:
+    #                 in_video_interface = True
+    #             time.sleep(1)
+    #             c += 1
+    #         time.sleep(2)
+    #
+    #         # list_actual2 = [count_interrupt == 0, live_time >= PING_TIMES, in_video_interface]
+    #         # list_expected2 = [return_true] * 3
+    #
+    #         list_actual1 = [ping_result <= 1.0, (count_interrupt == 0) and
+    #                         (live_time >= PING_TIMES) and in_video_interface]
+    #         list_expected1 = [return_true,  return_true]
+    #         step_1_2_name = f'1, 2. Check Ping {PING_ADDRESS}; '
+    #         list_check_in_step_1_2 = [
+    #             "Condition 'Ping loss rate less than 1%' is correct",
+    #             "Condition 'Streaming should be played without interruption' is correct"
+    #         ]
+    #
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_2_name,
+    #                 list_check_in_step=list_check_in_step_1_2,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_2_name,
+    #                 list_check_in_step=list_check_in_step_1_2,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('1, 2. Assertion wong')
+    #
+    #     self.assertListEqual(list_step_fail, [])
 
 
     def test_45_HOME_Verification_of_Network_Map_WAN_information(self):
@@ -2845,153 +2845,153 @@ class NON_FUNCTION(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_R_59_MAIN_System_Extender_mode_Check_firmware_upgrade_when_disconnected_internet(self):
-        self.key = 'MAIN_59'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-        # save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
-        # ===========================================================
-        detect_firmware_version(driver)
-        time.sleep(10)
-        wait_ethernet_available()
-        grand_login(driver)
-        time.sleep(2)
-        goto_menu(driver, network_tab, network_operationmode_tab)
-        time.sleep(2)
-        connect_repeater_mode(driver, force=True)
-        # ===========================================================
-
-        try:
-            # URL_LOGIN = get_config('URL', 'url')
-            _USER = get_config('ACCOUNT', 'user')
-            _PW = get_config('ACCOUNT', 'password')
-            # Call API disconnect WAN
-            URL_DISCONNECT_WAN = 'http://192.168.1.1' + '/api/v1/network/wan/0/disconnect'
-            _METHOD = 'POST'
-            _TOKEN = call_api_login(_USER, _PW, url='http://dearmyrouter.net')["accessToken"]
-            _BODY = ''
-
-            # res_data = call_api(URL_DISCONNECT_WAN, _METHOD, _BODY, _TOKEN)
-            headers = {
-                "content-type": "application/json",
-                "content-language": "en",
-                "access-token": _TOKEN
-            }
-            res_data = send_request(URL_DISCONNECT_WAN, _METHOD, headers, _BODY)
-            time.sleep(300)
-            list_actual0 = [res_data.status_code]
-            list_expected0 = [200]
-            check = assert_list(list_actual0, list_expected0)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                f'[Pass] Pre-condition: API Disconnect WAN Success. Check Status code. ')
-        except:
-            self.list_steps.append(
-                f'[Fail] Pre-condition: Disconnect WAN Fail. Check Status code. ')
-            list_step_fail.append('0. Assertion wong')
-
-        try:
-            time.sleep(20)
-            wait_ethernet_available()
-            grand_login(driver)
-            time.sleep(1)
-
-            # System > Firmware
-            driver.find_element_by_css_selector(system_btn).click()
-            time.sleep(0.2)
-            driver.find_element_by_css_selector(ele_sys_firmware_update).click()
-            time.sleep(1)
-
-            # Check pop up firmware update display
-            check_pop_firmware_display = driver.find_element_by_css_selector(ele_check_for_update_title).text
-
-            list_actual1 = [check_pop_firmware_display]
-            list_expected1 = ['Firmware Update']
-            check = assert_list(list_actual1, list_expected1)
-            step_1_name = "1. Login > System > Firmware. Check name of popup displayed. "
-            list_check_in_step_1 = ["Popup name is: Firmware Update"]
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_name,
-                    list_check_in_step=list_check_in_step_1,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_name,
-                    list_check_in_step=list_check_in_step_1,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-            list_step_fail.append('1. Assertion wong')
-
-        try:
-            message = driver.find_element_by_css_selector(ele_firm_update_msg).text
-
-            list_actual2 = [message]
-            list_expected2 = ['Internet disconnected']
-            step_2_name = "2. Check Message shown in pop up firmware update. "
-            list_check_in_step_2 = [
-                f"Message is: {list_expected2[0]}"
-            ]
-            check = assert_list(list_actual2, list_expected2)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_2_name,
-                    list_check_in_step=list_check_in_step_2,
-                    list_actual=list_actual2,
-                    list_expected=list_expected2
-                )
-            )
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_2_name,
-                    list_check_in_step=list_check_in_step_2,
-                    list_actual=list_actual2,
-                    list_expected=list_expected2
-                )
-            )
-            self.list_steps.append('[END TC]')
-            list_step_fail.append(f'[Fail] 2. Check Message shown in pop up firmware update '
-                                  f'Actual: {str(list_actual2)}. '
-                                  f'Expected: {str(list_expected2)}')
-
-        try:
-            _USER = get_config('ACCOUNT', 'user')
-            _PW = get_config('ACCOUNT', 'password')
-            # Call API disconnect WAN
-            URL_DISCONNECT_WAN = 'http://192.168.1.1' + '/api/v1/network/wan/0/disconnect'
-            _METHOD = 'POST'
-            _TOKEN = call_api_login(_USER, _PW, url='http://dearmyrouter.net')["accessToken"]
-            _BODY = ''
-            headers = {
-                "content-type": "application/json",
-                "content-language": "en",
-                "access-token": _TOKEN
-            }
-            res_data = send_request(URL_DISCONNECT_WAN, _METHOD, headers, _BODY)
-            time.sleep(300)
-            list_actual0 = [res_data.status_code]
-            list_expected0 = [200]
-            check = assert_list(list_actual0, list_expected0)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                f'API Connect WAN Success After test. Check Status code. ')
-        except:
-            self.list_steps.append(
-                f'Connect WAN Fail After test. Check Status code. ')
-
-        self.assertListEqual(list_step_fail, [])
+    # def test_R_59_MAIN_System_Extender_mode_Check_firmware_upgrade_when_disconnected_internet(self):
+    #     self.key = 'MAIN_59'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     # save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
+    #     # ===========================================================
+    #     detect_firmware_version(driver)
+    #     time.sleep(10)
+    #     wait_ethernet_available()
+    #     grand_login(driver)
+    #     time.sleep(2)
+    #     goto_menu(driver, network_tab, network_operationmode_tab)
+    #     time.sleep(2)
+    #     connect_repeater_mode(driver, force=True)
+    #     # ===========================================================
+    #
+    #     try:
+    #         # URL_LOGIN = get_config('URL', 'url')
+    #         _USER = get_config('ACCOUNT', 'user')
+    #         _PW = get_config('ACCOUNT', 'password')
+    #         # Call API disconnect WAN
+    #         URL_DISCONNECT_WAN = 'http://192.168.1.1' + '/api/v1/network/wan/0/disconnect'
+    #         _METHOD = 'POST'
+    #         _TOKEN = call_api_login(_USER, _PW, url='http://dearmyrouter.net')["accessToken"]
+    #         _BODY = ''
+    #
+    #         # res_data = call_api(URL_DISCONNECT_WAN, _METHOD, _BODY, _TOKEN)
+    #         headers = {
+    #             "content-type": "application/json",
+    #             "content-language": "en",
+    #             "access-token": _TOKEN
+    #         }
+    #         res_data = send_request(URL_DISCONNECT_WAN, _METHOD, headers, _BODY)
+    #         time.sleep(300)
+    #         list_actual0 = [res_data.status_code]
+    #         list_expected0 = [200]
+    #         check = assert_list(list_actual0, list_expected0)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'[Pass] Pre-condition: API Disconnect WAN Success. Check Status code. ')
+    #     except:
+    #         self.list_steps.append(
+    #             f'[Fail] Pre-condition: Disconnect WAN Fail. Check Status code. ')
+    #         list_step_fail.append('0. Assertion wong')
+    #
+    #     try:
+    #         time.sleep(20)
+    #         wait_ethernet_available()
+    #         grand_login(driver)
+    #         time.sleep(1)
+    #
+    #         # System > Firmware
+    #         driver.find_element_by_css_selector(system_btn).click()
+    #         time.sleep(0.2)
+    #         driver.find_element_by_css_selector(ele_sys_firmware_update).click()
+    #         time.sleep(1)
+    #
+    #         # Check pop up firmware update display
+    #         check_pop_firmware_display = driver.find_element_by_css_selector(ele_check_for_update_title).text
+    #
+    #         list_actual1 = [check_pop_firmware_display]
+    #         list_expected1 = ['Firmware Update']
+    #         check = assert_list(list_actual1, list_expected1)
+    #         step_1_name = "1. Login > System > Firmware. Check name of popup displayed. "
+    #         list_check_in_step_1 = ["Popup name is: Firmware Update"]
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_name,
+    #                 list_check_in_step=list_check_in_step_1,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_name,
+    #                 list_check_in_step=list_check_in_step_1,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #         list_step_fail.append('1. Assertion wong')
+    #
+    #     try:
+    #         message = driver.find_element_by_css_selector(ele_firm_update_msg).text
+    #
+    #         list_actual2 = [message]
+    #         list_expected2 = ['Internet disconnected']
+    #         step_2_name = "2. Check Message shown in pop up firmware update. "
+    #         list_check_in_step_2 = [
+    #             f"Message is: {list_expected2[0]}"
+    #         ]
+    #         check = assert_list(list_actual2, list_expected2)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_2_name,
+    #                 list_check_in_step=list_check_in_step_2,
+    #                 list_actual=list_actual2,
+    #                 list_expected=list_expected2
+    #             )
+    #         )
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_2_name,
+    #                 list_check_in_step=list_check_in_step_2,
+    #                 list_actual=list_actual2,
+    #                 list_expected=list_expected2
+    #             )
+    #         )
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append(f'[Fail] 2. Check Message shown in pop up firmware update '
+    #                               f'Actual: {str(list_actual2)}. '
+    #                               f'Expected: {str(list_expected2)}')
+    #
+    #     try:
+    #         _USER = get_config('ACCOUNT', 'user')
+    #         _PW = get_config('ACCOUNT', 'password')
+    #         # Call API disconnect WAN
+    #         URL_DISCONNECT_WAN = 'http://192.168.1.1' + '/api/v1/network/wan/0/disconnect'
+    #         _METHOD = 'POST'
+    #         _TOKEN = call_api_login(_USER, _PW, url='http://dearmyrouter.net')["accessToken"]
+    #         _BODY = ''
+    #         headers = {
+    #             "content-type": "application/json",
+    #             "content-language": "en",
+    #             "access-token": _TOKEN
+    #         }
+    #         res_data = send_request(URL_DISCONNECT_WAN, _METHOD, headers, _BODY)
+    #         time.sleep(300)
+    #         list_actual0 = [res_data.status_code]
+    #         list_expected0 = [200]
+    #         check = assert_list(list_actual0, list_expected0)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             f'API Connect WAN Success After test. Check Status code. ')
+    #     except:
+    #         self.list_steps.append(
+    #             f'Connect WAN Fail After test. Check Status code. ')
+    #
+    #     self.assertListEqual(list_step_fail, [])
 
     def test_14_MAIN_Verify_the_time_out_operation(self):
         self.key = 'MAIN_14'
