@@ -9,7 +9,7 @@ from Helper.t10x.common import *
 from selenium import webdriver
 from faker import Faker
 
-# save_config(config_path, 'URL', 'url', 'http://192.168.1.1')
+
 class MEDIASHARE(unittest.TestCase):
     def setUp(self):
         try:
@@ -91,15 +91,34 @@ class MEDIASHARE(unittest.TestCase):
             list_expected3 = ['Media Share > USB', exp_subtitle_ms_usb,
                               ['Connected USB', 'Network Folder', 'Account Settings'], api_list_usb]
             check = assert_list(list_actual3, list_expected3)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     '[Pass] 3. Check title, subtitle, list block title, api of return of id and name. '
+            #     f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            step_1_2_3_name = '''1. Access and login Web UI\n2. Go to Wireless -> Media Share -> USB\n3. Check output page information'''
+            list_check_in_step_1_2_3 = ['Check page title',
+                                        'Check sub title',
+                                        'Check list block title',
+                                        'Check api of return of id and name']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Check title, subtitle, list block title, api of return of id and name. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check title, subtitle, list block title, api of return of id and name. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('3. Assertion wong.')
 
@@ -111,8 +130,6 @@ class MEDIASHARE(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        url_login = get_config('URL', 'url')
-
         # ===========================================================
         factory_dut()
         # ===========================================================
@@ -128,7 +145,7 @@ class MEDIASHARE(unittest.TestCase):
             get_config('MEDIA_SHARE', 'ms04_file_7', input_data_path),
             get_config('MEDIA_SHARE', 'ms04_file_8', input_data_path)
         ]
-        fake = Faker()
+
         try:
             grand_login(driver)
             time.sleep(5)
@@ -199,14 +216,36 @@ class MEDIASHARE(unittest.TestCase):
             list_actual1 = [before_add+1]
             list_expected1 = [after_add]
             check = assert_list(list_actual1, list_expected1)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     '[Pass] 1,2,3. Check Add NW folder successfully: Quantity before and after. '
+            #     f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            step_1_2_3_name = '''1. Access and login Web UI\n
+                            2. Go to Wireless -> Media Share -> USB\n
+                            3. Click the Add button in Network Folder and change below settings:
+                            - Description: 123!@ abcd #^&*
+                            - Select an any folder on USB
+                            - Permission: Write/Read
+                            click Save'''
+            list_check_in_step_1_2_3 = ['Check number before and after Add']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Check Add NW folder successfully: Quantity before and after. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3. Check Add NW folder successfully: Quantity before and after. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append(
                 '1,2,3. Assertion wong.')
 
@@ -242,13 +281,31 @@ class MEDIASHARE(unittest.TestCase):
             list_actual2 = [err_msg]
             list_expected2 = [exp_nw_folder_exist]
             check = assert_list(list_actual2, list_expected2)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append('[Pass] 4. Change same network folder: Check error message. '
+            #                        f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            step_4_name = '''4. Click the Add button in Network Folder and change below settings:
+            - Description: 123!@ abcd
+            - Select a folder on USB is as same as the step 3'''
+            list_check_in_step_4 = ['Check error message']
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Change same network folder: Check error message. '
-                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Change same network folder: Check error message. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
@@ -285,17 +342,36 @@ class MEDIASHARE(unittest.TestCase):
             after_add_2 = len(network_block.find_elements_by_css_selector(tbody))
             # after_add_2 = len(network_table.find_elements_by_css_selector(table_row))
 
-            list_actual34 = [after_add + 1]
-            list_expected34 = [after_add_2]
-            check = assert_list(list_actual34, list_expected34)
+            list_actual3 = [after_add + 1]
+            list_expected3 = [after_add_2]
+            check = assert_list(list_actual3, list_expected3)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 5. Check Add NW folder successfully: Quantity before and after. '
+            #     f'Actual: {str(list_actual34)}. Expected: {str(list_expected34)}')
+            step_5_name = '''5. Change below settings:
+                - Select a different folder on USB 
+                - Permission: Read
+                and click Save'''
+            list_check_in_step_5 = ['Check number before and after Add']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Check Add NW folder successfully: Quantity before and after. '
-                f'Actual: {str(list_actual34)}. Expected: {str(list_expected34)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 5. Check Add NW folder successfully: Quantity before and after. '
-                f'Actual: {str(list_actual34)}. Expected: {str(list_expected34)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('5. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
@@ -351,20 +427,35 @@ class MEDIASHARE(unittest.TestCase):
 
             # Check quantity of record
             after_add_final = len(network_block.find_elements_by_css_selector(tbody))
-            # after_add_final = len(network_table.find_elements_by_css_selector(table_row))
+
 
             list_actual4 = [add_btn_disabled, after_add_final]
             list_expected4 = [return_true, exp_max_row_usb_nw]
             check = assert_list(list_actual4, list_expected4)
+
+            step_6_name = '''6. Add more 3 share folder rules with Read permission and 3 share folder rules with Write/Read permission
+            and apply setting'''
+            list_check_in_step_6 = ['Check Add button is disabled',
+                                    'Check number of network folder rule = max rules']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 6. Check Add NW folder successfully: Check Quantity. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 6. Check Add NW folder successfully: Check Quantity. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('6. Assertion wong.')
 
@@ -391,24 +482,37 @@ class MEDIASHARE(unittest.TestCase):
             is_dialog_loading_disappear = wait_popup_disappear(driver, dialog_loading)
             is_correct_page_title = driver.find_element_by_css_selector(ele_title_page).text
 
-            list_actual0 = [is_dialog_loading_disappear, is_correct_page_title]
-            list_expected0 = [True, USB_PAGE_TITLE]
+            list_actual0 = [is_correct_page_title]
+            list_expected0 = [USB_PAGE_TITLE]
             check = assert_list(list_actual0, list_expected0)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 1, 2. Login. Goto USB page. '
+            #     f'Check Dialog loading is disappeared after login.'
+            #     f'Check title USB page:'
+            #     f'Actual: {str(list_actual0)}.'
+            #     f'Expected: {str(list_expected0)}.'
+            # )
+            step_1_2_name = '''1. Access and login Web UI\n2. Go to Wireless -> Media Share -> USB'''
+            list_check_in_step_1_2 = ['Check page title']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto USB page. '
-                f'Check Dialog loading is disappeared after login.'
-                f'Check title USB page:'
-                f'Actual: {str(list_actual0)}.'
-                f'Expected: {str(list_expected0)}.'
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
             )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto USB page. '
-                f'Check Dialog loading is disappeared after login.'
-                f'Check title USB page:'
-                f'Actual: {str(list_actual0)}.'
-                f'Expected: {str(list_expected0)}.')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
             list_step_fail.append('1,2. Assertion wong.')
 
         try:
@@ -507,18 +611,40 @@ class MEDIASHARE(unittest.TestCase):
             time.sleep(0.5)
             per_write_first_row_check = len(network_table[0].find_elements_by_css_selector(permission_write_check_box_first_row)) > 0
 
-
             list_actual1 = [desc_check, path_check, permission_status_before]
             list_expected1 = [fake_name, PATH_FILE_9, not(per_write_first_row_check)]
             check = assert_list(list_actual1, list_expected1)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 3,4. Check edit NW folder successfully: Result same as configuration. '
+            #     f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            step_3_4_name = '''3. Click the Edit button and change below settings:
+                - Description: change to a new value
+                - Select an other folder on USB
+                - Permission: change to a new value (Write/Read or Read)
+                and click Save 
+                4. Click the Apply button'''
+            list_check_in_step_3_4 = ['Check Description text',
+                                      'Check folder path',
+                                      'Check Read permision of status is check']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3,4. Check edit NW folder successfully: Result same as configuration. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_4_name,
+                    list_check_in_step=list_check_in_step_3_4,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3,4. Check edit NW folder successfully: Result same as configuration. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_4_name,
+                    list_check_in_step=list_check_in_step_3_4,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('3,4. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
@@ -538,14 +664,30 @@ class MEDIASHARE(unittest.TestCase):
             list_actual2 = [before_delete - 1]
             list_expected2 = [after_delete]
             check = assert_list(list_actual2, list_expected2)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(f'[Pass] 5. Delete a rule: Check quantity decrease 1. '
+            #                        f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            step_5_name = '''5. Click the Delete button and click OK'''
+            list_check_in_step_5 = ['Check number rule decrease 1']
             self.assertTrue(check["result"])
-            self.list_steps.append(f'[Pass] 5. Delete a rule: Check quantity decrease 1. '
-                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 5. Delete a rule: Check quantity decrease 1 '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong.')
 
@@ -570,24 +712,37 @@ class MEDIASHARE(unittest.TestCase):
             is_dialog_loading_disappear = wait_popup_disappear(driver, dialog_loading)
             is_correct_page_title = driver.find_element_by_css_selector(ele_title_page).text
 
-            list_actual0 = [is_dialog_loading_disappear, is_correct_page_title]
-            list_expected0 = [True, EXPECTED_SERVER_SETTING_PAGE_TITLE]
+            list_actual0 = [is_correct_page_title]
+            list_expected0 = [EXPECTED_SERVER_SETTING_PAGE_TITLE]
             check = assert_list(list_actual0, list_expected0)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 1, 2. Login. Goto USB sever setting page. '
+            #     f'Check Dialog loading is disappeared after login.'
+            #     f'Check title USB sever setting page:'
+            #     f'Actual: {str(list_actual0)}.'
+            #     f'Expected: {str(list_expected0)}.'
+            # )
+            step_1_2_name = '''1. Access and login Web UI\n2. Go to Wireless -> Media Share -> Server Settings'''
+            list_check_in_step_1_2 = ['Check title page']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto USB sever setting page. '
-                f'Check Dialog loading is disappeared after login.'
-                f'Check title USB sever setting page:'
-                f'Actual: {str(list_actual0)}.'
-                f'Expected: {str(list_expected0)}.'
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
             )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto USB sever setting page. '
-                f'Check Dialog loading is disappeared after login.'
-                f'Check title USB sever setting page:'
-                f'Actual: {str(list_actual0)}.'
-                f'Expected: {str(list_expected0)}.')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
             list_step_fail.append('1,2. Assertion wong.')
 
         try:
@@ -635,14 +790,34 @@ class MEDIASHARE(unittest.TestCase):
             list_actual1 = [account_value, nw_folder_value]
             list_expected1 = [ACCOUNT_FTP, option_value]
             check = assert_list(list_actual1, list_expected1)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 3. Edit FTP server: Check result same as configuration. '
+            #     f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            step_3_name = '''3. Enable FTP server and change below settings:
+                - Account: Anonymous
+                - Network Folder: choose a network folder
+                and Apply setting'''
+            list_check_in_step_3 = ['Check Account value',
+                                    'Check network folder value']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Edit FTP server: Check result same as configuration. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Edit FTP server: Check result same as configuration. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append(
                 '3. Assertion wong.')
 
@@ -665,14 +840,30 @@ class MEDIASHARE(unittest.TestCase):
             list_actual2 = [check_folder_status]
             list_expected2 = [SERVER_FTP]
             check = assert_list(list_actual2, list_expected2)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 4. Check status of network folder should be FTP. '
+            #     f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            step_4_name = '''4. Go to Wireless -> Media Share -> USB'''
+            list_check_in_step_4 = ['Check status of network folder should be FTP']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Check status of network folder should be FTP. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Check status of network folder should be FTP. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
@@ -690,14 +881,30 @@ class MEDIASHARE(unittest.TestCase):
             list_actual3 = [confirm_msg_edit]
             list_expected3 = [exp_confirm_msg_edit]
             check = assert_list(list_actual3, list_expected3)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     '[Pass] 5. Check content of confirm message. '
+            #     f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            step_5_name = '''5. Click the Edit button of the network folder in step 3'''
+            list_check_in_step_5 = ['Check content of confirm message']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 5. Check content of confirm message. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 5. Check content of confirm message. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('5. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
@@ -727,15 +934,32 @@ class MEDIASHARE(unittest.TestCase):
             list_actual4 = [confirm_msg_delete, check_delete]
             list_expected4 = [exp_confirm_msg_delete, return_true]
             check = assert_list(list_actual4, list_expected4)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     '[Pass] 6. Delete a rule: Check pop-up content; check folder path not in total path. '
+            #     f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            step_6_name = '''6. Click the Delete button of the network folder in step 3 and click OK'''
+            list_check_in_step_6 = ['Delete a rule: Check pop-up content',
+                                    'Check folder path not in total path.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 6. Delete a rule: Check pop-up content; check folder path not in total path. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 6. Delete a rule: Check pop-up content; check folder path not in total path'
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('6. Assertion wong.')
 
