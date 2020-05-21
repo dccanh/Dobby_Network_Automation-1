@@ -2541,7 +2541,7 @@ class HOME(unittest.TestCase):
             step_3_name = "3. Check Server title, icon fab, value fields."
             list_check_in_step_3 = [
                 f"Check Server title is: {list_expected1[0]}",
-                "Check icon fab is exist",
+                "Check icon fab is existed",
                 "Check FTP Server is off",
                 "Check Windows Network (Samba) is off",
                 "Check Media Server (DLNA) is off"
