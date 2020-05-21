@@ -1924,15 +1924,15 @@ def add_a_usb_network_folder(driver, DESC_VALUE, PATH_FILE, WRITE=True):
         edit_field.find_element_by_css_selector('.read-write #custom-checkbox-write-add+label').click()
     else:
         edit_field.find_element_by_css_selector('.read-write #custom-checkbox-read-add+label').click()
-    time.sleep(1)
+    time.sleep(0.3)
     network_block.find_element_by_css_selector(btn_save).click()
-    time.sleep(1)
+    time.sleep(0.3)
     network_block.find_element_by_css_selector(apply).click()
     wait_popup_disappear(driver, dialog_loading)
-    time.sleep(1)
+    time.sleep(0.3)
     driver.find_element_by_css_selector(btn_ok).click()
     wait_popup_disappear(driver, dialog_loading)
-    time.sleep(1)
+    time.sleep(0.5)
 
 
 def add_a_usb_account_setting(driver, ID_VALUE, PASSWORD_VALUE):
@@ -1950,13 +1950,13 @@ def add_a_usb_account_setting(driver, ID_VALUE, PASSWORD_VALUE):
     pw_field.find_element_by_css_selector(input).send_keys(PASSWORD_VALUE)
 
     account_settings_block.find_element_by_css_selector(btn_save).click()
-    time.sleep(1)
+    time.sleep(0.5)
     account_settings_block.find_element_by_css_selector(apply).click()
     wait_popup_disappear(driver, dialog_loading)
-    time.sleep(1)
+    time.sleep(0.5)
     driver.find_element_by_css_selector(btn_ok).click()
     wait_popup_disappear(driver, dialog_loading)
-    time.sleep(1)
+    time.sleep(0.5)
 
 
 def add_a_default_guest_network(driver, block):

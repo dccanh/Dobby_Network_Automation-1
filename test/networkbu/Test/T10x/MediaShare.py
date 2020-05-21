@@ -705,6 +705,15 @@ class MEDIASHARE(unittest.TestCase):
         EXPECTED_SERVER_SETTING_PAGE_TITLE = "Media Share > Server Settings"
         try:
             grand_login(driver)
+            goto_menu(driver, media_share_tab, media_share_usb_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            network_block = driver.find_element_by_css_selector(usb_network)
+            network_table = network_block.find_elements_by_css_selector(tbody)
+            if len(network_table) == 0:
+                DESCRIPTION_3 = 'Test01'
+                PATH_FILE_1 = get_config('MEDIA_SHARE', 'ms04_file_1', input_data_path)
+                add_a_usb_network_folder(driver, DESCRIPTION_3, PATH_FILE_1, WRITE=True)
+
 
             # Goto media share USB
             goto_menu(driver, media_share_tab, media_share_server_settings_tab)
@@ -751,7 +760,7 @@ class MEDIASHARE(unittest.TestCase):
             media_fields = server_ftp.find_elements_by_css_selector(media_item)
             # Account
             media_fields[0].find_element_by_css_selector(input).click()
-            time.sleep(0.5)
+            time.sleep(1)
             ls_account = media_fields[0].find_elements_by_css_selector(secure_value_in_drop_down)
             time.sleep(0.5)
             for o in ls_account:
@@ -761,7 +770,7 @@ class MEDIASHARE(unittest.TestCase):
 
             # Network folder
             media_fields[1].find_element_by_css_selector(input).click()
-            time.sleep(0.5)
+            time.sleep(1)
             ls_folder = media_fields[1].find_elements_by_css_selector(secure_value_in_drop_down)
             time.sleep(0.5)
             choice = random.choice(ls_folder)
@@ -921,7 +930,7 @@ class MEDIASHARE(unittest.TestCase):
 
             step_6_name = '''6. Click the Delete button of the network folder in step 3 and click OK'''
             list_check_in_step_6 = ['Delete a rule: Check pop-up content',
-                                    'Check folder path not in total path']
+                                    'Check folder path not in total path: deleted']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -962,7 +971,7 @@ class MEDIASHARE(unittest.TestCase):
             # Goto media share USB
             goto_menu(driver, media_share_tab, media_share_usb_tab)
             wait_popup_disappear(driver, dialog_loading)
-            is_correct_page_title = driver.find_element_by_css_selector(ele_title_page).text
+
 
             # Network Folder
             network_block = driver.find_element_by_css_selector(usb_network)
@@ -989,6 +998,10 @@ class MEDIASHARE(unittest.TestCase):
                     driver.find_element_by_css_selector(btn_ok).click()
                     time.sleep(0.5)
 
+            # Goto Sever setting
+            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            is_correct_page_title = driver.find_element_by_css_selector(ele_title_page).text
             list_actual0 = [is_correct_page_title]
             list_expected0 = ['Media Share > Server Settings']
             check = assert_list(list_actual0, list_expected0)
@@ -1015,9 +1028,7 @@ class MEDIASHARE(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Prepare done precondition
 
         try:
-            # Goto Sever setting
-            goto_menu(driver, media_share_tab, media_share_server_settings_tab)
-            wait_popup_disappear(driver, dialog_loading)
+
 
             exp_account_and_folder_msg = [exp_server_account_warning, exp_server_folder_warning]
             exp_account_msg = [exp_server_account_warning]
@@ -1854,29 +1865,30 @@ class MEDIASHARE(unittest.TestCase):
             for l, v in zip(input_label, input_value):
                 if l.text == 'Account':
                     v.find_element_by_css_selector(input).click()
-                    time.sleep(1)
+                    time.sleep(0.3)
                     ls_account_drop = v.find_elements_by_css_selector(secure_value_in_drop_down)
-                    time.sleep(0.5)
+                    time.sleep(0.3)
                     for o in ls_account_drop:
                         if o.text == id_account:
                             o.click()
                             break
                 if l.text == 'Network Folder':
                     v.find_element_by_css_selector(input).click()
-                    time.sleep(1)
+                    time.sleep(0.3)
                     ls_folder = v.find_elements_by_css_selector(secure_value_in_drop_down)
-                    time.sleep(0.5)
+                    time.sleep(0.3)
                     choice = random.choice(ls_folder)
-                    time.sleep(0.5)
+                    time.sleep(0.3)
                     choice.click()
                     break
             # Apply
-            driver.find_element_by_css_selector(apply).click()
-            time.sleep(1)
-            wait_popup_disappear(driver, dialog_loading)
-            driver.find_element_by_css_selector(btn_ok).click()
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            if server_ftp.find_element_by_css_selector(apply).is_displayed() is True:
+                server_ftp.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
 
             # Enable Windows Network Samba
             server_samba = driver.find_element_by_css_selector(samba_server_card)
@@ -1895,29 +1907,30 @@ class MEDIASHARE(unittest.TestCase):
                     v.find_element_by_css_selector(input).send_keys(fake.name())
                 if l.text == 'Account':
                     v.find_element_by_css_selector(input).click()
-                    time.sleep(1)
+                    time.sleep(0.3)
                     ls_account_drop = v.find_elements_by_css_selector(secure_value_in_drop_down)
-                    time.sleep(0.5)
+                    time.sleep(0.3)
                     for o in ls_account_drop:
                         if o.text == id_account:
                             o.click()
                             break
                 if l.text == 'Network Folder':
                     v.find_element_by_css_selector(input).click()
-                    time.sleep(1)
+                    time.sleep(0.3)
                     ls_folder = v.find_elements_by_css_selector(secure_value_in_drop_down)
-                    time.sleep(0.5)
+                    time.sleep(0.3)
                     choice = random.choice(ls_folder)
-                    time.sleep(0.5)
+                    time.sleep(0.3)
                     choice.click()
-                    time.sleep(0.5)
+                    time.sleep(0.3)
                     break
             # Apply
-            server_samba.find_element_by_css_selector(apply).click()
-            time.sleep(1)
-            wait_popup_disappear(driver, dialog_loading)
-            driver.find_element_by_css_selector(btn_ok).click()
-            wait_popup_disappear(driver, dialog_loading)
+            if server_samba.find_element_by_css_selector(apply).is_displayed() is True:
+                server_samba.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
 
             self.list_steps.append(
                 '[Pass] Precondition: Existed an account that is using in server (exp: FPT server/ Samba)')
@@ -1928,55 +1941,48 @@ class MEDIASHARE(unittest.TestCase):
         try:
             goto_menu(driver, media_share_tab, media_share_usb_tab)
             wait_popup_disappear(driver, dialog_loading)
-
+            time.sleep(0.3)
+            driver.refresh()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
             # Verify
             account_setting_block = driver.find_element_by_css_selector(account_setting_card)
             ActionChains(driver).move_to_element(account_setting_block).perform()
             ls_account = account_setting_block.find_elements_by_css_selector(rows)
             random_account = random.choice(ls_account)
-            time.sleep(1)
 
             # Click Edit
             random_account.find_element_by_css_selector(edit_cls).click()
-            time.sleep(1)
-            check_edit_when_on_server = False
+            time.sleep(0.3)
+
             if len(driver.find_elements_by_css_selector(complete_dialog_msg)) > 0:
-                check_edit_when_on_server = True
-                time.sleep(1)
                 edit_confirm_msg = driver.find_element_by_css_selector(complete_dialog_msg).text
-                time.sleep(1)
+                time.sleep(0.3)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(1)
-            else:
-                driver.find_element_by_css_selector(btn_cancel).click()
-                time.sleep(1)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.3)
+
             # Click Delete
             ls_account = account_setting_block.find_elements_by_css_selector(rows)
             random_account = random.choice(ls_account)
-            time.sleep(1)
+            time.sleep(0.3)
             random_account.find_element_by_css_selector(delete_cls).click()
             time.sleep(0.5)
 
-            check_delete_when_on_server = False
             if len(driver.find_elements_by_css_selector(confirm_dialog_msg)) > 0:
-                check_delete_when_on_server = True
                 delete_confirm_msg = driver.find_element_by_css_selector(confirm_dialog_msg).text
-                time.sleep(1)
+                time.sleep(0.3)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.2)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(1)
+                time.sleep(0.3)
 
-            if not (check_delete_when_on_server and check_edit_when_on_server):
-                list_actual1 = [check_edit_when_on_server, check_delete_when_on_server]
-                list_expected1 = [return_true] * 2
-            else:
-                list_actual1 = [edit_confirm_msg, delete_confirm_msg]
-                list_expected1 = [exp_confirm_msg_edit, exp_delete_account_when_server_running]
+            list_actual1 = [edit_confirm_msg, delete_confirm_msg]
+            list_expected1 = [exp_confirm_msg_edit, exp_delete_account_when_server_running]
             check = assert_list(list_actual1, list_expected1)
 
-            step_1_name = '''1. Click Edit button on existed account. 
-                            2. Click Delete button on existed account. '''
+            step_1_name = '''1. Click Edit button on existed account. \n2. Click Delete button on existed account. '''
             list_check_in_step_1 = ['Check Edit confirm message',
                                     'Check Delete confirm message']
             self.assertTrue(check["result"])
@@ -2002,17 +2008,18 @@ class MEDIASHARE(unittest.TestCase):
             wait_popup_disappear(driver, dialog_loading)
 
             server_ftp = driver.find_element_by_css_selector(ftp_server)
-            ftp_account_warning = server_ftp.find_element_by_css_selector(account_link_cls).text
+            ftp_account_enable = server_ftp.find_element_by_css_selector(ele_toggle_input).is_selected()
 
             server_samba = driver.find_element_by_css_selector(samba_server_card)
-            samba_account_warning = server_samba.find_element_by_css_selector(account_link_cls).text
+            samba_account_enable = server_samba.find_element_by_css_selector(ele_toggle_input).is_selected()
 
-            list_actual2 = [ftp_account_warning, samba_account_warning]
-            list_expected2 = [exp_server_account_warning]*2
+            list_actual2 = [ftp_account_enable, samba_account_enable]
+            list_expected2 = [return_false]*2
             check = assert_list(list_actual2, list_expected2)
 
             step_3_name = '''3. Click OK button then check server that using account'''
-            list_check_in_step_3 = ['Check Server Accounts are not available']
+            list_check_in_step_3 = ['Check FPT Server is not available: not available',
+                                    'Check Samba Server is not available: not available']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(step_name=step_3_name,
@@ -2127,7 +2134,7 @@ class MEDIASHARE(unittest.TestCase):
             list_expected2 = [expected_res]
             check = assert_list(list_actual2, list_expected2)
             step_2_name = '''2. Go to Media Share > Server Settings > Windows Network (Samba)'''
-            list_check_in_step_2 = ['Check default Status of Samba server with API']
+            list_check_in_step_2 = ['Check default Status of Samba server with API is true']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(step_name=step_2_name,

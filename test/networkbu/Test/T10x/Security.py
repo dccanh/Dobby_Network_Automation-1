@@ -4430,7 +4430,7 @@ class SECURITY(unittest.TestCase):
                     break
             check_forwarding_redirect = detect_current_menu(driver)
 
-            list_actual16 = [check_disable_forwarding, check_enable_forwarding, ' > '.joincheck_forwarding_redirect()]
+            list_actual16 = [check_disable_forwarding, check_enable_forwarding, ' > '.join(check_forwarding_redirect)]
             list_expected16 = ['Disable', 'Enable', ' > '.join(('ADVANCED', 'Port Forwarding/DMZ'))]
             check = assert_list(list_actual16, list_expected16)
 
