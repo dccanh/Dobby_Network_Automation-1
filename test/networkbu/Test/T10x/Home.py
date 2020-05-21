@@ -1100,7 +1100,7 @@ class HOME(unittest.TestCase):
             list_actual3 = [check_radio_box]
             list_expected3 = [return_false]
             step_3_name = "3. Goto Advanced> Wireless. Disabled 2G Radio. Check Disabled. "
-            list_check_in_step_3 = ["Check 2G Radio is disable"]
+            list_check_in_step_3 = ["Check 2G Radio is disabled"]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
