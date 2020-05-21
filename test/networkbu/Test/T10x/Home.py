@@ -1357,8 +1357,8 @@ class HOME(unittest.TestCase):
             step_3_3_name = "3.3 Check Information, CPU Status, Ethernet Port Status, Memory Status. "
             list_check_in_step_3_3 = [
                 f"Check label information is: {list_expected3[0]}",
-                f"Check label CPU status is: {list_expected3[1]}"
-                f"Check label Ethernet Port Status is: {list_expected3[2]}"
+                f"Check label CPU status is: {list_expected3[1]}",
+                f"Check label Ethernet Port Status is: {list_expected3[2]}",
                 f"Check label Memory Status is: {list_expected3[3]}"
             ]
             check = assert_list(list_actual3, list_expected3)
