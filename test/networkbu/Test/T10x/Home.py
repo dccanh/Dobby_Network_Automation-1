@@ -4623,8 +4623,8 @@ class HOME(unittest.TestCase):
                 generate_step_information(
                     step_name=step_3_name,
                     list_check_in_step=list_check_in_step_3,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
                 )
             )
         except:
@@ -4632,8 +4632,8 @@ class HOME(unittest.TestCase):
                 generate_step_information(
                     step_name=step_3_name,
                     list_check_in_step=list_check_in_step_3,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
                 )
             )
             list_step_fail.append('3. Assertion wong.')
