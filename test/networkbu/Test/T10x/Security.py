@@ -9,7 +9,7 @@ from Helper.t10x.common import *
 from selenium import webdriver
 from faker import Faker
 
-# save_config(config_path, 'URL', 'url', 'http://192.168.1.1')
+
 class SECURITY(unittest.TestCase):
     def setUp(self):
         try:
@@ -18,6 +18,7 @@ class SECURITY(unittest.TestCase):
             check_enable_ethernet()
             self.driver = webdriver.Chrome(driver_path)  # open chrome
             self.driver.maximize_window()
+            os.system('netsh wlan delete profile name=*')
         except:
             self.tearDown()
             raise
@@ -48,7 +49,7 @@ class SECURITY(unittest.TestCase):
                            test_case_steps=self.list_steps,
                            start_time=self.start_time)
         self.driver.quit()
-    # OK
+
     def test_01_SECURITY_Check_Parental_Code_setting(self):
         self.key = 'SECURITY_01'
         driver = self.driver
@@ -89,14 +90,31 @@ class SECURITY(unittest.TestCase):
             list_actual1 = ls_parental_name
             list_expected1 = exp_ls_parental_label
             check = assert_list(list_actual1, list_expected1)
+
+            step_1_2_3_name = '''1. Access and login Web UI
+                                2. Go to Security -> Parental Control
+                                3. Enable Parental Code and set up new parental code'''
+            list_check_in_step_1_2_3 = ['Check  "New Parental Code" field',
+                                        'Check "Retype New Parental Code" field']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Check Parental pop up labels. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
+
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3. Check Parental pop up labels. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append(
                 '1,2,3. Assertion wong.')
 
@@ -120,13 +138,29 @@ class SECURITY(unittest.TestCase):
             list_actual2 = [pop_up_title]
             list_expected2 = [exp_parental_pop_up_title]
             check = assert_list(list_actual2, list_expected2)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append('[Pass] 4. Refresh Parental control: Check title pop up. '
+            #                        f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            step_4_name = '''4. Refresh the Parental Control page'''
+            list_check_in_step_4 = ['Check title pop up']
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Refresh Parental control: Check title pop up. '
-                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Refresh Parental control: Check title pop up. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
@@ -145,13 +179,29 @@ class SECURITY(unittest.TestCase):
             list_actual3 = [error_msg]
             list_expected3 = [exp_parental_error_msg]
             check = assert_list(list_actual3, list_expected3)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append('[Pass] 5. Input wrong parental code: Check error message. '
+            #                        f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            step_5_name = '''5. Input an invalid parental code'''
+            list_check_in_step_5 = ['Check error message']
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 5. Input wrong parental code: Check error message. '
-                                   f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 5. Input wrong parental code: Check error mesage. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('5. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
@@ -169,19 +219,35 @@ class SECURITY(unittest.TestCase):
             list_actual4 = [check_page_security]
             list_expected4 = [return_true]
             check = assert_list(list_actual4, list_expected4)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append('[Pass] 6. Input valid code. Check page Security displayed. '
+            #                        f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            step_6_name = '''6. Input a valid parental code'''
+            list_check_in_step_6 = ['Check page Security displayed.']
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 6. Input valid code. Check page Security displayed. '
-                                   f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 6. Input valid code. Check page Security displayed. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('6. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-    # OK
+
     def test_02_SECURITY_Parental_code_Change_Confirmation(self):
         self.key = 'SECURITY_02'
         driver = self.driver
@@ -220,7 +286,6 @@ class SECURITY(unittest.TestCase):
                     driver.find_element_by_css_selector(btn_ok).click()
                     wait_popup_disappear(driver, dialog_loading)
 
-
             check_page_security = len(driver.find_elements_by_css_selector(security_page)) > 0
             time.sleep(1)
             check_pop_up_disable = len(driver.find_elements_by_css_selector(dialog_content)) == 0
@@ -228,14 +293,33 @@ class SECURITY(unittest.TestCase):
             list_actual1 = [check_page_security, check_pop_up_disable]
             list_expected1 = [return_true, return_true]
             check = assert_list(list_actual1, list_expected1)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     '[Pass] 1,2,3. Check Security page displayed'
+            #     f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            step_1_2_3_name = '''1. Access and login Web UI
+                                2. Go to Security -> Parental Control
+                                3. Enable Parental Code'''
+            list_check_in_step_1_2_3 = ['Check Security page is displayed',
+                                        'Check apply without error. Check popup disappear']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Check Security page displayed'
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3. Check Security page displayed. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append(
                 '1,2,3. Assertion wong.')
 
@@ -276,14 +360,29 @@ class SECURITY(unittest.TestCase):
             list_actual2 = [check_page_security, check_pop_up_disable]
             list_expected2 = [return_true, return_true]
             check = assert_list(list_actual2, list_expected2)
+
+            step_4_5_name = '''4. Input new parental code and click Apply setting
+                               5. Refresh the parental control page and input the new parental code'''
+            list_check_in_step_4_5 = ['Check Security page is displayed',
+                                      'Check popup disappear']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4, 5. Change Parental code: Check Security page displayed. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_4_5_name,
+                    list_check_in_step=list_check_in_step_4_5,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4, 5. Change Parental code: Check Security page displayed. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_4_5_name,
+                    list_check_in_step=list_check_in_step_4_5,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('4, 5. Assertion wong.')
 
         try:
@@ -300,14 +399,30 @@ class SECURITY(unittest.TestCase):
             list_actual6 = [check_parental_code_disabled]
             list_expected6 = [return_false]
             check = assert_list(list_actual6, list_expected6)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 6. Disable Parental code: Check Parental Code disabled. '
+            #     f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+            step_6_name = '''6. Disable Parental Code button'''
+            list_check_in_step_6 = ['Check Parental Code should be disabled']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Disable Parental code: Check Parental Code disabled. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 6. Disable Parental code: Check Parental Code disabled. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
             list_step_fail.append('6. Assertion wong.')
 
         try:
@@ -336,16 +451,32 @@ class SECURITY(unittest.TestCase):
             list_actual7 = [check_popup_content, check_create_new_parental]
             list_expected7 = [exp_confirm_msg_init_parental_key, return_true]
             check = assert_list(list_actual7, list_expected7)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 7. Input Init parental code. '
+            #     f'Check confirm message. Click OK. Check popup parental create code display. '
+            #     f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+            step_7_name = '''7. Enable Parental Code, then input code to reset parental code : !@#$ then click OK button'''
+            list_check_in_step_7 = ['Check confirm message.',
+                                    'Check popup parental create code is displayed.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 7. Input Init parental code. '
-                f'Check confirm message. Click OK. Check popup parental create code display. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 7. Input Init parental code. '
-                f'Check confirm message. Click OK. Check popup parental create code display. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
             list_step_fail.append('7 Assertion wong.')
 
         try:
@@ -365,16 +496,33 @@ class SECURITY(unittest.TestCase):
             list_actual8 = [check_dialog_parental_display]
             list_expected8 = [return_true]
             check = assert_list(list_actual8, list_expected8)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 8. Input new parental code key. Click OK.'
+            #     f'Check popup login parental display. '
+            #     f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+            step_8_name = '''8. Input New Parental Code
+                            Input Retype New Parental Code
+                            - Click OK'''
+            list_check_in_step_8 = ['Check popup login parental is displayed.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8. Input new parental code key. Click OK.'
-                f'Check popup login parental display. '
-                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_8_name,
+                    list_check_in_step=list_check_in_step_8,
+                    list_actual=list_actual8,
+                    list_expected=list_expected8
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 8. Input new parental code key. Click OK.'
-                f'Check popup login parental display. '
-                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_8_name,
+                    list_check_in_step=list_check_in_step_8,
+                    list_actual=list_actual8,
+                    list_expected=list_expected8
+                )
+            )
             list_step_fail.append('8. Assertion wong.')
 
         try:
@@ -390,22 +538,38 @@ class SECURITY(unittest.TestCase):
             list_actual9 = [check_page_security_2]
             list_expected9 = [return_true]
             check = assert_list(list_actual9, list_expected9)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 9. Input parental code key. Click OK.'
+            #     f'Check Security page display. '
+            #     f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+            step_9_name = '''9. Refresh the parental control page and input the new parental code in step8
+                            - Click OK, then check page display'''
+            list_check_in_step_9 = ['CheckThe "Parental Control" page should be displayed.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 9. Input parental code key. Click OK.'
-                f'Check Security page display. '
-                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+                generate_step_information(
+                    step_name=step_9_name,
+                    list_check_in_step=list_check_in_step_9,
+                    list_actual=list_actual9,
+                    list_expected=list_expected9
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 9. Input parental code key. Click OK.'
-                f'Check Security page display. '
-                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+                generate_step_information(
+                    step_name=step_9_name,
+                    list_check_in_step=list_check_in_step_9,
+                    list_actual=list_actual9,
+                    list_expected=list_expected9
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('9. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
-    # OK
+
     def test_03_SECURITY_Confirmation_Parental_code_Initialization(self):
         self.key = 'SECURITY_03'
         driver = self.driver
@@ -457,14 +621,30 @@ class SECURITY(unittest.TestCase):
             list_actual1 = [check_page_security, check_pop_up_disable]
             list_expected1 = [return_true, return_true]
             check = assert_list(list_actual1, list_expected1)
+
+            step_1_2_3_name = '''1. Access and login Web UI
+                                2. Go to Security -> Parental Control
+                                3. Enable Parental Code and set up new parental code'''
+            list_check_in_step_1_2_3 = ['Check Security page is displayed',
+                                        'Check apply without error. Check popup disappear']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Apply successfully: Check Security page displayed and pop-up disappear. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3. Apply successfully: Check Security page displayed and pop-up disappear. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1,2,3. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
@@ -496,13 +676,27 @@ class SECURITY(unittest.TestCase):
             list_actual2 = [check_pop_init]
             list_expected2 = [return_true]
             check = assert_list(list_actual2, list_expected2)
+
+            step_4_name = '''4. Refresh the parental control page and input the parental code: !@#$'''
+            list_check_in_step_4 = ['Check pop-up init is displayed']
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Send INIT key. Check pop-up init is displayed. '
-                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Change Parental code: Check Security page displayed. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~ 5
@@ -526,14 +720,28 @@ class SECURITY(unittest.TestCase):
             list_actual3 = ls_parental_name
             list_expected3 = exp_ls_parental_label
             check = assert_list(list_actual3, list_expected3)
+
+            step_5_name = '''5. Enter a new parental code'''
+            list_check_in_step_5 = ['Check Parental pop up labels "New Parental Code" field',
+                                    'Check Parental pop up labels "Retype New Parental Code" field']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 5. Check Parental pop up labels. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 5. Check Parental pop up labels. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~ 6
@@ -548,28 +756,36 @@ class SECURITY(unittest.TestCase):
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
-            # parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
-            # ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
-            # time.sleep(0.5)
-            # driver.find_element_by_css_selector(btn_ok).click()
-            # wait_popup_disappear(driver, dialog_loading)
-
             time.sleep(3)
-            check_page_security_2 = len(driver.find_elements_by_css_selector(security_page)) >0
+            check_page_security_2 = len(driver.find_elements_by_css_selector(security_page)) > 0
             check_pop_up_disable_2 = len(driver.find_elements_by_css_selector(dialog_content)) == 0
 
             list_actual4 = [check_page_security_2, check_pop_up_disable_2]
             list_expected4 = [return_true, return_true]
             check = assert_list(list_actual4, list_expected4)
+
+            step_6_name = '''6. Refresh the parental control page and input the new parental code'''
+            list_check_in_step_6 = ['Check Security page is displayed',
+                                    'Check popup content is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 6. Check Parental pop up labels. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 6. Check Parental pop up labels. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('6. Assertion wong.')
 
@@ -709,7 +925,7 @@ class SECURITY(unittest.TestCase):
                     s.click()
                     break
             # Save
-            time.sleep(1)
+            time.sleep(2)
             driver.find_element_by_css_selector(btn_ok).click()
 
             # Schedule
@@ -757,14 +973,35 @@ class SECURITY(unittest.TestCase):
             list_actual1 = [ls_service_filter_items_value, block_schedule_value]
             list_expected1 = [['Social Network[1]', 'User Define[1]'], exp_block_schedule_value]
             check = assert_list(list_actual1, list_expected1)
+
+            step_1_2_3_name = '''1, 2, 3. Login. Goto parental control.
+                At Control Rule, click the Add button and change below settings:
+                - Device Name/MAC Address: Select a connected device from dropdown list or enter a MAC address manually (need to check both methods)
+                - Service Filters:
+                + Click "Setup the Filters" and choose "facebook" in Social Network category
+                + Add a "User Define" filter for "google.com" and select the created filter then save the filter
+                - Block Schedule: Click "Setup the Schedule" and choose the schedule contains the testing time
+                and click Save the rule'''
+            list_check_in_step_1_2_3 = ['Check list of Social Network[1] User Define[1]',
+                                        'Check Block Schedule text']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1,2,3. Add rule: Check list of Service Filter and Block Schedule. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3. Add rule: Check list of Service Filter and Block Schedule. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1,2,3. Assertion wong.')
 
         FACEBOOK = 'http://facebook.com'
@@ -878,14 +1115,42 @@ class SECURITY(unittest.TestCase):
                 list_actual2 = [check_step_4, check_step_6, check_step_8]
                 list_expected2 = [[return_false]*4, [return_true]*4, [return_false]*4]
                 check = assert_list(list_actual2, list_expected2)
+
+                step_2_name = f'''4-8. -Repeat: {str(i+1)} From the registered device in step 3, access below URL from web browser:
+                                    http://facebook.com, https://facebook.com, http://google.com, https://google.com.\n
+                                    Disabled Parental Rule. Then check this site again.\n
+                                    Enabled Parental Rule. Then check this site again'''
+                list_check_in_step_2 = [['Check can not access http://facebook.com: not access',
+                                         'Check can not access https://facebook.com: not access',
+                                         'Check can not access http://google.com: not access',
+                                         'Check can not access https://google.com: not access.'],
+                                        ['Check can access http://facebook.com: access',
+                                         'Check can access https://facebook.com: access',
+                                         'Check can access http://google.com: access',
+                                         'Check can access https://google.com: access.'],
+                                        ['Check can not access http://facebook.com:not access',
+                                         'Check can not access https://facebook.com:not access',
+                                         'Check can not access http://google.com:not access',
+                                         'Check can not access https://google.com:not access.']
+                                        ]
                 self.assertTrue(check["result"])
                 self.list_steps.append(
-                    f'[Pass] 4-8. -{str(i+1)}-. Check Access to FB, FBS, GG, GGS Enable -> Disable -> Enable Parental control. '
-                    f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                    generate_step_information(
+                        step_name=step_2_name,
+                        list_check_in_step=list_check_in_step_2,
+                        list_actual=list_actual2,
+                        list_expected=list_expected2
+                    )
+                )
             except:
                 self.list_steps.append(
-                    f'[Fail] 4-8. -{str(i+1)}-. Check Access to FB, FBS, GG, GGS Enable -> Disable -> Enable Parental control. '
-                    f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                    generate_step_information(
+                        step_name=step_2_name,
+                        list_check_in_step=list_check_in_step_2,
+                        list_actual=list_actual2,
+                        list_expected=list_expected2
+                    )
+                )
                 list_step_fail.append(f'4-8. -{str(i+1)}- Assertion wong.')
             driver2.quit()
 
@@ -925,14 +1190,27 @@ class SECURITY(unittest.TestCase):
             list_actual1 = [check_title]
             list_expected1 = ['Security > Parental Control']
             check = assert_list(list_actual1, list_expected1)
+
+            step_1_2_name = '1, 2. Go to Security > Parental Control, enable the Parental Control function and set a parental code.'
+            list_check_in_step_1_2 = ['Security > Parental Control page should be displayed.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. goto Parental Control page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. goto Parental Control page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -1084,14 +1362,36 @@ class SECURITY(unittest.TestCase):
             list_actual3 = [sub_title, check_service_filter, block_schedule_value]
             list_expected3 = [exp_subtitle_set_website_app, True, exp_block_schedule_value]
             check = assert_list(list_actual3, list_expected3)
+
+            step_3_name = '''3. Click the Add button and change below settings:
+                        - Device Name/MAC Address: Select a connected device from dropdown list or enter a MAC address manually (need to check both methods)
+                        - Service Filters:
+                        + Click "Setup the Filters" and choose "facebook" in Social Network category
+                        + Add a "User Define" filter for "google.com" and select the created filter 
+                        + Select 9 other service for the dropdown list then save the filter
+                        - Block Schedule: Click "Setup the Schedule" and choose the schedule contains the testing time
+                        and click Save the rule'''
+            list_check_in_step_3 = ['Check Set the Websites/Apps Sub title',
+                                    'Check list Social Network[1] and User Filter[1] is displayed',
+                                    'Check Block schedule text']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Add rule: Set the Websites/Apps Sub title, Check list Social Network and User Filter, Block schedule text. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Add rule: Set the Websites/Apps Sub title, Check list Social Network and User Filter, Block schedule text. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         FACEBOOK = 'http://facebook.com'
@@ -1127,14 +1427,34 @@ class SECURITY(unittest.TestCase):
             list_actual4 = [fb_http_4, fb_https_4, gg_http_4, gg_https_4]
             list_expected4 = [return_false] * 4
             check = assert_list(list_actual4, list_expected4)
+
+            step_4_name = '''4. From the registered device in step 3, access below URL from web browser:
+                            - http://facebook.com
+                            - https://facebook.com
+                            - http://google.com 
+                            - https://google.com'''
+            list_check_in_step_4 = ['Check can not access to http://facebook.com: not access',
+                                    'Check can not access to https://facebook.com: not access',
+                                    'Check can not access to http://google.com: not access',
+                                    'Check can not access to https://google.com: not access']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Check Can not Access to Facebook, Facebooks, Google, Googles. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Check Can not Access to Facebook, Facebooks, Google, Googles. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -1160,14 +1480,27 @@ class SECURITY(unittest.TestCase):
             list_actual5 = [check_row_active]
             list_expected5 = [return_false]
             check = assert_list(list_actual5, list_expected5)
+
+            step_5_name = '''5. Disable the Parental Control rule function'''
+            list_check_in_step_5 = ['Check rule disabled']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Disabled Control Rule at step 3. Check disabled success. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 5. Disabled Control Rule at step 3. Check disabled success. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             list_step_fail.append('5. Assertion wong.')
 
             # ======================================================================================
@@ -1197,14 +1530,34 @@ class SECURITY(unittest.TestCase):
             list_actual6 = [fb_http_6, fb_https_6, gg_http_6, gg_https_6]
             list_expected6 = [return_true] * 4
             check = assert_list(list_actual6, list_expected6)
+
+            step_6_name = '''6. From the registered device in step 3, access below URL from web browser:
+                            - http://facebook.com
+                            - https://facebook.com
+                            - http://google.com 
+                            - https://google.com'''
+            list_check_in_step_6 = ['Check can access to http://facebook.com: access',
+                                    'Check can access to https://facebook.com: access',
+                                    'Check can access to http://google.com: access',
+                                    'Check can access to https://google.com: access']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Check can Access to Facebook, Facebooks, Google, Googles. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 6. Check can Access to Facebook, Facebooks, Google, Googles. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
             list_step_fail.append('6. Assertion wong.')
 
         try:
@@ -1215,15 +1568,29 @@ class SECURITY(unittest.TestCase):
             list_actual7 = [check_add_btn_disabled]
             list_expected7 = [return_false]
             check = assert_list(list_actual7, list_expected7)
+
+            step_7_name = '''7. Add more 5 rules
+                                Then click Add button'''
+            list_check_in_step_7 = ['After add 5 rules. Check ADD button disabled']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 7. Add more 6 Parental Control Rule. Check Button Add Disabled. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 7. Add more 6 Parental Control Rule. Check Button Add Disabled. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('7. Assertion wong.')
 
@@ -1235,7 +1602,7 @@ class SECURITY(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
+        # factory_dut()
         # ===============================================================
         PARENTAL_CODE_KEY = get_config('SECURITY', 'parental_code')
         SOCIAL_NW = get_config('SECURITY', 'security4_social_nw', input_data_path)
@@ -1267,14 +1634,27 @@ class SECURITY(unittest.TestCase):
             list_actual1 = [check_title]
             list_expected1 = ['Security > Parental Control']
             check = assert_list(list_actual1, list_expected1)
+
+            step_1_2_name = '1, 2. Go to Security > Parental Control, enable the Parental Control function and set a parental code.'
+            list_check_in_step_1_2 = ['Security > Parental Control page should be displayed.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. goto Parental Control page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. goto Parental Control page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -1289,7 +1669,7 @@ class SECURITY(unittest.TestCase):
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
             driver.refresh()
-            time.sleep(3)
+            wait_popup_disappear(driver, dialog_loading)
             parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
             if len(parental_field_input) > 0:
                 #  New
@@ -1422,14 +1802,36 @@ class SECURITY(unittest.TestCase):
             list_actual3 = [sub_title, check_service_filter, block_schedule_value]
             list_expected3 = [exp_subtitle_set_website_app, True, exp_block_schedule_value]
             check = assert_list(list_actual3, list_expected3)
+
+            step_3_name = '''3. Click the Add button and change below settings:
+                - Device Name/MAC Address: Select a connected device from dropdown list or enter a MAC address manually (need to check both methods)
+                - Service Filters:
+                + Click "Setup the Filters" and choose "facebook" in Social Network category
+                + Add a "User Define" filter for "google.com" and select the created filter 
+                + Select 9 other service for the dropdown list then save the filter
+                - Block Schedule: Click "Setup the Schedule" and choose the schedule contains the testing time
+                and click Save the rule'''
+            list_check_in_step_3 = ['Check Set the Websites/Apps Sub title',
+                                    'Check Social Network[1] and User Define[1] is displayed',
+                                    'Check Block schedule text. ']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Add rule: Set the Websites/Apps Sub title, Check Social Network[1] and User Define[1], Block schedule text. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Add rule: Set the Websites/Apps Sub title, Check Social Network[1] and User Define[1], Block schedule text. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -1490,8 +1892,9 @@ class SECURITY(unittest.TestCase):
             for f in ls_service:
 
                 if f.find_element_by_css_selector('span').text == 'Mail':
-                    print(f.text)
+                    # print(f.text)
                     ActionChains(driver).move_to_element(f).perform()
+
                     if len(f.find_elements_by_css_selector('.on-show')) == 0:
                         f.click()
                     else:
@@ -1501,6 +1904,7 @@ class SECURITY(unittest.TestCase):
                             print(s.text)
                             if s.text in ['gmail', 'outlook']:
                                 s.click()
+                                time.sleep(0.5)
             time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
@@ -1519,25 +1923,42 @@ class SECURITY(unittest.TestCase):
             ls_mac_device = [i.text.splitlines()[-1] for i in driver.find_elements_by_css_selector('.name .device-item')]
             check_mac = MAC_2 in ls_mac_device
 
-            exp_service = ['Mail[2]', 'User Define[1]']
-            number_of_total_nw = [i.text for i in driver.find_elements_by_css_selector('.filter-item')]
-            time.sleep(0.5)
-            check_service_filter = all([i in number_of_total_nw for i in exp_service])
-            # Check block schedule
+            # ls_mac_device = [i.text.splitlines()[-1] for i in
+            #                  driver.find_elements_by_css_selector('.name .device-item')]
+            # check_mac = MAC_2 in ls_mac_device
             block_schedule_value = driver.find_elements_by_css_selector('.schedule')[-1].text
 
             list_actual4 = [check_mac, check_service_filter, block_schedule_value]
             list_expected4 = [return_true, True, 'Always Block']
             check = assert_list(list_actual4, list_expected4)
+
+            step_4_name = '''4. Click on Edit icon to change the setting of item in control rule.
+                        - Change the setting for MAC address/ Filters/ schedule and Save.
+                        + Service Filters: gmail, outlook
+                        + Schedule: Always Block.
+                        - Then check Paretal Control list information.'''
+            list_check_in_step_4 = ['Check MAC is correct',
+                                    'Check Mail[2] and User Define[1] is displayed',
+                                    'Check Block schedule text. ']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Edit rule: Check Add other mac, Check Mail[2] and User Define[1], Text of block schedule. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Edit rule: Check Add other mac, Check Mail[2] and User Define[1], Text of block schedule. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
 
@@ -1581,14 +2002,27 @@ class SECURITY(unittest.TestCase):
             list_actual1 = [check_title]
             list_expected1 = ['Security > Parental Control']
             check = assert_list(list_actual1, list_expected1)
+
+            step_1_2_name = '1, 2. Go to Security > Parental Control, enable the Parental Control function and set a parental code.'
+            list_check_in_step_1_2 = ['Security > Parental Control page should be displayed.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. goto Parental Control page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. goto Parental Control page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -1707,14 +2141,39 @@ class SECURITY(unittest.TestCase):
             list_actual3 = [sub_title, number_of_total_nw, block_schedule_value]
             list_expected3 = [exp_subtitle_set_website_app, 10, exp_block_schedule_value]
             check = assert_list(list_actual3, list_expected3)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 3. Add rule: Set the Websites/Apps Sub title, number of Social NW, Block schedule text. '
+            #     f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            step_3_name = '''3. Click the Add button and change below settings:
+                        - Device Name/MAC Address: Select a connected device from dropdown list or enter a MAC address manually (need to check both methods)
+                        - Service Filters:
+                        + Click "Setup the Filters" and choose "facebook" in Social Network category
+                        + Add a "User Define" filter for "google.com" and select the created filter 
+                        + Select 9 other service for the dropdown list then save the filter
+                        - Block Schedule: Click "Setup the Schedule" and choose the schedule contains the testing time
+                        and click Save the rule'''
+            list_check_in_step_3 = ['Check Websites/Apps Sub title',
+                                    'Check number of Social NW',
+                                    'Check Block schedule text']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Add rule: Set the Websites/Apps Sub title, number of Social NW, Block schedule text. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Add rule: Set the Websites/Apps Sub title, number of Social NW, Block schedule text. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -1732,19 +2191,34 @@ class SECURITY(unittest.TestCase):
             parental_rule = driver.find_element_by_css_selector(parental_rule_card)
             remain_row = len(parental_rule.find_elements_by_css_selector(rows))
 
-
             list_actual4 = [remain_row]
             list_expected4 = [0]
             check = assert_list(list_actual4, list_expected4)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 4. Delete rule: Check number of remain row = 0. '
+            #     f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            step_4_name = '''4. Click on Delete icon to delete item in control rule and select OK.'''
+            list_check_in_step_4 = ['Check number of remain row = 0']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Delete rule: Check number of remain row = 0. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Delete rule: Check number of remain row = 0. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
 
@@ -1794,14 +2268,26 @@ class SECURITY(unittest.TestCase):
             list_actual1 = [check_title]
             list_expected1 = ['Security > Filtering']
             check = assert_list(list_actual1, list_expected1)
+            step_1_2_name = '1, 2. Access and Login. Go to home page > Security > Filtering.'
+            list_check_in_step_1_2 = ['Security > Filtering page should be displayed.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Filtering page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Filtering page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -1824,16 +2310,31 @@ class SECURITY(unittest.TestCase):
             list_actual3 = get_table_value[-1]
             list_expected3 = [return_true, DESC_VALUE, IP_ADDRESS_1, PORT_START_END_1, PROTOCOL_TYPE]
             check = assert_list(list_actual3, list_expected3)
+
+            step_3_name = '3. Add a IP/Port Filtering: Description/ IP Address/ Port(Start - End)/ Protocol. Then click Save.'
+            list_check_in_step_3 = ['Check rule row is active',
+                                    'Check description',
+                                    'Check IP address',
+                                    'Check Port Start-End',
+                                    'Check Protocol type']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Add a IP/Port Filtering: Check Row have just added. '
-                f'Is active, Description, IP, Port Start End, Portocol Type. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Add a IP/Port Filtering: Check Row have just added. '
-                f'Is active, Description, IP, Port Start End, Portocol Type. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -1865,15 +2366,32 @@ class SECURITY(unittest.TestCase):
             list_actual4 = get_table_value[-1]
             list_expected4 = [return_true, DESC_VALUE, IP_ADDRESS_2, PORT_START_END_1, PROTOCOL_TYPE]
             check = assert_list(list_actual4, list_expected4)
+
+            step_4_name = '4, 5. Edit IP/Port filtering then save. Check row.'
+            list_check_in_step_4 = ['Check rule row is active',
+                                    'Check description',
+                                    'Check IP address',
+                                    'Check Port Start-End',
+                                    'Check Protocol type']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4, 5. Edit IP/Port Filtering: Change IP address. Check Row after saved. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4, 5. Edit IP/Port Filtering: Change IP address. Check Row after saved. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('4, 5. Assertion wong.')
 
@@ -1921,14 +2439,29 @@ class SECURITY(unittest.TestCase):
             list_actual1 = [check_title]
             list_expected1 = ['Security > Filtering']
             check = assert_list(list_actual1, list_expected1)
+            step_1_2_name = '1, 2. Access and Login. Go to Homepage > Security > Filtering page.'
+            list_check_in_step_1_2 = ['Check page Security > Filtering is displayed.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Filtering page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Filtering page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
+            # self.list_steps.append(
+            #     f'[Fail] 1, 2. Login. Goto Filtering page. Check page title. '
+            #     f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -1951,16 +2484,34 @@ class SECURITY(unittest.TestCase):
             list_actual3 = get_table_value[-1]
             list_expected3 = [return_true, DESC_VALUE, IP_ADDRESS_1, PORT_START_END_1, PROTOCOL_TYPE]
             check = assert_list(list_actual3, list_expected3)
+            step_3_name = '3. Click +ADD. Input Description/ IP Address/ Port(Start-End)/Protocol. Then Click Save. Click Apply. Click OK.'
+            list_check_in_step_3 = ['Check rule Is active',
+                                    'Check Description',
+                                    'Check IP address',
+                                    'Check Start - End port',
+                                    'Check Protocol type.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Add a IP/Port Filtering: Check Row have just added. '
-                f'Is active, Description, IP, Port Start End, Portocol Type. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
+            # self.list_steps.append(
+            #     f'[Fail] 3. Add a IP/Port Filtering: Check Row have just added. '
+            #     f'Is active, Description, IP, Port Start End, Portocol Type. '
+            #     f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
             self.list_steps.append(
-                f'[Fail] 3. Add a IP/Port Filtering: Check Row have just added. '
-                f'Is active, Description, IP, Port Start End, Portocol Type. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -1978,14 +2529,30 @@ class SECURITY(unittest.TestCase):
             list_actual = [remain_row]
             list_expected = [1]
             check = assert_list(list_actual, list_expected)
+
+            step_4_name = '4. Click on Delete on list then click Cancel.'
+            list_check_in_step_4 = ['Check the row was not deleted']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Delete IP Port Filtering. Click Cancel: Check number of remain row = 1. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
         except:
+            # self.list_steps.append(
+            #     f'[Fail] 4. Delete IP Port Filtering. Click Cancel: Check number of remain row = 1. '
+            #     f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
             self.list_steps.append(
-                f'[Fail] 4. Delete IP Port Filtering. Click Cancel: Check number of remain row = 1. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -2006,15 +2573,32 @@ class SECURITY(unittest.TestCase):
             list_actual4 = [remain_row]
             list_expected4 = [0]
             check = assert_list(list_actual4, list_expected4)
+
+            step_5_6_name = '5, 6. Click on Delete on list then click OK.'
+            list_check_in_step_5_6 = ['Check the row was deleted']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5, 6. Delete IP Port Filtering. Click OK: Check number of remain row = 0. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_5_6_name,
+                    list_check_in_step=list_check_in_step_5_6,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
+
             self.list_steps.append('[END TC]')
         except:
+            # self.list_steps.append(
+            #     f'[Fail] 5, 6. Delete IP Port Filtering. Click OK: Check number of remain row = 0. '
+            #     f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
             self.list_steps.append(
-                f'[Fail] 5, 6. Delete IP Port Filtering. Click OK: Check number of remain row = 0. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_5_6_name,
+                    list_check_in_step=list_check_in_step_5_6,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('5, 6. Assertion wong.')
 
@@ -2030,19 +2614,14 @@ class SECURITY(unittest.TestCase):
         PARENTAL_CODE_KEY = get_config('SECURITY', 'parental_code')
         PHYSICAL_MAC = get_value_from_ipconfig('Ethernet adapter Ethernet', 'Physical Address').replace('-', ':')
         HOST_NAME = get_value_from_ipconfig('Windows IP Configuration', 'Host Name')
-        try:
-            grand_login(driver)
-            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
-            # Get Wireless 2G Information
-            block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
 
-            wifi_2g_name = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
-            wifi_2g_pw = wireless_check_pw_eye(driver, block_2g, change_pw=False)
+        grand_login(driver)
+        goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+        # Get Wireless 2G Information
+        block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
 
-            self.list_steps.append(f'[Pass] Precondition')
-        except:
-            self.list_steps.append(f'[Fail] Precondition')
-            list_step_fail.append('0. Assertion wong.')
+        wifi_2g_name = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
+        wifi_2g_pw = wireless_check_pw_eye(driver, block_2g, change_pw=False)
 
         try:
             grand_login(driver)
@@ -2065,8 +2644,6 @@ class SECURITY(unittest.TestCase):
                         wait_popup_disappear(driver, dialog_loading)
                     goto_menu(driver, security_tab, security_filtering_tab)
 
-
-
             wait_popup_disappear(driver, dialog_loading)
 
             check_title = driver.find_element_by_css_selector(ele_title_page).text
@@ -2074,14 +2651,27 @@ class SECURITY(unittest.TestCase):
             list_actual1 = [check_title]
             list_expected1 = ['Security > Filtering']
             check = assert_list(list_actual1, list_expected1)
+
+            step_1_2_name = '1, 2. Access and Login. Go to Homepage > Security > Filtering page.'
+            list_check_in_step_1_2 = ['Check page Security > Filtering is displayed.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Filtering page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Filtering page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -2103,16 +2693,29 @@ class SECURITY(unittest.TestCase):
             list_actual3 = get_table_value[-1]
             list_expected3 = [return_true, HOST_NAME, PHYSICAL_MAC]
             check = assert_list(list_actual3, list_expected3)
+
+            step_3_name = '3. Click +ADD. Input Host name/ Physical MAC. Then Click Save. Click Apply.'
+            list_check_in_step_3 = ['Check MAC filtering Is active',
+                                    'Check Host name',
+                                    'Check Check Physical MAC']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Add a IP/Port Filtering: Check Row have just added. '
-                f'Is active, Description, IP, Port Start End, Portocol Type. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Add a IP/Port Filtering: Check Row have just added. '
-                f'Is active, Description, IP, Port Start End, Portocol Type. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -2122,21 +2725,35 @@ class SECURITY(unittest.TestCase):
             list_actual4 = [check_google, check_youtube]
             list_expected4 = [return_false] * 2
             check = assert_list(list_actual4, list_expected4)
+
+            step_4_name = '4. External communication from registered PC.'
+            list_check_in_step_4 = ['Check Can not access to external to Google: not access',
+                                    'Check Can not access to external to Youtube: not access']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Check Can not Access to Google, Youtube. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Check Can not Access to Google, Youtube. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         try:
             # Disconnect Ethernet
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(3)
-            # Connect Wifi 2.4 Ghz
+            interface_connect_disconnect('Wi-Fi', 'enable')
             connect_wifi_by_command(wifi_2g_name, wifi_2g_pw)
             time.sleep(5)
             # Login again
@@ -2149,16 +2766,29 @@ class SECURITY(unittest.TestCase):
             list_actual5 = get_table_value_2[-1]
             list_expected5 = [return_true, HOST_NAME, PHYSICAL_MAC]
             check = assert_list(list_actual5, list_expected5)
+
+            step_5_name = '5. Disconnect ethernet then connect client PC to wireless of DUT. Login then Go to Security > Filtering page. Check list MAC Filtering list.'
+            list_check_in_step_5 = ['Check MAC filtering Is active',
+                                    'Check Host name',
+                                    'Check Check Physical MAC']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Disconnect LAN. Connect 2GHz Wifi. Login again. '
-                f'Check Mac filtering table: Is active, Device Name, MAC address.  '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 5. Disconnect LAN. Connect 2GHz Wifi. Login again. '
-                f'Check Mac filtering table: Is active, Device Name, MAC address.  '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             list_step_fail.append('5. Assertion wong.')
 
         try:
@@ -2178,16 +2808,29 @@ class SECURITY(unittest.TestCase):
             list_actual6 = get_table_value_3[-1]
             list_expected6 = [return_false, HOST_NAME, PHYSICAL_MAC]
             check = assert_list(list_actual6, list_expected6)
+
+            step_6_name = '6 . Disable a rule was added at step 3 and lick "Apply" button > OK button'
+            list_check_in_step_6 = ['Check MAC filtering Is deactive',
+                                    'Check Host name',
+                                    'Check Check Physical MAC']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Disconnect LAN. Connect 2GHz Wifi. Login again. '
-                f'Check Mac filtering table: Is NOT active, Device Name, MAC address.  '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 6. Disconnect LAN. Connect 2GHz Wifi. Login again. '
-                f'Check Mac filtering table: Is NOT active, Device Name, MAC address.  '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
             list_step_fail.append('6. Assertion wong.')
 
         try:
@@ -2203,14 +2846,26 @@ class SECURITY(unittest.TestCase):
             list_actual7 = [check_ethernet]
             list_expected7 = [return_true]
             check = assert_list(list_actual7, list_expected7)
+            step_7_name = '7. Disable wireless, enable LAN port of PC '
+            list_check_in_step_7 = ['Check ethernet available']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 7. Disabled Wireless. Re-connect Ethernet. Check Ethernet enabled. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 7. Disabled Wireless. Re-connect Ethernet. Check Ethernet enabled. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
             list_step_fail.append('7. Assertion wong.')
 
         try:
@@ -2220,25 +2875,56 @@ class SECURITY(unittest.TestCase):
             list_actual8 = [check_google_2, check_youtube_2]
             list_expected8 = [return_true] * 2
             check = assert_list(list_actual8, list_expected8)
+            step_8_name = '8. External communication from registerd PC.'
+            list_check_in_step_8 = ['Check Can access to external to Google: access',
+                                    'Check Can access to external to Youtube: access']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8. Check Can Access to Google, Youtube normally. '
-                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_8_name,
+                    list_check_in_step=list_check_in_step_8,
+                    list_actual=list_actual8,
+                    list_expected=list_expected8
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 8. Check Can Access to Google, Youtube normally. '
-                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_8_name,
+                    list_check_in_step=list_check_in_step_8,
+                    list_actual=list_actual8,
+                    list_expected=list_expected8
+                )
+            )
             list_step_fail.append('8. Assertion wong.')
 
         try:
             grand_login(driver)
-            # Goto media share USB
+            #
             goto_menu(driver, security_tab, security_filtering_tab)
             wait_popup_disappear(driver, dialog_loading)
+            ls_mac = list()
             for i in range(31):
                 tmp_mac = random_mac_address()
-                add_a_mac_filtering(driver, tmp_mac)
-                time.sleep(1)
+                if tmp_mac not in ls_mac:
+                    add_a_mac_filtering(driver, tmp_mac)
+                    ls_mac.append(tmp_mac)
+                else:
+                    tmp_mac = random_mac_address()
+                    add_a_mac_filtering(driver, tmp_mac)
+                    ls_mac.append(tmp_mac)
+                # while tmp_mac in ls_mac:
+                #     tmp_mac = random_mac_address()
+                #     if tmp_mac in ls_mac:
+                #         tmp_mac = random_mac_address()
+                #     ls_mac.append(tmp_mac)
+                #     while tmp_mac in ls_mac:
+                #         tmp_mac = random_mac_address()
+                #         ls_mac.append(tmp_mac)
+                #     add_a_mac_filtering(driver, tmp_mac)
+                #     time.sleep(1).append(tmp_mac)
+                # add_a_mac_filtering(driver, tmp_mac)
+                # time.sleep(1)
 
             time.sleep(1)
             mac_block = driver.find_element_by_css_selector(ele_mac_filtering)
@@ -2247,15 +2933,27 @@ class SECURITY(unittest.TestCase):
             list_actual9 = [check_add_btn_disabled]
             list_expected9 = [return_false]
             check = assert_list(list_actual9, list_expected9)
+            step_9_name = '9. Re-do step 3 check the creation of 32 max entry'
+            list_check_in_step_9 = ['After 32 rules are added, "+ADD" button is not clickable']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 9. Add more 31 MAC filtering. Check Button Add Disabled. '
-                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+                generate_step_information(
+                    step_name=step_9_name,
+                    list_check_in_step=list_check_in_step_9,
+                    list_actual=list_actual9,
+                    list_expected=list_expected9
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 9. Add more 31 MAC filtering. Check Button Add Disabled. '
-                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+                generate_step_information(
+                    step_name=step_9_name,
+                    list_check_in_step=list_check_in_step_9,
+                    list_actual=list_actual9,
+                    list_expected=list_expected9
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('9. Assertion wong.')
 
@@ -2270,19 +2968,15 @@ class SECURITY(unittest.TestCase):
         factory_dut()
         PHYSICAL_MAC = get_value_from_ipconfig('Ethernet adapter Ethernet', 'Physical Address').replace('-', ':')
         HOST_NAME = get_value_from_ipconfig('Windows IP Configuration', 'Host Name')
-        try:
-            grand_login(driver)
-            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
-            # Get Wireless 2G Information
-            block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
 
-            wifi_2g_name = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
-            wifi_2g_pw = wireless_check_pw_eye(driver, block_2g, change_pw=False)
+        grand_login(driver)
+        goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+        # Get Wireless 2G Information
+        block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
 
-            self.list_steps.append(f'[Pass] Precondition')
-        except:
-            self.list_steps.append(f'[Fail] Precondition')
-            list_step_fail.append('0. Assertion wong.')
+        wifi_2g_name = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
+        wifi_2g_pw = wireless_check_pw_eye(driver, block_2g, change_pw=False)
+
 
         try:
             grand_login(driver)
@@ -2310,14 +3004,26 @@ class SECURITY(unittest.TestCase):
             list_actual1 = [check_title]
             list_expected1 = ['Security > Filtering']
             check = assert_list(list_actual1, list_expected1)
+            step_1_2_name = '1, 2. Access and Login. Go to Homepage > Security > Filtering page.'
+            list_check_in_step_1_2 = ['Check page Security > Filtering is displayed.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Filtering page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Filtering page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -2339,16 +3045,33 @@ class SECURITY(unittest.TestCase):
             list_actual3 = get_table_value[-1]
             list_expected3 = [return_true, HOST_NAME, PHYSICAL_MAC]
             check = assert_list(list_actual3, list_expected3)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 3. Add a MAC Filtering: Check Row have just added. '
+            #     f'Is active, Host name and MAC address. '
+            #     f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            step_3_name = '3. Click "+ADD" button > click on "Select the device" list box > select MAC address of PC connected to DUT via LAN port. Click Save and Apply.'
+            list_check_in_step_3 = ['Check MAC filtering Is active',
+                                    'Check Host name',
+                                    'Check Check Physical MAC']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Add a MAC Filtering: Check Row have just added. '
-                f'Is active, Host name and MAC address. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Add a MAC Filtering: Check Row have just added. '
-                f'Is active, Host name and MAC address. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -2368,16 +3091,33 @@ class SECURITY(unittest.TestCase):
             list_actual5 = get_table_value_2[-1]
             list_expected5 = [return_true, HOST_NAME, PHYSICAL_MAC]
             check = assert_list(list_actual5, list_expected5)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 4.0. Disconnect LAN. Connect 2GHz Wifi. Login again. '
+            #     f'Check Mac filtering table: Is active, Device Name, MAC address.  '
+            #     f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+            step_4_name = '4.0. Disconnect LAN. Connect 2GHz Wifi. Login again. Go to Mac filtering. Verify information have just created'
+            list_check_in_step_4 = ['Check MAC filtering Is active',
+                                    'Check Host name',
+                                    'Check Check Physical MAC']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4.0. Disconnect LAN. Connect 2GHz Wifi. Login again. '
-                f'Check Mac filtering table: Is active, Device Name, MAC address.  '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4.0. Disconnect LAN. Connect 2GHz Wifi. Login again. '
-                f'Check Mac filtering table: Is active, Device Name, MAC address.  '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             list_step_fail.append('4.0. Assertion wong.')
 
         try:
@@ -2400,14 +3140,27 @@ class SECURITY(unittest.TestCase):
             list_actual = [remain_row]
             list_expected = [1]
             check = assert_list(list_actual, list_expected)
+
+            step_6_name = '4.1 Click "Delete" icon on the rule > select "Cancel" button'
+            list_check_in_step_6 = ['Number of remain row = 1']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Delete MAC Filtering. Click Cancel: Check number of remain row = 1. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Delete MAC Filtering. Click Cancel: Check number of remain row = 1. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -2425,21 +3178,37 @@ class SECURITY(unittest.TestCase):
             mac_block = driver.find_element_by_css_selector(ele_mac_filtering)
             remain_row = len(mac_block.find_elements_by_css_selector(rows))
 
-            list_actual4 = [remain_row]
-            list_expected4 = [0]
+            list_actual7 = [remain_row]
+            list_expected7 = [0]
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
             time.sleep(10)
 
-            check = assert_list(list_actual4, list_expected4)
+            check = assert_list(list_actual7, list_expected7)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 5, 6. Delete MAC Filtering. Click OK: Check number of remain row = 0. '
+            #     f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            step_7_name = f'5, 6. Click "Delete" icon on the rule > select "OK" button. Check MAC Filtering list after delete rule'
+            list_check_in_step_7 = ['Check Number of remain row = 0']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5, 6. Delete MAC Filtering. Click OK: Check number of remain row = 0. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 5, 6. Delete MAC Filtering. Click OK: Check number of remain row = 0. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('5, 6. Assertion wong.')
 
@@ -2480,14 +3249,27 @@ class SECURITY(unittest.TestCase):
             list_actual1 = [check_title]
             list_expected1 = ['Security check']
             check = assert_list(list_actual1, list_expected1)
+
+            step_1_2_name = '1, 2. Access and Login.  Go to Home page > Security > Security Check.'
+            list_check_in_step_1_2 = ['Check page Security > Filtering is displayed.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Security > Security Check page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Security > Security Check page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -2509,14 +3291,36 @@ class SECURITY(unittest.TestCase):
                               'Port Forwarding',
                               'Anonymous Login to FTP Server']
             check = assert_list(list_actual3, list_expected3)
+            step_3_name = '3. Check the Security list.'
+            list_check_in_step_3 = [f'Check Login Password Changed',
+                                    f'Check Login Password Security Level',
+                                    f'Check 2.4GHz Wireless Password Security Type',
+                                    f'Check 5GHz Wireless Password Security Type',
+                                    f'Check UPnP Service',
+                                    f'Check Remote Access',
+                                    f'Check Ping from WAN',
+                                    f'Check DMZ',
+                                    f'Check Port Triggering',
+                                    f'Check Port Forwarding',
+                                    f'Check Anonymous Login to FTP Server']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Check list label of Security Check Block. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3.Check list label of Security Check Block. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -2536,14 +3340,27 @@ class SECURITY(unittest.TestCase):
             list_actual4 = [check_lg_pw_changed_value]
             list_expected4 = ['Yes']
             check = assert_list(list_actual4, list_expected4)
+
+            step_4_name = '4. Check value of Login Password Changed.'
+            list_check_in_step_4 = [f'Check value is Yes']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Check Value of Login Password Changed. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Check Value of Login Password Changed. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -2576,16 +3393,27 @@ class SECURITY(unittest.TestCase):
             list_actual5 = [check_lg_pw_changed_value_2]
             list_expected5 = ['Medium']
             check = assert_list(list_actual5, list_expected5)
+
+            step_5_name = '5. Go to "System" in the header > select Change Password , set new password is Good. Re-do step 2 to check value of Login Password Security Level'
+            list_check_in_step_5 = [f'Check value of Login Password Security Level is: Medium']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Change PW to Good Password. '
-                f'Check value of Login Password Security Level. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 5. Change PW to Good Password. '
-                f'Check value of Login Password Security Level. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             list_step_fail.append('5. Assertion wong.')
 
         try:
@@ -2618,16 +3446,27 @@ class SECURITY(unittest.TestCase):
             list_actual6 = [check_lg_pw_changed_value_3]
             list_expected6 = ['Strong']
             check = assert_list(list_actual6, list_expected6)
+
+            step_6_name = '6. Re-do step 5 to set new password is Strong. Check value of Login Password Security Level'
+            list_check_in_step_6 = [f'Value of Login Password Security Level is: Strong']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Change PW to Strong Password. '
-                f'Check value of Login Password Security Level. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 6. Change PW to Strong Password. '
-                f'Check value of Login Password Security Level. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
             list_step_fail.append('6. Assertion wong.')
         # Step 7
         try:
@@ -2663,18 +3502,27 @@ class SECURITY(unittest.TestCase):
             list_actual7 = [check_24g_wireless, check_current_screen]
             list_expected7 = ['Weak(None)', ('WIRELESS', 'Primary Network')]
             check = assert_list(list_actual7, list_expected7)
+            step_7_name = '7. Change Wifi 24GHz to NONE. Re-do step 2 to check value of 2.4GHz Wireless Password Security Type. Click to link text. Check Re-direct to Wireless > Primary Network.'
+            list_check_in_step_7 = [f'Value of  2.4GHz Wireless Password Security Type is: Weak(None)',
+                                    'Move to the Wireless > Primary Network screen']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 7. Change Wifi 24GHz to NONE. '
-                f'Check value of 2.4GHz Wireless Password Security Type. '
-                f'Click to link text. Check Re-direct to Wireless > Primary Network. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 7. Change Wifi 24GHz to NONE. '
-                f'Check value of 2.4GHz Wireless Password Security Type. '
-                f'Click to link text. Check Re-direct to Wireless > Primary Network. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
             list_step_fail.append('7. Assertion wong.')
         # Step 8
         try:
@@ -2711,18 +3559,27 @@ class SECURITY(unittest.TestCase):
             list_actual8 = [check_24g_wireless, check_current_screen]
             list_expected8 = ['Weak(WEP)', ('WIRELESS', 'Primary Network')]
             check = assert_list(list_actual8, list_expected8)
+            step_8_name = '8. Re-do step 7 to set Security is WEP. Click to link text.'
+            list_check_in_step_8 = ['Check value of 2.4GHz Wireless Password Security Type',
+                                    'Check Re-direct to Wireless > Primary Network when click to link text']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8. Change Wifi 24GHz to WEP. '
-                f'Check value of 2.4GHz Wireless Password Security Type. '
-                f'Click to link text. Check Re-direct to Wireless > Primary Network. '
-                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_8_name,
+                    list_check_in_step=list_check_in_step_8,
+                    list_actual=list_actual8,
+                    list_expected=list_expected8
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 8. Change Wifi 24GHz to WEP. '
-                f'Check value of 2.4GHz Wireless Password Security Type. '
-                f'Click to link text. Check Re-direct to Wireless > Primary Network. '
-                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_8_name,
+                    list_check_in_step=list_check_in_step_8,
+                    list_actual=list_actual8,
+                    list_expected=list_expected8
+                )
+            )
             list_step_fail.append('8. Assertion wong.')
         # Step 9
         try:
@@ -2844,16 +3701,30 @@ class SECURITY(unittest.TestCase):
                               'Good(WPA2-Enterprise)',
                               'Good(WPA2/WPA-Enterprise)']
             check = assert_list(list_actual9, list_expected9)
+
+            step_9_name = '9. Re-do step 7 to set Security is: WPA2-PSK, WPA2/WPA-PSK, WPA2-ENTERPRISE, WPA2/WPA-ENTERPRISE'
+            list_check_in_step_9 = ['Check value of 2.4GHz Wireless Password Security Type is WPA2-PSK.',
+                                    'Check value of 2.4GHz Wireless Password Security Type is WPA2/WPA-PSK.',
+                                    'Check value of 2.4GHz Wireless Password Security Type is WPA2-ENTERPRISE.',
+                                    'Check value of 2.4GHz Wireless Password Security Type is WPA2/WPA-ENTERPRISE.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 9. Change Wifi 24GHz Security to WPA2-PSK, WPA2/WPA-PSK, WPA2-ENTERPRISE, WPA2/WPA-ENTERPRISE. '
-                f'Check value of 2.4GHz Wireless Password Security Type. '
-                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+                generate_step_information(
+                    step_name=step_9_name,
+                    list_check_in_step=list_check_in_step_9,
+                    list_actual=list_actual9,
+                    list_expected=list_expected9
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 9. Change Wifi 24GHz Security to WPA2-PSK, WPA2/WPA-PSK, WPA2-ENTERPRISE, WPA2/WPA-ENTERPRISE. '
-                f'Check value of 2.4GHz Wireless Password Security Type. '
-                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+                generate_step_information(
+                    step_name=step_9_name,
+                    list_check_in_step=list_check_in_step_9,
+                    list_actual=list_actual9,
+                    list_expected=list_expected9
+                )
+            )
             list_step_fail.append('9. Assertion wong.')
         # Step 10
         try:
@@ -3030,27 +3901,42 @@ class SECURITY(unittest.TestCase):
                              check_5g_4,
                              check_5g_5,
                              check_5g_6,
-                             check_current_screen_5]
+                             ' > '.join(check_current_screen_5)]
             list_expected10 = ['Weak(None)',
                                'Weak(WEP)',
                                'Good(WPA2-PSK)',
                                'Good(WPA2/WPA-PSK)',
                                'Good(WPA2-Enterprise)',
                                'Good(WPA2/WPA-Enterprise)',
-                               ('WIRELESS', 'Primary Network')]
+                               ' > '.join(('WIRELESS', 'Primary Network'))]
             check = assert_list(list_actual10, list_expected10)
+
+            step_10_name = '10. 5GHz Wireless Password Security Type check same as 2.4GHz'
+            list_check_in_step_10 = ['Check value of 5GHz Wireless Security Type is NONE.',
+                                     'Check value of 5GHz Wireless Security Type is WEP.',
+                                     'Check value of 5GHz Wireless Security Type is WPA2-PSK.',
+                                     'Check value of 5GHz Wireless Security Type is WPA2/WPA-PSK.',
+                                     'Check value of 5GHz Wireless Security Type is WPA2-ENTERPRISE.',
+                                     'Check value of 5GHz Wireless Security Type is WPA2/WPA-ENTERPRISE.',
+                                     'Click to link text. Check re-direct to Wireless > Primary Network']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 10. Change Wifi 5GHz Security to NONE, WEP, WPA2-PSK, WPA2/WPA-PSK, WPA2-ENTERPRISE, WPA2/WPA-ENTERPRISE. '
-                f'Check value of 5GHz Wireless Password Security Type. '
-                f'Check click to link text to Re-direct to Wireless > Primary Network. '
-                f'Actual: {str(list_actual10)}. Expected: {str(list_expected10)}')
+                generate_step_information(
+                    step_name=step_10_name,
+                    list_check_in_step=list_check_in_step_10,
+                    list_actual=list_actual10,
+                    list_expected=list_expected10
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 10. Change Wifi 5GHz Security to NONE, WEP, WPA2-PSK, WPA2/WPA-PSK, WPA2-ENTERPRISE, WPA2/WPA-ENTERPRISE. '
-                f'Check value of 5GHz Wireless Password Security Type. '
-                f'Check click to link text to Re-direct to Wireless > Primary Network. '
-                f'Actual: {str(list_actual10)}. Expected: {str(list_expected10)}')
+                generate_step_information(
+                    step_name=step_10_name,
+                    list_check_in_step=list_check_in_step_10,
+                    list_actual=list_actual10,
+                    list_expected=list_expected10
+                )
+            )
             list_step_fail.append('10. Assertion wong.')
 
         # Step 11
@@ -3107,21 +3993,32 @@ class SECURITY(unittest.TestCase):
                     break
             check_upnp_redirect = detect_current_menu(driver)
 
-            list_actual11 = [check_disabled_upnp, check_enabled_upnp, check_upnp_redirect]
-            list_expected11 = ['Disable', 'Enable', ('ADVANCED', 'UPnP')]
+            list_actual11 = [check_disabled_upnp, check_enabled_upnp, ' > '.join(check_upnp_redirect)]
+            list_expected11 = ['Disable', 'Enable', ' > '.join(('ADVANCED', 'UPnP'))]
             check = assert_list(list_actual11, list_expected11)
+
+            step_11_name = '11. Disable UPnp. Check status in Security Check. Enable UPnP. Check Status in Security Check. Click to link text.'
+            list_check_in_step_11 = ['Check status in Security Check when disable UPnp.',
+                                     'Check status in Security Check when enable UPnp.',
+                                     'Click to link text. Check Redirect to ADVANCED > UPnP']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 11. Disable UPnp. Check status in Security Check. '
-                f'Enable UPnP. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to ADVANCED > UPnP. '
-                f'Actual: {str(list_actual11)}. Expected: {str(list_expected11)}')
+                generate_step_information(
+                    step_name=step_11_name,
+                    list_check_in_step=list_check_in_step_11,
+                    list_actual=list_actual11,
+                    list_expected=list_expected11
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 11. Disable UPnp. Check status in Security Check. '
-                f'Enable UPnP. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to ADVANCED > UPnP. '
-                f'Actual: {str(list_actual11)}. Expected: {str(list_expected11)}')
+                generate_step_information(
+                    step_name=step_11_name,
+                    list_check_in_step=list_check_in_step_11,
+                    list_actual=list_actual11,
+                    list_expected=list_expected11
+                )
+            )
             list_step_fail.append('11. Assertion wong.')
 
         # Step 12
@@ -3197,21 +4094,32 @@ class SECURITY(unittest.TestCase):
                     check_disable_remote = v.text
                     break
 
-            list_actual12 = [check_enable_remote, check_disable_remote, check_remote_redirect]
-            list_expected12 = ['Enable', 'Disable', ('ADVANCED', 'Network')]
+            list_actual12 = [check_enable_remote, check_disable_remote, ' > '.join(check_remote_redirect)]
+            list_expected12 = ['Enable', 'Disable', ' > '.join(('ADVANCED', 'Network'))]
             check = assert_list(list_actual12, list_expected12)
+
+            step_12_name = '12. Enable Remote Access. Check status in Security. Disable Remote Access. Check Status in Security Check. Click to link text.'
+            list_check_in_step_12 = ['Check status in Security Check when enable Remote Access.',
+                                     'Check status in Security Check when disable Remote Access.',
+                                     'Click to link text. Check Redirect to ADVANCED > Network']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 12. Enable Remote Access. Check status in Security Check. '
-                f'Disable Remote Access. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to ADVANCED > Network. '
-                f'Actual: {str(list_actual12)}. Expected: {str(list_expected12)}')
+                generate_step_information(
+                    step_name=step_12_name,
+                    list_check_in_step=list_check_in_step_12,
+                    list_actual=list_actual12,
+                    list_expected=list_expected12
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 12. Enable Remote Access. Check status in Security Check. '
-                f'Disable Remote Access. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to ADVANCED > Network. '
-                f'Actual: {str(list_actual12)}. Expected: {str(list_expected12)}')
+                generate_step_information(
+                    step_name=step_12_name,
+                    list_check_in_step=list_check_in_step_12,
+                    list_actual=list_actual12,
+                    list_expected=list_expected12
+                )
+            )
             list_step_fail.append('12. Assertion wong.')
 
         # Step 13
@@ -3279,21 +4187,31 @@ class SECURITY(unittest.TestCase):
                     break
             check_ping_redirect = detect_current_menu(driver)
 
-            list_actual13 = [check_disable_ping, check_enable_ping, check_ping_redirect]
-            list_expected13 = ['Disable', 'Enable', ('ADVANCED', 'Network')]
+            list_actual13 = [check_disable_ping, check_enable_ping, ' > '.join(check_ping_redirect)]
+            list_expected13 = ['Disable', 'Enable', ' > '.join(('ADVANCED', 'Network'))]
             check = assert_list(list_actual13, list_expected13)
+            step_13_name = '13. Enable WAN ICMP Blocking. Check status in Security. Disable WAN ICMP Blocking. Check Status in Security Check. Click to link text.'
+            list_check_in_step_13 = ['Check status in Security Check when enable  WAN ICMP Blocking.',
+                                     'Check status in Security Check when disable  WAN ICMP Blocking.',
+                                     'Click to link text. Check Redirect to ADVANCED > Network']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 13. Enable WAN ICMP Blocking. Check status in Security Check. '
-                f'Disable WAN ICMP Blocking. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to ADVANCED > Network. '
-                f'Actual: {str(list_actual13)}. Expected: {str(list_expected13)}')
+                generate_step_information(
+                    step_name=step_13_name,
+                    list_check_in_step=list_check_in_step_13,
+                    list_actual=list_actual13,
+                    list_expected=list_expected13
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 13.  Enable WAN ICMP Blocking. Check status in Security Check. '
-                f'Disable WAN ICMP Blocking. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to ADVANCED > Network. '
-                f'Actual: {str(list_actual13)}. Expected: {str(list_expected13)}')
+                generate_step_information(
+                    step_name=step_13_name,
+                    list_check_in_step=list_check_in_step_13,
+                    list_actual=list_actual13,
+                    list_expected=list_expected13
+                )
+            )
             list_step_fail.append('13. Assertion wong.')
 
         # Step 14
@@ -3350,21 +4268,32 @@ class SECURITY(unittest.TestCase):
                     break
             check_dmz_redirect = detect_current_menu(driver)
 
-            list_actual14 = [check_disable_dmz, check_enable_dmz, check_dmz_redirect]
-            list_expected14 = ['Disable', 'Enable', ('ADVANCED', 'Port Forwarding/DMZ')]
+            list_actual14 = [check_disable_dmz, check_enable_dmz, ' > '.join(check_dmz_redirect)]
+            list_expected14 = ['Disable', 'Enable', ' > '.join(('ADVANCED', 'Port Forwarding/DMZ'))]
             check = assert_list(list_actual14, list_expected14)
+
+            step_14_name = '14. Disabled DMZ. Check status in Security. Disable DMZ. Check Status in Security Check. Click to link text.'
+            list_check_in_step_14 = ['Check status in Security Check when enable DMZ.',
+                                     'Check status in Security Check when disable DMZ.',
+                                     'Click to link text. Check Redirect to ADVANCED > Port Forwarding/DMZ']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 14. Disabled DMZ. Check status in Security Check. '
-                f'Enabled DMZ. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to ADVANCED > Port Forwarding/DMZ. '
-                f'Actual: {str(list_actual14)}. Expected: {str(list_expected14)}')
+                generate_step_information(
+                    step_name=step_14_name,
+                    list_check_in_step=list_check_in_step_14,
+                    list_actual=list_actual14,
+                    list_expected=list_expected14
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 14. Disabled DMZ. Check status in Security Check. '
-                f'Enabled DMZ. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to ADVANCED > Port Forwarding/DMZ. '
-                f'Actual: {str(list_actual14)}. Expected: {str(list_expected14)}')
+                generate_step_information(
+                    step_name=step_14_name,
+                    list_check_in_step=list_check_in_step_14,
+                    list_actual=list_actual14,
+                    list_expected=list_expected14
+                )
+            )
             list_step_fail.append('14. Assertion wong.')
 
         # Step 15
@@ -3418,21 +4347,32 @@ class SECURITY(unittest.TestCase):
                     break
             check_trigger_redirect = detect_current_menu(driver)
 
-            list_actual15 = [check_disable_trigger, check_enable_trigger, check_trigger_redirect]
-            list_expected15 = ['Disable', 'Enable', ('ADVANCED', 'Port Triggering')]
+            list_actual15 = [check_disable_trigger, check_enable_trigger, ' > '.join(check_trigger_redirect)]
+            list_expected15 = ['Disable', 'Enable', ' > '.join(('ADVANCED', 'Port Triggering'))]
             check = assert_list(list_actual15, list_expected15)
+
+            step_15_name = '15. Delete all Triggering rule. Check status in Security. Add a Triggering rule. Check Status in Security Check. Click to link text.'
+            list_check_in_step_15 = ['Check status in Security Check when delete all Triggering rule.',
+                                     'Check status in Security Check when add a Triggering rule.',
+                                     'Click to link text. Check Redirect to ADVANCED > Port Triggering']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 15. Delete all Triggering rule. Check status in Security Check. '
-                f'Add a Triggering rule. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to ADVANCED > Port Triggering. '
-                f'Actual: {str(list_actual15)}. Expected: {str(list_expected15)}')
+                generate_step_information(
+                    step_name=step_15_name,
+                    list_check_in_step=list_check_in_step_15,
+                    list_actual=list_actual15,
+                    list_expected=list_expected15
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 15. Delete all Triggering rule. Check status in Security Check. '
-                f'Add a Triggering rule. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to ADVANCED > Port Triggering. '
-                f'Actual: {str(list_actual15)}. Expected: {str(list_expected15)}')
+                generate_step_information(
+                    step_name=step_15_name,
+                    list_check_in_step=list_check_in_step_15,
+                    list_actual=list_actual15,
+                    list_expected=list_expected15
+                )
+            )
             list_step_fail.append('15. Assertion wong.')
 
         # Step 16
@@ -3492,21 +4432,32 @@ class SECURITY(unittest.TestCase):
                     break
             check_forwarding_redirect = detect_current_menu(driver)
 
-            list_actual16 = [check_disable_forwarding, check_enable_forwarding, check_forwarding_redirect]
-            list_expected16 = ['Disable', 'Enable', ('ADVANCED', 'Port Forwarding/DMZ')]
+            list_actual16 = [check_disable_forwarding, check_enable_forwarding, ' > '.joincheck_forwarding_redirect()]
+            list_expected16 = ['Disable', 'Enable', ' > '.join(('ADVANCED', 'Port Forwarding/DMZ'))]
             check = assert_list(list_actual16, list_expected16)
+
+            step_16_name = '16. Delete all Forwarding rule. Check status in Security. Add a Forwarding rule. Check Status in Security Check. Click to link text.'
+            list_check_in_step_16 = ['Check status in Security Check when delete all Forwarding rule.',
+                                     'Check status in Security Check when add a Forwarding rule.',
+                                     'Click to link text. Check Redirect to ADVANCED > Port Forwarding/DMZ']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 16. Delete all Forwarding rule. Check status in Security Check. '
-                f'Add a Forwarding rule. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to ADVANCED > Port Forwarding/DMZ. '
-                f'Actual: {str(list_actual16)}. Expected: {str(list_expected16)}')
+                generate_step_information(
+                    step_name=step_16_name,
+                    list_check_in_step=list_check_in_step_16,
+                    list_actual=list_actual16,
+                    list_expected=list_expected16
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 16. Delete all Forwarding rule. Check status in Security Check. '
-                f'Add a Forwarding rule. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to ADVANCED > Port Forwarding/DMZ. '
-                f'Actual: {str(list_actual16)}. Expected: {str(list_expected16)}')
+                generate_step_information(
+                    step_name=step_16_name,
+                    list_check_in_step=list_check_in_step_16,
+                    list_actual=list_actual16,
+                    list_expected=list_expected16
+                )
+            )
             list_step_fail.append('16. Assertion wong.')
 
         # Step 17
@@ -3641,24 +4592,34 @@ class SECURITY(unittest.TestCase):
                     time.sleep(0.5)
                     break
 
-            list_actual17 = [check_enable_server, check_disable_server, check_server_redirect]
-            list_expected17 = ['Enable', 'Disable', ('MEDIA SHARE', 'Server Settings')]
+            list_actual17 = [check_enable_server, check_disable_server, ' > '.join(check_server_redirect)]
+            list_expected17 = ['Enable', 'Disable', ' > '.join(('MEDIA SHARE', 'Server Settings'))]
             check = assert_list(list_actual17, list_expected17)
+
+            step_17_name = f'17.  Add USB Network Folder and Account Settings. Change Settings FTP server info.' \
+                f'Change Account to Anonymous. Check status in Security. Change Account to other option of Anonymous. Check Status in Security Check. Click to link text.'
+            list_check_in_step_17 = ['Check status in Security Check when delete all Forwarding rule.',
+                                     'Check status in Security Check when add a Forwarding rule.',
+                                     'Click to link text. Check Redirect to MEDIA SHARE > Server Settings']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 17. Add USB Network Folder and Account Settings. Change Settings FTP server info. '
-                f'Change Account to Anonymous. Check status in Security Check. '
-                f'Change Account to other option of Anonymous. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to MEDIA SHARE > Server Settings. '
-                f'Actual: {str(list_actual17)}. Expected: {str(list_expected17)}')
+                generate_step_information(
+                    step_name=step_17_name,
+                    list_check_in_step=list_check_in_step_17,
+                    list_actual=list_actual17,
+                    list_expected=list_expected17
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 17.  Add USB Network Folder and Account Settings. Change Settings FTP server info. '
-                f'Change Account to Anonymous. Check status in Security Check. '
-                f'Change Account to other option of Anonymous. Check Status in Security Check. '
-                f'Click to link text. Check Redirect to MEDIA SHARE > Server Settings. '
-                f'Actual: {str(list_actual17)}. Expected: {str(list_expected17)}')
+                generate_step_information(
+                    step_name=step_17_name,
+                    list_check_in_step=list_check_in_step_17,
+                    list_actual=list_actual17,
+                    list_expected=list_expected17
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('17. Assertion wong.')
         self.assertListEqual(list_step_fail, [])

@@ -91,15 +91,30 @@ class ADVANCED(unittest.TestCase):
 
             list_actual1 = [local_val, remote_val]
             list_expected1 = [exp_local, exp_remote]
+            step_1_2_3_name = "1,2,3. Disabled Remote and HTTPS Access: Check extra text"
+            list_check_in_step_1_2_3 = [
+                f"Check extra text local is: {list_expected1[0]}",
+                f"Check extra text remote is: {list_expected1[1]}"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1,2,3. Disabled Remote and HTTPS Access: Check extra text' 
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3. Disabled Remote and HTTPS Access: Check extra text. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append(
                 '1,2,3. Assertion wong.')
 
@@ -119,14 +134,30 @@ class ADVANCED(unittest.TestCase):
 
             list_actual2 = [local_val, remote_val]
             list_expected2 = [exp_local, exp_remote]
+            step_4_name = "4. Enable HTTPS Access: Check extra text"
+            list_check_in_step_4 = [
+                f"Check extra text local is: {list_expected2[0]}",
+                f"Check extra text remote is: {list_expected2[1]}"
+            ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Enable HTTPS Access: Check extra text'
-                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Enable HTTPS Access: Check extra text. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
@@ -147,15 +178,30 @@ class ADVANCED(unittest.TestCase):
 
             list_actual3 = [local_val, remote_val]
             list_expected3 = [exp_local, exp_remote]
+            step_5_name = "5. Disabled Remote and HTTPS Access: Check extra text"
+            list_check_in_step_5 = [
+                f"Check extra text local is: {list_expected3[0]}",
+                f"Check extra text remote is: {list_expected3[1]}"
+            ]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 5. Disabled Remote and HTTPS Access: Check extra text'
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 5. Disabled Remote and HTTPS Access: Check extra text. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append(
                 '5. Assertion wong.')
 
@@ -175,14 +221,30 @@ class ADVANCED(unittest.TestCase):
 
             list_actual4 = [local_val, remote_val]
             list_expected4 = [exp_local, exp_remote]
+            step_6_name = "6. Enable Remote Access: Check extra text"
+            list_check_in_step_6 = [
+                f"Check extra text local is: {list_expected4[0]}",
+                f"Check extra text remote is: {list_expected4[1]}"
+            ]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 6. Enable Remote Access: Check extra text'
-                                   f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 6. Enable Remote Access: Check extra text. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             list_step_fail.append('6. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 7
@@ -202,15 +264,30 @@ class ADVANCED(unittest.TestCase):
 
             list_actual5 = [local_val, remote_val]
             list_expected5 = [exp_local, exp_remote]
+            step_7_name = "7. Disabled Remote and HTTPS Access: Check extra text"
+            list_check_in_step_7 = [
+                f"Check extra text local is: {list_expected5[0]}",
+                f"Check extra text remote is: {list_expected5[1]}"
+            ]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 7. Disabled Remote and HTTPS Access: Check extra text'
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 7. Disabled Remote and HTTPS Access: Check extra text. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             list_step_fail.append(
                 '7. Assertion wong.')
 
@@ -234,15 +311,31 @@ class ADVANCED(unittest.TestCase):
 
             list_actual6 = [local_val, remote_val]
             list_expected6 = [exp_local, exp_remote]
+            step_8_name = "8. Enable Remote, HTTPS Access: Check extra text'"
+            list_check_in_step_8 = [
+                f"Check extra text local is: {list_expected6[0]}",
+                f"Check extra text remote is: {list_expected6[1]}"
+            ]
             check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 8. Enable Remote, HTTPS Access: Check extra text'
-                                   f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_8_name,
+                    list_check_in_step=list_check_in_step_8,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 8. Enable Remote, HTTPS Access: Check extra text. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_8_name,
+                    list_check_in_step=list_check_in_step_8,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('8. Assertion wong.')
 
@@ -292,15 +385,27 @@ class ADVANCED(unittest.TestCase):
 
             list_actual = [verify_mac_address_input]
             list_expected = [option_value]
+            step_1_2_3_name = f"1,2,3. Add a Mac address: Check add successfully: {option_value}"
+            list_check_in_step_1_2_3 = [f"Check inputed mac address is: {list_expected[0]}"]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1,2,3. Add a Mac address: Check add successfully: {option_value}'
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3.  Add a Mac address: Check add successfully:  {option_value}'
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             list_step_fail.append(
                 '1,2,3. Assertion wong.')
 
@@ -320,15 +425,28 @@ class ADVANCED(unittest.TestCase):
 
             list_actual2 = [check_delete]
             list_expected2 = [return_true]
+            step_4_name = "4. Delete row just added in previous step: {option_value}"
+            list_check_in_step_4 = ["Check delete added mac success"]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append(f'[Pass] 4. Delete row just added in previous step: {option_value}'
-                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Delete row just added in previous step: {option_value}'
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
 
@@ -379,15 +497,27 @@ class ADVANCED(unittest.TestCase):
 
             list_actual1 = [title]
             list_expected1 = ['Advanced > Port Forwarding/DMZ']
+            step_1_2_name = "1, 2. Login. Goto PortForwarding/DMZ. Check page title. "
+            list_check_in_step_1_2 = [f"Check Page wrap title is: {list_expected1[0]}"]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1, 2. Login. Goto PortForwarding/DMZ. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto PortForwarding/DMZ. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -409,15 +539,27 @@ class ADVANCED(unittest.TestCase):
 
             list_actual3 = [table_value[-1]]
             list_expected3 = [[True, SERVICE_TYPE_3, IP_ADDRESS_3, LOCAL_START_END_3, EXTERNAL_START_END_3, PROTOCOL_TYPE_3]]
+            step_3_name = "3. Add a Port Forwarding. Check Add successfully. "
+            list_check_in_step_3 = ["Check add a port forwarding success"]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Add a Port Forwarding. Check Add successfully. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Add a Port Forwarding. Check Add successfully.  '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -446,15 +588,30 @@ class ADVANCED(unittest.TestCase):
             list_actual4 = [check_waring_popup, table_value_4[-1]]
             list_expected4 = [return_true,
                 [True, SERVICE_TYPE_4, IP_ADDRESS_4, LOCAL_START_END_4, EXTERNAL_START_END_4, PROTOCOL_TYPE_4]]
+            step_4_name = "4. Add PF IP same as LAN IP. Check Popup warning displayed. If not Check PF just added. "
+            list_check_in_step_4 = [
+                "Check Popup warning appear",
+                "Check add PF IP same as LAN IP success"
+            ]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 4. Add PF IP same as LAN IP. Check Popup warning displayed. If not Check PF just added. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Add PF IP same as LAN IP. Check Popup warning displayed. If not Check PF just added.  '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -472,19 +629,32 @@ class ADVANCED(unittest.TestCase):
 
             driver.find_element_by_css_selector(btn_ok).click()
 
-
             list_actual5 = [check_confirm_message]
             list_expected5 = [exp_warning_local_port_same_external]
+            step_5_name = "5. Put External ports different Local ports: Check Warning message"
+            list_check_in_step_5 = [
+                f"Check Warning message is: {exp_warning_local_port_same_external}"
+            ]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Put External ports different Local ports: Check Warning message'
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 5. Put External ports different Local ports: Check Warning message. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong.')
 
@@ -852,15 +1022,31 @@ class ADVANCED(unittest.TestCase):
 
             list_actual = [act_triggered_range, act_forwarded_range]
             list_expected = [START_END_2]*2
+            step_1_name = "1. Delete rule successfully."
+            list_check_in_step_1 = [
+                f"Check triggered range is: {list_expected[0]}",
+                f"Check forwarded range is: {list_expected[1]}",
+            ]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Delete rule successfully.'
-                                   f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 1. Delete rule successfully. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('1. Assertion wong.')
 
@@ -955,15 +1141,28 @@ class ADVANCED(unittest.TestCase):
             after_delete = len(port_triggering_block.find_elements_by_css_selector(rows))
             list_actual = [before_delete-1]
             list_expected = [after_delete]
+            step_1_name = "1. Delete rule successfully."
+            list_check_in_step_1 = [f"Check Len of list rules after delete is: {list_expected[0]}"]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Delete rule successfully.'
-                                   f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 1. Delete rule successfully. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '1. Assertion wong.')
@@ -1025,14 +1224,27 @@ class ADVANCED(unittest.TestCase):
 
             list_actual1 = [assert_result]
             list_expected1 = [result]
+            step_1_name = "1. Test result format of Ping test."
+            list_check_in_step_1 = ["Check result format of Ping test is correct"]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Test result format of Ping test.'
-                                   f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1. Test result format of Ping test. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1044,15 +1256,28 @@ class ADVANCED(unittest.TestCase):
 
             list_actual2 = [clear_result]
             list_expected2 = [exp_none_text]
+            step_2_name = "2. Clear button: Check delete successfully."
+            list_check_in_step_2 = [f"Check After clear, list results is: {list_expected2[0]}"]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Clear button: Check delete successfully.'
-                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Clear button: Check delete successfully. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('2. Assertion wong.')
 
@@ -1106,14 +1331,27 @@ class ADVANCED(unittest.TestCase):
 
             list_actual1 = [assert_result]
             list_expected1 = [result]
+            step_1_name = "1. Test result format of Traceroute."
+            list_check_in_step_1 = [f"Check result format of Traceroute is: {list_expected1[0]}"]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Test result format of Traceroute.'
-                                   f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1. Test result format of Traceroute. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1125,15 +1363,28 @@ class ADVANCED(unittest.TestCase):
 
             list_actual2 = [clear_result]
             list_expected2 = [exp_none_text]
+            step_2_name = "2. Clear button: Check delete successfully."
+            list_check_in_step_2 = [f"Check After clear, list results is: {list_expected2[0]}"]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Clear button: Check delete successfully.'
-                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Clear button: Check delete successfully. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('2. Assertion wong.')
 

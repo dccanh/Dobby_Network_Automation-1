@@ -1759,15 +1759,18 @@ def add_a_mac_filtering(driver, OTHER_MAC=''):
     # Select all
     mac_field = edit_field.find_element_by_css_selector(wol_mac_addr)
     mac_field.find_element_by_css_selector(input).click()
+    time.sleep(0.5)
     if OTHER_MAC == '':
         opts = mac_field.find_elements_by_css_selector(secure_value_in_drop_down)
         for i in range(len(opts) - 1):
             opts = mac_field.find_elements_by_css_selector(secure_value_in_drop_down)
             opts[0].click()
+            time.sleep(0.3)
             break
         time.sleep(1)
         time.sleep(2)
         driver.find_element_by_css_selector(btn_save).click()
+        time.sleep(0.5)
     else:
         CORRECT_OTHER_MAC = OTHER_MAC.replace(':', '')
         driver.find_element_by_css_selector('.user-define').click()
@@ -1778,8 +1781,9 @@ def add_a_mac_filtering(driver, OTHER_MAC=''):
             driver.find_element_by_css_selector(btn_save).click()
             time.sleep(0.5)
         else:
+            time.sleep(0.5)
             driver.find_element_by_css_selector('.input-cancel-button').click()
-
+            time.sleep(0.5)
             edit_field = driver.find_element_by_css_selector(edit_mode)
             mac_field = edit_field.find_element_by_css_selector(wol_mac_addr)
             mac_field.find_element_by_css_selector(input).click()
@@ -1790,15 +1794,15 @@ def add_a_mac_filtering(driver, OTHER_MAC=''):
             driver.find_element_by_css_selector('.mac-address input').send_keys(tmp_mac)
             driver.find_element_by_css_selector(btn_save).click()
             time.sleep(0.5)
-
-
     time.sleep(1)
     driver.find_element_by_css_selector(apply).click()
     time.sleep(0.5)
     driver.find_element_by_css_selector(btn_ok).click()
     wait_popup_disappear(driver, dialog_loading)
+    time.sleep(0.5)
     driver.find_element_by_css_selector(btn_ok).click()
     wait_popup_disappear(driver, dialog_loading)
+    time.sleep(0.5)
 
 def get_mac_filtering_table(driver):
     mac_block = driver.find_element_by_css_selector(ele_mac_filtering)
@@ -2198,27 +2202,43 @@ def convert_stage_of_step_to_string(value):
     return bool_to_string[value]
 
 
+def generate_sub_step_info(list_check_in_sub_step, values, values_expected):
+    list_sub_step_info = []
+    if not isinstance(list_check_in_sub_step, list):
+        if isinstance(list_check_in_sub_step, str) and isinstance(values, bool) and isinstance(values_expected, bool):
+            return detect_check_information(list_check_in_sub_step, values == values_expected)
+        else:
+            return values
+
+    if not isinstance(values, list):
+        raise TypeError(f"Not valid list value actual or expected for sub step: {list_check_in_sub_step}")
+
+    for i in range(0, len(list_check_in_sub_step)):
+        if isinstance(values[i], bool):
+            sub_step_info = detect_check_information(list_check_in_sub_step[i], values[i] == values_expected[i])
+        else:
+            sub_step_info = values[i]
+        list_sub_step_info.append(sub_step_info)
+    return ".".join(list_sub_step_info)
+
+
 def generate_step_information(step_name, list_check_in_step, list_actual, list_expected):
     step_status = assert_list(list_actual, list_expected)["result"]
     step_info = f"{convert_stage_of_step_to_string(step_status)} {step_name}\n"
     for i in range(0, len(list_check_in_step)):
-        step_info = f"{step_info}\t - {list_check_in_step[i]}\n"
+        if isinstance(list_check_in_step[i], list):
+            check_description = ".".join(list_check_in_step[i])
+        else:
+            check_description = list_check_in_step[i]
+        step_info = f"{step_info}\t - {check_description}\n"
 
     step_info = f"{step_info}\tActual:\n"
     for i in range(0, len(list_actual)):
-        checking_info = remove_question_in_step_checking(list_check_in_step[i])
-        if isinstance(list_actual[i], bool):
-            step_info = f"{step_info}\t - {detect_check_information(checking_info, list_actual[i]==list_expected[i])}\n"
-        else:
-            step_info = f"{step_info}\t - {list_actual[i]}\n"
+        step_info = f"{step_info}\t - {generate_sub_step_info(list_check_in_step[i], list_actual[i], list_expected[i])}\n"
 
     step_info = f"{step_info}\tExpected:\n"
     for i in range(0, len(list_expected)):
-        checking_info = remove_question_in_step_checking(list_check_in_step[i])
-        if isinstance(list_expected[i], bool):
-            step_info = f"{step_info}\t - {detect_check_information(checking_info, True)}\n"
-        else:
-            step_info = f"{step_info}\t - {list_expected[i]}\n"
+        step_info = f"{step_info}\t - {generate_sub_step_info(list_check_in_step[i], list_expected[i], list_expected[i])}\n"
 
     return step_info
 
@@ -2236,6 +2256,7 @@ def remove_question_in_step_checking(checking_info: str = None):
 
 
 def detect_check_information(checking_info: str = None, result: bool = None) -> str:
+    checking_info = remove_question_in_step_checking(checking_info)
     dict_opposite_stage = {
         "on": "off",
         "off": "on",
@@ -2260,15 +2281,33 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "not correct": "correct",
         "correct": "not correct",
         "selected": "not selected",
-        "not selected": "selected"
+        "not selected": "selected",
+        "activated": "non activated",
+        "assigned": "not assigned",
+        "active": "deactive",
+        "access": "not access",
+        "available": "not available",
+        "clickable": "not clickable",
+        "deleted": "not deleted",
+        "valid": "invalid",
+        "null": "not null",
+        "not null": "null",
+        "false": "true",
+        "true": "false",
+        "highlight": "not highlight",
+        "True": "False",
+        "False": "True"
     }
-    for key in dict_opposite_stage:
-        if checking_info.endswith(key) or \
+    list_dict = list(dict_opposite_stage.items())
+    list_dict.sort(reverse=True)
+    sorted_opposite_stage = dict(list_dict)
+    for key in sorted_opposite_stage:
+        if checking_info.endswith(f" {key}") or \
                 ("contain:" in key and key in checking_info) or \
                 (("is displayed:" == key or "is not displayed:" == key) and key in checking_info):
             if result:
                 return checking_info
             else:
                 index = checking_info.rfind(key)
-                return f"{checking_info[:index]} {dict_opposite_stage[key]} {checking_info[index+len(key):]}"
+                return f"{checking_info[:index]} {sorted_opposite_stage[key]} {checking_info[index+len(key):]}"
     raise TypeError(f"Not define action for step: {checking_info}")

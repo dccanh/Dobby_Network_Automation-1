@@ -116,17 +116,30 @@ class HOME(unittest.TestCase):
 
             list_actual = [_actual, _check]
             list_expected = [_expected, return_true]
+            step_1_2_name = "1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. "
+            list_check_in_step_1_2 = [
+                f"Check IPv4 Information is: {list_expected[0]}",
+                "Check WAN type and Connection Type list option are correct"
+            ]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
-                f'Actual: {str(list_actual)}. '
-                f'Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
-                f'Actual: {str(list_actual)}. '
-                f'Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             list_step_fail.append(
                 '1,2. Assertion wong.')
 
@@ -140,15 +153,27 @@ class HOME(unittest.TestCase):
 
             list_actual2 = [more_fab]
             list_expected2 = [return_true]
+            step_3_name = "3. Check btn + is displayed when click btn |||."
+            list_check_in_step_3 = ["Check Button more tab is appear"]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Check btn + is displayed when click btn |||. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check btn + is displayed when click btn |||. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append(
                 '3. Assertion wong.')
 
@@ -161,16 +186,28 @@ class HOME(unittest.TestCase):
 
             list_actual3 = [current_tab]
             list_expected3 = [URL_LOGIN + network_internet]
+            step_4_name = "4. Click + btn. Check re-direct Network>Internet"
+            list_check_in_step_4 = [f"Check Current URL is {list_expected3[0]}"]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 4. Click + btn. Check re-direct Network>Internet\1'
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Click + btn. Check re-direct Network>Internet. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '4. Assertion wong.')
@@ -306,17 +343,31 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [primary_actual, secondary_actual, _check]
             list_expected1 = [primary_expected, secondary_expected, return_true]
+            step_1_2_name = "Check IPv4 Information; Check WAN type in options, and Connection Type in options. "
+            list_check_in_step_1_2 = [
+                "Check IPv4 information for primary is correct",
+                "Check IPv4 information for secondary is correct",
+                "Check WAN type and Connection Type are correct"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append(
                 '1,2. Assertion wong.')
 
@@ -330,15 +381,27 @@ class HOME(unittest.TestCase):
 
             list_actual3 = [more_fab]
             list_expected3 = [return_true]
+            step_3_name = "3. Check btn + is displayed when click btn |||. "
+            list_check_in_step_3 = ["Check button more fab is appear"]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Check btn + is displayed when click btn |||. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check btn + is displayed when click btn |||. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append(
                 '3. Assertion wong.')
 
@@ -351,15 +414,27 @@ class HOME(unittest.TestCase):
 
             list_actual4 = [current_tab]
             list_expected4 = [URL_LOGIN + network_internet]
+            step_4_name = "4. Click + btn. Check re-direct Network>Internet. "
+            list_check_in_step_4 = [f"Check current URL is: {list_expected4[0]}"]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 4. Click + btn. Check re-direct Network>Internet. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Click + btn. Check re-direct Network>Internet. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             list_step_fail.append(
                 '4. Assertion wong.')
 
@@ -375,15 +450,27 @@ class HOME(unittest.TestCase):
 
             list_actual5 = [check_home_displayed]
             list_expected5 = [return_true]
+            step_5_name = "5. Home page is displayed. "
+            list_check_in_step_5 = ["Check Home page is appear"]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 5. Home page is displayed. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 5. Home page is displayed. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             list_step_fail.append(
                 '5. Assertion wong.')
 
@@ -397,15 +484,27 @@ class HOME(unittest.TestCase):
 
             list_actual6 = [more_fab]
             list_expected6 = [return_true]
+            step_6_name = "6. Check btn + is displayed when click btn |||. "
+            list_check_in_step_6 = ["Check Button more fab is appear"]
             check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 6. Check btn + is displayed when click btn |||. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 6. Check btn + is displayed when click btn |||. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
             list_step_fail.append(
                 '6. Assertion wong.')
 
@@ -418,16 +517,28 @@ class HOME(unittest.TestCase):
 
             list_actual7 = [current_tab]
             list_expected7 = [URL_LOGIN + network_internet]
+            step_7_name = "7. Click + btn. Check re-direct Network>Internet. "
+            list_check_in_step_7 = [f"Check current URL is: {list_expected7[0]}"]
             check = assert_list(list_actual7, list_expected7)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 7. Click + btn. Check re-direct Network>Internet. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 7. Click + btn. Check re-direct Network>Internet. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '7. Assertion wong.')
@@ -498,16 +609,31 @@ class HOME(unittest.TestCase):
 
             list_actual = [_actual, _check]
             list_expected = [_expected, return_true]
+            step_1_2_name = "1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. "
+            list_check_in_step_1_2 = [
+                f"Check ipv4 information is: {list_expected[0]}",
+                " Check WAN types and Connection Types are correct"
+            ]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '1,2. Assertion wong.')
@@ -583,14 +709,27 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [check_active]
             list_expected1 = [return_true]
+            step_1_name = "1. Check Internet Image is high light. "
+            list_check_in_step_1 = ["Check Internet Image is active"]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Check Internet Image is high light. '
-                                   f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1. Check Internet Image is high light. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -632,16 +771,31 @@ class HOME(unittest.TestCase):
 
             list_actual = [_actual, _check]
             list_expected = [_expected, return_true]
+            step_2_name = "2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. "
+            list_check_in_step_2 = [
+                "Check IPv4 Information is correct",
+                "Check WAN type and connection type are correct"
+            ]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Check IPv4 Information; Check WAN type in options, and Connection Type in options. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '1,2. Assertion wong.')
@@ -765,14 +919,27 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [check_active]
             list_expected1 = [return_true]
+            step_1_name = "1. Check Internet Image is high light. "
+            list_check_in_step_1 = ["Check Internet Image is active"]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1. Check Internet Image is high light. '
-                                   f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1. Check Internet Image is high light. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -820,18 +987,31 @@ class HOME(unittest.TestCase):
 
             list_actual2 = [_actual, _check]
             list_expected2 = [_expected, return_true]
+            step_2_name = " 2. Check Information display. Check WAN type in options, and Connection Type in options. "
+            list_check_in_step_2 = [
+                "Check Information display is correct",
+                "Check WAN type and connection types are correct"
+            ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2. Check Information display. Check WAN type in options, and Connection Type in options. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Check Information display. Check WAN type in options, and Connection Type in options. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('2. Assertion wong.')
 
@@ -862,15 +1042,31 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [router_wireless_icon_check_active, check_2g_active, check_5g_active]
             list_expected1 = [return_true] * 3
+            step_1_2_name = "1, 2. Check Icon is active, Color of 2.4GHz and 5GHz. "
+            list_check_in_step_1_2 = [
+                "Check Router wireless icon is active",
+                "Check 2G is active",
+                "Check 5G is active",
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Check Icon is active, Color of 2.4GHz and 5GHz. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Check Icon is active, Color of 2.4GHz and 5GHz. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -903,15 +1099,27 @@ class HOME(unittest.TestCase):
 
             list_actual3 = [check_radio_box]
             list_expected3 = [return_false]
+            step_3_name = "3. Goto Advanced> Wireless. Disabled 2G Radio. Check Disabled. "
+            list_check_in_step_3 = ["Check 2G Radio is disable"]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Goto Advanced> Wireless. Disabled 2G Radio. Check Disabled. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Goto Advanced> Wireless. Disabled 2G Radio. Check Disabled. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -925,15 +1133,30 @@ class HOME(unittest.TestCase):
 
             list_actual4 = [check_2g_active_2, check_5g_active_2]
             list_expected4 = [return_true] * 2
+            step_4_name = "4. Check 2GHz image is disconnected, 5GHz image is connected. "
+            list_check_in_step_4 = [
+                "Check 2GHz image is not connect",
+                "Check 5GHz image is connect"
+            ]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Check 2GHz image is disconnected, 5GHz image is connected. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Check 2GHz image is disconnected, 5GHz image is connected. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -967,15 +1190,27 @@ class HOME(unittest.TestCase):
 
             list_actual5 = [check_radio_box]
             list_expected5 = [return_false]
+            step_5_name = "5. Goto Advanced> Wireless. Disabled 5G Radio. Check Disabled. "
+            list_check_in_step_5 = ["Check 5G radio is disabled"]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Goto Advanced> Wireless. Disabled 5G Radio. Check Disabled. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 5. Goto Advanced> Wireless. Disabled 5G Radio. Check Disabled. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             list_step_fail.append('5. Assertion wong.')
 
         try:
@@ -989,16 +1224,28 @@ class HOME(unittest.TestCase):
 
             list_actual6 = [check_2g_active_3, check_5g_active_3]
             list_expected6 = [return_true] * 2
+            step_6_name = "6. Check 2GHz image is disconnected, 5GHz image is disconnected."
+            list_check_in_step_6 = ["Check 2GHz image is not connect", "Check 5GHz image is not connect"]
             check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Check 2GHz image is disconnected, 5GHz image is disconnected. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 6. Check 2GHz image is disconnected, 5GHz image is disconnected. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('6. Assertion wong.')
 
@@ -1029,14 +1276,32 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [lan_title, lan_card_tabs_v4, lan_card_tabs_v6, icon_fab]
             list_expected1 = ['LAN', 'IPv4', 'IPv6', return_true]
+            step_3_1_name = "3.1 Check LAN block: Title, IPv4, IPv6, Icon ||| displayed. "
+            list_check_in_step_3_1 = [
+                f"Check LAN title is: {list_expected1[0]}",
+                f"Check LAN card tabs v4 label is: {list_expected1[1]}",
+                f"Check LAN card tabs v6 label is: {list_expected1[2]}",
+                f"Check Icon fab is appear",
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append(f'[Pass] 3.1 Check LAN block: Title, IPv4, IPv6, Icon ||| displayed. '
-                                   f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_3_1_name,
+                    list_check_in_step=list_check_in_step_3_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3.1 Check LAN block: Title, IPv4, IPv6, Icon ||| displayed. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_1_name,
+                    list_check_in_step=list_check_in_step_3_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('3.1 Assertion wong.')
 
         try:
@@ -1052,14 +1317,32 @@ class HOME(unittest.TestCase):
 
             list_actual2 = [lan_title, lan_card_tabs_24, lan_card_tabs_5, icon_fab]
             list_expected2 = ['Wireless', '2.4GHz', '5GHz', return_true]
+            step_3_2_name = "3.2 Check Wireless block: Title, 2.4GHz, 5GHz, Icon ||| displayed. "
+            list_check_in_step_3_2 = [
+                f"Check Title is: {list_expected2[0]}",
+                f"Check 2G card tabs label is: {list_expected2[1]}",
+                f"Check 5G card tabs label is: {list_expected2[2]}",
+                f"Check Icon fab is appear",
+            ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3.2 Check Wireless block: Title, 2.4GHz, 5GHz, Icon ||| displayed. '
-                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_3_2_name,
+                    list_check_in_step=list_check_in_step_3_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3.2 Check Wireless block: Title, 2.4GHz, 5GHz, Icon ||| displayed. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_3_2_name,
+                    list_check_in_step=list_check_in_step_3_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('3.2 Assertion wong.')
 
         try:
@@ -1071,15 +1354,33 @@ class HOME(unittest.TestCase):
 
             list_actual3 = [information_title, cpu_status_title, ethernet_title, memory_status_title]
             list_expected3 = ['Information', 'CPU Status', 'Ethernet Port Status', 'Memory Status']
+            step_3_3_name = "3.3 Check Information, CPU Status, Ethernet Port Status, Memory Status. "
+            list_check_in_step_3_3 = [
+                f"Check label information is: {list_expected3[0]}",
+                f"Check label CPU status is: {list_expected3[1]}"
+                f"Check label Ethernet Port Status is: {list_expected3[2]}"
+                f"Check label Memory Status is: {list_expected3[3]}"
+            ]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3.3 Check Information, CPU Status, Ethernet Port Status, Memory Status. '
-                                   f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_3_3_name,
+                    list_check_in_step=list_check_in_step_3_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3.3 Check Information, CPU Status, Ethernet Port Status, Memory Status. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_3_name,
+                    list_check_in_step=list_check_in_step_3_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('3.3 Assertion wong.')
 
@@ -1141,14 +1442,30 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [actual_lan_v4_value, actual_lan_v4_label]
             list_expected1 = [expected_lan_v4_value, expected_lan_v4_label]
+            step_3_name = "3 Check LAN block information"
+            list_check_in_step_3 = [
+                "Check List LAN value is correct",
+                "Check List LAN label is correct"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3 Check LAN block information'
-                                   f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check LAN block information. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -1171,15 +1488,28 @@ class HOME(unittest.TestCase):
 
             list_actual2 = [actual_lan_v6_label]
             list_expected2 = [expected_lan_v6_label]
+            step_4_name = "4. Check LAN block information IPv6: Check Label. "
+            list_check_in_step_4 = ["Check List label is correct"]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Check LAN block information IPv6: Check Label. '
-                                   f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Check LAN block information IPv6: Check Label. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
 
@@ -1222,18 +1552,30 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [more_fab, current_tab]
             list_expected1 = [return_true, ('NETWORK', 'LAN')]
-
+            step_3_4_name = "3, 4. Click ||| btn; Check Display +; Click +; Check Display target IPv4 page. "
+            list_check_in_step_3_4 = [
+                "Check button more fab appear",
+                f"Check Current tab is: {list_expected1[1]}"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3, 4. Click ||| btn; Check Display +; Click +; Check Display target IPv4 page. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_4_name,
+                    list_check_in_step=list_check_in_step_3_4,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3, 4. Click ||| btn; Check Display +; Click +; Check Display target IPv4 page. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_4_name,
+                    list_check_in_step=list_check_in_step_3_4,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('3, 4. Assertion wong.')
 
         try:
@@ -1265,18 +1607,31 @@ class HOME(unittest.TestCase):
 
             list_actual2 = [more_fab, current_tab]
             list_expected2 = [return_true, ('ADVANCED', 'IPv6')]
+            step_5_name = "5. Click ||| btn; Check Display +; Click +; Check Display target IPv6 page"
+            list_check_in_step_5 = [
+                "Check Icon more fab is appear",
+                f"Check Current tab is: {list_expected2[1]}"
+            ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 5. Click ||| btn; Check Display +; Click +; Check Display target IPv6 page'
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 5. Click ||| btn; Check Display +; Click +; Check Display target IPv6 page. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong.')
 
@@ -1333,16 +1688,32 @@ class HOME(unittest.TestCase):
 
             list_actual1 = actual_wl_2g_value
             list_expected1 = ['We Love You So Much_2G!', 'WPA2/WPA-PSK', True, True]
+            step_3_name = "3. Check Information of WL 2.4GHZ: SSID, Sercurity, PW, MAC address. "
+            list_check_in_step_3 = [
+                f"Check SSID is :{list_expected1[0]}",
+                f"Check Sercurity is :{list_expected1[1]}",
+                "Check password is existed",
+                "Check MAC address format is valid"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Check Information of WL 2.4GHZ: SSID, Sercurity, PW, MAC address. '
-                                   f'Actual: {str(list_actual1)}. '
-                                   f'Expected: {str(list_expected1)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check Information of WL 2.4GHZ: SSID, Sercurity, PW, MAC address. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -1377,17 +1748,33 @@ class HOME(unittest.TestCase):
 
             list_actual2 = actual_wl_5g_value
             list_expected2 = ['We Love You So Much_5G!', 'WPA2/WPA-PSK', True, True]
+            step_4_name = "4. Check Information of WL 5GHZ: SSID, Sercurity, PW, MAC address"
+            list_check_in_step_4 = [
+                f"Check SSID is :{list_expected2[0]}",
+                f"Check Sercurity is :{list_expected2[1]}",
+                "Check password is existed",
+                "Check MAC address format is valid"
+            ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Check Information of WL 5GHZ: SSID, Sercurity, PW, MAC address' 
-                                   f'Actual: {str(list_actual2)}. '
-                                   f'Expected: {str(list_expected2)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Check Information of WL 5GHZ: SSID, Sercurity, PW, MAC address. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
 
@@ -1421,16 +1808,28 @@ class HOME(unittest.TestCase):
 
             list_actual = [current_tab]
             list_expected = [URL_LOGIN + wireless_primary]
+            step_3_name = "3. Click + btn. Check re-direct Network>LAN. "
+            list_check_in_step_3 = [f"Check current tab URL is: {list_expected[0]}"]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Click + btn. Check re-direct Network>LAN. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Click + btn. Check re-direct Network>LAN. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append(
                 '3. Assertion wong.')
@@ -1508,19 +1907,38 @@ class HOME(unittest.TestCase):
                               [expected_model_name, True, firmware_version, True],
                               'Check for Update',
                               'rgba(23, 143, 230, 1)']
-
+            step_3_name = "3. Check Information title, Model name, End of Serial number, " \
+                          "type of build time, firm version,  Text of button, Color. "
+            list_check_in_step_3 = [
+                f"Check block title is: {list_expected1[0]}",
+                [
+                    "Check model name is correct",
+                    f"Check Condition Serial number end with '{SERIAL_NUMBER}' is correct",
+                    f"Check Firmware version is: {firmware_version}",
+                    "Check Condition 'Build time match has %Y.%m.%d %H:%M:%S format' is correct'"
+                ],
+                f"Check text of button update is: {list_expected1[2]}",
+                f"Check button of date color is: {list_expected1[3]}"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Check Information title, Model name, End of Serial number, '
-                                   'type of build time, firm version,  Text of button, Color. '
-                                   f'Actual: {str(list_actual1)}. '
-                                   f'Expected: {str(list_expected1)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check Information title, Model name, End of Serial number, '
-                                   'type of build time, firm version,  Text of button, Color. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -1530,17 +1948,28 @@ class HOME(unittest.TestCase):
 
             list_actual2 = [check_popup]
             list_expected2 = [return_true]
+            step_4_name = "4. Check pop up appear. "
+            list_check_in_step_4 = ["Check After click update, a popup is appear"]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Check pop up appear. '
-                                   f'Actual: {str(list_actual2)}. '
-                                   f'Expected: {str(list_expected2)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Check pop up appear. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
 
@@ -1590,18 +2019,36 @@ class HOME(unittest.TestCase):
                             check_has_key_memory]
             list_expected1 = [[['Free Memory', 'Total Memory'], return_true],
                               [return_true] * 2]
-
+            step_1_2_1_name = "1, 2.1 Login. Check list label, Graph displayed, API has key total and free. "
+            list_check_in_step_1_2_1 = [
+                [
+                    "Check list label is correct",
+                    "Check graph is appear"
+                ],
+                [
+                    "Check Condition 'API has key total' is correct",
+                    "Check Condition 'API has key free' is correct",
+                ]
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2.1 Login. Check list label, Graph displayed, API has key total and free. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_1_name,
+                    list_check_in_step=list_check_in_step_1_2_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2.1 Login. Check list label, Graph displayed, API has key total and free. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_1_name,
+                    list_check_in_step=list_check_in_step_1_2_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2.1 . Assertion wong.')
 
         try:
@@ -1620,18 +2067,28 @@ class HOME(unittest.TestCase):
             driver2.quit()
             list_actual2 = [check_request_update]
             list_expected2 = [return_true]
+            step_2_2_name = "2.2 Check Request recalled each 2 seconds.  "
+            list_check_in_step_2_2 = ["Check Request recalled each 2 seconds success"]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2.2 Check Request recalled each 2 seconds.  '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_2_name,
+                    list_check_in_step=list_check_in_step_2_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2.2. Check Request recalled each 2 seconds.'
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_2_name,
+                    list_check_in_step=list_check_in_step_2_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('2.2. Assertion wong.')
             self.list_steps.append('[END TC]')
 
@@ -1681,17 +2138,40 @@ class HOME(unittest.TestCase):
                             check_has_key]
             list_expected1 = [['Core1', 'Core2', return_true],
                               [return_true] * 4]
+            step_1_2_1_name = "1, 2.1 Login. Check list label, Graph displayed, API has key total and free. "
+            list_check_in_step_1_2_1 = [
+                [
+                    "Check cpu core1 label is correct",
+                    "Check cpu core2 label is correct",
+                    "Check cpu chart is appear"
+                ],
+                [
+                    "Check Condition 'API has key name core 1' is correct",
+                    "Check Condition 'API has key percentage core 1' is correct",
+                    "Check Condition 'API has key name core 2' is correct",
+                    "Check Condition 'API has key percentage core 2' is correct",
+                ]
+
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2.1 Login. Check list label, Graph displayed, API has key total and free. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_1_name,
+                    list_check_in_step=list_check_in_step_1_2_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2.1 Login. Check list label, Graph displayed, API has key total and free. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_1_name,
+                    list_check_in_step=list_check_in_step_1_2_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2.1 . Assertion wong.')
 
         try:
@@ -1713,20 +2193,30 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             list_actual2 = [check_request_update]
             list_expected2 = [return_true]
+            step_2_2_name = "2.2 Check Request recalled each 2 seconds.  "
+            list_check_in_step_2_2 = ["Check Request recalled each 2 seconds success"]
             driver3.quit()
             time.sleep(1)
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2.2 Check Request recalled each 2 seconds.  '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_2_name,
+                    list_check_in_step=list_check_in_step_2_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2.2. Check Request recalled each 2 seconds.'
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_2_name,
+                    list_check_in_step=list_check_in_step_2_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('2.2. Assertion wong.')
             self.list_steps.append('[END TC]')
 
@@ -1753,17 +2243,31 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [check_high_light, check_num_usb]
             list_expected1 = [return_true, '2']
+            step_2_name = "2. Check USB Image selected, Check number of USB. "
+            list_check_in_step_2 = [
+                "Check USB Image is selected",
+                f"Check number of USB is: {list_expected1[1]}"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Check USB Image selected, Check number of USB. '
-                                   f'Actual: {str(list_actual1)}. '
-                                   f'Expected: {str(list_expected1)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Check USB Image selected, Check number of USB. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('2. Assertion wong.')
 
@@ -1806,19 +2310,40 @@ class HOME(unittest.TestCase):
             list_actual1 = [usb_title, exist_btn_fab, actual_info_value,
                             space_used, space_available, space_bar, btn_remove]
             list_expected1 = ['USB', return_true, [return_true]*2, return_true, return_true, return_true, 'Remove']
+            step_3_name = "3. Check Title, Exist button |||, Device name, Total size, not null, " \
+                          "space used, availabled, space bar not null, Btn Remove text. "
+            list_check_in_step_3 = [
+                f"Check Title is: {list_expected1[0]}",
+                "Check icon fab is appear",
+                [
+                    "Check device name value is not null",
+                    "Check total size value is not null",
+                ],
+                "Check space used not null",
+                "Check space available not null",
+                "Check space bar not null",
+                "Check text of button remove correct"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Check Title, Exist button |||, Device name, Total size, not null, '
-                                   'space used, availabled, space bar not null, Btn Remove text. ' 
-                                   f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check Title, Exist button |||, Device name, Total size, not null, '
-                                   'space used, availabled, space bar not null, Btn Remove text. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('3. Assertion wong.')
 
@@ -1865,22 +2390,35 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [icon_fab_displayed, icon_more_fab_displayed, current_tab]
             list_expected1 = [return_true, return_true, ('MEDIA SHARE', 'USB')]
+            step_1_2_3_name = "1,2,3. Click and check display icon ||| btn; Click and check display icon +; " \
+                              "Check Display target USB page. "
+            list_check_in_step_1_2_3 = [
+                "Check icon fab is appear",
+                "Check icon more fab is appear",
+                f"Check Current tab is: {list_expected1[2]}"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1,2,3. Click and check display icon ||| btn; Click and check display icon +; '
-                'Check Display target USB page. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 1,2,3. Click and check display icon ||| btn; Click and check display icon +; '
-                f'Check Display target USB page. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
-            list_step_fail.append('3, 4. Assertion wong.')
+            list_step_fail.append('1,2, 3. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
     # OK
@@ -1930,18 +2468,32 @@ class HOME(unittest.TestCase):
             list_expected1 = ['Do you want to safely remove the USB device?',
                               'Remove the USB device safely from the router.',
                               return_true]
+            step_3_4_5_name = "3,4,5. Check popup confirm text, popup complete text, popup disappear. "
+            list_check_in_step_3_4_5 = [
+                f"Check confirm text is: {list_expected1[0]}",
+                f"Check confirm remove text is: {list_expected1[1]}",
+                "Check popup is not displayed"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3,4,5. Check popup confirm text, popup complete text, popup disappear. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_4_5_name,
+                    list_check_in_step=list_check_in_step_3_4_5,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3,4,5. Check popup confirm text, popup complete text, popup disappear. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_4_5_name,
+                    list_check_in_step=list_check_in_step_3_4_5,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('3, 4. Assertion wong.')
 
@@ -1986,18 +2538,34 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [server_title, exist_btn_fab] + actual_value
             list_expected1 = ['Server', return_true] + ['Off']*3
+            step_3_name = "3. Check Server title, icon fab, value fields."
+            list_check_in_step_3 = [
+                f"Check Server title is: {list_expected1[0]}",
+                "Check icon fab is exist",
+                "Check FTP Server is off",
+                "Check Windows Network (Samba) is off",
+                "Check Media Server (DLNA) is off"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Check Server title, icon fab, value fields. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check Server title, icon fab, value fields. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('3. Assertion wong.')
 
@@ -2035,18 +2603,31 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [more_fab, current_tab]
             list_expected1 = [return_true, ('MEDIA SHARE', 'Server Settings')]
+            step_3_name = "3. Click ||| btn; Check Display +; Click +; Check Display target USB Server page. "
+            list_check_in_step_3 = [
+                "Check button more fab is appear",
+                f"Check current tab is: {list_expected1[1]}"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Click ||| btn; Check Display +; Click +; Check Display target USB Server page. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Click ||| btn; Check Display +; Click +; Check Display target USB Server page. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('3. Assertion wong.')
 
@@ -2071,18 +2652,29 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [num_devices]
             list_expected1 = ['1']
+            step_3_name = "3. Click Device icon, Check number of device. "
+            list_check_in_step_3 = [f"Check number of device is: {list_expected1[0]}"]
+
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3. Click Device icon, Check number of device. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Click Device icon, Check number of device. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('3. Assertion wong.')
 
@@ -2131,17 +2723,30 @@ class HOME(unittest.TestCase):
 
             list_actual1 = tab_title
             list_expected1 = ['Connected Devices', 'Disconnected Devices']
+            step_2_name = "2. Check title of table."
+            list_check_in_step_2 = [
+                f"Check text of button 1 in table device connectivity is: {list_expected1[0]}",
+                f"Check text of button 2 in table device connectivity is: {list_expected1[1]}"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2. Check title of table.'
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2.Check title of table. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
 
             list_step_fail.append('2. Assertion wong.')
 
@@ -2178,17 +2783,29 @@ class HOME(unittest.TestCase):
 
             list_actual3 = ls_expected_connected
             list_expected3 = ls_expected_connected
+            step_3_1_name = " 3.1 Check value rows displayed on Connected Devices Page."
+            list_check_in_step_3_1 = [
+                f"Check Value rows displayed on Connected Devices Page are: {list_expected3[0]}"
+            ]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3.1 Check value rows displayed on Connected Devices Page.'
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_1_name,
+                    list_check_in_step=list_check_in_step_3_1,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3.1 Check value rows displayed on Connected Devices Page. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_1_name,
+                    list_check_in_step=list_check_in_step_3_1,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('3.1 Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~ Disconnected
@@ -2216,18 +2833,30 @@ class HOME(unittest.TestCase):
 
             list_actual4 = ls_actual_disconnected
             list_expected4 = ls_expected_disconnected
+            step_3_2_name = "3.2 Check value rows displayed on Disconnected Devices Page."
+            list_check_in_step_3_2 = [
+                f"Check value rows displayed on Disconnected Devices Page are: {list_expected4[0]}"
+            ]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 3.2 Check value rows displayed on Disconnected Devices Page.'
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_3_2_name,
+                    list_check_in_step=list_check_in_step_3_2,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3.2 Check value rows displayed on Disconnected Devices Page. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_3_2_name,
+                    list_check_in_step=list_check_in_step_3_2,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('3.2 Assertion wong.')
 
@@ -2268,20 +2897,35 @@ class HOME(unittest.TestCase):
                               'Local Network',
                               ['Device Name', 'Interface', 'MAC Address', 'IP Address'],
                               return_true]
+            step_1_2_3_name = "1, 2, 3. Check Connected Devices, [Refresh], Local Network, Device name, " \
+                              "Interface, MAC Address, IP Address, Edit icon are displayed"
+            list_check_in_step_1_2_3 = [
+                "Check Title tab is correct",
+                "Check Button refresh is displayed",
+                f"Check Local network title is: {list_expected1[2]}",
+                f"Check connect columns title are: {list_expected1[3]}",
+                "Check edit button is displayed"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 1, 2, 3. Check Connected Devices, [Refresh], Local Network, '
-                'Device name, Interface, MAC Address, IP Address, Edit icon are displayed .'
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2, 3.Check Connected Devices, [Refresh], Local Network, '
-                'Device name, Interface, MAC Address, IP Address, Edit icon are displayed . '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_3_name,
+                    list_check_in_step=list_check_in_step_1_2_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
 
             list_step_fail.append('1, 2, 3. Assertion wong.')
@@ -2315,16 +2959,30 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [default_device_tab_text, actual_local_network_number]
             list_expected1 = ['Connected Devices', num_devices]
+            step_1_2_name = "1, 2. Check default tab in Devices, number of devices."
+            list_check_in_step_1_2 = [
+                f"Check label of 'default tab in Devices' is: {list_expected1[0]}",
+                f"Check number of devices is: {list_expected1[1]}"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 1, 2. Check default tab in Devices, number of devices.'
-                                   f'Actual: {str(list_actual1)}. '
-                                   f'Expected: {str(list_expected1)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Check default tab in Devices, number of devices. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -2348,16 +3006,33 @@ class HOME(unittest.TestCase):
 
             list_actual3 = [img, check_mac, check_ip, check_port, ls_label_text]
             list_expected3 = ['pc', return_true, return_true, return_true, expected_ls_label]
+            step_3_name = "3. Check default tab in Devices, number of devices."
+            list_check_in_step_3 = [
+                f"Check image dispalyed is: {list_expected3[0]}",
+                "Check format of MAC address is valid",
+                "Check format of IP address is valid",
+                "Check Condition 'Port is start with LAN Port' is correct",
+                f"Check List label is: {list_expected3[4]}"
+            ]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Check default tab in Devices, number of devices.'
-                                   f'Actual: {str(list_actual3)}. '
-                                   f'Expected: {str(list_expected3)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check default tab in Devices, number of devices. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -2408,17 +3083,34 @@ class HOME(unittest.TestCase):
 
             list_actual5 = [img, check_mac, check_ip, check_wifi, ls_label_text]
             list_expected5 = ['pc', return_true, return_true, return_true, expected_ls_label]
+            list_check_in_step_4 = [
+                f"Check image dispalyed is: {list_expected5[0]}",
+                "Check format of MAC address is valid",
+                "Check format of IP address is valid",
+                "Check Condition 'Wifi is Wi-Fi 2.4GHz' is correct",
+                f"Check List label is: {list_expected5[4]}"
+            ]
+            step_4_name = "4. Check default tab in Devices, number of devices."
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Check default tab in Devices, number of devices.'
-                                   f'Actual: {str(list_actual5)}. '
-                                   f'Expected: {str(list_expected5)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4. Check default tab in Devices, number of devices. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('4. Assertion wong.')
 
@@ -2450,17 +3142,29 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [check_dialog_display]
             list_expected1 = [return_true]
+            step_2_name = "2. Click Edit; Check popup display."
+            list_check_in_step_2 = [
+                "Check popup is displayed"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2. Click Edit; Check popup display.'
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2. Click Edit; Check popup display. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('2. Assertion wong.')
 
         # Reserved IP OK
@@ -2509,19 +3213,32 @@ class HOME(unittest.TestCase):
 
             list_actual3 = [check_confirm_msg, check_confirm_pop_disappear, check_delete_icon]
             list_expected3 = [exp_confirm_msg_add_resserve_ip, return_true, return_true]
+            step_3_name = "3. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. " \
+                          "Click add again -> Click OK -> Check add icon change to delete icon"
+            list_check_in_step_3 = [
+                f"Check confirm message is: {exp_confirm_msg_add_resserve_ip}",
+                "Check popup confirm is not displayed",
+                "Check Condition 'Add icon change to delete icon' is correct"
+            ]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
-                f'Click add again -> Click OK -> Check add icon change to delete icon'
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
-                'Click add again -> Click OK -> Check add icon change to delete icon'
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         # Verify reserved IP in Network Lan
@@ -2548,17 +3265,27 @@ class HOME(unittest.TestCase):
 
             list_actual4 = [check_add_in_lan]
             list_expected4 = [return_true]
+            step_4_name = "4. Add reserved IP -> Check add successfully in Network Lan"
+            list_check_in_step_4 = ["Check Add reserved IP in network lan success"]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Add reserved IP -> Check add successfully in Network Lan'
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Add reserved IP -> Check add successfully in Network Lan'
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         # Delete Reserved IP, Check delete in Network LAN
@@ -2618,17 +3345,29 @@ class HOME(unittest.TestCase):
 
             list_actual5 = [check_confirm_delete_msg, check_add_in_lan]
             list_expected5 = [exp_confirm_msg_delete_resserve_ip, return_true]
+            step_5_6_7_name = "5,6,7. Delete reserved IP -> Check Delete successfully in Network Lan"
+            list_check_in_step_5_6_7 = [
+                "Check Delete reserved IP in network lan success"
+            ]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5,6,7. Delete reserved IP -> Check Delete successfully in Network Lan'
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_6_7_name,
+                    list_check_in_step=list_check_in_step_5_6_7,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 5,6,7. Delete reserved IP -> Check Delete successfully in Network Lan'
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_6_7_name,
+                    list_check_in_step=list_check_in_step_5_6_7,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             list_step_fail.append('5,6,7. Assertion wong.')
 
         # Connect Wifi
@@ -2645,17 +3384,27 @@ class HOME(unittest.TestCase):
 
             list_actual8 = [check_connect]
             list_expected8 = [wifi_2g_name]
+            step_8_0_name = "8.0 Connect wifi Successfully."
+            list_check_in_step_8_0 = [f"Check connected wifi name is: {wifi_2g_name}"]
             check = assert_list(list_actual8, list_expected8)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8.0 Connect wifi Successfully.'
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_8_0_name,
+                    list_check_in_step=list_check_in_step_8_0,
+                    list_actual=list_actual8,
+                    list_expected=list_expected8
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 8.0 Connect wifi Failure.'
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_8_0_name,
+                    list_check_in_step=list_check_in_step_8_0,
+                    list_actual=list_actual8,
+                    list_expected=list_expected8
+                )
+            )
             list_step_fail.append('8.0 Assertion wong.')
 
         try:
@@ -2677,17 +3426,27 @@ class HOME(unittest.TestCase):
 
             list_actual8 = [check_dialog_display]
             list_expected8 = [return_true]
+            step_8_1_name = "8.1. Click Edit; Check popup display."
+            list_check_in_step_8_1 = ["Check popup is displayed"]
             check = assert_list(list_actual8, list_expected8)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8.1. Click Edit; Check popup display.'
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_8_1_name,
+                    list_check_in_step=list_check_in_step_8_1,
+                    list_actual=list_actual8,
+                    list_expected=list_expected8
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 8.1. Click Edit; Check popup display. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_8_1_name,
+                    list_check_in_step=list_check_in_step_8_1,
+                    list_actual=list_actual8,
+                    list_expected=list_expected8
+                )
+            )
             list_step_fail.append('8.1. Assertion wong.')
 
         try:
@@ -2735,19 +3494,32 @@ class HOME(unittest.TestCase):
 
             list_actual9 = [check_confirm_msg, check_confirm_pop_disappear, check_delete_icon]
             list_expected9 = [exp_confirm_msg_add_resserve_ip, return_true, return_true]
+            step_8_2_name = "8.2. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. " \
+                            "Click add again -> Click OK -> Check add icon change to delete icon"
+            list_check_in_step_8_2 = [
+                f"Check confirm add reserved IP is: {exp_confirm_msg_add_resserve_ip}",
+                f"Check confirm add reserved IP is not displayed",
+                "Check Condition 'add icon change to delete icon' is correct"
+            ]
             check = assert_list(list_actual9, list_expected9)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8.2. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
-                f'Click add again -> Click OK -> Check add icon change to delete icon'
-                f'Actual: {str(list_actual9)}. '
-                f'Expected: {str(list_expected9)}')
+                generate_step_information(
+                    step_name=step_8_2_name,
+                    list_check_in_step=list_check_in_step_8_2,
+                    list_actual=list_actual9,
+                    list_expected=list_expected9
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 8.2. Check confirm add reserved IP msg, Click Cancel-> Check popup disappear. '
-                f'Click add again -> Click OK -> Check add icon change to delete icon'
-                f'Actual: {str(list_actual9)}. '
-                f'Expected: {str(list_expected9)}')
+                generate_step_information(
+                    step_name=step_8_2_name,
+                    list_check_in_step=list_check_in_step_8_2,
+                    list_actual=list_actual9,
+                    list_expected=list_expected9
+                )
+            )
             list_step_fail.append('8.2. Assertion wong.')
 
         try:
@@ -2773,17 +3545,29 @@ class HOME(unittest.TestCase):
 
             list_actual10 = [check_add_in_lan]
             list_expected10 = [return_true]
+            step_8_3_name = "8.3. Add reserved IP -> Check add successfully in Network Lan"
+            list_check_in_step_8_3 = [
+                "Check Add reserved IP success"
+            ]
             check = assert_list(list_actual10, list_expected10)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8.3. Add reserved IP -> Check add successfully in Network Lan'
-                f'Actual: {str(list_actual10)}. '
-                f'Expected: {str(list_expected10)}')
+                generate_step_information(
+                    step_name=step_8_3_name,
+                    list_check_in_step=list_check_in_step_8_3,
+                    list_actual=list_actual10,
+                    list_expected=list_expected10
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 8.3 reserved IP -> Check add successfully in Network Lan'
-                f'Actual: {str(list_actual10)}. '
-                f'Expected: {str(list_expected10)}')
+                generate_step_information(
+                    step_name=step_8_3_name,
+                    list_check_in_step=list_check_in_step_8_3,
+                    list_actual=list_actual10,
+                    list_expected=list_expected10
+                )
+            )
             list_step_fail.append('8.3. Assertion wong.')
 
         try:
@@ -2839,19 +3623,32 @@ class HOME(unittest.TestCase):
 
             list_actual11 = [check_confirm_delete_msg, check_add_in_lan]
             list_expected11 = [exp_confirm_msg_delete_resserve_ip, return_true]
+            step_8_4_name = "8.4. Delete reserved IP -> Check Delete successfully in Network Lan"
+            list_check_in_step_8_4 = [
+                f"Check confirm message delete reserved IP is: {exp_confirm_msg_delete_resserve_ip}",
+                "Check Delete reserved IP success"
+            ]
             check = assert_list(list_actual11, list_expected11)
             interface_connect_disconnect('Ethernet', 'Enable')
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8.4. Delete reserved IP -> Check Delete successfully in Network Lan'
-                f'Actual: {str(list_actual11)}. '
-                f'Expected: {str(list_expected11)}')
+                generate_step_information(
+                    step_name=step_8_4_name,
+                    list_check_in_step=list_check_in_step_8_4,
+                    list_actual=list_actual11,
+                    list_expected=list_expected11
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 8.4. Delete reserved IP -> Check Delete successfully in Network Lan'
-                f'Actual: {str(list_actual11)}. '
-                f'Expected: {str(list_expected11)}')
+                generate_step_information(
+                    step_name=step_8_4_name,
+                    list_check_in_step=list_check_in_step_8_4,
+                    list_actual=list_actual11,
+                    list_expected=list_expected11
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('8.4. Assertion wong.')
 
@@ -3352,16 +4149,27 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [check_dialog_display]
             list_expected1 = [return_true]
+            step_2_name = "2. Click Edit; Check popup display."
+            list_check_in_step_2 = ["Check popup is displayed"]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 2. Click Edit; Check popup display.'
-                                   f'Actual: {str(list_actual1)}. '
-                                   f'Expected: {str(list_expected1)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2. Click Edit; Check popup display. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('2. Assertion wong.')
 
         try:
@@ -3382,17 +4190,31 @@ class HOME(unittest.TestCase):
 
             list_actual3 = [parental_value, check_parental_api]
             list_expected3 = ['Off', False]
+            step_3_name = "3. Check Parental Control value in Web UI and API."
+            list_check_in_step_3 = [
+                f"Check Parental Control value in Web UI is: {list_expected3[0]}",
+                f"Check Parental Control value in API is: false",
+            ]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 3. Check Parental Control value in Web UI and API.'
-                                   f'Actual: {str(list_actual3)}. '
-                                   f'Expected: {str(list_expected3)}')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check Parental Control value in Web UI and API. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('3. Assertion wong.')
 
@@ -3459,19 +4281,32 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [check_device_active, check_device_number, disconnect_table_display]
             list_expected1 = [return_true] * 3
+            step_1_2_name = "1, 2. Login. Click Devices Image. " \
+                            "Check device image active, Check device number > 0, Check Disconnect table display. "
+            list_check_in_step_1_2 = [
+                "Check Device is active",
+                "Check Device number is correct",
+                "Check Disconnect table is displayed"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Click Devices Image. '
-                f'Check device image active, Check device number > 0, Check Disconnect table display. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Click Devices Image. '
-                f'Check device image active, Check device number > 0, Check Disconnect table display. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -3498,21 +4333,40 @@ class HOME(unittest.TestCase):
             list_expected2 = ['Disconnected Devices', return_true,
                               ['Device Name', 'MAC Address', 'Last Access Date', 'Block'],
                               [return_true]*5]
+            step_3_name = "3. Check client disconnected displayed: " \
+                          "Disconnected Devices text, Existed refresh button, List header text. " \
+                          "Check API: Connected value, Key id, name, mac, last connected. "
+            list_check_in_step_3 = [
+                f"Check card tab is: {list_expected2[0]}",
+                "Check button refresh is displayed",
+                f"Check list disconnect labels is: {list_expected2[2]}",
+                [
+                    "Check client id is not null",
+                    "Check res connected is false",
+                    "Check client name is not null",
+                    "Check client mac is not null",
+                    "Check client last connected is not null"
+                ]
+            ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Check client disconnected displayed: '
-                f'Disconnected Devices text, Existed refresh button, List header text. '
-                f'Check API: Connected value, Key id, name, mac, last connected. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check client disconnected displayed: '
-                f'Disconnected Devices text, Existed refresh button, List header text. '
-                f'Check API: Connected value, Key id, name, mac, last connected. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -3532,17 +4386,27 @@ class HOME(unittest.TestCase):
 
             list_actual4 = [get_current_wifi_name]
             list_expected4 = [ssid_2g]
+            step_5_name = "5. Connect wireless of DUT. Check connect wireless successfully. "
+            list_check_in_step_5 = [f"Check current wifi name is: {ssid_2g}"]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Connect wireless of DUT. Check connect wireless successfully. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 5. Connect wireless of DUT. Check connect wireless successfully. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             list_step_fail.append('5. Assertion wong.')
 
 
@@ -3556,17 +4420,27 @@ class HOME(unittest.TestCase):
 
             list_actual3 = [check_ethernet_disconnected]
             list_expected3 = [return_true]
+            step_4_name = "4. Disconnect Ethernet."
+            list_check_in_step_4 = ["Check Condition 'Ethernet is disconnected' is correct"]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Disconnect Ethernet. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Disconnect Ethernet. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -3597,22 +4471,41 @@ class HOME(unittest.TestCase):
             list_expected5 = ['Disconnected Devices', return_true,
                               ['Device Name', 'MAC Address', 'Last Access Date', 'Block'],
                               [return_true]*5]
+            step_6_name = "6. Check client disconnected displayed: " \
+                          "Disconnected Devices text, Existed refresh button, List header text. " \
+                          "Check API: Connected value, Key id, name, mac, last connected. "
+            list_check_in_step_6 = [
+                f"Check card tab is: {list_expected2[0]}",
+                "Check button refresh is displayed",
+                f"Check list disconnect labels is: {list_expected2[2]}",
+                [
+                    "Check client id is not null",
+                    "Check res connected is false",
+                    "Check client name is not null",
+                    "Check client mac is not null",
+                    "Check client last connected is not null"
+                ]
+            ]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Check client disconnected displayed: '
-                f'Disconnected Devices text, Existed refresh button, List header text. '
-                f'Check API: Connected value, Key id, name, mac, last connected. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 6. Check client disconnected displayed: '
-                f'Disconnected Devices text, Existed refresh button, List header text. '
-                f'Check API: Connected value, Key id, name, mac, last connected. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('6. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
@@ -3679,19 +4572,32 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [check_device_active, check_device_number, disconnect_table_display]
             list_expected1 = [return_true] * 3
+            step_1_2_name = "1, 2. Login. Click Devices Image. " \
+                            "Check device image active, Check device number > 0, Check Disconnect table display. "
+            list_check_in_step_1_2 = [
+                "Check device image is active",
+                "Check Condition 'Check device number > 0' is correct",
+                "Check Disconnect table is displayed"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Click Devices Image. '
-                f'Check device image active, Check device number > 0, Check Disconnect table display. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Click Devices Image. '
-                f'Check device image active, Check device number > 0, Check Disconnect table display. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -3703,19 +4609,32 @@ class HOME(unittest.TestCase):
             list_actual2 = [disconnect_device_text, btn_refresh_display, list_disconnect_label]
             list_expected2 = ['Disconnected Devices', return_true,
                               ['Device Name', 'MAC Address', 'Last Access Date', 'Block']]
+            step_3_name = "3. Check client disconnected displayed: " \
+                          "Disconnected Devices text, Existed refresh button, List header text. "
+            list_check_in_step_3 = [
+                "Check label Disconnected Devices is correct",
+                "Check Button refresh is displayed",
+                f"Check List disconnect label is: {list_expected2[2]}"
+            ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Check client disconnected displayed: '
-                f'Disconnected Devices text, Existed refresh button, List header text. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check client disconnected displayed: '
-                f'Disconnected Devices text, Existed refresh button, List header text. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -3731,17 +4650,27 @@ class HOME(unittest.TestCase):
 
             list_actual3 = [check_block_enable]
             list_expected3 = [return_true]
+            step_4_name = "4. Enabled all block. "
+            list_check_in_step_4 = ["Check Block button is enabled"]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Enabled all block. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 4. Enabled all block. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -3755,19 +4684,29 @@ class HOME(unittest.TestCase):
 
             list_actual4 = [check_connect_wireless]
             list_expected4 = [True]
+            step_5_name = "5. Connect wireless of DUT. Check can not wireless. "
+            list_check_in_step_5 = ["Check Condition 'Can not access to internet' is correct"]
             check = assert_list(list_actual4, list_expected4)
             interface_connect_disconnect('Ethernet', 'enable')
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Connect wireless of DUT. Check can not wireless. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 5. Connect wireless of DUT. Check can not wireless. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong.')
 
@@ -3849,20 +4788,49 @@ class HOME(unittest.TestCase):
 
             list_actual3 = [expected_api, expected_web]
             list_expected3 = [[return_true]*7]*2
+            step_1_2_name = "1, 2. Login. Check WAN api (Connectivity is disconnected, mode, address, subnet, " \
+                            "gateway, dns1, dns2). Web UI (Wan Type is Ethernet, Connection Type, Wan IP, " \
+                            "Subnet Mask, Gateway, DNS server 1, DNS server 2). "
+            list_check_in_step_1_2 = [
+                [
+                    "Check api Condition 'connectivity is disconnected' is correct",
+                    "Check api Condition 'mode is dynamic' is correct",
+                    "Check api Condition 'address is -' is correct",
+                    "Check api Condition 'subnet is -' is correct",
+                    "Check api Condition 'gateway is -' is correct",
+                    "Check api Condition 'DNS Server 1 is -' is correct"
+                    "Check api Condition 'DNS Server 2 is -' is correct"
+                ],
+                [
+                    "Check UI Condition 'Wan Type in list (Ethernet / USB Broadband / Android Tethering)' is correct",
+                    "Check UI Condition 'Connection Type in list (Dynamic IP / Satatic IP / PPPoE)' is correct",
+                    "Check UI Condition 'WAN IP Address is 0.0.0.0' is correct",
+                    "Check UI Condition 'Subnet Mask is 0.0.0.0' is correct",
+                    "Check UI Condition 'Gateway is 0.0.0.0' is correct",
+                    "Check UI Condition 'DNS Server 1 is 0.0.0.0' is correct"
+                    "Check UI Condition 'DNS Server 2 is 0.0.0.0' is correct"
+                ]
+            ]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Check WAN api (Connectivity is disconnected, mode, address, subnet, gateway, dns1, dns2). '
-                f'Web UI (Wan Type is Ethernet, Connection Type, Wan IP, Subnet Mask, Gateway, DNS server 1, DNS server 2). '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Check WAN api (Connectivity is disconnected, mode, address, subnet, gateway, dns1, dns2). '
-                f'Web UI (Wan Type is Ethernet, Connection Type, Wan IP, Subnet Mask, Gateway, DNS server 1, DNS server 2). '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('1, 2. Assertion wong')
 
@@ -3914,17 +4882,27 @@ class HOME(unittest.TestCase):
 
             list_actual0 = [res['name']]
             list_expected0 = [repeater_name]
+            step_0_name = "Precondition successfully. Check Upper name. "
+            list_check_in_step_0 = [f"Check Upper name is: {repeater_name}"]
             check = assert_list(list_actual0, list_expected0)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] Precondition successfully. Check Upper name. '
-                f'Actual: {str(list_actual0)}. '
-                f'Expected: {str(list_expected0)}')
+                generate_step_information(
+                    step_name=step_0_name,
+                    list_check_in_step=list_check_in_step_0,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Faill] Precondition Fail. Check Upper name. '
-                f'Actual: {str(list_actual0)}. '
-                f'Expected: {str(list_expected0)}')
+                generate_step_information(
+                    step_name=step_0_name,
+                    list_check_in_step=list_check_in_step_0,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
             list_step_fail.append('0. Precondition wong')
 
         try:
@@ -3936,17 +4914,27 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [check_home]
             list_expected1 = [return_true]
+            step_1_name = "1. Login. Check Home page is displayed."
+            list_check_in_step_1 = ["Check Home page is displayed"]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1. Login. Check Home page is displayed. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1. Login. Check Home page is displayed. . '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1. Assertion wong')
 
         try:
@@ -3958,18 +4946,33 @@ class HOME(unittest.TestCase):
 
             list_actual2 = [check_wan_img, check_router_img, check_usb_img, check_device]
             list_expected2 = [return_true] * 4
+            step_2_name = "2. Check Network map image: WAN, Router and Wireless, USB, Device image. "
+            list_check_in_step_2 = [
+                "Check WAN image is displayed",
+                "Check Router & Wireless image is displayed",
+                "Check USB image is displayed",
+                "Check Connected Devices image is displayed"
+            ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2. Check Network map image: WAN, Router and Wireless, USB, Device image. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Check Network map image: WAN, Router and Wireless, USB, Device image. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('2. Assertion wong.')
 
@@ -4024,17 +5027,27 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [check_home]
             list_expected1 = [return_true]
+            step_1_name = "1. Login. Check Home page is displayed. "
+            list_check_in_step_1 = ["Check Home page is displayed"]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1. Login. Check Home page is displayed. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1. Login. Check Home page is displayed. . '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1. Assertion wong')
 
         try:
@@ -4048,21 +5061,30 @@ class HOME(unittest.TestCase):
 
             list_actual2 = [check_wan_image_highlight, check_host_network_table]
             list_expected2 = [return_true] * 2
+            step_2_1_name = "2.1 Click WAN image. Check WAN image highlight. Host Network table displayed. "
+            list_check_in_step_2_1 = [
+                "Check WAN image is highlight",
+                "Check Host Network table is displayed"
+            ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2.1 Click WAN image. '
-                f'Check WAN image highlight. '
-                f'Host Network table displayed. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_1_name,
+                    list_check_in_step=list_check_in_step_2_1,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2.1 Click WAN image. '
-                f'Check WAN image highlight. '
-                f'Host Network table displayed. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_1_name,
+                    list_check_in_step=list_check_in_step_2_1,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('2.1 Assertion wong.')
 
         try:
@@ -4100,17 +5122,38 @@ class HOME(unittest.TestCase):
             list_expected3 = ['Host Network',
                               ['Connection status', 'Signal Strength', 'Network Name(SSID)', 'Security', 'Password', 'MAC Address'],
                               [return_true]*6]
+            step_2_2_name = "2.2 Check WebUI Host network component. Title, List Sub title, Values of subtitle. "
+            list_check_in_step_2_2 = [
+                "Check host network title is displayed",
+                f"Check Sub title is: {list_expected3[1]}",
+                [
+                    "Check Condition 'Connection status is Connected (2.4GHz) or Connected (5GHz)'",
+                    "Check Signal Strength is not null",
+                    "Check Network name is not null",
+                    "Check Security is not null",
+                    f"Check Condition 'password is: {repeater_pw}' is correct",
+                    "Check Format of BSSID is valid"
+                ]
+            ]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2.2 Check WebUI Host network component. Title, List Sub title, Values of subtitle. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_2_2_name,
+                    list_check_in_step=list_check_in_step_2_2,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2.2 Check WebUI Host network component. Title, List Sub title, Values of subtitle. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_2_2_name,
+                    list_check_in_step=list_check_in_step_2_2,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('2.2 Assertion wong.')
 
         try:
@@ -4137,20 +5180,37 @@ class HOME(unittest.TestCase):
 
             list_actual4 = check_has_key
             list_expected4 = [return_true]*7
+            step_2_3_name = "2.3 Check API Host network component: " \
+                            "qmode, operation, connection, ssid, securityType, pw, status. "
+            list_check_in_step_2_3 = [
+                "Check Condition 'qmode is extender' is correct",
+                "Check Condition 'operation is mesh slave' is correct",
+                "Check Connection is not null",
+                "Check ssid is not null",
+                "Check securityType is not null",
+                "Check password is not null",
+                "Check status is not null",
+            ]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2.3 Check API Host network component: '
-                f'qmode, operation, connection, ssid, securityType, pw, status. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_2_3_name,
+                    list_check_in_step=list_check_in_step_2_3,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2.3 Check API Host network component: '
-                f'qmode, operation, connection, ssid, securityType, pw, status. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_2_3_name,
+                    list_check_in_step=list_check_in_step_2_3,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('2.3 Assertion wong.')
 
@@ -4185,17 +5245,27 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             list_actual0 = [res['name']]
             list_expected0 = [repeater_name]
+            step_0_name = "Precondition successfully. Check Upper name. "
+            list_check_in_step_0 = [f"Check Upper name is: {repeater_name}"]
             check = assert_list(list_actual0, list_expected0)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] Precondition successfully. Check Upper name. '
-                f'Actual: {str(list_actual0)}. '
-                f'Expected: {str(list_expected0)}')
+                generate_step_information(
+                    step_name=step_0_name,
+                    list_check_in_step=list_check_in_step_0,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Faill] Precondition Fail. Check Upper name. '
-                f'Actual: {str(list_actual0)}. '
-                f'Expected: {str(list_expected0)}')
+                generate_step_information(
+                    step_name=step_0_name,
+                    list_check_in_step=list_check_in_step_0,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
             list_step_fail.append('0. Precondition wong')
 
         try:
@@ -4207,17 +5277,27 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [check_home]
             list_expected1 = [return_true]
+            step_1_name = "1. Login. Check Home page is displayed. "
+            list_check_in_step_1 = ["Check Home page is displayed"]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1. Login. Check Home page is displayed. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1. Login. Check Home page is displayed. . '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1. Assertion wong')
 
         try:
@@ -4229,17 +5309,27 @@ class HOME(unittest.TestCase):
 
             list_actual2 = [check_lan_image_highlight]
             list_expected2 = [return_true]
+            step_2_1_name = "2.1 Click LAN image. Check LAN image highlight active. "
+            list_check_in_step_2_1 = ["Check LAN image is highlight"]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2.1 Click LAN image. Check LAN image highlight active. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_1_name,
+                    list_check_in_step=list_check_in_step_2_1,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2.1 Click LAN image. Check LAN image highlight active. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_1_name,
+                    list_check_in_step=list_check_in_step_2_1,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('2.1 Assertion wong.')
 
         try:
@@ -4255,17 +5345,30 @@ class HOME(unittest.TestCase):
             list_actual3 = [lan_label_ipv4, lan_label_ipv6]
             list_expected3 = [['LAN IP Address', 'Subnet Mask', 'DHCP Server', 'MAC Address'],
                               ['LAN IPv6 Address', 'Prefix Length', 'Assigned Type', 'MAC Address']]
+            step_2_3_name = "2.2 Check LAN card component. Label text of IPv4 and IPv6. "
+            list_check_in_step_2_3 = [
+                "Check list lan label for ipv4 is correct",
+                "Check list lan label for ipv6 is correct"
+            ]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2.2 Check LAN card component. Label text of IPv4 and IPv6. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_2_3_name,
+                    list_check_in_step=list_check_in_step_2_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2.2 Check LAN card component. Label text of IPv4 and IPv6. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_2_3_name,
+                    list_check_in_step=list_check_in_step_2_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('2.2 Assertion wong.')
 
         try:
@@ -4281,55 +5384,88 @@ class HOME(unittest.TestCase):
             list_actual4 = [wireless_label_ipv4, wireless_label_ipv6]
             list_expected4 = [['Network Name(SSID)', 'Security', 'Password', 'MAC Address'],
                               ['Network Name(SSID)', 'Security', 'Password', 'MAC Address']]
+            step_2_3_name = "2.3 Check Wireless card component. Label text of 2.4GHz and 5GHz. "
+            list_check_in_step_2_3 = [
+                "Check Label text of 2.4GHz is correct",
+                "Check Label text of 5GHz is correct"
+            ]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2.3 Check Wireless card component. Label text of 2.4GHz and 5GHz. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_2_3_name,
+                    list_check_in_step=list_check_in_step_2_3,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2.3 Check Wireless card component. Label text of 2.4GHz and 5GHz. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_2_3_name,
+                    list_check_in_step=list_check_in_step_2_3,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             list_step_fail.append('2.3 Assertion wong.')
 
         try:
             information_block = driver.find_element_by_css_selector(ele_information_card)
             information_label = [i.text for i in information_block.find_elements_by_css_selector(label_name_in_2g)]
 
-            list_actual5 = information_label
-            list_expected5 = ['Model Name', 'Serial Number', 'Firmware Version', 'Build Time', 'Operation Time']
+            list_actual5 = [information_label]
+            list_expected5 = [['Model Name', 'Serial Number', 'Firmware Version', 'Build Time', 'Operation Time']]
+            step_2_4_name = "2.4 Check Information card component. Check Information Label text. "
+            list_check_in_step_2_4 = ["Check Information Label text is correct"]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2.4 Check Information card component. Check Information Label text. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_2_4_name,
+                    list_check_in_step=list_check_in_step_2_4,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2.4 Check Information card component. Check Information Label text. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_2_4_name,
+                    list_check_in_step=list_check_in_step_2_4,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             list_step_fail.append('2.4 Assertion wong.')
 
         try:
             ethernet_status_block = driver.find_element_by_css_selector(ele_ethernet_port_status)
             ethernet_label = [i.text for i in ethernet_status_block.find_elements_by_css_selector(label_name_in_2g)]
 
-            list_actual6 = ethernet_label
-            list_expected6 = ['Internet Port', 'LAN Port 1', 'LAN Port 2', 'LAN Port 3', 'LAN Port 4']
+            list_actual6 = [ethernet_label]
+            list_expected6 = [['Internet Port', 'LAN Port 1', 'LAN Port 2', 'LAN Port 3', 'LAN Port 4']]
+            step_2_5_name = "2.5 Check Ethernet Port Status card component. Check Ethernet Port Status Label text. "
+            list_check_in_step_2_5 = ["Check Ethernet Port Status label are: Internet Port, LAN Port 1,2,3,4"]
             check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2.5 Check Ethernet Port Status card component. Check Ethernet Port Status Label text. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_2_5_name,
+                    list_check_in_step=list_check_in_step_2_5,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2.5 Check Ethernet Port Status card component. Check Ethernet Port Status Label text. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_2_5_name,
+                    list_check_in_step=list_check_in_step_2_5,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6
+                )
+            )
             list_step_fail.append('2.5 Assertion wong.')
 
         try:
@@ -4358,19 +5494,40 @@ class HOME(unittest.TestCase):
                             check_has_key]
             list_expected7 = [['Core1', 'Core2', return_true],
                               [return_true] *4]
+            step_2_6_name = "2.6 Check CPU Status card: Check Label text, Chart display. " \
+                            "API: Check Name and Percent of Core 1 and Core 2'"
+            list_check_in_step_2_6 = [
+                [
+                    "Check CPU core 1 label is correct",
+                    "Check CPU core 1 label is correct",
+                    "Check CPU chart is displayed"
+                ],
+                [
+                    "Check api Condition 'name of core 1 is Core 1' is correct",
+                    "Check api percentage of Core 1 is not null",
+                    "Check api Condition 'name of core 2 is Core 2' is correct",
+                    "Check api percentage of Core 2 is not null",
+                ]
+            ]
             check = assert_list(list_actual7, list_expected7)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2.6 Check CPU Status card: Check Label text, Chart display. '
-                f'API: Check Name and Percent of Core 1 and Core 2'
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_2_6_name,
+                    list_check_in_step=list_check_in_step_2_6,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2.6 Check CPU Status card: Check Label text, Chart display. '
-                f'API: Check Name and Percent of Core 1 and Core 2. '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_2_6_name,
+                    list_check_in_step=list_check_in_step_2_6,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
             list_step_fail.append('2.6 Assertion wong.')
 
         try:
@@ -4393,24 +5550,39 @@ class HOME(unittest.TestCase):
                 res3.get('free') is not None
             ]
 
-            list_actual8 = [[memory_label, memory_chart_displayed],
+            list_actual8 = [memory_label, memory_chart_displayed,
                             check_has_key_memory]
-            list_expected8 = [[['Free Memory', 'Total Memory'], return_true],
+            list_expected8 = [['Free Memory', 'Total Memory'], return_true,
                               [return_true] *2]
+            step_2_7_name = "2.7 Check Memory Status card: Check Label text, Chart display. API: Check Total and Free. "
+            list_check_in_step_2_7 = [
+                "Check memory label is correct",
+                "Check memory chart is displayed",
+                [
+                    "Check api get memory total is not null",
+                    "Check api get memory free is not null",
+                ]
+            ]
             check = assert_list(list_actual8, list_expected8)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2.7 Check Memory Status card: Check Label text, Chart display. '
-                f'API: Check Total and Free. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_2_7_name,
+                    list_check_in_step=list_check_in_step_2_7,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2.7 Check Memory Status card: Check Label text, Chart display. '
-                f'API: Check Total and Free. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_2_7_name,
+                    list_check_in_step=list_check_in_step_2_7,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('2.7 Assertion wong.')
         self.assertListEqual(list_step_fail, [])
@@ -4442,17 +5614,27 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             list_actual0 = [res['name']]
             list_expected0 = [repeater_name]
+            step_0_name = "1, 2. Get result by command success."
+            list_check_in_step_0 = ["Get result by command success"]
             check = assert_list(list_actual0, list_expected0)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] Precondition successfully. Check Upper name. '
-                f'Actual: {str(list_actual0)}. '
-                f'Expected: {str(list_expected0)}')
+                generate_step_information(
+                    step_name=step_0_name,
+                    list_check_in_step=list_check_in_step_0,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Faill] Precondition Fail. Check Upper name. '
-                f'Actual: {str(list_actual0)}. '
-                f'Expected: {str(list_expected0)}')
+                generate_step_information(
+                    step_name=step_0_name,
+                    list_check_in_step=list_check_in_step_0,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
             list_step_fail.append('0. Precondition wong')
 
         try:
@@ -4464,17 +5646,27 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [check_home]
             list_expected1 = [return_true]
+            step_1_name = "1. Login. Check Home page is displayed. "
+            list_check_in_step_1 = ["Check Home page is displayed"]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1. Login. Check Home page is displayed. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1. Login. Check Home page is displayed. . '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1. Assertion wong')
 
         try:
@@ -4487,17 +5679,27 @@ class HOME(unittest.TestCase):
 
             list_actual2 = [check_usb_image_highlight]
             list_expected2 = [return_true]
+            step_2_1_name = "2.1 Click USB image. Check USB image highlight. "
+            list_check_in_step_2_1 = ["Check USB image is highlight"]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2.1 Click USB image. Check USB image highlight. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_1_name,
+                    list_check_in_step=list_check_in_step_2_1,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2.1 Click WAN image. Check WAN image highlight. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_1_name,
+                    list_check_in_step=list_check_in_step_2_1,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('2.1 Assertion wong.')
 
         try:
@@ -4517,19 +5719,35 @@ class HOME(unittest.TestCase):
                             total_size_text, button_text, icon_fab_displayed]
             list_expected3 = ['Device Name', return_true, return_true,
                               'Total Size', 'Remove', return_true]
+            step_2_2_name = "[Pass] 2.2 Check USB card component. Device name text, Graph displayed, " \
+                            "Available Space displayed, Total Size label text, button remove text, icon fab displayed. "
+            list_check_in_step_2_2 = [
+                "Check Device name text correct",
+                "Check Graph is displayed",
+                "Check Available Space is displayed",
+                "Check label total size is correct",
+                "Check text of button remove is remove",
+                "Check icon fab is displayed"
+            ]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2.2 Check USB card component. Device name text, Graph displayed, Available Space displayed, '
-                f'Total Size label text, button remove text, icon fab displayed. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_2_2_name,
+                    list_check_in_step=list_check_in_step_2_2,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2.2 Check USB card component. Device name text, Graph displayed, Available Space displayed, '
-                f'Total Size label text, button remove text, icon fab displayed. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_2_2_name,
+                    list_check_in_step=list_check_in_step_2_2,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             list_step_fail.append('2.2 Assertion wong.')
 
         try:
@@ -4553,17 +5771,33 @@ class HOME(unittest.TestCase):
 
             list_actual4 = check_has_key
             list_expected4 = [return_true]*5
+            step_2_3_name = "2.3 Check API USB component: usb, id, name, available, total. "
+            list_check_in_step_2_3 = [
+                "Check api response of get usbs information is not null",
+                "Check api response information usbs id is not null",
+                "Check api response information usbs name is not null",
+                "Check api response information usbs available is not null",
+                "Check api response information usbs total is not null",
+            ]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2.3 Check API USB component: usb, id, name, available, total. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_2_3_name,
+                    list_check_in_step=list_check_in_step_2_3,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2.3 Check API USB component: usb, id, name, available, total. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_2_3_name,
+                    list_check_in_step=list_check_in_step_2_3,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             list_step_fail.append('2.3 Assertion wong.')
 
         try:
@@ -4575,18 +5809,31 @@ class HOME(unittest.TestCase):
 
             list_actual5 = [label_servers_text, icon_fab_server_displayed]
             list_expected5 = [['FTP Server', 'Windows Network (Samba)', 'Media Server (DLNA)'], return_true]
+            step_2_4_name = "2.4 Check Server card component. List label text and icon fab displayed. "
+            list_check_in_step_2_4 = [
+                "Check label server text is correct",
+                "Check Icon fab is displayed"
+            ]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2.4 Check Server card component. List label text and icon fab displayed. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_2_4_name,
+                    list_check_in_step=list_check_in_step_2_4,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2.4 Check Server card component. List label text and icon fab displayed. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_2_4_name,
+                    list_check_in_step=list_check_in_step_2_4,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('2.4 Assertion wong.')
         self.assertListEqual(list_step_fail, [])
@@ -4618,17 +5865,27 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             list_actual0 = [res['name']]
             list_expected0 = [repeater_name]
+            step_0_name = "Precondition successfully. Check Upper name. "
+            list_check_in_step_0 = [f"Check Upper name is: {repeater_name}"]
             check = assert_list(list_actual0, list_expected0)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] Precondition successfully. Check Upper name. '
-                f'Actual: {str(list_actual0)}. '
-                f'Expected: {str(list_expected0)}')
+                generate_step_information(
+                    step_name=step_0_name,
+                    list_check_in_step=list_check_in_step_0,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Faill] Precondition Fail. Check Upper name. '
-                f'Actual: {str(list_actual0)}. '
-                f'Expected: {str(list_expected0)}')
+                generate_step_information(
+                    step_name=step_0_name,
+                    list_check_in_step=list_check_in_step_0,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
             list_step_fail.append('0. Precondition wong')
 
         try:
@@ -4640,17 +5897,27 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [check_home]
             list_expected1 = [return_true]
+            step_1_name = "1. Login. Check Home page is displayed. "
+            list_check_in_step_1 = ["Check Home page is displayed"]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1. Login. Check Home page is displayed. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1. Login. Check Home page is displayed. . '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1. Assertion wong')
 
         try:
@@ -4660,18 +5927,28 @@ class HOME(unittest.TestCase):
 
             list_actual2 = [check_device_image_highlight]
             list_expected2 = [return_true]
+            step_2_name = "2. Check Device image is disabled"
+            list_check_in_step_2 = ["Check Device image is disabled"]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2. Check Device image is disabled. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Check Device image is disabled. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('2. Assertion wong.')
 
@@ -4683,15 +5960,15 @@ class HOME(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        # save_config(config_path, 'URL', 'url', 'http://dearmyextender.net')
-        # save_config(config_path, 'URL', 'user', 'admin')
-        # save_config(config_path, 'URL', 'password', get_config('COMMON', 'new_pw', input_data_path))
+        factory_dut()
         try:
             repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
             repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
             grand_login(driver)
+            wait_visible(driver, home_view_wrap)
             time.sleep(2)
             goto_menu(driver, network_tab, network_operationmode_tab)
+            wait_popup_disappear(driver, dialog_loading)
             # connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw, force=True)
             connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
             wait_ethernet_available()
@@ -4708,17 +5985,27 @@ class HOME(unittest.TestCase):
             time.sleep(1)
             list_actual0 = [res['name']]
             list_expected0 = [repeater_name]
+            step_1_2_name = "1, 2. Get result by command success."
+            list_check_in_step_1_2 = ["Get result by command success"]
             check = assert_list(list_actual0, list_expected0)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] Precondition successfully. Check Upper name. '
-                f'Actual: {str(list_actual0)}. '
-                f'Expected: {str(list_expected0)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] Precondition Fail. Check Upper name. '
-                f'Actual: {str(list_actual0)}. '
-                f'Expected: {str(list_expected0)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
             list_step_fail.append('0. Precondition wong')
 
         try:
@@ -4741,17 +6028,27 @@ class HOME(unittest.TestCase):
 
             list_actual1 = [check_device_page]
             list_expected1 = [return_true]
+            step_1_name = "1. Login. Click to Device Image. Check Device Connection page is displayed. "
+            list_check_in_step_1 = ["Check Device Connection page is displayed"]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1. Login. Click to Device Image. Check Device Connection page is displayed. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1. Login. Click to Device Image. Check Device Connection page is displayed. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1. Assertion wong')
 
         try:
@@ -4784,17 +6081,36 @@ class HOME(unittest.TestCase):
             list_actual2 = [check_icon_dot, check_interfaces, check_macs, check_ips,
                             check_upgrade_button, check_version, check_edit_btn]
             list_expected2 = [return_true] * 7
+            step_2_name = "2. Check Dot icon of Mesh; Interfaces is Wireless and Lan " \
+                          "Port; MAC; IP; Upgrade btn; Version; Edit button displayed. "
+            list_check_in_step_2 = [
+                "Check Dot icon of Mesh is displayed",
+                "Check Condition 'Interfaces is start with Wireless or Lan' is correct",
+                "Check Format of MAC address is valid",
+                "Check Format of IP address is valid",
+                "Check Upgrade button is displayed",
+                "Check Version is displayed",
+                "Check Edit button is displayed",
+            ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                '[Pass] 2. Check Dot icon of Mesh; Interfaces is Wireless and Lan Port; MAC; IP; Upgrade btn; Version; Edit button displayed. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 2. Check Dot icon of Mesh; Interfaces is Wireless and Lan Port; MAC; IP; Upgrade btn; Version; Edit button displayed. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
+                )
+            )
             list_step_fail.append('2. Assertion wong.')
 
         try:
@@ -4814,18 +6130,28 @@ class HOME(unittest.TestCase):
 
             list_actual3 = [current_url]
             list_expected3 = ['http://'+get_ip + '/']
+            step_3_name = "3. Click to Upper Ip address link. Check URL. "
+            list_check_in_step_3 = [f"Check current URL is: {list_expected3[0]}"]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Click to Upper Ip address link. Check URL. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Click to Upper Ip address link. Check URL. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('3. Assertion wong.')
 
@@ -4938,25 +6264,39 @@ class HOME(unittest.TestCase):
 
             check_card_title = card.find_element_by_css_selector(title_tabs_cls).text
             check_icon_more = len(card.find_elements_by_css_selector(home_icon_fab)) > 0
-
+            factory_dut()
             list_actual4 = [ls_label, get_connection_type, check_card_title, check_icon_more]
             list_expected4 = [['WAN Type', 'Connection Type', 'WAN IP Address', 'Subnet Mask',
                                'Gateway', 'DNS Server 1', 'DNS Server 2'], 'PPPoE', 'Internet', True
                               ]
+            step_2_name = "2. Set to PPPoE. Click to WAN image. " \
+                          "Check list label, Check Connection Type, Card title, Icon more. "
+            list_check_in_step_2 = [
+                "Check list label is correct",
+                "Check connection type is: PPPoE",
+                "Check card title is: Internet",
+                "Check icon more is displayed"
+            ]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2. Set to PPPoE. Click to WAN image. '
-                f'Check list label, Check Connection Type, Card title, Icon more. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 2. Set to PPPoE. Click to WAN image. '
-                f'Check list label, Check Connection Type, Card title, Icon more. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('2.  Assertion wong')
 
@@ -5019,20 +6359,37 @@ class HOME(unittest.TestCase):
             list_actual1 = [check_device_name, check_device_type_image, check_device_type,
                             check_device_mac, check_device_ip, check_device_interface, check_label]
             list_expected1 = [return_true] * 6 + [['Reserved IP', 'MAC Filtering', 'Parental Control', 'WoL (Wake on LAN)']]
+            step_1_2_name = "1, 2. Goto Device image. Click Edit of Mesh Network. " \
+                            "Check Device name, Device, Type image, Device Type, MAC address, IP address, Interface and List Labels."
+            list_check_in_step_1_2 = [
+                "Check Condition 'Device name start with DESKTOP' is correct",
+                "Check device type image is appear",
+                "Check device type is appear",
+                "Check format mac address is valid",
+                "Check format id address is valid",
+                "Check Condition 'Device interface start with Lan port' is correct",
+                "Check list label is correct"
+            ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Goto Device image. Click Edit of Mesh Network. '
-                f'Check Device name, Device, Type image, Device Type, MAC address, IP address, Interface and List Labels. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail]  1, 2. Goto Device image. Click Edit of Mesh Network. '
-                f'Check Device name, Device, Type image, Device Type, MAC address, IP address, Interface and List Labels. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_1_2,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('1. Assertion wong')
 
