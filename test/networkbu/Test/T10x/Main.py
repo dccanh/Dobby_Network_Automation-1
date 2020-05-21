@@ -2794,6 +2794,7 @@ class MAIN(unittest.TestCase):
                 f"Title change password page is: {text_change_pw_page_title}",
                 f"Change password message is: {exp_change_pw_msg}",
                 "Default login id is: admin",
+                "List label is correct",
                 "List placeholder is correct"
             ]
             check = assert_list(list_actual2, list_expected2)
