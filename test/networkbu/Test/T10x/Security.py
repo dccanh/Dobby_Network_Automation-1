@@ -219,11 +219,9 @@ class SECURITY(unittest.TestCase):
             list_actual4 = [check_page_security]
             list_expected4 = [return_true]
             check = assert_list(list_actual4, list_expected4)
-            # self.assertTrue(check["result"])
-            # self.list_steps.append('[Pass] 6. Input valid code. Check page Security displayed. '
-            #                        f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+
             step_6_name = '''6. Input a valid parental code'''
-            list_check_in_step_6 = ['Check page Security displayed.']
+            list_check_in_step_6 = ['Check page Security is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -457,8 +455,8 @@ class SECURITY(unittest.TestCase):
             #     f'Check confirm message. Click OK. Check popup parental create code display. '
             #     f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
             step_7_name = '''7. Enable Parental Code, then input code to reset parental code : !@#$ then click OK button'''
-            list_check_in_step_7 = ['Check confirm message.',
-                                    'Check popup parental create code is displayed.']
+            list_check_in_step_7 = ['Check confirm message',
+                                    'Check popup parental create code is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -504,7 +502,7 @@ class SECURITY(unittest.TestCase):
             step_8_name = '''8. Input New Parental Code
                             Input Retype New Parental Code
                             - Click OK'''
-            list_check_in_step_8 = ['Check popup login parental is displayed.']
+            list_check_in_step_8 = ['Check popup login parental is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -545,7 +543,7 @@ class SECURITY(unittest.TestCase):
             #     f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
             step_9_name = '''9. Refresh the parental control page and input the new parental code in step8
                             - Click OK, then check page display'''
-            list_check_in_step_9 = ['CheckThe "Parental Control" page should be displayed.']
+            list_check_in_step_9 = ['CheckThe "Parental Control" page should be displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -1123,15 +1121,15 @@ class SECURITY(unittest.TestCase):
                 list_check_in_step_2 = [['Check can not access http://facebook.com: not access',
                                          'Check can not access https://facebook.com: not access',
                                          'Check can not access http://google.com: not access',
-                                         'Check can not access https://google.com: not access.'],
+                                         'Check can not access https://google.com: not access'],
                                         ['Check can access http://facebook.com: access',
                                          'Check can access https://facebook.com: access',
                                          'Check can access http://google.com: access',
-                                         'Check can access https://google.com: access.'],
+                                         'Check can access https://google.com: access'],
                                         ['Check can not access http://facebook.com:not access',
                                          'Check can not access https://facebook.com:not access',
                                          'Check can not access http://google.com:not access',
-                                         'Check can not access https://google.com:not access.']
+                                         'Check can not access https://google.com:not access']
                                         ]
                 self.assertTrue(check["result"])
                 self.list_steps.append(
@@ -1192,7 +1190,7 @@ class SECURITY(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
 
             step_1_2_name = '1, 2. Go to Security > Parental Control, enable the Parental Control function and set a parental code.'
-            list_check_in_step_1_2 = ['Security > Parental Control page should be displayed.']
+            list_check_in_step_1_2 = ['Security > Parental Control page should be displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -1636,7 +1634,7 @@ class SECURITY(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
 
             step_1_2_name = '1, 2. Go to Security > Parental Control, enable the Parental Control function and set a parental code.'
-            list_check_in_step_1_2 = ['Security > Parental Control page should be displayed.']
+            list_check_in_step_1_2 = ['Security > Parental Control page should be displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -2004,7 +2002,7 @@ class SECURITY(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
 
             step_1_2_name = '1, 2. Go to Security > Parental Control, enable the Parental Control function and set a parental code.'
-            list_check_in_step_1_2 = ['Security > Parental Control page should be displayed.']
+            list_check_in_step_1_2 = ['Security > Parental Control page should be displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -2269,7 +2267,7 @@ class SECURITY(unittest.TestCase):
             list_expected1 = ['Security > Filtering']
             check = assert_list(list_actual1, list_expected1)
             step_1_2_name = '1, 2. Access and Login. Go to home page > Security > Filtering.'
-            list_check_in_step_1_2 = ['Security > Filtering page should be displayed.']
+            list_check_in_step_1_2 = ['Security > Filtering page should be displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -2440,7 +2438,7 @@ class SECURITY(unittest.TestCase):
             list_expected1 = ['Security > Filtering']
             check = assert_list(list_actual1, list_expected1)
             step_1_2_name = '1, 2. Access and Login. Go to Homepage > Security > Filtering page.'
-            list_check_in_step_1_2 = ['Check page Security > Filtering is displayed.']
+            list_check_in_step_1_2 = ['Check page Security > Filtering is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -2489,7 +2487,7 @@ class SECURITY(unittest.TestCase):
                                     'Check Description',
                                     'Check IP address',
                                     'Check Start - End port',
-                                    'Check Protocol type.']
+                                    'Check Protocol type']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -2653,7 +2651,7 @@ class SECURITY(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
 
             step_1_2_name = '1, 2. Access and Login. Go to Homepage > Security > Filtering page.'
-            list_check_in_step_1_2 = ['Check page Security > Filtering is displayed.']
+            list_check_in_step_1_2 = ['Check page Security > Filtering is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -3005,7 +3003,7 @@ class SECURITY(unittest.TestCase):
             list_expected1 = ['Security > Filtering']
             check = assert_list(list_actual1, list_expected1)
             step_1_2_name = '1, 2. Access and Login. Go to Homepage > Security > Filtering page.'
-            list_check_in_step_1_2 = ['Check page Security > Filtering is displayed.']
+            list_check_in_step_1_2 = ['Check page Security > Filtering is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -3251,7 +3249,7 @@ class SECURITY(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
 
             step_1_2_name = '1, 2. Access and Login.  Go to Home page > Security > Security Check.'
-            list_check_in_step_1_2 = ['Check page Security > Filtering is displayed.']
+            list_check_in_step_1_2 = ['Check page Security > Filtering is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -3706,7 +3704,7 @@ class SECURITY(unittest.TestCase):
             list_check_in_step_9 = ['Check value of 2.4GHz Wireless Password Security Type is WPA2-PSK.',
                                     'Check value of 2.4GHz Wireless Password Security Type is WPA2/WPA-PSK.',
                                     'Check value of 2.4GHz Wireless Password Security Type is WPA2-ENTERPRISE.',
-                                    'Check value of 2.4GHz Wireless Password Security Type is WPA2/WPA-ENTERPRISE.']
+                                    'Check value of 2.4GHz Wireless Password Security Type is WPA2/WPA-ENTERPRISE']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(

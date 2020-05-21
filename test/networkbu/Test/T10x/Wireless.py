@@ -1284,8 +1284,13 @@ class WIRELESS(unittest.TestCase):
             )
         except:
             self.list_steps.append(
-                f'[Fail] 1,2. Check Default Password of 2G, 5G. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_1_2_name,
+                    list_check_in_step=list_check_in_step_2,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             list_step_fail.append(
                 '1,2. Assertion wong.')
 
@@ -1466,9 +1471,13 @@ class WIRELESS(unittest.TestCase):
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 5. Connect Wifi 2G -> Check connect 2G wifi and access Google fail. '
-                f'Connect Wifi 5G -> Check connect 5G wifi and access Google fail. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
+                )
+            )
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong.')
 
@@ -2466,9 +2475,13 @@ class WIRELESS(unittest.TestCase):
             )
         except:
             self.list_steps.append(
-                f'[Fail] 7. Change Secirity, Encryption, Keytype  and password of  2G/5G . '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7
+                )
+            )
             list_step_fail.append('7. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~ 8
@@ -8196,9 +8209,6 @@ class WIRELESS(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
-        URL_LOGIN = get_config('URL', 'url')
-        # ===========================================================
         factory_dut()
         # ===========================================================
         save_config(config_path, 'URL', 'url', get_config('URL', 'sub_url'))
@@ -8216,14 +8226,20 @@ class WIRELESS(unittest.TestCase):
             list_actual = [page_title_text]
             list_expected = ['Advanced > Wireless']
             check = assert_list(list_actual, list_expected)
+            step_1_2_name = '1. Login WEB UI. \n2. Go to Advanced > Wireless page'
+            list_check_in_step_1_2 = ['Check Advanced > Wireless page should be displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual,
+                                          list_expected=list_expected))
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual,
+                                          list_expected=list_expected))
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -8286,25 +8302,34 @@ class WIRELESS(unittest.TestCase):
             list_actual2 = [api_active, api_wl_mode, api_bandwidth,
                             api_output_power, api_channel, api_short_guard, api_beacon,
                             api_dtim, api_beamforming, api_mumimo, api_wmm]
-            list_expected2 = [default_radio, default_wireless_mode,
-                              default_bandwidth,
+            list_expected2 = [default_radio, default_wireless_mode, default_bandwidth,
                               default_output_power, default_channel, default_short_guard_interval, default_beacon,
                               default_dtim, default_beamforming, default_mumimo, default_wmm]
             check = assert_list(list_actual2, list_expected2)
+            step_3_name = '3. Check default status of wireless 5GHz:  Connect to SSID 5GHz'
+            list_check_in_step_3 = ['Check API: Radio active is true',
+                                    'Check API: Wireless mode',
+                                    'Check API: Bandwidth',
+                                    'Check API: Output Power',
+                                    'Check API: Channel',
+                                    'Check API: Short Guard = on is true',
+                                    'Check API: Beacon Interval',
+                                    'Check API: DTIM',
+                                    'Check API: Beamforming is true',
+                                    'Check API: MU-MIMO is false',
+                                    'Check API: WMM is true']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3.0 Check API response: '
-                f'API active, wireless mode, bandwidth, output power, channel, '
-                f'short guard, beacon, dtim, beamforming, mu-mimo, wmm. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual2,
+                                          list_expected=list_expected2))
         except:
             self.list_steps.append(
-                f'[Fail] 3.0 Check API response: '
-                f'API active, wireless mode, bandwidth, output power, channel, '
-                f'short guard, beacon, dtim, beamforming, mu-mimo, wmm. '
-                f'Actual: {str(list_actual2)}. '
-                f'Expected: {str(list_expected2)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual2,
+                                          list_expected=list_expected2))
             list_step_fail.append('2. Assertion wong.')
 
         try:
@@ -8322,14 +8347,20 @@ class WIRELESS(unittest.TestCase):
             list_actual3 = [connected_wifi_name]
             list_expected3 = [default_5g_ssid]
             check = assert_list(list_actual3, list_expected3)
+            step_3_2_name = '3.2 Connect Wifi 2.4GHz'
+            list_check_in_step_3_2 = ['Check Connect success']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3.2 Connect Wifi 2.4GHz. Check Connect successfully'
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_2_name,
+                                          list_check_in_step=list_check_in_step_3_2,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3.2 Connect Wifi 2.4GHz. Check Connect successfully. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_2_name,
+                                          list_check_in_step=list_check_in_step_3_2,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
             list_step_fail.append('3.2 Assertion wong.')
 
         try:
@@ -8384,15 +8415,20 @@ class WIRELESS(unittest.TestCase):
             list_actual4 = [get_radio]
             list_expected4 = [return_false]
             check = assert_list(list_actual4, list_expected4)
+            step_4_name = '4. Click the Radio button to turn OFF it'
+            list_check_in_step_4 = ['Check Change  Radio to off']
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 4. Change Security: Check Change  Radio to OFF successfully. '
-                                   f'Actual: {str(list_actual4)}. '
-                                   f'Expected: {str(list_expected4)}')
+            self.list_steps.append(
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 4. Change Security: Check Change  Radio to OFF successfully. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -8412,16 +8448,23 @@ class WIRELESS(unittest.TestCase):
             list_actual5 = [api_active, check_block_5g_have_no_content]
             list_expected5 = [return_false, return_true]
             check = assert_list(list_actual5, list_expected5)
+
+            step_5_name = '5. Check output of 5G after setting is completed: Connect to SSID 5GHz of DUT'
+            list_check_in_step_5 = ['Check disable Radio in API is false',
+                                    'Check Wireless 5G have no content: is not displayed']
             self.assertTrue(check["result"])
-            self.list_steps.append('[Pass] 5. Check disable Radio in API and Wireless 5G have no content. '
-                                   f'Actual: {str(list_actual5)}. '
-                                   f'Expected: {str(list_expected5)}')
+            self.list_steps.append(
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 5. Check disable Radio in API and Wireless 5G have no content. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
@@ -8449,16 +8492,20 @@ class WIRELESS(unittest.TestCase):
             list_actual0 = [check_home]
             list_expected0 = [True]
             check = assert_list(list_actual0, list_expected0)
+            step_1_name = '1. Login WEB UI.'
+            list_check_in_step_1 = ['Login WEB UI successfully. Check home page is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1. Login. '
-                f'\n\t - Check Login successfully. '
-                f'\nActual: {"Login Pass"}. \nExpected: {"Login Pass"}')
+                generate_step_information(step_name=step_1_name,
+                                          list_check_in_step=list_check_in_step_1,
+                                          list_actual=list_actual0,
+                                          list_expected=list_expected0))
         except:
             self.list_steps.append(
-                f'[Fail] 1. Login. '
-                f'\n\t - Check Login successfully. '
-                f'\nActual: {"Login Fail"}. \nExpected: {"Login Pass"}')
+                generate_step_information(step_name=step_1_name,
+                                          list_check_in_step=list_check_in_step_1,
+                                          list_actual=list_actual0,
+                                          list_expected=list_expected0))
             list_step_fail.append('1. Assertion wong.')
 
         try:
@@ -8469,14 +8516,20 @@ class WIRELESS(unittest.TestCase):
             list_actual = [page_title_text]
             list_expected = ['Advanced > Wireless']
             check = assert_list(list_actual, list_expected)
+            step_2_name = '2. Go to Advanced > Wireless page on the menu tree.'
+            list_check_in_step_2 = ['Check The Advanced > Wireless page should be shown']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2. Goto Advanced > Wireless. Check title page. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(step_name=step_2_name,
+                                          list_check_in_step=list_check_in_step_2,
+                                          list_actual=list_actual,
+                                          list_expected=list_expected))
         except:
             self.list_steps.append(
-                f'[Fail] 2. Goto Advanced > Wireless. Check title page. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(step_name=step_2_name,
+                                          list_check_in_step=list_check_in_step_2,
+                                          list_actual=list_actual,
+                                          list_expected=list_expected))
             list_step_fail.append('2. Assertion wong.')
 
         try:
@@ -8511,16 +8564,21 @@ class WIRELESS(unittest.TestCase):
             list_expected3 = [default_wireless_mode_text, dropdown_values_text]
             list_actual3 = [api_wl_mode, ['802.11a', '802.11a+n', '802.11a+n+ac']]
             check = assert_list(list_actual3, list_expected3)
+            step_3_name = '3. Check default of 5GHz 802.11 Mode: Click on 802.11 Mode list'
+            list_check_in_step_3 = ['Check Default wireless mode',
+                                    'Check List modes are supported']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Check Default Wireless mode and list options supported. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check Default Wireless mode and list options supported. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -8552,7 +8610,6 @@ class WIRELESS(unittest.TestCase):
 
             api_wl_mode_4 = _res['basic']['wirelessMode']
 
-            # interface_connect_disconnect('Ethernet', 'disable')
             current_connect4 = connect_wifi_by_command(exp_ssid_5g_default_val, default_wifi_pw)
             print(current_connect4)
             if current_connect4 == exp_ssid_5g_default_val:
@@ -8561,18 +8618,21 @@ class WIRELESS(unittest.TestCase):
             list_actual4 = [default_wireless_mode_text_4, check_connect4]
             list_expected4 = [api_wl_mode_4, True]
             check = assert_list(list_actual4, list_expected4)
+            step_4_name = '4. Change the 802.11 Mode to 802.11a: Click "Apply" button then click OK'
+            list_check_in_step_4 = ['Check Value wireless mode same with api',
+                                    'Check Connect to google success']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Change Wireless Mode to 802.11a. Then connect to wireless 5G. '
-                f'Check change successfully. '
-                f'Check connect can access to google. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 4. Change Wireless Mode to 802.11a. Then connect to wireless 5G. '
-                f'Check change successfully. '
-                f'Check connect can access to google. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -8628,18 +8688,21 @@ class WIRELESS(unittest.TestCase):
             list_actual5 = [default_wireless_mode_text_5, check_connect5]
             list_expected5 = [api_wl_mode_5, True]
             check = assert_list(list_actual5, list_expected5)
+            step_5_name = '5. Change the 802.11 Mode to 802.11a+n: Click "Apply" button then click OK'
+            list_check_in_step_5 = ['Check Value wireless mode same with api',
+                                    'Check Connect to google success']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Change Wireless Mode to 802.11a+n. Then connect to wireless 5G. '
-                f'Check change successfully. '
-                f'Check connect can access to google. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
         except:
             self.list_steps.append(
-                f'[Fail] 5. Change Wireless Mode to 802.11a+n. Then connect to wireless 5G. '
-                f'Check change successfully. '
-                f'Check connect can access to google. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
             list_step_fail.append('5. Assertion wong.')
 
         try:
@@ -8695,19 +8758,23 @@ class WIRELESS(unittest.TestCase):
             list_actual6 = [default_wireless_mode_text_6, check_connect6]
             list_expected6 = [api_wl_mode_6, True]
             check = assert_list(list_actual6, list_expected6)
+
+            step_6_name = '6. Change the 802.11 Mode to 802.11a+n+ac: Click "Apply" button then click OK'
+            list_check_in_step_6 = ['Check Value wireless mode same with api',
+                                    'Check Connect to google success']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Change Wireless Mode to 802.11a+n+ac. Then connect to wireless 5G. '
-                f'Check change successfully. '
-                f'Check connect access to google. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 6. Change Wireless Mode to 802.11a+n+ac. Then connect to wireless 5G. '
-                f'Check change successfully. '
-                f'Check connect access to google. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
             self.list_steps.append('[END TC]')
             list_step_fail.append('6. Assertion wong.')
 
@@ -8720,12 +8787,7 @@ class WIRELESS(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        # =================================================
-        _URL_API = get_config('URL', 'url') + '/api/v1/wifi/1/scanResult'
-        _BODY = ''
-        _METHOD = 'GET'
-        _USER = get_config('ACCOUNT', 'user')
-        _PW = get_config('ACCOUNT', 'password')
+
         try:
             grand_login(driver)
             wait_popup_disappear(driver, dialog_loading)
@@ -8736,14 +8798,20 @@ class WIRELESS(unittest.TestCase):
             list_actual = [page_title_text]
             list_expected = ['Advanced > Wireless']
             check = assert_list(list_actual, list_expected)
+            step_1_2_name = '1. Login WEB UI. \n2. Go to Advanced > Wireless page'
+            list_check_in_step_1_2 = ['Check Advanced > Wireless page should be displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual,
+                                          list_expected=list_expected))
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual,
+                                          list_expected=list_expected))
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -8783,20 +8851,35 @@ class WIRELESS(unittest.TestCase):
             list_actual2 = [popup_title, popup_refresh_button, check_list_wf, check_chart_wf, check_btn_close_display]
             list_expected2 = ['Nearby Wireless Access Points (5GHz)', return_true, return_true, return_true, 'Close']
             check = assert_list(list_actual2, list_expected2)
+            step_3_name = '3. Click Scan APs button in 5GHz menu: Check the information display'
+            list_check_in_step_3 = ['Check popup title',
+                                    'Check Icon refresh is displayed',
+                                    'Check Icon wifi List is displayed',
+                                    'Check Icon wifi Chart is displayed',
+                                    'Check Button Close text displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3.0 Check popup scan components: Title, Refresh, List table, Chart table, Close button. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual2,
+                                          list_expected=list_expected2))
         except:
             self.list_steps.append(
-                f'[Fail] 3.0 Check popup scan components: Title, Refresh, List table, Chart table, Close button. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual2,
+                                          list_expected=list_expected2))
             list_step_fail.append('3.0 Assertion wong.')
 
         try:
             popup.find_element_by_css_selector(ele_button_list).click()
             time.sleep(1)
             # ==================================================
+            _URL_API = get_config('URL', 'url') + '/api/v1/wifi/1/scanResult'
+            _BODY = ''
+            _METHOD = 'GET'
+            _USER = get_config('ACCOUNT', 'user')
+            _PW = get_config('ACCOUNT', 'password')
             _TOKEN = get_token(_USER, _PW)
             _res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
 
@@ -8817,20 +8900,27 @@ class WIRELESS(unittest.TestCase):
                         get_security = r.find_element_by_css_selector(ele_table_security).text
                         break
 
-                list_actual3 = [api_ssid, api_channel, api_rssi, api_security, api_mac_address]
-                list_expected3 = [get_nw_name, get_channel, get_rssi, get_security, get_row_mac]
-            else:
-                list_actual3 = []
-                list_expected3 = []
+            list_actual3 = [api_ssid, api_channel, api_rssi, api_security, api_mac_address]
+            list_expected3 = [get_nw_name, get_channel, get_rssi, get_security, get_row_mac]
             check = assert_list(list_actual3, list_expected3)
+            step_3_name = '3.2 Check one of wifi scaned information with api: SSID, Channel, RSSI, Security, MAC. '
+            list_check_in_step_3 = ['Check API: SSID',
+                                    'Check API: Channel',
+                                    'Check API: RSSID',
+                                    'Check API: Security',
+                                    'Check API: macAddress']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3.2 Check one of wifi scaned information with api: SSID, Channel, RSSI, Security, MAC. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3.2 Check one of wifi scaned information with api: SSID, Channel, RSSI, Security, MAC. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
             list_step_fail.append('3.2 Assertion wong.')
 
         try:
@@ -8844,16 +8934,20 @@ class WIRELESS(unittest.TestCase):
             list_actual4 = [check_list_wf_refresh]
             list_expected4 = [return_true]
             check = assert_list(list_actual4, list_expected4)
+            step_4_name = '4. Click the Refresh icon. '
+            list_check_in_step_4 = ['Check Table list is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Click Refresh button. Table list displayed.  '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 4. Click Refresh button. Table list displayed.. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -8866,15 +8960,21 @@ class WIRELESS(unittest.TestCase):
             list_actual5 = [check_chart_wf]
             list_expected5 = [return_true]
             check = assert_list(list_actual5, list_expected5)
+            step_5_name = '5. Click the Graph icon. '
+            list_check_in_step_5 = ['Check Graph chart is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Click Chart button. Check Graph chart displayed. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
         except:
             self.list_steps.append(
-                f'[Fail] 5. Click Chart button. Check Graph chart displayed. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
-            list_step_fail.append('5 Assertion wong.')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
+            list_step_fail.append('5. Assertion wong.')
 
         try:
             # Click Refresh
@@ -8896,15 +8996,20 @@ class WIRELESS(unittest.TestCase):
             list_actual6 = [check_chart_wf_refresh]
             list_expected6 = [return_true]
             check = assert_list(list_actual6, list_expected6)
+            step_6_name = '6. Click the Refresh icon. '
+            list_check_in_step_6 = ['Check Table Graph Chart displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Click Refresh button. Table Graph Chart displayed.  '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
         except:
             self.list_steps.append(
-                f'[Fail] 6. Click Refresh button.Table Graph Chart displayed. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
             list_step_fail.append('6. Assertion wong.')
 
         try:
@@ -8917,16 +9022,22 @@ class WIRELESS(unittest.TestCase):
             list_actual7 = [popup_scan, page_title_text]
             list_expected7 = [return_true, 'Advanced > Wireless']
             check = assert_list(list_actual7, list_expected7)
+            step_7_name = '7. Click "Close" button '
+            list_check_in_step_7 = ['Check pop up Scan APs is disappear',
+                                    'Check back to Advanced > Wireless page is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 7. Click Close button. Check popup disappear, Page Advanced > Wireless display.  '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 7. Click Close button. Check popup disappear, Page Advanced > Wireless display. '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
             self.list_steps.append('[END TC]')
             list_step_fail.append('7. Assertion wong.')
 
@@ -8966,14 +9077,20 @@ class WIRELESS(unittest.TestCase):
             list_actual = [page_title_text]
             list_expected = ['Advanced > Wireless']
             check = assert_list(list_actual, list_expected)
+            step_1_2_name = '1. Login WEB UI. \n2. Go to Advanced > Wireless page'
+            list_check_in_step_1_2 = ['Check Advanced > Wireless page should be displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual,
+                                          list_expected=list_expected))
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Advanced > Wireless. Check title page. '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual,
+                                          list_expected=list_expected))
             list_step_fail.append('1, 2. Assertion wong.')
 
         try:
@@ -9050,18 +9167,28 @@ class WIRELESS(unittest.TestCase):
             list_expected3 = [return_true, CHANNEL, WIRELESS_MODE, CHECK_WMM,
                               CHECK_BEAMFORMING, CHECK_MU_MIMO, OUTPUT_POWER, BEACON, DTIM]
             check = assert_list(list_actual3, list_expected3)
+            step_3_name = '3. On 5GHz table, change to any setting then click "Appy" button to apply it. Click "OK" button'
+            list_check_in_step_3 = ['Check API: Radio active is true',
+                                    'Check API: Channel',
+                                    'Check API: Wireless mode',
+                                    'Check API: WMM is false',
+                                    'Check API: Beamforming is true',
+                                    'Check API: MU-MIMO is true',
+                                    'Check API: Output Power',
+                                    'Check API: Beacon',
+                                    'Check API: DTIM']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Change 5 GHz: '
-                f'Radio active, Channel, Wireless Mode, WMM, Beamforming, MU-MIMO, Output Power, Beacon, DTIM. '
-                f'Check change successfully with api. Check api active and above option. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3. Change 5 GHz: '
-                f'Radio active, Channel, Wireless Mode, WMM, Beamforming, MU-MIMO, Output Power, Beacon, DTIM. '
-                f'Check change successfully with api. Check api active and above option. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
             list_step_fail.append('3. Assertion wong.')
 
         try:
@@ -9079,16 +9206,20 @@ class WIRELESS(unittest.TestCase):
             list_actual4 = [check_confirm_msg]
             list_expected4 = [exp_advance_restore_confirm_msg]
             check = assert_list(list_actual4, list_expected4)
+            step_4_name = '4. Click Restore.  '
+            list_check_in_step_4 = ['Check restore confirm message']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Click Restore. Check restore confirm message. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 4. Click Restore. Check restore confirm message. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -9152,23 +9283,32 @@ class WIRELESS(unittest.TestCase):
                               default_output_power, default_channel, default_short_guard_interval, default_beacon,
                               default_dtim, default_beamforming, default_mumimo, default_wmm]
             check = assert_list(list_actual5, list_expected5)
+            step_5_name = '4.2 Click Restore result. Check API restored  '
+            list_check_in_step_5 = ['Check API: active is true',
+                                    'Check API: Wireless mode',
+                                    'Check API: Bandwidth',
+                                    'Check API: Output power is true',
+                                    'Check API: Channel',
+                                    'Check API: Short guard = on is true',
+                                    'Check API: Beacon',
+                                    'Check API: DTIM',
+                                    'Check API: Beamforming is true',
+                                    'Check API: MU-MIMO is false',
+                                    'Check API: WMM is true']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4.2 Click Restore result. Check API restored: '
-                f'API active, wireless mode, bandwidth, output power, channel, '
-                f'short guard, beacon, dtim, beamforming, MU-MIMO, wmm. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 4.2 Click Restore result. Check API restored: '
-                f'API active, wireless mode, bandwidth, output power, channel, '
-                f'short guard, beacon, dtim, beamforming, MU-MIMO, wmm. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
             self.list_steps.append('[END TC]')
-
             list_step_fail.append('4.2 Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
@@ -9194,16 +9334,20 @@ class WIRELESS(unittest.TestCase):
             list_actual1 = [check_page_title]
             list_expected1 = ['Wireless > Guest Network']
             check = assert_list(list_actual1, list_expected1)
+            step_1_2_name = '1. Login WEB UI. \n2. Go to Wireless > Guest Network'
+            list_check_in_step_1_2 = ['Check Wireless > Guest Network page should be shown']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Guest network. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Guest network. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
             list_step_fail.append('1, 2. Login. Assertion wong.')
 
         try:
@@ -9231,19 +9375,22 @@ class WIRELESS(unittest.TestCase):
             list_actual3 = [check_web_access]
             list_expected3 = [return_true]
             check = assert_list(list_actual3, list_expected3)
+            step_3_name = '3. On 2.4GHz, click +ADD button to add Guest Network 2.4G: Check the default status of "WEB UI Access". Click "Apply" button to appy it.'
+            list_check_in_step_3 = ['Check Web UI Access option is disabled']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Add Wireless 2G. Check Web UI Access option is Disabled. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3.  Add Wireless 2G. Check Web UI Access option is Disabled. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
             list_step_fail.append('3. Assertion wong.')
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Disconnect Ethernet
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
@@ -9269,18 +9416,21 @@ class WIRELESS(unittest.TestCase):
             list_actual4 = [get_current_wifi, check_not_connect_web]
             list_expected4 = [wl_2g_ssid, return_true]
             check = assert_list(list_actual4, list_expected4)
+            step_4_name = '4. Disconnect ethernet then connect the client PC to DUT via guest network above and access the WEB UI through Gateway IP.'
+            list_check_in_step_4 = ['Check current connected wifi',
+                                    'Check can not connect to WEB UI page']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Disconnect Ethernet. Connect Guest wifi. '
-                f'Check current connected wifi and Check can not connect to WEB UI page. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 4. Disconnect Ethernet. Connect Guest wifi. '
-                f'Check current connected wifi and Check can not connect to WEB UI page. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -9296,18 +9446,20 @@ class WIRELESS(unittest.TestCase):
             list_actual5 = [check_home_page]
             list_expected5 = [return_true]
             check = assert_list(list_actual5, list_expected5)
+            step_5_name = '5. Disconnect wireless, connect DUT to ethernet then access WEB UI'
+            list_check_in_step_5 = ['Check Home page displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Disconnect Wifi. Connect Ethernet.'
-                f'Login. Check Home page displayed. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
         except:
             self.list_steps.append(
-                f'[Fail] 5.  Disconnect Wifi. Connect Ethernet.'
-                f'Login. Check Home page displayed. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
             list_step_fail.append('5. Assertion wong.')
 
         try:
@@ -9364,18 +9516,23 @@ class WIRELESS(unittest.TestCase):
             list_actual6 = [get_current_wifi_2, check_connect_web]
             list_expected6 = [wl_2g_ssid, return_true]
             check = assert_list(list_actual6, list_expected6)
+
+            step_67_name = '''6. Go to "Wireless >  Guest Network". Click Edit button then enable "WEB UI Access", click "Apply" button to save it\n
+            7. Connect the wireless client to DUT via guest network and access the WEB UI through Gateway.'''
+            list_check_in_step_67 = ['Check Current connected wifi.',
+                                     'Check can get URL via Default gateway success']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6, 7. Check to WEB UI Access. Disconnect Ethernet. Connect wifi. '
-                f'Check Current connected wifi and can get URL via Default gateway. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_67_name,
+                                          list_check_in_step=list_check_in_step_67,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
         except:
             self.list_steps.append(
-                f'[Fail] 6, 7. Check to WEB UI Access. Disconnect Ethernet. Connect wifi. '
-                f'Check Current connected wifi and can get URL via Default gateway. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_67_name,
+                                          list_check_in_step=list_check_in_step_67,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
             list_step_fail.append('6, 7. Assertion wong.')
 
         try:
@@ -9480,30 +9637,28 @@ class WIRELESS(unittest.TestCase):
             time.sleep(5)
             check_connect_web_5g = len(driver.find_elements_by_css_selector(lg_page)) > 0
 
-            list_actual8 = [check_web_access_5g,
-                            [get_current_wifi_5g, check_not_connect_web_2],
-                            [get_current_wifi_5g_2, check_connect_web_5g]]
-            list_expected8 = [return_true,
-                              [wl_5g_ssid, return_true],
-                              [wl_5g_ssid, return_true]]
+            list_actual8 = [check_web_access_5g, get_current_wifi_5g, check_not_connect_web_2, get_current_wifi_5g_2, check_connect_web_5g]
+            list_expected8 = [return_true, wl_5g_ssid, return_true, wl_5g_ssid, return_true]
             check = assert_list(list_actual8, list_expected8)
+            step_8_name = '''8. Re-do all step with 5GHz'''
+            list_check_in_step_8 = ['Check Default Access 5G option is disabled.',
+                                    'Connect 5G Wifi. Check wifi connect',
+                                    'Check Can not connect to Web UI: not connect',
+                                    'Enable Web UI Access. Check wifi connect',
+                                    'Check Can connect to Web UI: connect']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8. Re-do for 5G. '
-                f'Check default Access 5G option.'
-                f'Check Connect Wifi and check can not connect to Web UI. '
-                f'Enable Web UI Access. Connect wifi and check can connect to Web UI. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(step_name=step_8_name,
+                                          list_check_in_step=list_check_in_step_8,
+                                          list_actual=list_actual8,
+                                          list_expected=list_expected8))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 8. Re-do for 5G. '
-                f'Check default Access 5G option.'
-                f'Check Connect Wifi and check can not connect to Web UI. '
-                f'Enable Web UI Access. Connect wifi and check can connect to Web UI. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(step_name=step_8_name,
+                                          list_check_in_step=list_check_in_step_8,
+                                          list_actual=list_actual8,
+                                          list_expected=list_expected8))
             self.list_steps.append('[END TC]')
             list_step_fail.append('8. Assertion wong.')
 
@@ -9516,9 +9671,6 @@ class WIRELESS(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        # ===========================================================
-        # factory_dut()
-
         try:
             grand_login((driver))
             # Enable Dual WAN
@@ -9530,16 +9682,20 @@ class WIRELESS(unittest.TestCase):
             list_actual1 = [check_page_title]
             list_expected1 = ['Wireless > Guest Network']
             check = assert_list(list_actual1, list_expected1)
+            step_1_2_name = '1. Login WEB UI. \n2. Go to Wireless > Guest Network'
+            list_check_in_step_1_2 = ['Check Wireless > Guest Network page should be shown']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Guest network. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Guest network. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
             list_step_fail.append('1, 2. Login. Assertion wong.')
 
         try:
@@ -9591,21 +9747,22 @@ class WIRELESS(unittest.TestCase):
             list_actual3 = [ls_row]
             list_expected3 = [return_true]
             check = assert_list(list_actual3, list_expected3)
+            step_3_4_name = '3. On 2.4GHz, click +ADD button to add Guest Network 2.4G\n 4. Add 1PC MAC Address in Black Mode of Wireless MAC Filtering. Apply'
+            list_check_in_step_3_4 = ['Check added success']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3, 4. Add a Guest Network. Add a Wireless MAC Filtering.'
-                f'Check Add successfully. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_4_name,
+                                          list_check_in_step=list_check_in_step_3_4,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3, 4. Add a Guest Network. Add a Wireless MAC Filtering.'
-                f'Check Add successfully. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_4_name,
+                                          list_check_in_step=list_check_in_step_3_4,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
             list_step_fail.append('3. Assertion wong.')
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Disconnect Ethernet
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
@@ -9618,18 +9775,20 @@ class WIRELESS(unittest.TestCase):
             list_actual4 = [check_wifi_blocked]
             list_expected4 = [return_true]
             check = assert_list(list_actual4, list_expected4)
+            step_5_name = '5. Connect registered PC to this newly Guest network. Check connection status'
+            list_check_in_step_5 = ['Check can not connect to Wifi: not connect']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
-                f'Check can not connect to Wifi '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
-                f'Check can not connect to Wifi. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
             list_step_fail.append('5. Assertion wong.')
 
         try:
@@ -9674,18 +9833,21 @@ class WIRELESS(unittest.TestCase):
             list_actual6 = [check_scan_wifi, check_wifi_blocked_2]
             list_expected6 = [return_true, return_true]
             check = assert_list(list_actual6, list_expected6)
+            step_6_name = '6. Disable this Guest Network. Check connection status from registered PC to this Guest Network'
+            list_check_in_step_6 = ['Check That wifi is not in Wifi scan list: not existed',
+                                    'Check can not connect to that Wifi: not connect']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Disable 2G Guest Wifi. Check that Wifi is not in Wifi Scan list.'
-                f'Check Can not connect to that Wifi. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
         except:
             self.list_steps.append(
-                f'[Fail] 6. Disable 2G Guest Wifi. Check that Wifi is not in Wifi Scan list.'
-                f'Check Can not connect to that Wifi. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
             list_step_fail.append('6. Assertion wong.')
 
         try:
@@ -9722,18 +9884,20 @@ class WIRELESS(unittest.TestCase):
             list_actual7 = [check_wifi_blocked_3]
             list_expected7 = [return_true]
             check = assert_list(list_actual7, list_expected7)
+            step_7_name = '7. Enable this Guest Network. Check connection status from registered PC to this Guest Network'
+            list_check_in_step_7 = ['Check can not connect to 5G Wifi: not connect']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 7. Disconnect Ethernet. Connect Guest Wifi 2G. '
-                f'Check Can not connect to that Wifi '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
         except:
             self.list_steps.append(
-                f'[Fail] 7.  Disconnect Ethernet. Connect Guest Wifi 2G. '
-                f'Check Can not connect to that Wifi '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
             list_step_fail.append('7. Assertion wong.')
 
         try:
@@ -9775,18 +9939,22 @@ class WIRELESS(unittest.TestCase):
             list_actual8 = [check_mac_filtering, row_device_name, row_mac]
             list_expected8 = [return_true, device_name, get_device_mac]
             check = assert_list(list_actual8, list_expected8)
+            step_8_name = '8. Click Edit button in this Guest Network. Check the data shown'
+            list_check_in_step_8 = ['Check Wireless Mac Filtering is enabled',
+                                    'Check Block Device Name is enabled',
+                                    'Check Block MAC Address is enabled']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8. Check Information remain.'
-                f'Check Wireless Mac Filtering. Block Device Name, Block MAC Address. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(step_name=step_8_name,
+                                          list_check_in_step=list_check_in_step_8,
+                                          list_actual=list_actual8,
+                                          list_expected=list_expected8))
         except:
             self.list_steps.append(
-                f'[Fail] 8. Check Information remain.'
-                f'Check Wireless Mac Filtering. Block Device Name, Block MAC Address. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(step_name=step_8_name,
+                                          list_check_in_step=list_check_in_step_8,
+                                          list_actual=list_actual8,
+                                          list_expected=list_expected8))
             list_step_fail.append('8. Assertion wong.')
 
         try:
@@ -9881,28 +10049,32 @@ class WIRELESS(unittest.TestCase):
             # ========================================================================
             check_wifi_connect_4 = current_connected_wifi() == wl_2g_ssid
 
-            list_actual9 = [[check_wifi_connect_1, ],
-                            [check_scan_wifi_2, check_wifi_connect_3, ],
-                            [check_wifi_connect_4, ]]
-            list_expected9 = [[return_true], [return_true, return_true, ], [return_true]]
+            list_actual9 = [check_wifi_connect_1, check_scan_wifi_2, check_wifi_connect_3, check_wifi_connect_4]
+            list_expected9 = [return_true]*4
             check = assert_list(list_actual9, list_expected9)
+
+            step_9_name = '''9. Do the same step with Wireless filtering in White Mode: 
+                            - Click to "Block list" button
+                            - Click "OK" button to change to "Allow list" (White Mode)
+                            - Add 1PC MAC Address > Apply
+                            - Redo step 5,6,7,8'''
+            list_check_in_step_9 = ['Check connect wifi is connect',
+                                    'Disable Guest Wifi. Check can not scan wifi: not existed',
+                                    'Check can not connect Wifi: not connect',
+                                    'Enabled Guest Wifi. Check Can connect wifi: connect']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 9. Re do all step With white Mode.'
-                f'Check connect wifi.'
-                f'Disable Guest Wifi. Check can not scan and Check can connect Wifi.'
-                f'Enabled Guest Wifi. Check Can connect wifi. '
-                f'Actual: {str(list_actual9)}. '
-                f'Expected: {str(list_expected9)}')
+                generate_step_information(step_name=step_9_name,
+                                          list_check_in_step=list_check_in_step_9,
+                                          list_actual=list_actual9,
+                                          list_expected=list_expected9))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 9.  Re do all step With white Mode.'
-                f'Check connect wifi.'
-                f'Disable Guest Wifi. Check can not scan and Check can connect Wifi.'
-                f'Enabled Guest Wifi. Check Can connect wifi. '
-                f'Actual: {str(list_actual9)}. '
-                f'Expected: {str(list_expected9)}')
+                generate_step_information(step_name=step_9_name,
+                                          list_check_in_step=list_check_in_step_9,
+                                          list_actual=list_actual9,
+                                          list_expected=list_expected9))
             self.list_steps.append('[END TC]')
             list_step_fail.append('9. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
@@ -9928,16 +10100,20 @@ class WIRELESS(unittest.TestCase):
             list_actual1 = [check_page_title]
             list_expected1 = ['Wireless > Guest Network']
             check = assert_list(list_actual1, list_expected1)
+            step_1_2_name = '1. Login WEB UI. \n2. Go to Wireless > Guest Network'
+            list_check_in_step_1_2 = ['Check Wireless > Guest Network page should be shown']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Guest network. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Guest network. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
             list_step_fail.append('1, 2. Login. Assertion wong.')
 
         try:
@@ -9989,18 +10165,20 @@ class WIRELESS(unittest.TestCase):
             list_actual3 = [ls_row]
             list_expected3 = [return_true]
             check = assert_list(list_actual3, list_expected3)
+            step_3_4_name = '3. On 5GHz, click +ADD button to add Guest Network 5G\n 4. Add 1PC MAC Address in Black Mode of Wireless MAC Filtering. Apply'
+            list_check_in_step_3_4 = ['Check added success']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3, 4. Add a Guest Network. Add a Wireless MAC Filtering.'
-                f'Check Add successfully. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_4_name,
+                                          list_check_in_step=list_check_in_step_3_4,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3, 4. Add a Guest Network. Add a Wireless MAC Filtering.'
-                f'Check Add successfully. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_4_name,
+                                          list_check_in_step=list_check_in_step_3_4,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
             list_step_fail.append('3. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -10016,19 +10194,21 @@ class WIRELESS(unittest.TestCase):
             list_actual4 = [check_wifi_blocked]
             list_expected4 = [return_true]
             check = assert_list(list_actual4, list_expected4)
+            step_5_name = '5. Connect registered PC to this newly Guest network. Check connection status'
+            list_check_in_step_5 = ['Check can not connect to Wifi: not connect']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4, 5. Disconnect Ethernet. Connect Guest Wifi 5G. '
-                f'Check can not connect to Wifi '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 4, 5. Disconnect Ethernet. Connect Guest Wifi 5G. '
-                f'Check can not connect to Wifi. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
-            list_step_fail.append('4, 5. Assertion wong.')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
+            list_step_fail.append('5. Assertion wong.')
 
         try:
             os.system('netsh wlan delete profile name=*')
@@ -10072,18 +10252,21 @@ class WIRELESS(unittest.TestCase):
             list_actual6 = [check_scan_wifi, check_wifi_blocked_2]
             list_expected6 = [return_true, return_true]
             check = assert_list(list_actual6, list_expected6)
+            step_6_name = '6. Disable this Guest Network. Check connection status from registered PC to this Guest Network'
+            list_check_in_step_6 = ['Check That wifi is not in Wifi scan list: not existed',
+                                    'Check can not connect to that Wifi: not connect']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Disable 5G Guest Wifi. Check that Wifi is not in Wifi Scan list.'
-                f'Check Can not connect to that Wifi. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
         except:
             self.list_steps.append(
-                f'[Fail] 6. Disable 5G Guest Wifi. Check that Wifi is not in Wifi Scan list.'
-                f'Check Can not connect to that Wifi. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
             list_step_fail.append('6. Assertion wong.')
 
         try:
@@ -10120,18 +10303,20 @@ class WIRELESS(unittest.TestCase):
             list_actual7 = [check_wifi_blocked_3]
             list_expected7 = [return_true]
             check = assert_list(list_actual7, list_expected7)
+            step_7_name = '7. Enable this Guest Network. Check connection status from registered PC to this Guest Network'
+            list_check_in_step_7 = ['Check can not connect to 5G Wifi: not connect']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 7. Disconnect Ethernet. Connect Guest Wifi 5G. '
-                f'Check Can not connect to that Wifi '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
         except:
             self.list_steps.append(
-                f'[Fail] 7.  Disconnect Ethernet. Connect Guest Wifi 5G. '
-                f'Check Can not connect to that Wifi '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
             list_step_fail.append('7. Assertion wong.')
 
         try:
@@ -10173,18 +10358,22 @@ class WIRELESS(unittest.TestCase):
             list_actual8 = [check_mac_filtering, row_device_name, row_mac]
             list_expected8 = [return_true, device_name, get_device_mac]
             check = assert_list(list_actual8, list_expected8)
+            step_8_name = '8. Click Edit button in this Guest Network. Check the data shown'
+            list_check_in_step_8 = ['Check Wireless Mac Filtering is enabled',
+                                    'Check Block Device Name is enabled',
+                                    'Check Block MAC Address is enabled']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8. Check Information remain.'
-                f'Check Wireless Mac Filtering. Block Device Name, Block MAC Address. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(step_name=step_8_name,
+                                          list_check_in_step=list_check_in_step_8,
+                                          list_actual=list_actual8,
+                                          list_expected=list_expected8))
         except:
             self.list_steps.append(
-                f'[Fail] 8. Check Information remain.'
-                f'Check Wireless Mac Filtering. Block Device Name, Block MAC Address. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(step_name=step_8_name,
+                                          list_check_in_step=list_check_in_step_8,
+                                          list_actual=list_actual8,
+                                          list_expected=list_expected8))
             list_step_fail.append('8. Assertion wong.')
 
         try:
@@ -10279,28 +10468,31 @@ class WIRELESS(unittest.TestCase):
             # ========================================================================
             check_wifi_connect_4 = current_connected_wifi() == wl_5g_ssid
 
-            list_actual9 = [[check_wifi_connect_1, ],
-                            [check_scan_wifi_2, check_wifi_connect_3, ],
-                            [check_wifi_connect_4, ]]
-            list_expected9 = [[return_true], [return_true, return_true, ], [return_true]]
+            list_actual9 = [check_wifi_connect_1, check_scan_wifi_2, check_wifi_connect_3, check_wifi_connect_4]
+            list_expected9 = [return_true]*4
             check = assert_list(list_actual9, list_expected9)
+            step_9_name = '''9. Do the same step with Wireless filtering in White Mode: 
+                - Click to "Block list" button
+                - Click "OK" button to change to "Allow list" (White Mode)
+                - Add 1PC MAC Address > Apply
+                - Redo step 5,6,7,8'''
+            list_check_in_step_9 = ['Check connect wifi is connect',
+                                    'Disable Guest Wifi. Check can not scan wifi: not existed',
+                                    'Check can not connect Wifi: not connect',
+                                    'Enabled Guest Wifi. Check Can connect wifi: connect']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 9. Re do all step With white Mode.'
-                f'Check connect wifi.'
-                f'Disable Guest Wifi. Check can not scan and Check can connect Wifi.'
-                f'Enabled Guest Wifi. Check Can connect wifi. '
-                f'Actual: {str(list_actual9)}. '
-                f'Expected: {str(list_expected9)}')
+                generate_step_information(step_name=step_9_name,
+                                          list_check_in_step=list_check_in_step_9,
+                                          list_actual=list_actual9,
+                                          list_expected=list_expected9))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 9.  Re do all step With white Mode.'
-                f'Check connect wifi.'
-                f'Disable Guest Wifi. Check can not scan and Check can connect Wifi.'
-                f'Enabled Guest Wifi. Check Can connect wifi. '
-                f'Actual: {str(list_actual9)}. '
-                f'Expected: {str(list_expected9)}')
+                generate_step_information(step_name=step_9_name,
+                                          list_check_in_step=list_check_in_step_9,
+                                          list_actual=list_actual9,
+                                          list_expected=list_expected9))
             self.list_steps.append('[END TC]')
             list_step_fail.append('9. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
@@ -10328,16 +10520,20 @@ class WIRELESS(unittest.TestCase):
             list_actual1 = [check_page_title]
             list_expected1 = ['Wireless > Guest Network']
             check = assert_list(list_actual1, list_expected1)
+            step_1_2_name = '1. Login WEB UI. \n2. Go to Wireless > Guest Network'
+            list_check_in_step_1_2 = ['Check Wireless > Guest Network page should be shown']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Guest network. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Guest network. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
             list_step_fail.append('1, 2. Login. Assertion wong.')
 
         try:
@@ -10377,21 +10573,22 @@ class WIRELESS(unittest.TestCase):
             list_actual3 = [ls_row]
             list_expected3 = [return_true]
             check = assert_list(list_actual3, list_expected3)
+            step_3_4_name = '3. On 2.4GHz, click +ADD button to add Guest Network 2.4G\n 4. Add 1PC MAC Address in Black Mode of Wireless MAC Filtering. Apply'
+            list_check_in_step_3_4 = ['Check added success']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3, 4. Add a Guest Network. Add a Wireless MAC Filtering.'
-                f'Check Add successfully. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_4_name,
+                                          list_check_in_step=list_check_in_step_3_4,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3, 4. Add a Guest Network. Add a Wireless MAC Filtering.'
-                f'Check Add successfully. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_4_name,
+                                          list_check_in_step=list_check_in_step_3_4,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
             list_step_fail.append('3. Assertion wong.')
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
             # Disconnect Ethernet
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
@@ -10404,18 +10601,20 @@ class WIRELESS(unittest.TestCase):
             list_actual4 = [check_wifi_blocked]
             list_expected4 = [return_true]
             check = assert_list(list_actual4, list_expected4)
+            step_5_name = '5. Connect registered PC to this newly Guest network. Check connection status'
+            list_check_in_step_5 = ['Check can not connect to Wifi: not connect']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
-                f'Check can not connect to Wifi. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 5. Disconnect Ethernet. Connect Guest Wifi 2G. '
-                f'Check can not connect to Wifi. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
             list_step_fail.append('5. Assertion wong.')
 
         try:
@@ -10459,18 +10658,21 @@ class WIRELESS(unittest.TestCase):
             list_actual6 = [check_scan_wifi, check_wifi_blocked_1]
             list_expected6 = [return_true, return_true]
             check = assert_list(list_actual6, list_expected6)
+            step_6_name = '6. Delete this Guest Network. Check connection status from registered PC to this Guest Network.'
+            list_check_in_step_6 = ['Check That wifi is not in Wifi scan list: not existed',
+                                    'Check can not connect to that Wifi: not connect']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Disable 2G Guest Wifi. Check that Wifi is not in Wifi Scan list.'
-                f'Check Can connect to that Wifi. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
         except:
             self.list_steps.append(
-                f'[Fail] 6. Disable 2G Guest Wifi. Check that Wifi is not in Wifi Scan list.'
-                f'Check Can connect to that Wifi. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
             list_step_fail.append('6. Assertion wong.')
 
         try:
@@ -10543,21 +10745,23 @@ class WIRELESS(unittest.TestCase):
 
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
             time.sleep(10)
+
+            step_7_name = '7. Do the same step with Wireless filtering in White Mode.'
+            list_check_in_step_7 = ['Check That wifi is not in Wifi scan list: not existed',
+                                    'Check can not connect to that Wifi: not connect']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 7. Add a guest network with White mode is on contain Host PC Mac address. '
-                f'Delete this guest network. '
-                f'Check Wireless not in scan list. Can not connect to wireless. '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 7. Add a guest network with White mode is on contain Host PC Mac address. '
-                f'Delete this guest network. '
-                f'Check Wireless not in scan list. Can not connect to wireless. '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
             self.list_steps.append('[END TC]')
             list_step_fail.append('7. Assertion wong.')
 
@@ -10572,7 +10776,7 @@ class WIRELESS(unittest.TestCase):
         # ===========================================================
         os.system('netsh wlan delete profile name=*')
         try:
-            grand_login((driver))
+            grand_login(driver)
             # Enable Dual WAN
             goto_menu(driver, advanced_tab, advanced_wireless_tab)
             wait_popup_disappear(driver, dialog_loading)
@@ -10582,16 +10786,20 @@ class WIRELESS(unittest.TestCase):
             list_actual1 = [check_page_title]
             list_expected1 = ['Advanced > Wireless']
             check = assert_list(list_actual1, list_expected1)
+            step_1_2_name = '1. Login WEB UI. \n2. Go to Advanced > Wireless page'
+            list_check_in_step_1_2 = ['Check Advanced > Wireless page should be shown']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Advanced > Wireless. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Advanced > Wireless. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
             list_step_fail.append('1, 2. Login. Assertion wong.')
 
         try:
@@ -10626,16 +10834,21 @@ class WIRELESS(unittest.TestCase):
             list_actual3 = [check_2g, check_5g]
             list_expected3 = [return_true] * 2
             check = assert_list(list_actual3, list_expected3)
+            step_3_name = '''3. On 2.4GHz and 5GHz table: Make sure that Radio should be enable'''
+            list_check_in_step_3 = ['Check Radio 2G is selected',
+                                    'Check Radio 5G is selected']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Check radio 2G and 5G is selected. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check radio 2G and 5G is selected. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
             list_step_fail.append('3. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -10671,16 +10884,21 @@ class WIRELESS(unittest.TestCase):
             list_actual4 = [check_secure_2g, check_secure_5g]
             list_expected4 = ['WPA2-PSK'] * 2
             check = assert_list(list_actual4, list_expected4)
+            step_4_name = '''4. On 2.4GHz and 5GHz table: Change Security to WPA2-PSK. Click "Appy" button to apply it'''
+            list_check_in_step_4 = ['Check Security 2G is WPA2-PSK',
+                                    'Check Security 5G is WPA2-PSK']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Change Security to WPA2-PSK. Check security of 2G and 5G. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 4 Change Security to WPA2-PSK. Check security of 2G and 5G. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -10698,16 +10916,20 @@ class WIRELESS(unittest.TestCase):
             list_actual5 = [check_timer]
             list_expected5 = ['WPS Operating… Wait 120 seconds.']
             check = assert_list(list_actual5, list_expected5)
+            step_5_name = '''5. Go to Wireless > WPS page on the menu tree: Click on WPS button'''
+            list_check_in_step_5 = ['Check Timer "WPS Operating ... " is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Goto Wireless > WPS. Click WPS. Check status. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
         except:
             self.list_steps.append(
-                f'[Fail] 5. Goto Wireless > WPS. Click WPS. Check status. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
             list_step_fail.append('5. Assertion wong.')
 
         try:
@@ -10720,16 +10942,20 @@ class WIRELESS(unittest.TestCase):
             list_expected6 = [wifi_2g_name]
             check = assert_list(list_actual6, list_expected6)
 
+            step_6_name = '''6. Client PC connect to SSID of Wireless 2.4GHz (not input pw)'''
+            list_check_in_step_6 = ['Check current wifi connected']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Client connect 2G wifi without PW. Check current connected. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
         except:
             self.list_steps.append(
-                f'[Fail]  6. Client connect 2G wifi without PW. Check current connected. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
             list_step_fail.append('6. Assertion wong.')
 
         try:
@@ -10749,16 +10975,20 @@ class WIRELESS(unittest.TestCase):
             list_actual7 = [check_timer_2]
             list_expected7 = ['WPS Operating… Wait 120 seconds.']
             check = assert_list(list_actual7, list_expected7)
+            step_7_name = '''7. Go to Wireless > WPS page on the menu tree: Click on WPS button'''
+            list_check_in_step_7 = ['Check Timer "WPS Operating ... " is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 7. Goto Wireless > WPS. Click WPS. Check status. '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
         except:
             self.list_steps.append(
-                f'[Fail] 7. Goto Wireless > WPS. Click WPS. Check status. '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
             list_step_fail.append('7. Assertion wong.')
 
         try:
@@ -10771,17 +11001,21 @@ class WIRELESS(unittest.TestCase):
             list_actual8 = [check_5g_connected]
             list_expected8 = [wifi_5g_name]
             check = assert_list(list_actual8, list_expected8)
+            step_8_name = '''8. Client PC connect to SSID of Wireless 5GHz (not input pw)'''
+            list_check_in_step_8 = ['Check current wifi connected']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8. Client connect 5G wifi without PW. Check current connected. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(step_name=step_8_name,
+                                          list_check_in_step=list_check_in_step_8,
+                                          list_actual=list_actual8,
+                                          list_expected=list_expected8))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail]  8. Client connect 5G wifi without PW. Check current connected. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(step_name=step_8_name,
+                                          list_check_in_step=list_check_in_step_8,
+                                          list_actual=list_actual8,
+                                          list_expected=list_expected8))
             self.list_steps.append('[END TC]')
             list_step_fail.append('8. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
@@ -10805,16 +11039,20 @@ class WIRELESS(unittest.TestCase):
             list_actual1 = [check_page_title]
             list_expected1 = ['Advanced > Wireless']
             check = assert_list(list_actual1, list_expected1)
+            step_1_2_name = '1. Login WEB UI. \n2. Go to Advanced > Wireless page'
+            list_check_in_step_1_2 = ['Check Advanced > Wireless page should be shown.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Advanced > Wireless. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Advanced > Wireless. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
             list_step_fail.append('1, 2. Login. Assertion wong.')
 
         try:
@@ -10849,16 +11087,21 @@ class WIRELESS(unittest.TestCase):
             list_actual3 = [check_2g, check_5g]
             list_expected3 = [return_true] * 2
             check = assert_list(list_actual3, list_expected3)
+            step_3_name = '''3. On 2.4GHz and 5GHz table: Make sure that Radio should be enable'''
+            list_check_in_step_3 = ['Check Radio 2G is selected',
+                                    'Check Radio 5G is selected']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Check radio 2G and 5G is selected. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check radio 2G and 5G is selected. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
             list_step_fail.append('3. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -10894,16 +11137,21 @@ class WIRELESS(unittest.TestCase):
             list_actual4 = [check_secure_2g, check_secure_5g]
             list_expected4 = ['WPA2/WPA-PSK'] * 2
             check = assert_list(list_actual4, list_expected4)
+            step_4_name = '''4. On 2.4GHz and 5GHz table: Change Security to WPA2/WPA-PSK. Click "Appy" button to apply it'''
+            list_check_in_step_4 = ['Check Security 2G is WPA2/WPA-PSK',
+                                    'Check Security 5G is WPA2/WPA-PSK']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Change Security to WPA2/WPA-PSK. Check security of 2G and 5G. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 4 Change Security to WPA2/WPA-PSK. Check security of 2G and 5G. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -10919,21 +11167,25 @@ class WIRELESS(unittest.TestCase):
             list_actual5 = [check_timer]
             list_expected5 = ['WPS Operating… Wait 120 seconds.']
             check = assert_list(list_actual5, list_expected5)
+            step_5_name = '''5. Go to Wireless > WPS page on the menu tree: Click on WPS button'''
+            list_check_in_step_5 = ['Check Timer "WPS Operating ... " is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Goto Wireless > WPS. Click WPS. Check status. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
         except:
             self.list_steps.append(
-                f'[Fail] 5. Goto Wireless > WPS. Click WPS. Check status. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
             list_step_fail.append('5. Assertion wong.')
 
         try:
             interface_connect_disconnect('Ethernet', 'disable')
-            time.sleep(1)
+            time.sleep(5)
             check_2g_connected = connect_wifi_by_command(wifi_2g_name, '')
 
             interface_connect_disconnect('Ethernet', 'enable')
@@ -10941,16 +11193,20 @@ class WIRELESS(unittest.TestCase):
             list_actual6 = [check_2g_connected]
             list_expected6 = [wifi_2g_name]
             check = assert_list(list_actual6, list_expected6)
+            step_6_name = '''6. Client PC connect to SSID of Wireless 2.4GHz (not input pw)'''
+            list_check_in_step_6 = ['Check current wifi connected']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Client connect 2G wifi without PW. Check current connected. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
         except:
             self.list_steps.append(
-                f'[Fail]  6. Client connect 2G wifi without PW. Check current connected. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
             list_step_fail.append('6. Assertion wong.')
 
         try:
@@ -10969,41 +11225,47 @@ class WIRELESS(unittest.TestCase):
             list_actual7 = [check_timer_2]
             list_expected7 = ['WPS Operating… Wait 120 seconds.']
             check = assert_list(list_actual7, list_expected7)
+            step_7_name = '''7. Go to Wireless > WPS page on the menu tree: Click on WPS button'''
+            list_check_in_step_7 = ['Check Timer "WPS Operating ... " is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 7. Goto Wireless > WPS. Click WPS. Check status. '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
         except:
             self.list_steps.append(
-                f'[Fail] 7. Goto Wireless > WPS. Click WPS. Check status. '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
             list_step_fail.append('7. Assertion wong.')
 
         try:
             interface_connect_disconnect('Ethernet', 'disable')
             time.sleep(5)
-
             check_5g_connected = connect_wifi_by_command(wifi_5g_name, '')
-
             interface_connect_disconnect('Ethernet', 'enable')
             os.system('netsh wlan disconnect')
 
             list_actual8 = [check_5g_connected]
             list_expected8 = [wifi_5g_name]
             check = assert_list(list_actual8, list_expected8)
+            step_8_name = '''8. Client PC connect to SSID of Wireless 5GHz (not input pw)'''
+            list_check_in_step_8 = ['Check current wifi connected']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8. Client connect 5G wifi without PW. Check current connected. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(step_name=step_8_name,
+                                          list_check_in_step=list_check_in_step_8,
+                                          list_actual=list_actual8,
+                                          list_expected=list_expected8))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail]  8. Client connect 5G wifi without PW. Check current connected. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(step_name=step_8_name,
+                                          list_check_in_step=list_check_in_step_8,
+                                          list_actual=list_actual8,
+                                          list_expected=list_expected8))
             self.list_steps.append('[END TC]')
             list_step_fail.append('8. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
@@ -11027,16 +11289,21 @@ class WIRELESS(unittest.TestCase):
             list_actual1 = [check_page_title]
             list_expected1 = ['Advanced > Wireless']
             check = assert_list(list_actual1, list_expected1)
+
+            step_1_2_name = '1. Login WEB UI. \n2. Go to Advanced > Wireless page'
+            list_check_in_step_1_2 = ['Check Advanced > Wireless page should be shown.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Login. Goto Advanced > Wireless. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Login. Goto Advanced > Wireless. Check page title. '
-                f'Actual: {str(list_actual1)}. '
-                f'Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_2_name,
+                                          list_check_in_step=list_check_in_step_1_2,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
             list_step_fail.append('1, 2. Login. Assertion wong.')
 
         try:
@@ -11055,7 +11322,7 @@ class WIRELESS(unittest.TestCase):
             if not radio_button.find_element_by_css_selector(input).is_selected():
                 radio_button.click()
                 time.sleep(1)
-                block_2g.find_element_by_css_selector(apply).click()
+                block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
@@ -11071,16 +11338,22 @@ class WIRELESS(unittest.TestCase):
             list_actual3 = [check_2g, check_5g]
             list_expected3 = [return_true] * 2
             check = assert_list(list_actual3, list_expected3)
+
+            step_3_name = '''3. On 2.4GHz and 5GHz table: Make sure that Radio should be enable'''
+            list_check_in_step_3 = ['Check Radio 2G is selected',
+                                    'Check Radio 5G is selected']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Check radio 2G and 5G is selected. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check radio 2G and 5G is selected. '
-                f'Actual: {str(list_actual3)}. '
-                f'Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
             list_step_fail.append('3. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -11116,16 +11389,21 @@ class WIRELESS(unittest.TestCase):
             list_actual4 = [check_secure_2g, check_secure_5g]
             list_expected4 = ['None'] * 2
             check = assert_list(list_actual4, list_expected4)
+            step_4_name = '''4.  On 2.4GHz and 5GHz table: Change Security to NONE. Click "Appy" button to apply it'''
+            list_check_in_step_4 = ['Check Security 2G is None',
+                                    'Check Security 5G is None']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Change Security to None. Check security of 2G and 5G. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 4 Change Security to None. Check security of 2G and 5G. '
-                f'Actual: {str(list_actual4)}. '
-                f'Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
             list_step_fail.append('4. Assertion wong.')
 
         try:
@@ -11141,21 +11419,25 @@ class WIRELESS(unittest.TestCase):
             list_actual5 = [check_timmer]
             list_expected5 = ['WPS Operating… Wait 120 seconds.']
             check = assert_list(list_actual5, list_expected5)
+            step_5_name = '''5. Go to Wireless > WPS page on the menu tree: Click on WPS button'''
+            list_check_in_step_5 = ['Check Timer "WPS Operating ... " is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Goto Wireless > WPS. Click WPS. Check status. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
         except:
             self.list_steps.append(
-                f'[Fail] 5. Goto Wireless > WPS. Click WPS. Check status. '
-                f'Actual: {str(list_actual5)}. '
-                f'Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
             list_step_fail.append('5. Assertion wong.')
 
         try:
             interface_connect_disconnect('Ethernet', 'disable')
-            time.sleep(1)
+            time.sleep(5)
             check_2g_connected = connect_wifi_by_command(wifi_2g_name, '', xml_file=wifi_none_secure_path)
 
             interface_connect_disconnect('Ethernet', 'enable')
@@ -11163,17 +11445,20 @@ class WIRELESS(unittest.TestCase):
             list_actual6 = [check_2g_connected]
             list_expected6 = [wifi_2g_name]
             check = assert_list(list_actual6, list_expected6)
-
+            step_6_name = '''6. Client PC connect to SSID of Wireless 2.4GHz (not input pw)'''
+            list_check_in_step_6 = ['Check current wifi connected']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Client connect 2G wifi without PW. Check current connected. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
         except:
             self.list_steps.append(
-                f'[Fail]  6. Client connect 2G wifi without PW. Check current connected. '
-                f'Actual: {str(list_actual6)}. '
-                f'Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
             list_step_fail.append('6. Assertion wong.')
 
         try:
@@ -11192,21 +11477,25 @@ class WIRELESS(unittest.TestCase):
             list_actual7 = [check_timmer_2]
             list_expected7 = ['WPS Operating… Wait 120 seconds.']
             check = assert_list(list_actual7, list_expected7)
+            step_7_name = '''7. Go to Wireless > WPS page on the menu tree: Click on WPS button'''
+            list_check_in_step_7 = ['Check Timer "WPS Operating ... " is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 7. Goto Wireless > WPS. Click WPS. Check status. '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
         except:
             self.list_steps.append(
-                f'[Fail] 7. Goto Wireless > WPS. Click WPS. Check status. '
-                f'Actual: {str(list_actual7)}. '
-                f'Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_7_name,
+                                          list_check_in_step=list_check_in_step_7,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
             list_step_fail.append('7. Assertion wong.')
 
         try:
             interface_connect_disconnect('Ethernet', 'disable')
-            time.sleep(1)
+            time.sleep(5)
             check_5g_connected = connect_wifi_by_command(wifi_5g_name, '', xml_file=wifi_none_secure_path)
 
             interface_connect_disconnect('Ethernet', 'enable')
@@ -11215,17 +11504,21 @@ class WIRELESS(unittest.TestCase):
             list_actual8 = [check_5g_connected]
             list_expected8 = [wifi_5g_name]
             check = assert_list(list_actual8, list_expected8)
+            step_8_name = '''8. Client PC connect to SSID of Wireless 5GHz (not input pw)'''
+            list_check_in_step_8 = ['Check current wifi connected']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8. Client connect 5G wifi without PW. Check current connected. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(step_name=step_8_name,
+                                          list_check_in_step=list_check_in_step_8,
+                                          list_actual=list_actual8,
+                                          list_expected=list_expected8))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail]  8. Client connect 5G wifi without PW. Check current connected. '
-                f'Actual: {str(list_actual8)}. '
-                f'Expected: {str(list_expected8)}')
+                generate_step_information(step_name=step_8_name,
+                                          list_check_in_step=list_check_in_step_8,
+                                          list_actual=list_actual8,
+                                          list_expected=list_expected8))
             self.list_steps.append('[END TC]')
             list_step_fail.append('8. Assertion wong.')
 

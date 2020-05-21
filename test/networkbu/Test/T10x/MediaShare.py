@@ -921,7 +921,7 @@ class MEDIASHARE(unittest.TestCase):
 
             step_6_name = '''6. Click the Delete button of the network folder in step 3 and click OK'''
             list_check_in_step_6 = ['Delete a rule: Check pop-up content',
-                                    'Check folder path not in total path.']
+                                    'Check folder path not in total path']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -1346,7 +1346,7 @@ class MEDIASHARE(unittest.TestCase):
             check = assert_list(list_actual6, list_expected6)
 
             step_6_name = '''6. Add new account with same ID of existed account'''
-            list_check_in_step_6 = ['Check Message “The same ID exists.” displays.']
+            list_check_in_step_6 = ['Check Message “The same ID exists.” is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -1395,7 +1395,7 @@ class MEDIASHARE(unittest.TestCase):
             check = assert_list(list_actual7, list_expected7)
 
             step_7_name = '''7. Add new account with empty ID field by erased ID before. '''
-            list_check_in_step_7 = ['Check Message  “This field is required" displays.']
+            list_check_in_step_7 = ['Check Message  “This field is required" displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -2012,7 +2012,7 @@ class MEDIASHARE(unittest.TestCase):
             check = assert_list(list_actual2, list_expected2)
 
             step_3_name = '''3. Click OK button then check server that using account'''
-            list_check_in_step_3 = ['Check Server Accounts are not available.']
+            list_check_in_step_3 = ['Check Server Accounts are not available']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(step_name=step_3_name,
@@ -2127,7 +2127,7 @@ class MEDIASHARE(unittest.TestCase):
             list_expected2 = [expected_res]
             check = assert_list(list_actual2, list_expected2)
             step_2_name = '''2. Go to Media Share > Server Settings > Windows Network (Samba)'''
-            list_check_in_step_2 = ['Check default Status of Samba server with API.']
+            list_check_in_step_2 = ['Check default Status of Samba server with API']
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(step_name=step_2_name,

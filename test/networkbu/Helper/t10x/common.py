@@ -2266,6 +2266,7 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "appear": "not appear",
         "success": "unsuccess",
         "unsuccess": "success",
+        "connect": "not connect",
         "not connect": "connect",
         "not connected": "connected",
         "connect": "not connect",
@@ -2278,6 +2279,7 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "is not displayed": "is displayed",
         "existed": "not existed",
         "not existed": "existed",
+        "correct": "not correct",
         "not correct": "correct",
         "correct": "not correct",
         "selected": "not selected",
@@ -2285,6 +2287,7 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "activated": "non activated",
         "assigned": "not assigned",
         "active": "deactive",
+        "not access": "access",
         "access": "not access",
         "available": "not available",
         "clickable": "not clickable",
@@ -2296,7 +2299,13 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "true": "false",
         "highlight": "not highlight",
         "True": "False",
-        "False": "True"
+        "False": "True",
+        "deleted": "not deleted",
+        "true": "false",
+        "false": "true",
+        "displayed": "not displayed",
+        "display": "not display",
+        "disappear": "appear"
     }
     list_dict = list(dict_opposite_stage.items())
     list_dict.sort(reverse=True)
