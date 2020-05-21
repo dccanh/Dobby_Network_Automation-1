@@ -4476,9 +4476,9 @@ class HOME(unittest.TestCase):
                           "Disconnected Devices text, Existed refresh button, List header text. " \
                           "Check API: Connected value, Key id, name, mac, last connected. "
             list_check_in_step_6 = [
-                f"Check card tab is: {list_expected2[0]}",
+                f"Check card tab is: {list_expected5[0]}",
                 "Check button refresh is displayed",
-                f"Check list disconnect labels is: {list_expected2[2]}",
+                f"Check list disconnect labels is: {list_expected5[2]}",
                 [
                     "Check client id is not null",
                     "Check res connected is false",
