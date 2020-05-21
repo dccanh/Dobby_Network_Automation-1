@@ -2234,13 +2234,17 @@ def generate_step_information(step_name, list_check_in_step, list_actual, list_e
 
     step_info = f"{step_info}\tActual:\n"
     for i in range(0, len(list_actual)):
-        step_info = f"{step_info}\t - {generate_sub_step_info(list_check_in_step[i], list_actual[i], list_expected[i])}\n"
+        if list_actual[i] != list_expected[i]:
+            prefix_step = "[Fail] -> "
+        else:
+            prefix_step = ""
+        step_info = f"{step_info}\t - {prefix_step}{generate_sub_step_info(list_check_in_step[i], list_actual[i], list_expected[i])}\n"
 
     step_info = f"{step_info}\tExpected:\n"
     for i in range(0, len(list_expected)):
         step_info = f"{step_info}\t - {generate_sub_step_info(list_check_in_step[i], list_expected[i], list_expected[i])}\n"
-
-    return step_info
+    # google sheet auto convert \t to 8 space, so we must covert tab to space
+    return step_info.replace("\t", "        ")
 
 
 def remove_question_in_step_checking(checking_info: str = None):
