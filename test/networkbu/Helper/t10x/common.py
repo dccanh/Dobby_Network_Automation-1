@@ -2286,6 +2286,7 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "access": "not access",
         "available": "not available",
         "clickable": "not clickable",
+        "deleted": "not deleted",
         "valid": "invalid",
         "null": "not null",
         "not null": "null",

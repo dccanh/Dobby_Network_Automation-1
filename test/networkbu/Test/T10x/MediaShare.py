@@ -715,14 +715,7 @@ class MEDIASHARE(unittest.TestCase):
             list_actual0 = [is_correct_page_title]
             list_expected0 = [EXPECTED_SERVER_SETTING_PAGE_TITLE]
             check = assert_list(list_actual0, list_expected0)
-            # self.assertTrue(check["result"])
-            # self.list_steps.append(
-            #     f'[Pass] 1, 2. Login. Goto USB sever setting page. '
-            #     f'Check Dialog loading is disappeared after login.'
-            #     f'Check title USB sever setting page:'
-            #     f'Actual: {str(list_actual0)}.'
-            #     f'Expected: {str(list_expected0)}.'
-            # )
+
             step_1_2_name = '''1. Access and login Web UI\n2. Go to Wireless -> Media Share -> Server Settings'''
             list_check_in_step_1_2 = ['Check title page']
             self.assertTrue(check["result"])
@@ -790,10 +783,7 @@ class MEDIASHARE(unittest.TestCase):
             list_actual1 = [account_value, nw_folder_value]
             list_expected1 = [ACCOUNT_FTP, option_value]
             check = assert_list(list_actual1, list_expected1)
-            # self.assertTrue(check["result"])
-            # self.list_steps.append(
-            #     f'[Pass] 3. Edit FTP server: Check result same as configuration. '
-            #     f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+
             step_3_name = '''3. Enable FTP server and change below settings:
                 - Account: Anonymous
                 - Network Folder: choose a network folder
@@ -840,10 +830,7 @@ class MEDIASHARE(unittest.TestCase):
             list_actual2 = [check_folder_status]
             list_expected2 = [SERVER_FTP]
             check = assert_list(list_actual2, list_expected2)
-            # self.assertTrue(check["result"])
-            # self.list_steps.append(
-            #     f'[Pass] 4. Check status of network folder should be FTP. '
-            #     f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+
             step_4_name = '''4. Go to Wireless -> Media Share -> USB'''
             list_check_in_step_4 = ['Check status of network folder should be FTP']
             self.assertTrue(check["result"])
@@ -881,10 +868,7 @@ class MEDIASHARE(unittest.TestCase):
             list_actual3 = [confirm_msg_edit]
             list_expected3 = [exp_confirm_msg_edit]
             check = assert_list(list_actual3, list_expected3)
-            # self.assertTrue(check["result"])
-            # self.list_steps.append(
-            #     '[Pass] 5. Check content of confirm message. '
-            #     f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+
             step_5_name = '''5. Click the Edit button of the network folder in step 3'''
             list_check_in_step_5 = ['Check content of confirm message']
             self.assertTrue(check["result"])
@@ -934,10 +918,7 @@ class MEDIASHARE(unittest.TestCase):
             list_actual4 = [confirm_msg_delete, check_delete]
             list_expected4 = [exp_confirm_msg_delete, return_true]
             check = assert_list(list_actual4, list_expected4)
-            # self.assertTrue(check["result"])
-            # self.list_steps.append(
-            #     '[Pass] 6. Delete a rule: Check pop-up content; check folder path not in total path. '
-            #     f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+
             step_6_name = '''6. Click the Delete button of the network folder in step 3 and click OK'''
             list_check_in_step_6 = ['Delete a rule: Check pop-up content',
                                     'Check folder path not in total path.']
@@ -971,8 +952,6 @@ class MEDIASHARE(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
-        URL_LOGIN = get_config('URL', 'url')
         # ===========================================================
         factory_dut()
         # ===========================================================
@@ -983,6 +962,7 @@ class MEDIASHARE(unittest.TestCase):
             # Goto media share USB
             goto_menu(driver, media_share_tab, media_share_usb_tab)
             wait_popup_disappear(driver, dialog_loading)
+            is_correct_page_title = driver.find_element_by_css_selector(ele_title_page).text
 
             # Network Folder
             network_block = driver.find_element_by_css_selector(usb_network)
@@ -1008,23 +988,36 @@ class MEDIASHARE(unittest.TestCase):
                     wait_popup_disappear(driver, dialog_loading)
                     driver.find_element_by_css_selector(btn_ok).click()
                     time.sleep(0.5)
-            self.list_steps.append('[Pass] Precondition')
+
+            list_actual0 = [is_correct_page_title]
+            list_expected0 = ['Media Share > Server Settings']
+            check = assert_list(list_actual0, list_expected0)
+            step_0_name = '''1. Access and login Web UI\n2. Go to Wireless -> Media Share -> Server Settings'''
+            list_check_in_step_0 = ['Check title page']
+            self.assertTrue(check["result"])
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_0_name,
+                    list_check_in_step=list_check_in_step_0,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
         except:
-            self.list_steps.append('[Fail] Precondition')
+            self.list_steps.append(
+                generate_step_information(
+                    step_name=step_0_name,
+                    list_check_in_step=list_check_in_step_0,
+                    list_actual=list_actual0,
+                    list_expected=list_expected0
+                )
+            )
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Prepare done precondition
 
         try:
             # Goto Sever setting
             goto_menu(driver, media_share_tab, media_share_server_settings_tab)
             wait_popup_disappear(driver, dialog_loading)
-
-            # ls_card = [ftp_server,
-            #            samba_server_card,
-            #            dlna_server_card,
-            #            dev_dav_server_card,
-            #            torrent_server_card,
-            #            time_machine_server_card]
-            # exp_msg = [exp_server_account_warning, exp_server_folder_warning]
 
             exp_account_and_folder_msg = [exp_server_account_warning, exp_server_folder_warning]
             exp_account_msg = [exp_server_account_warning]
@@ -1038,7 +1031,7 @@ class MEDIASHARE(unittest.TestCase):
 
             _check_warning_msg = []
             for i in ls_card:
-                # server = driver.find_element_by_css_selector(i)
+
                 server = driver.find_element_by_css_selector(i["locator"])
                 ActionChains(driver).move_to_element(server).perform()
                 server_btn = server.find_element_by_css_selector(select)
@@ -1050,27 +1043,45 @@ class MEDIASHARE(unittest.TestCase):
                 list_warnings_text = [warning.text for warning in list_warnings]
                 _check_warning_msg.append(i["messages"] == list_warnings_text)
 
-                # account_warning = server.find_elements_by_css_selector(account_link_cls)
-                # account_warning_text = [i.text for i in account_warning]
-                # _check_warning_msg.append(exp_msg == account_warning_text)
-
 
             list_actual = _check_warning_msg
             list_expected = [return_true]*6
             check = assert_list(list_actual, list_expected)
+
+            step_45678_name = '''3. Enable FTP Server\n
+            4. Enable Samba Server\n
+            5. Enable DLNA Server\n
+            6. Enable WebDAV Server\n
+            7. Enable Torrent Server\n
+            8. Enable Time Machine Server\n'''
+            list_check_in_step_45678 = [
+                'Check Message server account and network folder are not available of FTP is displayed',
+                'Check Message server account and network folder are not available of Samba is displayed',
+                'Check Message server account and network folder are not available of DLNA is displayed',
+                'Check Message server account and network folder are not available of WebDAV is displayed',
+                'Check Message server account and network folder are not available of Torrent is displayed',
+                'Check Message server account and network folder are not available of Time machine is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Check Message Server Accounts and Network Folder are not available of '
-                f'FTP, Samba, DLNA, WebDAV, Torrent, Time Machine '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_45678_name,
+                    list_check_in_step=list_check_in_step_45678,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Check Message Server Accounts and Network Folder are not available of '
-                f'FTP, Samba, DLNA, WebDAV, Torrent, Time Machine '
-                f'Actual: {str(list_actual)}. Expected: {str(list_expected)}')
+                generate_step_information(
+                    step_name=step_45678_name,
+                    list_check_in_step=list_check_in_step_45678,
+                    list_actual=list_actual,
+                    list_expected=list_expected
+                )
+            )
             self.list_steps.append('[END TC]')
-            list_step_fail.append('1, 2. Assertion wong.')
+            list_step_fail.append('45678. Assertion wong.')
 
         self.assertListEqual(list_step_fail, [])
     # OK F
@@ -1102,14 +1113,26 @@ class MEDIASHARE(unittest.TestCase):
             list_actual1 = [check_title]
             list_expected1 = ['Media Share > USB']
             check = assert_list(list_actual1, list_expected1)
+            step_1_name = '''1. Access and login Web UI\n2. Go to Media Share > USB > Account Settings'''
+            list_check_in_step_1 = ['Check title page']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Goto Media Share > USB. Check title page. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Goto Media Share > USB. Check title page. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1
+                )
+            )
             list_step_fail.append('1, 2. Assertion wrong.')
 
 
@@ -1136,14 +1159,23 @@ class MEDIASHARE(unittest.TestCase):
             list_actual3 = [check_id_holder, check_pw_holder]
             list_expected3 = ['Enter the ID', 'Enter the Password']
             check = assert_list(list_actual3, list_expected3)
+            step_3_name = '''3. Click "+ADD" button to add account.'''
+            list_check_in_step_3 = ['Check ID placeholder',
+                                    'Check Password placeholder']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Check place holder of ID and password in Account Settings. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3. Check place holder of ID and password in Account Settings. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3))
             list_step_fail.append('3. Assertion wrong.')
 
         try:
@@ -1201,16 +1233,27 @@ class MEDIASHARE(unittest.TestCase):
             list_actual4 = [[id_account_1, pw_account_1], [id_account_2, pw_account_2]]
             list_expected4 = [[ID_1[:32], PASSWORD_1[:32]], [ID_2[:32], PASSWORD_2[:32]]]
             check = assert_list(list_actual4, list_expected4)
+            step_4_name = '''4. Check max length of ID and Password can be inputed
+                - Enter 32 characters into ID field.
+                - Enter 33 characters into ID field
+                - Enter 32 characters into Password field.
+                - Enter 33 characters into Password field'''
+            list_check_in_step_4 = ['Check max length ID and Password account 1',
+                                    'Check max length ID and Password account 2']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Input ID and Password 32 chars. Check.'
-                f'Input ID and Password 33 chars. Check. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail]4. Input ID and Password 32 chars. Check.'
-                f'Input ID and Password 33 chars. Check. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4))
             list_step_fail.append('4. Assertion wrong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1252,16 +1295,26 @@ class MEDIASHARE(unittest.TestCase):
             list_actual5 = [id_account_3, pw_account_3]
             list_expected5 = [TEST_STRING_ID, TEST_STRING]
             check = assert_list(list_actual5, list_expected5)
+
+            step_5_name = '''5. Enter ID and Password then click on "Save" button
+                            - ID/Password with number (0-9), letters (a-z, A-Z) and special characters is valid.
+                            - Click "Apply" button then click "OK" button'''
+            list_check_in_step_5 = ['Check ID account 1',
+                                    'Check Password account 2']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Input ID and Password normally. Save > Apply'
-                f'Check add successfully. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5))
         except:
             self.list_steps.append(
-                f'[Fail]  5. Input ID and Password normally. Save > Apply'
-                f'Check add successfully. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5))
             list_step_fail.append('5. Assertion wong.')
 
         try:
@@ -1291,14 +1344,23 @@ class MEDIASHARE(unittest.TestCase):
             list_actual6 = [error_msg_1]
             list_expected6 = [exp_account_id_exist]
             check = assert_list(list_actual6, list_expected6)
+
+            step_6_name = '''6. Add new account with same ID of existed account'''
+            list_check_in_step_6 = ['Check Message “The same ID exists.” displays.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Change same ID: Check error message. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6))
         except:
             self.list_steps.append(
-                f'[Fail] 6. Change same ID: Check error message. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(
+                    step_name=step_6_name,
+                    list_check_in_step=list_check_in_step_6,
+                    list_actual=list_actual6,
+                    list_expected=list_expected6))
             list_step_fail.append('6. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
@@ -1331,14 +1393,23 @@ class MEDIASHARE(unittest.TestCase):
             list_actual7 = [error_msg_2]
             list_expected7 = [exp_account_null_id]
             check = assert_list(list_actual7, list_expected7)
+
+            step_7_name = '''7. Add new account with empty ID field by erased ID before. '''
+            list_check_in_step_7 = ['Check Message  “This field is required" displays.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 7. Check Add New account with empty ID: Check error message. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7))
         except:
             self.list_steps.append(
-                f'[Fail] 7. Check Add New account with empty ID: Check error message. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(
+                    step_name=step_7_name,
+                    list_check_in_step=list_check_in_step_7,
+                    list_actual=list_actual7,
+                    list_expected=list_expected7))
             list_step_fail.append('7. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 8
@@ -1377,14 +1448,23 @@ class MEDIASHARE(unittest.TestCase):
             list_actual8 = [check_key_words]
             list_expected8 = [return_true]
             check = assert_list(list_actual8, list_expected8)
+
+            step_8_name = '''8. Add new account with ID "admin" or "ADmin" or "root" or "Anonymous" '''
+            list_check_in_step_8 = ['Check error msg key words not available']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8. Check Add KeyWords: Check error msg key words not available. '
-                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_8_name,
+                    list_check_in_step=list_check_in_step_8,
+                    list_actual=list_actual8,
+                    list_expected=list_expected8))
         except:
             self.list_steps.append(
-                f'[Fail] 8. Check Add KeyWords: Check error msg key words not available. '
-                f'Actual: {str(list_actual8)}. Expected: {str(list_expected8)}')
+                generate_step_information(
+                    step_name=step_8_name,
+                    list_check_in_step=list_check_in_step_8,
+                    list_actual=list_actual8,
+                    list_expected=list_expected8))
             list_step_fail.append('8. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
@@ -1416,15 +1496,27 @@ class MEDIASHARE(unittest.TestCase):
             list_actual9 = [ls_account]
             list_expected9 = [5]
             check = assert_list(list_actual9, list_expected9)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] 9. Add max rule: Check max rule. '
+            #     f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+            step_9_name = '''9. Check max rule is added '''
+            list_check_in_step_9 = ['Check Max rule account is added up to 5. ']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 9. Add max rule: Check max rule. '
-                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+                generate_step_information(
+                    step_name=step_9_name,
+                    list_check_in_step=list_check_in_step_9,
+                    list_actual=list_actual9,
+                    list_expected=list_expected9))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 9. Add max rule: Check max rule. '
-                f'Actual: {str(list_actual9)}. Expected: {str(list_expected9)}')
+                generate_step_information(
+                    step_name=step_9_name,
+                    list_check_in_step=list_check_in_step_9,
+                    list_actual=list_actual9,
+                    list_expected=list_expected9))
             self.list_steps.append('[END TC]')
             list_step_fail.append('9. Assertion wong.')
 
@@ -1455,14 +1547,23 @@ class MEDIASHARE(unittest.TestCase):
             list_actual1 = [check_title]
             list_expected1 = ['Media Share > USB']
             check = assert_list(list_actual1, list_expected1)
+
+            step_1_name = '''1. Access and login Web UI\n2. Go to Media Share > USB '''
+            list_check_in_step_1 = ['Check title page']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Goto Media Share > USB. Check title page. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1))
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Goto Media Share > USB. Check title page. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1))
             list_step_fail.append('1, 2. Assertion wrong.')
 
         try:
@@ -1539,14 +1640,25 @@ class MEDIASHARE(unittest.TestCase):
             list_actual3 = [verify_id_account, verify_pw_account]
             list_expected3 = [EDIT_ID, EDIT_PW]
             check = assert_list(list_actual3, list_expected3)
+
+            step_3_name = '''3. Click "Edit" button on existed account, edit to new ID/ Password then click "Save" button
+                    - Click "Apply" button to apply it '''
+            list_check_in_step_3 = ['Check ID account',
+                                    'Check password account']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Edit an random account: ID and PW changed. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3. Edit an random account: ID and PW changed. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(
+                    step_name=step_3_name,
+                    list_check_in_step=list_check_in_step_3,
+                    list_actual=list_actual3,
+                    list_expected=list_expected3))
             list_step_fail.append('3. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2
@@ -1564,18 +1676,26 @@ class MEDIASHARE(unittest.TestCase):
             list_actual4 = [check_confirm_msg_1, check_popup_close, check_usb_page]
             list_expected4 = ['Do you want to delete this item?', True, True]
             check = assert_list(list_actual4, list_expected4)
+            step_4_name = '''4. Click "Delete" button on existed account.
+                    - Click "Cancel" button '''
+            list_check_in_step_4 = ['Click "Delete". Check Confirm message',
+                                    'Check Popup disappear',
+                                    'Check USB page is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Click Delete. '
-                f'Check Confirm message. Click Cancel. Check Popup disappear. Check USB page display '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 4. Click Delete. '
-                f'Check Confirm message. Click Cancel. Check Popup disappear. Check USB page display '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(
+                    step_name=step_4_name,
+                    list_check_in_step=list_check_in_step_4,
+                    list_actual=list_actual4,
+                    list_expected=list_expected4))
             list_step_fail.append('4. Assertion wong.')
-
 
         try:
             ls_account[index_chosen].find_element_by_css_selector(delete_cls).click()
@@ -1594,17 +1714,27 @@ class MEDIASHARE(unittest.TestCase):
             list_actual5 = [check_confirm_msg_2, check_delete]
             list_expected5 = ['Do you want to delete this item?', True]
             check = assert_list(list_actual5, list_expected5)
+
+            step_5_name = '''5. Click "Delete" button on existed account.
+                    - Click "OK" button on confirmation message.
+                    - Click "OK" button then check account list'''
+            list_check_in_step_5 = ['Click "Delete". Check Confirm message',
+                                    'Check the rule is deleted']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Delete a rule: '
-                f'Check Confirm message and Check that rule not in list account. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 5. Delete a rule: '
-                f'Check Confirm message and Check that rule not in list account. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(
+                    step_name=step_5_name,
+                    list_check_in_step=list_check_in_step_5,
+                    list_actual=list_actual5,
+                    list_expected=list_expected5))
             self.list_steps.append('[END TC]')
             list_step_fail.append('5. Assertion wong.')
 
@@ -1789,9 +1919,11 @@ class MEDIASHARE(unittest.TestCase):
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
-            self.list_steps.append('[Pass] Precondition Successfully')
+            self.list_steps.append(
+                '[Pass] Precondition: Existed an account that is using in server (exp: FPT server/ Samba)')
         except:
-            self.list_steps.append('[Fail] Precondition Fail')
+            self.list_steps.append(
+                '[Fail] Precondition: Existed an account that is using in server (exp: FPT server/ Samba)')
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Prepare done precondition
         try:
             goto_menu(driver, media_share_tab, media_share_usb_tab)
@@ -1842,16 +1974,26 @@ class MEDIASHARE(unittest.TestCase):
                 list_actual1 = [edit_confirm_msg, delete_confirm_msg]
                 list_expected1 = [exp_confirm_msg_edit, exp_delete_account_when_server_running]
             check = assert_list(list_actual1, list_expected1)
+
+            step_1_name = '''1. Click Edit button on existed account. 
+                            2. Click Delete button on existed account. '''
+            list_check_in_step_1 = ['Check Edit confirm message',
+                                    'Check Delete confirm message']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1, 2. Edit and Delete account when server is running: Check Warning. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1))
         except:
             self.list_steps.append(
-                f'[Fail] 1, 2. Edit and Delete account when server is running: Check Warning. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
-            list_step_fail.append(
-                '1, 2. Assertion wong.')
+                generate_step_information(
+                    step_name=step_1_name,
+                    list_check_in_step=list_check_in_step_1,
+                    list_actual=list_actual1,
+                    list_expected=list_expected1))
+            list_step_fail.append('1, 2. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2
         try:
@@ -1868,15 +2010,22 @@ class MEDIASHARE(unittest.TestCase):
             list_actual2 = [ftp_account_warning, samba_account_warning]
             list_expected2 = [exp_server_account_warning]*2
             check = assert_list(list_actual2, list_expected2)
+
+            step_3_name = '''3. Click OK button then check server that using account'''
+            list_check_in_step_3 = ['Check Server Accounts are not available.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Delete OK: Check Server Accounts are not available. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual2,
+                                          list_expected=list_expected2))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 3. Delete OK: Check Server Accounts are not available. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual2,
+                                          list_expected=list_expected2))
             self.list_steps.append('[END TC]')
             list_step_fail.append('3. Assertion wong.')
 
@@ -1941,14 +2090,20 @@ class MEDIASHARE(unittest.TestCase):
             list_actual1 = [page_title]
             list_expected1 = ['Media Share > USB']
             check = assert_list(list_actual1, list_expected1)
+            step_1_name = '''1. Access and login Web UI and Go to Media Share > USB'''
+            list_check_in_step_1 = ['Check title page']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1. Login. Goto USB page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_name,
+                                          list_check_in_step=list_check_in_step_1,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
         except:
             self.list_steps.append(
-                f'[Fail] 1. Login. Goto USB page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_name,
+                                          list_check_in_step=list_check_in_step_1,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
             list_step_fail.append('1. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
@@ -1971,14 +2126,20 @@ class MEDIASHARE(unittest.TestCase):
             list_actual2 = [default_samba]
             list_expected2 = [expected_res]
             check = assert_list(list_actual2, list_expected2)
+            step_2_name = '''2. Go to Media Share > Server Settings > Windows Network (Samba)'''
+            list_check_in_step_2 = ['Check default Status of Samba server with API.']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2. Check default Status of Samba server with API. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(step_name=step_2_name,
+                                          list_check_in_step=list_check_in_step_2,
+                                          list_actual=list_actual2,
+                                          list_expected=list_expected2))
         except:
             self.list_steps.append(
-                f'[Fail] 2. Check default Status of Samba server with API. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(step_name=step_2_name,
+                                          list_check_in_step=list_check_in_step_2,
+                                          list_actual=list_actual2,
+                                          list_expected=list_expected2))
             list_step_fail.append('2. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
@@ -1993,14 +2154,20 @@ class MEDIASHARE(unittest.TestCase):
             list_actual3 = [samba_enable_2]
             list_expected3 = [return_true]
             check = assert_list(list_actual3, list_expected3)
+            step_3_name = '''3. Enable Windows Network (Samba)'''
+            list_check_in_step_3 = ['Check Window Network (Samba) should be enabled']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Enabled Samba server. Check Status. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3. Enabled Samba server. Check Status. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
             list_step_fail.append('3. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 5
@@ -2020,14 +2187,21 @@ class MEDIASHARE(unittest.TestCase):
             list_actual4 = [conn_name_error]
             list_expected4 = ['This field is required']
             check = assert_list(list_actual4, list_expected4)
+            step_4_name = '''4. Not enter Connection Name: 
+                - The cussor click on input box of Connection Name then click out side it.'''
+            list_check_in_step_4 = ['Check Error message displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Not enter Connection Name. Check Error message displayed. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 4. Not enter Connection Name. Check Error message displayed. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
             list_step_fail.append('4. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
@@ -2053,14 +2227,20 @@ class MEDIASHARE(unittest.TestCase):
             list_actual5 = [get_conn_name]
             list_expected5 = ['hoa']
             check = assert_list(list_actual5, list_expected5)
+            step_5_name = '''5. Enter valid connection name'''
+            list_check_in_step_5 = ['Check value in input box']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Enter valid connection name. Check value in input box. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
         except:
             self.list_steps.append(
-                f'[Fail] 5. Enter valid connection name. Check value in input box. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
             list_step_fail.append('5. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
@@ -2104,20 +2284,22 @@ class MEDIASHARE(unittest.TestCase):
             list_actual6 = [check_home_page]
             list_expected6 = [return_true]
             check = assert_list(list_actual6, list_expected6)
+            step_67_name = '''6, 7. Enter Network Folder. Apply. Access DUT login via connection name.'''
+            list_check_in_step_67 = ['Check access success home page is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6, 7. Enter Network Folder. Apply. Access DUT login via connection name. '
-                f'Check access success home page displayed. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_67_name,
+                                          list_check_in_step=list_check_in_step_67,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
         except:
             self.list_steps.append(
-                f'[Fail] 6, 7. Enter Network Folder. Apply. Access DUT login via connection name. '
-                f'Check access success home page displayed. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_67_name,
+                                          list_check_in_step=list_check_in_step_67,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
             list_step_fail.append('6, 7. Assertion wong.')
 
-
-            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
         try:
             goto_menu(driver, media_share_tab, media_share_server_settings_tab)
             wait_popup_disappear(driver, dialog_loading)
@@ -2152,17 +2334,22 @@ class MEDIASHARE(unittest.TestCase):
             list_actual7 = [check_home_page_2]
             list_expected7 = [return_true]
             check = assert_list(list_actual7, list_expected7)
+
+            step_89_name = '''8, 9. Enter Account to  Anonymous. Apply. Access DUT login via connection name.'''
+            list_check_in_step_89 = ['Check access success home page is displayed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 8, 9. Enter Account to  Anonymous. Apply. Access DUT login via connection name. '
-                f'Check access success home page displayed. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_89_name,
+                                          list_check_in_step=list_check_in_step_89,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 8, 9. Enter Account to  Anonymous. Apply. Access DUT login via connection name. '
-                f'Check access success home page displayed. '
-                f'Actual: {str(list_actual7)}. Expected: {str(list_expected7)}')
+                generate_step_information(step_name=step_89_name,
+                                          list_check_in_step=list_check_in_step_89,
+                                          list_actual=list_actual7,
+                                          list_expected=list_expected7))
             self.list_steps.append('[END TC]')
             list_step_fail.append('8, 9. Assertion wong.')
 
@@ -2231,14 +2418,20 @@ class MEDIASHARE(unittest.TestCase):
             list_actual1 = [page_title]
             list_expected1 = ['Media Share > USB']
             check = assert_list(list_actual1, list_expected1)
+            step_1_name = '''1. Access and login Web UI and Go to Media Share > USB'''
+            list_check_in_step_1 = ['Check title page']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 1. Login. Goto USB page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_name,
+                                          list_check_in_step=list_check_in_step_1,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
         except:
             self.list_steps.append(
-                f'[Fail] 1. Login. Goto USB page. Check page title. '
-                f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
+                generate_step_information(step_name=step_1_name,
+                                          list_check_in_step=list_check_in_step_1,
+                                          list_actual=list_actual1,
+                                          list_expected=list_expected1))
             list_step_fail.append('1. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
@@ -2251,14 +2444,20 @@ class MEDIASHARE(unittest.TestCase):
             list_actual2 = [check_title_server]
             list_expected2 = ['Media Share > Server Settings']
             check = assert_list(list_actual2, list_expected2)
+            step_2_name = '''2. Go to Wireless -> Media Share -> Server Settings'''
+            list_check_in_step_2 = ['Check Server Settings page displays']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 2. Goto Server setting. Check title. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(step_name=step_2_name,
+                                          list_check_in_step=list_check_in_step_2,
+                                          list_actual=list_actual2,
+                                          list_expected=list_expected2))
         except:
             self.list_steps.append(
-                f'[Fail] 2. Goto Server setting. Check title. '
-                f'Actual: {str(list_actual2)}. Expected: {str(list_expected2)}')
+                generate_step_information(step_name=step_2_name,
+                                          list_check_in_step=list_check_in_step_2,
+                                          list_actual=list_actual2,
+                                          list_expected=list_expected2))
             list_step_fail.append('2. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
@@ -2303,14 +2502,20 @@ class MEDIASHARE(unittest.TestCase):
             list_actual3 = [check_ftp_on]
             list_expected3 = [return_true]
             check = assert_list(list_actual3, list_expected3)
+            step_3_name = '''3. Enable FTP server and change below settings: Select a Account ; Network Folder: choose a network folder and Apply setting'''
+            list_check_in_step_3 = ['Check FTP server is activated']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 3. Create a FTP server. Check create success. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
         except:
             self.list_steps.append(
-                f'[Fail] 3.  Create a FTP server. Check create success. '
-                f'Actual: {str(list_actual3)}. Expected: {str(list_expected3)}')
+                generate_step_information(step_name=step_3_name,
+                                          list_check_in_step=list_check_in_step_3,
+                                          list_actual=list_actual3,
+                                          list_expected=list_expected3))
             list_step_fail.append('3. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 4
@@ -2348,16 +2553,21 @@ class MEDIASHARE(unittest.TestCase):
             list_actual4 = [check_put, check_get]
             list_expected4 = [return_true]*2
             check = assert_list(list_actual4, list_expected4)
+            step_4_name = '''4. Connect FTP. Put a *.png file then Get that file to local.'''
+            list_check_in_step_4 = ['Check file in server is existed',
+                                    'Check file in download is existed']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 4. Connect FTP. Put a *.png file. Check that file in server. '
-                f'Get that file to local. Check that file downloaded. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
         except:
             self.list_steps.append(
-                f'[Fail] 4. Connect FTP. Put a *.png file. Check that file in server. '
-                f'Get that file to local. Check that file downloaded. '
-                f'Actual: {str(list_actual4)}. Expected: {str(list_expected4)}')
+                generate_step_information(step_name=step_4_name,
+                                          list_check_in_step=list_check_in_step_4,
+                                          list_actual=list_actual4,
+                                          list_expected=list_expected4))
             list_step_fail.append('4. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
@@ -2401,20 +2611,23 @@ class MEDIASHARE(unittest.TestCase):
             first_row = network_block.find_elements_by_css_selector(rows)[0]
             check_read = first_row.find_element_by_css_selector(permission_read_check_box_first_row).is_selected()
 
-
             list_actual5 = [check_read]
             list_expected5 = [return_true]
             check = assert_list(list_actual5, list_expected5)
+            step_5_name = '''5. Click the Edit button of the network folder then change to select Read permission only, click "Apply" , click OK'''
+            list_check_in_step_5 = ['Check Permission to Read is enabled']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 5. Disabled Server. Change Permission to Read. '
-                f'Check Read is checked. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
         except:
             self.list_steps.append(
-                f'[Fail] 5. Disabled Server. Change Permission to Read. '
-                f'Check Read is checked. '
-                f'Actual: {str(list_actual5)}. Expected: {str(list_expected5)}')
+                generate_step_information(step_name=step_5_name,
+                                          list_check_in_step=list_check_in_step_5,
+                                          list_actual=list_actual5,
+                                          list_expected=list_expected5))
             list_step_fail.append('5. Assertion wong.')
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 6
@@ -2460,17 +2673,27 @@ class MEDIASHARE(unittest.TestCase):
             list_actual6 = [check_put_perm, check_get_perm]
             list_expected6 = [return_true] * 2
             check = assert_list(list_actual6, list_expected6)
+            # self.assertTrue(check["result"])
+            # self.list_steps.append(
+            #     f'[Pass] Enable FTP server '
+            #     f'Check can not put file to server cause no permission. Check can get file from server. '
+            #     f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+            step_6_name = '''6. Enable FTP server'''
+            list_check_in_step_6 = ['Check can not put file to server cause no permission: available',
+                                    'Check can get file from server is available']
             self.assertTrue(check["result"])
             self.list_steps.append(
-                f'[Pass] 6. Enable FTP server. '
-                f'Check can not put file to server cause no permission. Check can get file from server. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
-                f'[Fail] 6.  Enable FTP server. '
-                f'Check can not put file to server cause no permission. Check can not get file from server. '
-                f'Actual: {str(list_actual6)}. Expected: {str(list_expected6)}')
+                generate_step_information(step_name=step_6_name,
+                                          list_check_in_step=list_check_in_step_6,
+                                          list_actual=list_actual6,
+                                          list_expected=list_expected6))
             self.list_steps.append('[END TC]')
             list_step_fail.append('6. Assertion wong.')
         self.assertListEqual(list_step_fail, [])
