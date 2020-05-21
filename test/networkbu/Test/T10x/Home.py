@@ -3347,6 +3347,7 @@ class HOME(unittest.TestCase):
             list_expected5 = [exp_confirm_msg_delete_resserve_ip, return_true]
             step_5_6_7_name = "5,6,7. Delete reserved IP -> Check Delete successfully in Network Lan"
             list_check_in_step_5_6_7 = [
+                "Check Confirm delete message is correct",
                 "Check Delete reserved IP in network lan success"
             ]
             check = assert_list(list_actual5, list_expected5)
