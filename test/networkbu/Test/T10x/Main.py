@@ -1851,8 +1851,8 @@ class MAIN(unittest.TestCase):
             list_tab_text = driver.find_elements_by_css_selector(ls_tab)
             list_tab_text = [i.text for i in list_tab_text]
 
-            list_actual4 = ["/".join(list_tab_text)]
-            list_expected4 = ["/".join(['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE', 'QOS', 'SECURITY', 'ADVANCED'])]
+            list_actual4 = [list_tab_text]
+            list_expected4 = [['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE', 'QOS', 'SECURITY', 'ADVANCED']]
             step_5_name = "5. Check Menu tree in Home page via IP address. "
             list_check_in_step_5 = [
                 "There is no problem with menu"
@@ -2561,7 +2561,7 @@ class MAIN(unittest.TestCase):
             list_expected1 = [return_true]*2
             step_1_name = "1. Check Agree button is enable, Click Agree, Welcome page display. "
             list_check_in_step_1 = [
-                "Button agress is enable",
+                "Button agress is enabled",
                 "Wellcome page is appear"
             ]
             check = assert_list(list_actual1, list_expected1)
@@ -2794,6 +2794,7 @@ class MAIN(unittest.TestCase):
                 f"Title change password page is: {text_change_pw_page_title}",
                 f"Change password message is: {exp_change_pw_msg}",
                 "Default login id is: admin",
+                "List label is correct",
                 "List placeholder is correct"
             ]
             check = assert_list(list_actual2, list_expected2)
@@ -6139,7 +6140,7 @@ class MAIN(unittest.TestCase):
             list_check_in_step_4 = [
                 "Password 2g holder is correct",
                 "Password 5g holder is correct",
-                "Error message require password 2g is show correct"
+                "Error message require password 2g is show correct",
                 "Error message require password 5g is show correct"
             ]
             check = assert_list(list_actual3, list_expected3)

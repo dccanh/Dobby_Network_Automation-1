@@ -1100,7 +1100,7 @@ class HOME(unittest.TestCase):
             list_actual3 = [check_radio_box]
             list_expected3 = [return_false]
             step_3_name = "3. Goto Advanced> Wireless. Disabled 2G Radio. Check Disabled. "
-            list_check_in_step_3 = ["Check 2G Radio is disable"]
+            list_check_in_step_3 = ["Check 2G Radio is disabled"]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -1357,8 +1357,8 @@ class HOME(unittest.TestCase):
             step_3_3_name = "3.3 Check Information, CPU Status, Ethernet Port Status, Memory Status. "
             list_check_in_step_3_3 = [
                 f"Check label information is: {list_expected3[0]}",
-                f"Check label CPU status is: {list_expected3[1]}"
-                f"Check label Ethernet Port Status is: {list_expected3[2]}"
+                f"Check label CPU status is: {list_expected3[1]}",
+                f"Check label Ethernet Port Status is: {list_expected3[2]}",
                 f"Check label Memory Status is: {list_expected3[3]}"
             ]
             check = assert_list(list_actual3, list_expected3)
@@ -1915,7 +1915,7 @@ class HOME(unittest.TestCase):
                     "Check model name is correct",
                     f"Check Condition Serial number end with '{SERIAL_NUMBER}' is correct",
                     f"Check Firmware version is: {firmware_version}",
-                    "Check Condition 'Build time match has %Y.%m.%d %H:%M:%S format' is correct'"
+                    "Check Condition 'Build time match has %Y.%m.%d %H:%M:%S format' is correct"
                 ],
                 f"Check text of button update is: {list_expected1[2]}",
                 f"Check button of date color is: {list_expected1[3]}"
@@ -2541,7 +2541,7 @@ class HOME(unittest.TestCase):
             step_3_name = "3. Check Server title, icon fab, value fields."
             list_check_in_step_3 = [
                 f"Check Server title is: {list_expected1[0]}",
-                "Check icon fab is exist",
+                "Check icon fab is existed",
                 "Check FTP Server is off",
                 "Check Windows Network (Samba) is off",
                 "Check Media Server (DLNA) is off"
@@ -3347,6 +3347,7 @@ class HOME(unittest.TestCase):
             list_expected5 = [exp_confirm_msg_delete_resserve_ip, return_true]
             step_5_6_7_name = "5,6,7. Delete reserved IP -> Check Delete successfully in Network Lan"
             list_check_in_step_5_6_7 = [
+                "Check Confirm delete message is correct",
                 "Check Delete reserved IP in network lan success"
             ]
             check = assert_list(list_actual5, list_expected5)
@@ -4475,9 +4476,9 @@ class HOME(unittest.TestCase):
                           "Disconnected Devices text, Existed refresh button, List header text. " \
                           "Check API: Connected value, Key id, name, mac, last connected. "
             list_check_in_step_6 = [
-                f"Check card tab is: {list_expected2[0]}",
+                f"Check card tab is: {list_expected5[0]}",
                 "Check button refresh is displayed",
-                f"Check list disconnect labels is: {list_expected2[2]}",
+                f"Check list disconnect labels is: {list_expected5[2]}",
                 [
                     "Check client id is not null",
                     "Check res connected is false",
@@ -4622,8 +4623,8 @@ class HOME(unittest.TestCase):
                 generate_step_information(
                     step_name=step_3_name,
                     list_check_in_step=list_check_in_step_3,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
                 )
             )
         except:
@@ -4631,8 +4632,8 @@ class HOME(unittest.TestCase):
                 generate_step_information(
                     step_name=step_3_name,
                     list_check_in_step=list_check_in_step_3,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
                 )
             )
             list_step_fail.append('3. Assertion wong.')
@@ -5127,7 +5128,7 @@ class HOME(unittest.TestCase):
                 "Check host network title is displayed",
                 f"Check Sub title is: {list_expected3[1]}",
                 [
-                    "Check Condition 'Connection status is Connected (2.4GHz) or Connected (5GHz)'",
+                    "Check Condition 'Connection status is Connected (2.4GHz) or Connected (5GHz)' is correct",
                     "Check Signal Strength is not null",
                     "Check Network name is not null",
                     "Check Security is not null",
