@@ -5128,7 +5128,7 @@ class HOME(unittest.TestCase):
                 "Check host network title is displayed",
                 f"Check Sub title is: {list_expected3[1]}",
                 [
-                    "Check Condition 'Connection status is Connected (2.4GHz) or Connected (5GHz)'",
+                    "Check Condition 'Connection status is Connected (2.4GHz) or Connected (5GHz)' is correct",
                     "Check Signal Strength is not null",
                     "Check Network name is not null",
                     "Check Security is not null",
