@@ -2299,7 +2299,7 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
     list_dict.sort(reverse=True)
     sorted_opposite_stage = dict(list_dict)
     for key in sorted_opposite_stage:
-        if checking_info.endswith(key) or \
+        if checking_info.endswith(f" {key}") or \
                 ("contain:" in key and key in checking_info) or \
                 (("is displayed:" == key or "is not displayed:" == key) and key in checking_info):
             if result:
