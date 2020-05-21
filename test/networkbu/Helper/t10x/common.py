@@ -2217,7 +2217,7 @@ def generate_sub_step_info(list_check_in_sub_step, values, values_expected):
         if isinstance(values[i], bool):
             sub_step_info = detect_check_information(list_check_in_sub_step[i], values[i] == values_expected[i])
         else:
-            sub_step_info = values[i]
+            sub_step_info = str(values[i])
         list_sub_step_info.append(sub_step_info)
     return ".".join(list_sub_step_info)
 
