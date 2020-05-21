@@ -2561,7 +2561,7 @@ class MAIN(unittest.TestCase):
             list_expected1 = [return_true]*2
             step_1_name = "1. Check Agree button is enable, Click Agree, Welcome page display. "
             list_check_in_step_1 = [
-                "Button agress is enable",
+                "Button agress is enabled",
                 "Wellcome page is appear"
             ]
             check = assert_list(list_actual1, list_expected1)
