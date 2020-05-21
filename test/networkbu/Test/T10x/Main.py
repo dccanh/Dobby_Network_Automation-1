@@ -3923,8 +3923,8 @@ class MAIN(unittest.TestCase):
             list_options = operation_block.find_elements_by_css_selector(secure_value_in_drop_down)
             list_operation_mode_text = [i.text for i in list_options]
 
-            list_actual3 = sorted(list_operation_mode_text)
-            list_expected3 = sorted(['Router Mode', 'Repeater Mode', 'Access Point Mode', 'Bridge Mode'])
+            list_actual3 = [sorted(list_operation_mode_text)]
+            list_expected3 = [sorted(['Router Mode', 'Repeater Mode', 'Access Point Mode', 'Bridge Mode'])]
             step_3_name = "3. Get list 4 operation mode supported."
             list_check_in_step_3 = [
                 "List supported operation mode is correct"
@@ -4007,8 +4007,8 @@ class MAIN(unittest.TestCase):
 
             title_summary_4 = driver.find_element_by_css_selector(lg_welcome_header).text
 
-            list_actual4 = [title_repeater_setting_1, title_wireless_setup_2, title_humax_wifi_app_3, title_summary_4]
-            list_expected4 = ['Repeater Setting', 'Wireless Setup', 'HUMAX Wi-Fi App', 'Summary']
+            list_actual4 = [[title_repeater_setting_1, title_wireless_setup_2, title_humax_wifi_app_3, title_summary_4]]
+            list_expected4 = [['Repeater Setting', 'Wireless Setup', 'HUMAX Wi-Fi App', 'Summary']]
             step_4_name = "4.1 Check order of page wizard with Repeater mode Third party. "
             list_check_in_step_4 = [
                 "Order of page wizard with Repeater mode Third party is correct"
@@ -4105,8 +4105,8 @@ class MAIN(unittest.TestCase):
 
             title_summary_3 = driver.find_element_by_css_selector(lg_welcome_header).text
 
-            list_actual5 = [title_repeater_setting_1, title_humax_wifi_app_2, title_summary_3]
-            list_expected5 = ['Repeater Setting', 'HUMAX Wi-Fi App', 'Summary']
+            list_actual5 = [[title_repeater_setting_1, title_humax_wifi_app_2, title_summary_3]]
+            list_expected5 = [['Repeater Setting', 'HUMAX Wi-Fi App', 'Summary']]
             step_4_2_name = "4.2 Check order of page wizard with Repeater mode with Mesh mode. "
             list_check_in_step_4_2 = [
                 "Order of page wizard with Repeater mode with Mesh mode is correct"
@@ -4190,8 +4190,8 @@ class MAIN(unittest.TestCase):
 
             title_summary_3 = driver.find_element_by_css_selector(lg_welcome_header).text
 
-            list_actual6 = [title_wireless_setup_1, title_humax_wifi_app_2, title_summary_3]
-            list_expected6 = ['Wireless Setup', 'HUMAX Wi-Fi App', 'Summary']
+            list_actual6 = [[title_wireless_setup_1, title_humax_wifi_app_2, title_summary_3]]
+            list_expected6 = [['Wireless Setup', 'HUMAX Wi-Fi App', 'Summary']]
             step_5_name = "5. Check order of page wizard with Access Point mode. "
             list_check_in_step_5 = [
                 "Order of page wizard with Access Point mode is correct"
@@ -4275,8 +4275,8 @@ class MAIN(unittest.TestCase):
 
             title_summary_3 = driver.find_element_by_css_selector(lg_welcome_header).text
 
-            list_actual7 = [title_wireless_setup_1, title_humax_wifi_app_2, title_summary_3]
-            list_expected7 = ['Wireless Setup', 'HUMAX Wi-Fi App', 'Summary']
+            list_actual7 = [[title_wireless_setup_1, title_humax_wifi_app_2, title_summary_3]]
+            list_expected7 = [['Wireless Setup', 'HUMAX Wi-Fi App', 'Summary']]
             step_6_name = "6.  Check order of page wizard with Bridge mode."
             list_check_in_step_6 = [
                 "Order of page wizard with Bridge mode is correct"
@@ -4488,8 +4488,8 @@ class MAIN(unittest.TestCase):
 
             title_summary_3 = driver.find_element_by_css_selector(lg_welcome_header).text
 
-            list_actual4 = [title_humax_wifi_app_2, title_summary_3]
-            list_expected4 = ['HUMAX Wi-Fi App', 'Summary']
+            list_actual4 = [[title_humax_wifi_app_2, title_summary_3]]
+            list_expected4 = [['HUMAX Wi-Fi App', 'Summary']]
             step_4_1_name = "4.1 Check order of page wizard with Repeater mode Mesh mode. "
             list_check_in_step_4_1 = [
                 "Order of page wizard with Repeater mode Mesh mode is correct"
@@ -4854,7 +4854,7 @@ class MAIN(unittest.TestCase):
             step_3_4_name = "3, 4. Change Operation Mode to Bridge Mode. Check title is Wireless Mode. "
             list_check_in_step_3_4 = [
                 f"Title next page times 2 is: {list_expected3[0]}",
-                f"Title next page times 3 is: {list_expected3[1]}"
+                f"Title next page times 3 is: {list_expected3[1]}",
                 f"Title next page times 4 is: {list_expected3[2]}"
             ]
             check = assert_list(list_actual3, list_expected3)
