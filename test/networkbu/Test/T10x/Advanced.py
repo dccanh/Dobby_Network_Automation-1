@@ -1033,8 +1033,8 @@ class ADVANCED(unittest.TestCase):
                 generate_step_information(
                     step_name=step_1_name,
                     list_check_in_step=list_check_in_step_1,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
+                    list_actual=list_actual,
+                    list_expected=list_expected
                 )
             )
             self.list_steps.append('[END TC]')
@@ -1043,8 +1043,8 @@ class ADVANCED(unittest.TestCase):
                 generate_step_information(
                     step_name=step_1_name,
                     list_check_in_step=list_check_in_step_1,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
+                    list_actual=list_actual,
+                    list_expected=list_expected
                 )
             )
             self.list_steps.append('[END TC]')
