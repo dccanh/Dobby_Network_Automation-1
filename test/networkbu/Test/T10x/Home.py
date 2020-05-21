@@ -1915,7 +1915,7 @@ class HOME(unittest.TestCase):
                     "Check model name is correct",
                     f"Check Condition Serial number end with '{SERIAL_NUMBER}' is correct",
                     f"Check Firmware version is: {firmware_version}",
-                    "Check Condition 'Build time match has %Y.%m.%d %H:%M:%S format' is correct'"
+                    "Check Condition 'Build time match has %Y.%m.%d %H:%M:%S format' is correct"
                 ],
                 f"Check text of button update is: {list_expected1[2]}",
                 f"Check button of date color is: {list_expected1[3]}"
