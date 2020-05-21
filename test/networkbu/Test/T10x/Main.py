@@ -1851,8 +1851,8 @@ class MAIN(unittest.TestCase):
             list_tab_text = driver.find_elements_by_css_selector(ls_tab)
             list_tab_text = [i.text for i in list_tab_text]
 
-            list_actual4 = ["/".join(list_tab_text)]
-            list_expected4 = ["/".join(['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE', 'QOS', 'SECURITY', 'ADVANCED'])]
+            list_actual4 = [list_tab_text]
+            list_expected4 = [['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE', 'QOS', 'SECURITY', 'ADVANCED']]
             step_5_name = "5. Check Menu tree in Home page via IP address. "
             list_check_in_step_5 = [
                 "There is no problem with menu"
