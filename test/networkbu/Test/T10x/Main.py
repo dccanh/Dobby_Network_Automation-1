@@ -6139,7 +6139,7 @@ class MAIN(unittest.TestCase):
             list_check_in_step_4 = [
                 "Password 2g holder is correct",
                 "Password 5g holder is correct",
-                "Error message require password 2g is show correct"
+                "Error message require password 2g is show correct",
                 "Error message require password 5g is show correct"
             ]
             check = assert_list(list_actual3, list_expected3)
