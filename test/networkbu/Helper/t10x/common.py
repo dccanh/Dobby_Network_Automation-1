@@ -2205,13 +2205,13 @@ def convert_stage_of_step_to_string(value):
 def generate_sub_step_info(list_check_in_sub_step, values, values_expected):
     list_sub_step_info = []
     if not isinstance(list_check_in_sub_step, list):
-        return values
+        if isinstance(list_check_in_sub_step, str) and isinstance(values, bool) and isinstance(values_expected, bool):
+            return detect_check_information(list_check_in_sub_step, values == values_expected)
+        else:
+            return values
 
     if not isinstance(values, list):
         raise TypeError(f"Not valid list value actual or expected for sub step: {list_check_in_sub_step}")
-
-    if isinstance(values, bool) and isinstance(values_expected, bool):
-        return detect_check_information(list_check_in_sub_step, values == values_expected)
 
     for i in range(0, len(list_check_in_sub_step)):
         if isinstance(values[i], bool):
