@@ -1546,9 +1546,13 @@ def add_port_forwarding(driver, SERVICE_TYPE,
     service_type = edit_field.find_element_by_css_selector(service_type_cls)
     service_type.find_element_by_css_selector(input).send_keys(SERVICE_TYPE)
     # IP address
+
+    ip_address = edit_field.find_element_by_css_selector(ip_address_col_cls)
+    ip_address_box = ip_address.find_element_by_css_selector(input)
     for i in range(2):
-        ip_address = edit_field.find_element_by_css_selector(ip_address_col_cls)
-        ip_address_box = ip_address.find_element_by_css_selector(input)
+        # ActionChains(driver).move_to_element(ip_address_box).click().perform()
+        # ActionChains(driver).key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).perform()
+        # ActionChains(driver).send_keys(IP_ADDRESS_SPLIT).perform()
         ip_address_box.clear()
         ip_address_box.send_keys(IP_ADDRESS_SPLIT)
     # Local Port
@@ -2270,10 +2274,9 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "appear": "not appear",
         "success": "unsuccess",
         "unsuccess": "success",
-        "connect": "not connect",
         "not connect": "connect",
-        "not connected": "connected",
         "connect": "not connect",
+        "not connected": "connected",
         "connected": "not connected",
         "contain:": "not contain:",
         "not contain:": "contain:",
@@ -2283,7 +2286,6 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "is not displayed": "is displayed",
         "existed": "not existed",
         "not existed": "existed",
-        "correct": "not correct",
         "not correct": "correct",
         "correct": "not correct",
         "selected": "not selected",
@@ -2304,9 +2306,6 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "highlight": "not highlight",
         "True": "False",
         "False": "True",
-        "deleted": "not deleted",
-        "true": "false",
-        "false": "true",
         "displayed": "not displayed",
         "display": "not display",
         "disappear": "appear"

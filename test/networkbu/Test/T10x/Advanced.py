@@ -65,7 +65,7 @@ class ADVANCED(unittest.TestCase):
         try:
             # Login
             grand_login(driver)
-            time.sleep(3)
+            wait_popup_disappear(driver, dialog_loading)
             wan_ip = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
             # Goto Advanced > Network
             goto_menu(driver, advanced_tab, advanced_network_tab)
@@ -365,7 +365,7 @@ class ADVANCED(unittest.TestCase):
             mac_address = wol_block.find_element_by_css_selector(wol_mac_addr)
             mac_address_input = mac_address.find_element_by_css_selector(input)
             mac_address_input.click()
-
+            time.sleep(0.5)
             # Choose in list drop down
             project_options = wol_block.find_elements_by_css_selector(secure_value_in_drop_down)
             choice = random.choice(project_options)
@@ -380,6 +380,7 @@ class ADVANCED(unittest.TestCase):
                 option_value = option_value.splitlines()[-1]
             # Save
             driver.find_element_by_css_selector(btn_save).click()
+            time.sleep(1)
             # Verify
             verify_mac_address_input = wol_block.find_element_by_css_selector(wol_mac_addr).text
 
@@ -425,7 +426,7 @@ class ADVANCED(unittest.TestCase):
 
             list_actual2 = [check_delete]
             list_expected2 = [return_true]
-            step_4_name = "4. Delete row just added in previous step: {option_value}"
+            step_4_name = f"4. Delete row just added in previous step: {option_value}"
             list_check_in_step_4 = ["Check delete added mac success"]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
@@ -522,6 +523,15 @@ class ADVANCED(unittest.TestCase):
 
         try:
             port_forwarding_block = driver.find_element_by_css_selector(port_forwarding_card)
+            while len(port_forwarding_block.find_elements_by_css_selector(delete_cls)) > 0:
+                port_forwarding_block.find_element_by_css_selector(delete_cls).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(btn_ok).click()
+                time.sleep(0.5)
             add_port_forwarding(port_forwarding_block,
                                 SERVICE_TYPE_3,
                                 IP_ADDRESS_3_SPLIT,
@@ -573,26 +583,26 @@ class ADVANCED(unittest.TestCase):
             # Save
             driver.find_element_by_css_selector(btn_save).click()
             time.sleep(1)
-            # Check popup error display
-            check_waring_popup = len(driver.find_elements_by_css_selector(dialog_content)) > 0
-            if not check_waring_popup:
-                port_forwarding_block.find_element_by_css_selector(apply).click()
-                wait_popup_disappear(driver, dialog_loading)
-                driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(1)
-            else:
-                driver.find_element_by_css_selector(btn_ok).click()
+            port_forwarding_block.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(btn_ok).click()
+            time.sleep(1)
+            # # Check popup error display
+            # check_waring_popup = len(driver.find_elements_by_css_selector(dialog_content)) > 0
+            # if not check_waring_popup:
+            #     port_forwarding_block.find_element_by_css_selector(apply).click()
+            #     wait_popup_disappear(driver, dialog_loading)
+            #     driver.find_element_by_css_selector(btn_ok).click()
+            #     time.sleep(1)
+            # else:
+            #     driver.find_element_by_css_selector(btn_ok).click()
 
             table_value_4 = get_port_forwarding_table(driver)
 
-            list_actual4 = [check_waring_popup, table_value_4[-1]]
-            list_expected4 = [return_true,
-                [True, SERVICE_TYPE_4, IP_ADDRESS_4, LOCAL_START_END_4, EXTERNAL_START_END_4, PROTOCOL_TYPE_4]]
+            list_actual4 = [table_value_4[-1]]
+            list_expected4 = [[True, SERVICE_TYPE_4, IP_ADDRESS_4, LOCAL_START_END_4, EXTERNAL_START_END_4, PROTOCOL_TYPE_4]]
             step_4_name = "4. Add PF IP same as LAN IP. Check Popup warning displayed. If not Check PF just added. "
-            list_check_in_step_4 = [
-                "Check Popup warning appear",
-                "Check add PF IP same as LAN IP success"
-            ]
+            list_check_in_step_4 = ["Add PF IP same as LAN IP success: Can not added"]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
