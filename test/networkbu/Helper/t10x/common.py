@@ -411,14 +411,14 @@ def login(driver, url_login='', user_request='', pass_word=''):
         driver.get(url_login)
 
     driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
-    time.sleep(1)
+    time.sleep(0.2)
     driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
-    time.sleep(1)
+    time.sleep(0.2)
     # Captcha
     captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
     captcha_text = get_captcha_string(captcha_src)
     driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
-    time.sleep(1)
+    time.sleep(0.2)
     driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
 
     # If login Fail. Get USER and PW again
@@ -450,7 +450,7 @@ def login(driver, url_login='', user_request='', pass_word=''):
     wait_popup_disappear(driver, dialog_loading)
     time.sleep(1)
     # Check Privacy Policy
-    time.sleep(2)
+    time.sleep(0.5)
     policy_popup = driver.find_elements_by_css_selector(lg_privacy_policy_pop)
     if len(policy_popup):
         wait_popup_disappear(driver, icon_loading)
@@ -2294,6 +2294,7 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
         "not selected": "selected",
         "activated": "non activated",
         "assigned": "not assigned",
+        "deactive": "active",
         "active": "deactive",
         "not access": "access",
         "access": "not access",

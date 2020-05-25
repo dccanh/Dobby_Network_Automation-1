@@ -1492,7 +1492,7 @@ class WIRELESS(unittest.TestCase):
         self.list_steps = []
 
         # ===========================================================
-        # factory_dut()
+        factory_dut()
         # ===========================================================
         GOOGLE_URL = get_config('WIRELESS', 'wl08_google_url', input_data_path)
         SECURITY_TYPE = get_config('WIRELESS', 'wl08_security_type', input_data_path)
@@ -1643,7 +1643,7 @@ class WIRELESS(unittest.TestCase):
             ActionChains(driver).move_to_element(pw_5g).click().key_down(Keys.CONTROL).send_keys('a').key_up(
                 Keys.CONTROL).send_keys(PASSWORD_4).perform()
             # Apply
-            if block_2g.find_element_by_css_selector(apply).is_displayed():
+            if block_5g.find_element_by_css_selector(apply).is_displayed():
                 time.sleep(0.2)
                 block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
@@ -1750,9 +1750,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(15)
             wifi_connected_5g_name = current_connected_wifi()
             # Google
-            driver.get(GOOGLE_URL)
-            time.sleep(5)
-            check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
+            # driver.get(GOOGLE_URL)
+            # time.sleep(5)
+            # check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
+            check_5g = check_connect_to_google()
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
             time.sleep(10)
@@ -1796,13 +1797,13 @@ class WIRELESS(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~
         try:
             grand_login(driver)
-
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
-
+            wait_popup_disappear(driver, dialog_loading)
             # Default Pw
-            block_2g = driver.find_element_by_css_selector(left)
+            block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
             # 2G Change security
             security_2g = block_2g.find_element_by_css_selector(secure_value_field)
             security_2g.click()
@@ -1814,7 +1815,7 @@ class WIRELESS(unittest.TestCase):
                     break
 
             # Encryption
-            block_2g = driver.find_element_by_css_selector(left)
+            block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
             # Encryption
             encryption_2g = block_2g.find_element_by_css_selector(encryption_value_field)
             encryption_2g.click()
@@ -1842,7 +1843,7 @@ class WIRELESS(unittest.TestCase):
             error_msg_2g_hex = block_2g.find_element_by_css_selector(password_error_msg).text
 
             # Default Pw
-            block_5g = driver.find_element_by_css_selector(right)
+            block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
             # 5G Change security
             security_5g = block_5g.find_element_by_css_selector(secure_value_field)
             security_5g.click()
@@ -1854,7 +1855,7 @@ class WIRELESS(unittest.TestCase):
                     break
 
             # Encryption
-            block_5g = driver.find_element_by_css_selector(right)
+            block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
             # Encryption
             encryption_5g = block_5g.find_element_by_css_selector(encryption_value_field)
             encryption_5g.click()
@@ -1886,8 +1887,8 @@ class WIRELESS(unittest.TestCase):
 
             step_7_name = "7. Change Secirity, Encryption, Keytype  and password  of  2G/5G."
             list_check_in_step_7 = [
-                f"Password error msg of 5G is {exp_short_pw_error_msg[0]}",
-                f"Password error msg of 5G is {exp_short_pw_error_msg[1]}"
+                f"Password error msg of 2G is {list_expected7[0]}",
+                f"Password error msg of 5G is {list_expected7[1]}"
             ]
 
             check = assert_list(list_actual7, list_expected7)
@@ -1922,7 +1923,7 @@ class WIRELESS(unittest.TestCase):
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
 
             # 5G Change password
             pw_5g = block_5g.find_element_by_css_selector(input_pw)
@@ -1933,7 +1934,7 @@ class WIRELESS(unittest.TestCase):
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
 
             # Verify
             pw_eye_2g = block_2g.find_element_by_css_selector(password_eye)
@@ -1959,7 +1960,7 @@ class WIRELESS(unittest.TestCase):
                 if (not i.isalpha()) and (not i.isnumeric()):
                     PASSWORD_5 = PASSWORD_5.replace(i, '')
             expected_pw = PASSWORD_5[:10]
-            save_config(config_path, 'GENERAL', 'wifi_pw', expected_pw)
+            # save_config(config_path, 'GENERAL', 'wifi_pw', expected_pw)
 
             list_actual8 = [pw_2g, pw_5g]
             list_expected8 = [expected_pw] * 2
@@ -2044,10 +2045,10 @@ class WIRELESS(unittest.TestCase):
             list_actual9 = [check_2g, check_5g]
             list_expected9 = [return_true] * 2
 
-            step_9_name = "9. Connect to Google using of  2G/5G wifi."
+            step_9_name = "9. Connect to Google using of 2G/5G wifi."
             list_check_in_step_9 = [
-                f"Connect to Google using of  2G wifi is connected",
-                f"Connect to Google using of  5G wifi is connected"
+                f"Connect to Google using of 2G wifi is connected",
+                f"Connect to Google using of 5G wifi is connected"
             ]
 
             check = assert_list(list_actual9, list_expected9)
@@ -2105,7 +2106,7 @@ class WIRELESS(unittest.TestCase):
             goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
 
             # Default Pw
-            block_2g = driver.find_element_by_css_selector(left)
+            block_2g =  driver.find_elements_by_css_selector(wl_primary_card)[0]
             # 2G Change security
             security_2g = block_2g.find_element_by_css_selector(secure_value_field)
             security_2g.click()
@@ -2117,7 +2118,7 @@ class WIRELESS(unittest.TestCase):
                     break
 
             # Encryption
-            block_2g = driver.find_element_by_css_selector(left)
+            block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
             # Encryption
             encryption_2g = block_2g.find_element_by_css_selector(encryption_value_field)
             encryption_2g.click()
@@ -2145,7 +2146,7 @@ class WIRELESS(unittest.TestCase):
             error_msg_2g = block_2g.find_element_by_css_selector(password_error_msg).text
 
             # Default Pw
-            block_5g = driver.find_element_by_css_selector(right)
+            block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
             # 5G Change security
             security_5g = block_5g.find_element_by_css_selector(secure_value_field)
             security_5g.click()
@@ -2157,7 +2158,7 @@ class WIRELESS(unittest.TestCase):
                     break
 
             # Encryption
-            block_5g = driver.find_element_by_css_selector(right)
+            block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
             # Encryption
             encryption_5g = block_5g.find_element_by_css_selector(encryption_value_field)
             encryption_5g.click()
@@ -2187,7 +2188,7 @@ class WIRELESS(unittest.TestCase):
             list_actual3 = [error_msg_2g, error_msg_5g]
             list_expected3 = [exp_short_pw_error_msg] * 2
 
-            step_3_name = "3. Change Secirity, Encryption, Keytype  and password  of  2G/5G."
+            step_3_name = "3. Change Security, Encryption, Keytype  and password  of  2G/5G."
             list_check_in_step_3 = [
                 f"Password error msg of 2G is {list_expected3[0]}",
                 f"Password error msg of 5G is {list_expected3[1]}"
@@ -2235,7 +2236,7 @@ class WIRELESS(unittest.TestCase):
             ActionChains(driver).move_to_element(pw_5g).click().key_down(Keys.CONTROL).send_keys('a').key_up(
                 Keys.CONTROL).send_keys(PASSWORD_4).perform()
             # Apply
-            if block_2g.find_element_by_css_selector(apply).is_displayed():
+            if block_5g.find_element_by_css_selector(apply).is_displayed():
                 time.sleep(0.2)
                 block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
@@ -2246,9 +2247,7 @@ class WIRELESS(unittest.TestCase):
             pw_eye_2g = block_2g.find_element_by_css_selector(password_eye)
             act = ActionChains(driver)
             act.click_and_hold(pw_eye_2g)
-            time.sleep(1)
             pw_2g = block_2g.find_element_by_css_selector(input_pw).get_attribute('value')
-            time.sleep(1)
             act.release(pw_eye_2g)
             act.perform()
 
@@ -2256,9 +2255,7 @@ class WIRELESS(unittest.TestCase):
             pw_eye_5g = block_5g.find_element_by_css_selector(password_eye)
             act_5g = ActionChains(driver)
             act_5g.click_and_hold(pw_eye_5g)
-            time.sleep(1)
             pw_5g = block_5g.find_element_by_css_selector(input_pw).get_attribute('value')
-            time.sleep(1)
             act_5g.release(pw_eye_5g)
             act_5g.perform()
 
@@ -2320,10 +2317,10 @@ class WIRELESS(unittest.TestCase):
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(5)
             # Google
-            driver.get(GOOGLE_URL)
-            time.sleep(10)
-            check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
-
+            # driver.get(GOOGLE_URL)
+            # time.sleep(10)
+            # check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
+            check_2g = check_connect_to_google()
             # 5G Connect wifi
             time.sleep(3)
             write_data_to_xml(default_wifi_2g_path,
@@ -2342,9 +2339,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(10)
 
             # Google
-            driver.get(GOOGLE_URL)
-            time.sleep(10)
-            check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
+            # driver.get(GOOGLE_URL)
+            # time.sleep(10)
+            # check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
+            check_5g = check_connect_to_google()
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
             time.sleep(15)
@@ -2382,12 +2380,12 @@ class WIRELESS(unittest.TestCase):
         # ~~~~~~~~~~~~~~~~~
         try:
             grand_login(driver)
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
-
+            wait_popup_disappear(driver, dialog_loading)
             # Default Pw
-            block_2g = driver.find_element_by_css_selector(left)
+            block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
             # 2G Change security
             security_2g = block_2g.find_element_by_css_selector(secure_value_field)
             security_2g.click()
@@ -2399,7 +2397,7 @@ class WIRELESS(unittest.TestCase):
                     break
 
             # Encryption
-            block_2g = driver.find_element_by_css_selector(left)
+            block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
             # Encryption
             encryption_2g = block_2g.find_element_by_css_selector(encryption_value_field)
             encryption_2g.click()
@@ -2427,7 +2425,7 @@ class WIRELESS(unittest.TestCase):
             error_msg_2g_hex = block_2g.find_element_by_css_selector(password_error_msg).text
 
             # Default Pw
-            block_5g = driver.find_element_by_css_selector(right)
+            block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
             # 5G Change security
             security_5g = block_5g.find_element_by_css_selector(secure_value_field)
             security_5g.click()
@@ -2439,7 +2437,7 @@ class WIRELESS(unittest.TestCase):
                     break
 
             # Encryption
-            block_5g = driver.find_element_by_css_selector(right)
+            block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
             # Encryption
             encryption_5g = block_5g.find_element_by_css_selector(encryption_value_field)
             encryption_5g.click()
@@ -2469,7 +2467,7 @@ class WIRELESS(unittest.TestCase):
             list_actual7 = [error_msg_2g_hex, error_msg_5g_hex]
             list_expected7 = [exp_short_pw_error_msg] * 2
 
-            step_7_name = "7. Change Secirity, Encryption, Keytype  and password  of  2G/5G."
+            step_7_name = "7. Change Security, Encryption, Key type  and password  of  2G/5G."
             list_check_in_step_7 = [
                 f"Short password error msg of 2G is {list_expected7[0]}",
                 f"Short password error msg of 5G is {list_expected7[1]}"
@@ -2544,7 +2542,7 @@ class WIRELESS(unittest.TestCase):
                 if (not i.isalpha()) and (not i.isnumeric()):
                     PASSWORD_5 = PASSWORD_5.replace(i, '')
             expected_pw = PASSWORD_5[:26]
-            save_config(config_path, 'GENERAL', 'wifi_pw', expected_pw)
+            # save_config(config_path, 'GENERAL', 'wifi_pw', expected_pw)
 
             list_actual8 = [pw_2g, pw_5g]
             list_expected8 = [expected_pw] * 2
@@ -2596,10 +2594,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(15)
 
             # Google
-            driver.get(GOOGLE_URL)
-            time.sleep(10)
-            check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
-
+            # driver.get(GOOGLE_URL)
+            # time.sleep(10)
+            # check_2g = len(driver.find_elements_by_css_selector(google_img)) > 0
+            check_2g = check_connect_to_google()
             # 5G Connect wifi
             time.sleep(3)
             write_data_to_xml(default_wifi_2g_path,
@@ -2618,9 +2616,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(15)
 
             # Google
-            driver.get(GOOGLE_URL)
-            time.sleep(10)
-            check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
+            # driver.get(GOOGLE_URL)
+            # time.sleep(10)
+            # check_5g = len(driver.find_elements_by_css_selector(google_img)) > 0
+            check_5g = check_connect_to_google()
             # Enable
             os.system(f'python {nw_interface_path} -i Ethernet -a enable')
             time.sleep(15)
@@ -6200,7 +6199,7 @@ class WIRELESS(unittest.TestCase):
             step_9_name = "9. Connect Wifi 2G/5G -> Check connect 2G/5G wifi and access Google successfully."
             list_check_in_step_9 = [
                     f"Connect Wifi 2G. SSID of 2G wifi is {list_expected9[0]}",
-                    f"Connect Wifi 2G. Connect to Google is connected"
+                    f"Connect Wifi 2G. Connect to Google is connected",
                     f"Connect Wifi 5G. SSID of 5G wifi is  {list_expected9[2]}",
                     f"Connect Wifi 5G. Connect to Google is connected"
                 ]
@@ -9537,9 +9536,17 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('6, 7. Assertion wong.')
 
         try:
-            grand_login((driver))
+            step_8_name = '''8. Re-do all step with 5GHz'''
+            list_check_in_step_8 = ['Check Default Access 5G option is disabled.',
+                                    'Connect 5G Wifi. Check wifi connect',
+                                    'Check Can not connect to Web UI: not connect',
+                                    'Enable Web UI Access. Check wifi connect',
+                                    'Check Can connect to Web UI: connect']
+            grand_login(driver)
+            wait_popup_disappear(driver, dialog_loading)
             # Enable Dual WAN
             goto_menu(driver, wireless_tab, wireless_guestnetwork_tab)
+            wait_popup_disappear(driver, dialog_loading)
             # ====================================================================
             block_5g = driver.find_elements_by_css_selector(guest_network_block)[1]
             # Click Add
@@ -9641,12 +9648,7 @@ class WIRELESS(unittest.TestCase):
             list_actual8 = [check_web_access_5g, get_current_wifi_5g, check_not_connect_web_2, get_current_wifi_5g_2, check_connect_web_5g]
             list_expected8 = [return_true, wl_5g_ssid, return_true, wl_5g_ssid, return_true]
             check = assert_list(list_actual8, list_expected8)
-            step_8_name = '''8. Re-do all step with 5GHz'''
-            list_check_in_step_8 = ['Check Default Access 5G option is disabled.',
-                                    'Connect 5G Wifi. Check wifi connect',
-                                    'Check Can not connect to Web UI: not connect',
-                                    'Enable Web UI Access. Check wifi connect',
-                                    'Check Can connect to Web UI: connect']
+
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(step_name=step_8_name,
@@ -11021,6 +11023,7 @@ class WIRELESS(unittest.TestCase):
                                           list_expected=list_expected8))
             self.list_steps.append('[END TC]')
             list_step_fail.append('8. Assertion wong.')
+        time.sleep(100)
         self.assertListEqual(list_step_fail, [])
 
     def test_34_WIRELESS_Verification_of_WPS_operation_WPA2_WPA_PSK(self):
@@ -11216,7 +11219,8 @@ class WIRELESS(unittest.TestCase):
             os.system('netsh wlan disconnect')
             time.sleep(2)
             goto_menu(driver, wireless_tab, wireless_wps_tab)
-            time.sleep(5)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
             if driver.find_element_by_css_selector('.de-active-wps-button').is_displayed():
                 driver.find_element_by_css_selector('.de-active-wps-button').click()
                 wait_popup_disappear(driver, dialog_loading)
@@ -11272,6 +11276,7 @@ class WIRELESS(unittest.TestCase):
                                           list_expected=list_expected8))
             self.list_steps.append('[END TC]')
             list_step_fail.append('8. Assertion wong.')
+        time.sleep(100)
         self.assertListEqual(list_step_fail, [])
 
     def test_35_WIRELESS_Verification_of_WPS_operation_None_Security(self):
@@ -11411,7 +11416,9 @@ class WIRELESS(unittest.TestCase):
             list_step_fail.append('4. Assertion wong.')
 
         try:
+            wait_popup_disappear(driver, dialog_loading)
             goto_menu(driver, wireless_tab, wireless_wps_tab)
+            wait_popup_disappear(driver, dialog_loading)
             if driver.find_element_by_css_selector('.de-active-wps-button').is_displayed():
                 driver.find_element_by_css_selector('.de-active-wps-button').click()
                 wait_popup_disappear(driver, dialog_loading)

@@ -1,7 +1,7 @@
 [COMMON]
 new_pw = abc123
 google_url = http://google.com
-youtube_url = http://youtube.com
+youtube_url = https://www.youtube.com/
 
 [REPEATER]
 url = http://dearmyrouter.net

@@ -2712,10 +2712,10 @@ class HOME(unittest.TestCase):
 
         try:
             grand_login(driver)
-
+            wait_popup_disappear(driver, dialog_loading)
             # CLick Device Image
             driver.find_element_by_css_selector(home_img_device_connection).click()
-            time.sleep(2)
+            time.sleep(1)
             wait_popup_disappear(driver, dialog_loading)
 
             table = driver.find_element_by_css_selector(ele_device_tab_titles)
@@ -2835,7 +2835,7 @@ class HOME(unittest.TestCase):
             list_expected4 = ls_expected_disconnected
             step_3_2_name = "3.2 Check value rows displayed on Disconnected Devices Page."
             list_check_in_step_3_2 = [
-                f"Check value rows displayed on Disconnected Devices Page are: {list_expected4[0]}"
+                f"Check value rows displayed on Disconnected Devices Page"
             ]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
@@ -3036,18 +3036,37 @@ class HOME(unittest.TestCase):
             list_step_fail.append('3. Assertion wong.')
 
         try:
-            time.sleep(5)
-            new_2g_wf_name = api_change_wifi_setting(URL_2g)
-            time.sleep(10)
-            write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name, new_pw=current_pw)
-            time.sleep(3)
+            driver.find_element_by_css_selector(btn_cancel).click()
+            time.sleep(1)
+            goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
+            wireless_change_ssid_name(block_2g, "WiFi 2G Name")
+            if block_2g.find_element_by_css_selector(apply).is_displayed():
+                time.sleep(0.2)
+                block_2g.find_element_by_css_selector(apply).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.2)
+                driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(1)
+            current_2g_ssid = wireless_get_default_ssid(driver, 'Network Name(SSID)')
+            current_2g_pw = wireless_check_pw_eye(driver, block_2g, change_pw=False)
 
-            # Connect Default 2GHz
-            os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
-            time.sleep(5)
+            current_wifi_con = connect_wifi_by_command(current_2g_ssid, current_2g_pw, xml_file=wifi_default_file_path)
+            print(current_wifi_con)
 
-            os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
-            time.sleep(10)
+            # new_2g_wf_name = api_change_wifi_setting(URL_2g)
+            # time.sleep(10)
+            # write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name, new_pw=current_pw)
+            # time.sleep(3)
+            #
+            # # Connect Default 2GHz
+            # os.system(f'netsh wlan add profile filename="{default_wifi_2g_path}"')
+            # time.sleep(5)
+            #
+            # os.system(f'netsh wlan connect ssid="{new_2g_wf_name}" name="{new_2g_wf_name}"')
+            # time.sleep(10)
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(1)
@@ -3057,12 +3076,17 @@ class HOME(unittest.TestCase):
             list_step_fail.append('3.2 Assertion wong.')
 
         try:
-            time.sleep(5)
+            goto_menu(driver, home_tab, 0)
+            wait_popup_disappear(driver, dialog_loading)
+            driver.find_element_by_css_selector(home_img_device_connection).click()
+            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
             # Re-Load
-            driver.refresh()
-            time.sleep(7)
-            check_ota_auto_update(driver)
-            time.sleep(2)
+            # driver.refresh()
+            # wait_popup_disappear(driver, dialog_loading)
+            # check_ota_auto_update(driver)
+            # time.sleep(2)
+            # wait_popup_disappear(driver, dialog_loading)
             # Click Edit
             driver.find_element_by_css_selector(edit_cls).click()
             time.sleep(2)
@@ -3084,11 +3108,11 @@ class HOME(unittest.TestCase):
             list_actual5 = [img, check_mac, check_ip, check_wifi, ls_label_text]
             list_expected5 = ['pc', return_true, return_true, return_true, expected_ls_label]
             list_check_in_step_4 = [
-                f"Check image dispalyed is: {list_expected5[0]}",
+                f"Check image displayed is: {list_expected5[0]}",
                 "Check format of MAC address is valid",
                 "Check format of IP address is valid",
                 "Check Condition 'Wifi is Wi-Fi 2.4GHz' is correct",
-                f"Check List label is: {list_expected5[4]}"
+                f"Check List label in popup"
             ]
             step_4_name = "4. Check default tab in Devices, number of devices."
             check = assert_list(list_actual5, list_expected5)
@@ -4960,8 +4984,8 @@ class HOME(unittest.TestCase):
                 generate_step_information(
                     step_name=step_2_name,
                     list_check_in_step=list_check_in_step_2,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
                 )
             )
             self.list_steps.append('[END TC]')
@@ -4970,8 +4994,8 @@ class HOME(unittest.TestCase):
                 generate_step_information(
                     step_name=step_2_name,
                     list_check_in_step=list_check_in_step_2,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
                 )
             )
             self.list_steps.append('[END TC]')

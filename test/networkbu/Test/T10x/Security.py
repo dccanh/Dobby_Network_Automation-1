@@ -2614,7 +2614,9 @@ class SECURITY(unittest.TestCase):
         HOST_NAME = get_value_from_ipconfig('Windows IP Configuration', 'Host Name')
 
         grand_login(driver)
+        wait_popup_disappear(driver, dialog_loading)
         goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+        wait_popup_disappear(driver, dialog_loading)
         # Get Wireless 2G Information
         block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
 
@@ -2794,10 +2796,10 @@ class SECURITY(unittest.TestCase):
             mac_block.find_elements_by_css_selector(select)[0].click()
 
             mac_block.find_element_by_css_selector(apply).click()
-            time.sleep(2)
+            time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(2)
+            time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
 

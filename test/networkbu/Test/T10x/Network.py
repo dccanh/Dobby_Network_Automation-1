@@ -127,8 +127,8 @@ class NETWORK(unittest.TestCase):
             # Click Apply of this enable
             time.sleep(0.2)
             btn_apply = internet_setting.find_element_by_css_selector(apply)
-            _check_apply = btn_apply.is_displayed()
-            if _check_apply:
+            # _check_apply = btn_apply.is_displayed()
+            if btn_apply.is_displayed():
                 btn_apply.click()
                 time.sleep(0.5)
                 # Click OK
@@ -139,11 +139,16 @@ class NETWORK(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
                 time.sleep(5)
                 wait_ethernet_available()
-                list_actual = [_check_apply]
-                list_expected = [return_true]
-                check = assert_list(list_actual, list_expected)
-            else:
-                check = assert_list([return_true], [return_true])
+            wait_ethernet_available()
+            grand_login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            goto_menu(driver, network_tab, network_internet_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            _check_type = driver.find_element_by_css_selector('[name=connectionType]').text
+            list_actual = [_check_type]
+            list_expected = ['Dynamic IP']
+            check = assert_list(list_actual, list_expected)
+
             step_1_2_name = "1,2. Goto Network>Internet: Change values of Internet Settings: Dynamic IP. "
             list_check_in_step_1_2 = ["Change values of Internet Settings success"]
             self.assertTrue(check["result"])
@@ -169,13 +174,13 @@ class NETWORK(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
         try:
-            wait_ethernet_available()
+            # wait_ethernet_available()
             # Login
             grand_login(driver)
-            time.sleep(1)
-
+            # time.sleep(1)
+            wait_popup_disappear(driver, icon_loading)
             # Get Wan IP address
-            wan_ip = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
+            # wan_ip = driver.find_element_by_css_selector(home_conection_img_wan_ip).text
             # Click icons Internet connection
             driver.find_element_by_css_selector(home_img_connection).click()
             time.sleep(1)
@@ -220,9 +225,7 @@ class NETWORK(unittest.TestCase):
             list_expected2 = [_expected]
             step_3_name = "3. Check information changed: Dynamic IP. "
             list_check_in_step_3 = [
-                "Internet linkType information changed success",
-                "Internet ipv4 mode information changed success",
-                "Internet ipv4 dns server2 information changed success"
+                "Check WAN information of Dynamic show same as api api/v1/network/wan/0"
             ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
@@ -319,11 +322,16 @@ class NETWORK(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
                 time.sleep(5)
                 wait_ethernet_available()
-                list_actual3 = [_check_apply]
-                list_expected3 = [return_true]
-                check = assert_list(list_actual3, list_expected3)
-            else:
-                check = assert_list([return_true], [return_true])
+            # _check_apply = internet_setting.find_element_by_css_selector(apply).is_displayed()
+            # list_actual4 = [_check_apply]
+            # list_expected4 = [return_true]
+            grand_login(driver)
+            wait_popup_disappear(driver, dialog_loading)
+            goto_menu(driver, network_tab, network_internet_tab)
+            wait_popup_disappear(driver, dialog_loading)
+            _check_type = driver.find_element_by_css_selector('[name=connectionType]').text
+            list_actual4 = [_check_type]
+            list_expected4 = ['Static IP']
             step_4_name = "4. Goto Network>Internet: Change values of Internet Settings: Static IP. "
             list_check_in_step_4 = ["Change values of Internet Settings to 'Static IP' success"]
             self.assertTrue(check["result"])
@@ -331,8 +339,8 @@ class NETWORK(unittest.TestCase):
                 generate_step_information(
                     step_name=step_4_name,
                     list_check_in_step=list_check_in_step_4,
-                    list_actual=list_actual3,
-                    list_expected=list_expected3
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
                 )
             )
         except:
@@ -340,8 +348,8 @@ class NETWORK(unittest.TestCase):
                 generate_step_information(
                     step_name=step_4_name,
                     list_check_in_step=list_check_in_step_4,
-                    list_actual=list_actual3,
-                    list_expected=list_expected3
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
                 )
             )
             list_step_fail.append(
@@ -395,13 +403,11 @@ class NETWORK(unittest.TestCase):
             if res_wan_primary['ipv4']['dnsServer2'] == '':
                 _expected[-1] = '0.0.0.0'
 
-            list_actual4 = [_actual]
-            list_expected4 = [_expected]
+            list_actual5 = [_actual]
+            list_expected5 = [_expected]
             step_5_name = "5. Check information changed: Static IP. "
             list_check_in_step_5 = [
-                "Internet linkType information changed success",
-                "Internet ipv4 mode information changed success",
-                "Internet ipv4 dns server2 information changed success"
+                 "Check WAN information of Static show same as api api/v1/network/wan/0"
             ]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
@@ -409,8 +415,8 @@ class NETWORK(unittest.TestCase):
                 generate_step_information(
                     step_name=step_5_name,
                     list_check_in_step=list_check_in_step_5,
-                    list_actual=list_actual4,
-                    list_expected=list_expected4
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
                 )
             )
             self.list_steps.append('[END TC]')
@@ -419,8 +425,8 @@ class NETWORK(unittest.TestCase):
                 generate_step_information(
                     step_name=step_5_name,
                     list_check_in_step=list_check_in_step_5,
-                    list_actual=list_actual4,
-                    list_expected=list_expected4
+                    list_actual=list_actual5,
+                    list_expected=list_expected5
                 )
             )
             list_step_fail.append(
@@ -868,7 +874,7 @@ class NETWORK(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
+        factory_dut()
         URL_LOGIN = get_config('URL', 'url')
         USER_LOGIN = get_config('ACCOUNT', 'user')
         PW_LOGIN = get_config('ACCOUNT', 'password')
@@ -960,7 +966,7 @@ class NETWORK(unittest.TestCase):
             list_actual = [check_required_warning]
             list_expected = [return_true]
             step_1_2_3_name = "1,2,3. Delete DNS server info: Check text This field is required. "
-            list_check_in_step_1_2_3 = ["Warning message:  'This field is required' appear"]
+            list_check_in_step_1_2_3 = ["Warning message: This field is required appear"]
             check = assert_list(list_actual, list_expected)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -1103,13 +1109,13 @@ class NETWORK(unittest.TestCase):
         try:
             # Login
             grand_login(driver)
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
 
             # Click icons Internet connection
             driver.find_element_by_css_selector(home_img_connection).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
 
-            primary = driver.find_element_by_css_selector(left)
+            primary = driver.find_element_by_css_selector('.card')
             ls_wan_field = primary.find_elements_by_css_selector(home_wan_ls_fields)
             dict_wan = {}
             for w in ls_wan_field:
@@ -1488,7 +1494,7 @@ class NETWORK(unittest.TestCase):
             step_3_4_5_6_name = "3, 4, 5, 6. Enabled Dual WAN. Verify relate between Primary to Secondary WAN. "
             list_check_in_step_3_4_5_6 = [
                 f"When set primary wan is 'Ethernet', Secondary wan is selected as '{list_expected[0]}'",
-                f"When set primary wan is 'USB Broadband', Secondary wan is selected as '{list_expected[1]}'"
+                f"When set primary wan is 'USB Broadband', Secondary wan is selected as '{list_expected[1]}'",
                 f"When set primary wan is 'Android Tethering', secondary wan is selected as '{list_expected[2]}'"
             ]
             check = assert_list(list_actual, list_expected)
@@ -1621,7 +1627,7 @@ class NETWORK(unittest.TestCase):
             step_3_4_5_6_name = "3, 4, 5, 6. Enabled Dual WAN. Verify relate between Primary to Secondary WAN. "
             list_check_in_step_3_4_5_6 = [
                 f"When set secondary wan is 'Ethernet', primary wan is selected as '{list_expected[0]}'",
-                f"When set secondary wan is 'USB Broadband', primary wan is selected as '{list_expected[1]}'"
+                f"When set secondary wan is 'USB Broadband', primary wan is selected as '{list_expected[1]}'",
                 f"When set secondary wan is 'Android Tethering', primary wan is selected as '{list_expected[2]}'"
             ]
             check = assert_list(list_actual, list_expected)
@@ -1664,8 +1670,7 @@ class NETWORK(unittest.TestCase):
 
         IP3 = '10.0.1.1'
         IP3_VALUE = IP3.split('.')
-        GOOGLE_URL = get_config('COMMON', 'google_url', input_data_path)
-        YOUTUBE_URL = get_config('COMMON', 'youtube_url', input_data_path)
+        factory_dut()
         # ===========================================================
         try:
             grand_login(driver)
@@ -1752,6 +1757,7 @@ class NETWORK(unittest.TestCase):
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(120)
             wait_ping(IP1)
+            wait_ethernet_available()
             time.sleep(5)
 
             list_actual3 = [check_confirm_message]
@@ -1782,13 +1788,9 @@ class NETWORK(unittest.TestCase):
         try:
 
             # Check connect with external communication
-            driver.get(GOOGLE_URL)
-            time.sleep(5)
-            check_google = len(driver.find_elements_by_css_selector(google_img)) > 0
+            check_google = check_connect_to_google()
 
-            driver.get(YOUTUBE_URL)
-            time.sleep(5)
-            check_youtube = len(driver.find_elements_by_css_selector('#logo-icon-container')) != 0
+            check_youtube = check_connect_to_youtube()
 
             # Check in command line
             check_ip_in_cmd = get_url_ipconfig(ipconfig_field='Default Gateway')
@@ -1913,7 +1915,7 @@ class NETWORK(unittest.TestCase):
             # Click OK
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(120)
-            # wait_ping(IP2)
+            wait_ethernet_available()
             time.sleep(5)
 
             list_actual6 = [check_confirm_message]
@@ -1944,13 +1946,9 @@ class NETWORK(unittest.TestCase):
         try:
 
             # Check connect with external communication
-            driver.get(GOOGLE_URL)
-            time.sleep(5)
-            check_google = len(driver.find_elements_by_css_selector(google_img)) > 0
+            check_google = check_connect_to_google()
 
-            driver.get(YOUTUBE_URL)
-            time.sleep(5)
-            check_youtube = len(driver.find_elements_by_css_selector('#logo-icon-container')) != 0
+            check_youtube = check_connect_to_youtube()
 
             # Check in command line
             check_ip_in_cmd = get_url_ipconfig(ipconfig_field='Default Gateway')
@@ -2075,6 +2073,7 @@ class NETWORK(unittest.TestCase):
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(120)
             wait_ping(IP3)
+            wait_ethernet_available()
             time.sleep(5)
 
             list_actual9 = [check_confirm_message]
@@ -2104,13 +2103,9 @@ class NETWORK(unittest.TestCase):
 
         try:
             # Check connect with external communication
-            driver.get(GOOGLE_URL)
-            time.sleep(5)
-            check_google = len(driver.find_elements_by_css_selector(google_img)) > 0
+            check_google = check_connect_to_google()
 
-            driver.get(YOUTUBE_URL)
-            time.sleep(5)
-            check_youtube = len(driver.find_elements_by_css_selector('#logo-icon-container')) != 0
+            check_youtube = check_connect_to_youtube()
 
             # Check in command line
             check_ip_in_cmd = get_url_ipconfig(ipconfig_field='Default Gateway')
@@ -2203,18 +2198,14 @@ class NETWORK(unittest.TestCase):
                     step_name=step_1_name,
                     list_check_in_step=list_check_in_step_1,
                     list_actual=list_actual,
-                    list_expected=list_expected
-                )
-            )
+                    list_expected=list_expected))
         except:
             self.list_steps.append(
                 generate_step_information(
                     step_name=step_1_name,
                     list_check_in_step=list_check_in_step_1,
                     list_actual=list_actual,
-                    list_expected=list_expected
-                )
-            )
+                    list_expected=list_expected))
             list_step_fail.append(
                 '1. Assertion wong.')
 
@@ -2229,6 +2220,7 @@ class NETWORK(unittest.TestCase):
                         # Type B
                         if o.text == '172':
                             o.click()
+                            time.sleep(0.5)
                             for sl, sv in zip(lan_label, lan_fields):
                                 if sl.text == 'Subnet Mask':
                                     sv.click()
@@ -2249,22 +2241,22 @@ class NETWORK(unittest.TestCase):
                     start_ip_16 = len(f.find_elements_by_css_selector(input_filed)) == 2
                 if l.text == 'End IP Address':
                     end_ip_16 = len(f.find_elements_by_css_selector(input_filed)) == 2
-            list_actual = check_subnet_b + [start_ip_16, end_ip_16]
-            list_expected = exp_nw_subnet_type_b + [return_true, return_true]
+            list_actual2 = check_subnet_b + [start_ip_16, end_ip_16]
+            list_expected2 = exp_nw_subnet_type_b + [return_true, return_true]
             step_2_3_name = "2,3. Check Subnet Mask value when Ip Address is class B and verify en Start/End Ip <16 bits. "
             list_check_in_step_2_3 = [
-                f"Subnet Mask is: {list_expected[0]}",
+                f"Subnet Mask is: {list_expected2[0]}",
+                f"Subnet Mask is: {list_expected2[1]}",
                 "Condition 'Start IP less than 16 bits' is correct",
-                "Condition 'End IP less than 16 bits' is correct"
-            ]
-            check = assert_list(list_actual, list_expected)
+                "Condition 'End IP less than 16 bits' is correct"]
+            check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
                     step_name=step_2_3_name,
                     list_check_in_step=list_check_in_step_2_3,
-                    list_actual=list_actual,
-                    list_expected=list_expected
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
                 )
             )
         except:
@@ -2272,8 +2264,8 @@ class NETWORK(unittest.TestCase):
                 generate_step_information(
                     step_name=step_2_3_name,
                     list_check_in_step=list_check_in_step_2_3,
-                    list_actual=list_actual,
-                    list_expected=list_expected
+                    list_actual=list_actual2,
+                    list_expected=list_expected2
                 )
             )
             list_step_fail.append(
@@ -2326,37 +2318,36 @@ class NETWORK(unittest.TestCase):
                             break
                     break
 
-            list_actual = check_subnet_a + [start_ip_16, end_ip_16, start_ip_24, end_ip_24]
-            list_expected = exp_nw_subnet_type_a + [return_true, return_true, return_true, return_true]
+            list_actual4 = check_subnet_a + [start_ip_16, end_ip_16, start_ip_24, end_ip_24]
+            list_expected4 = exp_nw_subnet_type_a + [return_true, return_true, return_true, return_true]
             step_4_5_6_name = "4,5,6. Check Subnet Mask value when Ip Address is class A " \
                               "and verify en Start/End Ip <16, 24 bits. "
             list_check_in_step_4_5_6 = [
-                f"Subnet Mask is: {list_expected[0]}",
+                f"Subnet Mask is: {list_expected4[0]}",
+                f"Subnet Mask is: {list_expected4[1]}",
+                f"Subnet Mask is: {list_expected4[2]}",
                 "Condition 'Start IP less than 16 bits' is correct",
                 "Condition 'End IP less than 16 bits' is correct",
                 "Condition 'Start IP less than 24 bits' is correct",
-                "Condition 'End IP less than 24 bits' is correct"
-
-            ]
-            check = assert_list(list_actual, list_expected)
+                "Condition 'End IP less than 24 bits' is correct"]
+            check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
                     step_name=step_4_5_6_name,
                     list_check_in_step=list_check_in_step_4_5_6,
-                    list_actual=list_actual,
-                    list_expected=list_expected
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
                 )
             )
-
             self.list_steps.append('[END TC]')
         except:
             self.list_steps.append(
                 generate_step_information(
                     step_name=step_4_5_6_name,
                     list_check_in_step=list_check_in_step_4_5_6,
-                    list_actual=list_actual,
-                    list_expected=list_expected
+                    list_actual=list_actual4,
+                    list_expected=list_expected4
                 )
             )
             self.list_steps.append('[END TC]')
@@ -3082,8 +3073,6 @@ class NETWORK(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
-        URL_LOGIN = get_config('URL', 'url')
         # ===========================================================
         factory_dut()
         # ===========================================================
@@ -3151,7 +3140,7 @@ class NETWORK(unittest.TestCase):
                 nw_add_reserved_ip(driver, mac, ip)
                 reserved_ip_block.find_element_by_css_selector(btn_save).click()
                 time.sleep(0.2)
-
+            time.sleep(1)
             check_add_disabled = reserved_ip_block.find_element_by_css_selector(add_class).get_attribute('disabled') == 'true'
 
             reserved_ip_block.find_element_by_css_selector(add_class).click()
@@ -3163,7 +3152,7 @@ class NETWORK(unittest.TestCase):
                           "and Click add -> Check edit form not display. "
             list_check_in_step_3 = [
                 "Check Add button is disabled",
-                "Check After click add, edit form is not appear",
+                "Check After click add, edit form is not appear"
             ]
             check = assert_list(list_actual1, list_expected1)
             self.assertTrue(check["result"])
@@ -3299,6 +3288,7 @@ class NETWORK(unittest.TestCase):
             goto_menu(driver, network_tab, network_lan_tab)
             wait_ethernet_available()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(5)
             reserved_ip_block = driver.find_element_by_css_selector(network_reserved_ip_card)
             wait_popup_disappear(driver, dialog_loading)
             # Get info of first row
@@ -3727,7 +3717,7 @@ class NETWORK(unittest.TestCase):
             time.sleep(5)
             grand_login(driver)
             goto_menu(driver, network_tab, network_operationmode_tab)
-            time.sleep(5)
+            wait_popup_disappear(driver, dialog_loading)
             check_repeater_active = driver.find_element_by_css_selector(ele_repeater_mode_input).is_selected()
 
             list_actual2 = [check_repeater_active]
@@ -3771,7 +3761,7 @@ class NETWORK(unittest.TestCase):
             time.sleep(5)
             grand_login(driver)
             goto_menu(driver, network_tab, network_operationmode_tab)
-            time.sleep(5)
+            wait_popup_disappear(driver, dialog_loading)
             check_router_active = driver.find_element_by_css_selector(ele_router_mode_input).is_selected()
 
             list_actual3 = [check_router_active]
@@ -3788,7 +3778,6 @@ class NETWORK(unittest.TestCase):
                     list_expected=list_expected3
                 )
             )
-
         except:
             self.list_steps.append(
                 generate_step_information(
@@ -3804,7 +3793,7 @@ class NETWORK(unittest.TestCase):
             disconnect_or_connect_wan(disconnected=False)
             time.sleep(5)
             grand_login(driver)
-            time.sleep(5)
+            wait_popup_disappear(driver, dialog_loading)
             check_ip_assigned = driver.find_element_by_css_selector(home_conection_img_wan_ip).text != '0.0.0.0'
 
             list_actual4 = [check_ip_assigned]
@@ -3836,10 +3825,10 @@ class NETWORK(unittest.TestCase):
 
         try:
             grand_login(driver)
-            time.sleep(5)
+            wait_popup_disappear(driver, dialog_loading)
 
             check_google = check_connect_to_google()
-            time.sleep(5)
+            time.sleep(2)
 
             list_actual5 = [check_google]
             list_expected5 = [return_true]
@@ -3875,16 +3864,17 @@ class NETWORK(unittest.TestCase):
                 time.sleep(2)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(1)
-            time.sleep(180)
+            time.sleep(150)
             wait_popup_disappear(driver, icon_loading)
             wait_visible(driver, lg_page)
+            wait_ethernet_available()
 
             check_google = check_connect_to_google()
-            time.sleep(5)
+
             grand_login(driver)
-            time.sleep(5)
+            wait_popup_disappear(driver, dialog_loading)
             goto_menu(driver, network_tab, network_operationmode_tab)
-            time.sleep(5)
+            wait_popup_disappear(driver, dialog_loading)
             check_router_active = driver.find_element_by_css_selector(ele_router_mode_input).is_selected()
 
             URL_LOGIN = get_config('URL', 'url')
@@ -3905,10 +3895,9 @@ class NETWORK(unittest.TestCase):
                          " Check API /network/qmode. qmode is router, operation is router."
             list_check_in_step_6 = [
                 "Check Connect google success",
-                "Check Router is actived",
+                "Check Router is activated",
                 "Check Condition 'qmode is router' correct",
-                "Check Condition 'operation is router' correct",
-            ]
+                "Check Condition 'operation is router' correct"]
             check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -3943,7 +3932,7 @@ class NETWORK(unittest.TestCase):
         grand_login(driver)
         time.sleep(2)
         goto_menu(driver, network_tab, network_operationmode_tab)
-        connect_repeater_mode(driver, force=True)
+        connect_repeater_mode(driver)
         # ===========================================================
 
         try:
@@ -4067,9 +4056,9 @@ class NETWORK(unittest.TestCase):
             time.sleep(1)
             sys_button_text = [i.text for i in driver.find_elements_by_css_selector(ele_sys_list_button)]
 
-            list_actual6 = sorted(sys_button_text)
-            list_expected6 = sorted(['Language', 'Firmware Update', 'Change Password', 'Back Up/Restore',
-                                     'Restart/Factory Reset', 'Power Saving Mode', 'LED Mode', 'Date/Time', 'Wizard'])
+            list_actual6 = ' - '.join(sorted(sys_button_text))
+            list_expected6 = ' - '.join(sorted(['Language', 'Firmware Update', 'Change Password', 'Back Up/Restore',
+                                     'Restart/Factory Reset', 'Power Saving Mode', 'LED Mode', 'Date/Time', 'Wizard']))
             step_6_name = "6. Check list button in System button."
             list_check_in_step_6 = [
                 f"List button in System is: {list_expected6[0]}"
@@ -4244,8 +4233,8 @@ class NETWORK(unittest.TestCase):
             step_3_4_name = "3, 4. Click Let go. Login again with Repeater. " \
                             "Check home page display. Check can connect to google. "
             list_check_in_step_3_4 = [
-                "Home page is appear",
-                "Connect to google success"
+                "Check Home page is appear",
+                "Check Connect to google success"
             ]
             check = assert_list(list_actual3, list_expected3)
             self.assertTrue(check["result"])
@@ -4360,11 +4349,12 @@ class NETWORK(unittest.TestCase):
             ip_assigned = checkIPAddress(driver.find_element_by_css_selector(home_conection_img_wan_ip).text)
             check_google_2 = check_connect_to_google()
 
-            list_actual8 = [[wifi_connect, connected_mac], ip_assigned, check_google_2]
-            list_expected8 = [[REPEATER_MESH_NAME, extender_MAC], return_true, return_true]
+            list_actual8 = [wifi_connect, connected_mac, ip_assigned, check_google_2]
+            list_expected8 = [REPEATER_MESH_NAME, extender_MAC, return_true, return_true]
             step_8_name = "8. Connect Wifi (Wifi name and MAC). Check IP assigned and can connect to google."
             list_check_in_step_8 = [
-                f"Check Connect Wifi (Wifi name and MAC) is: {list_expected8[0]}",
+                f"Check Connect Wifi (Wifi name) is: {list_expected8[0]}",
+                f"Check Connect Wifi (MAC) is: {list_expected8[1]}",
                 "Check IP is assigned",
                 "Check connect to google success"
             ]
@@ -4666,11 +4656,12 @@ class NETWORK(unittest.TestCase):
             ip_assigned = checkIPAddress(driver.find_element_by_css_selector(home_conection_img_wan_ip).text)
             check_google_2 = check_connect_to_google()
 
-            list_actual8 = [[wifi_connect, connected_mac], ip_assigned, check_google_2]
-            list_expected8 = [[REPEATER_MESH_NAME, extender_MAC], return_true, return_true]
+            list_actual8 = [wifi_connect, connected_mac, ip_assigned, check_google_2]
+            list_expected8 = [REPEATER_MESH_NAME, extender_MAC, return_true, return_true]
             step_8_name = "8. Connect Wifi. Check IP assigned and can connect to google. "
             list_check_in_step_8 = [
-                f"Check Connect Wifi (repeater mesh name and mac) is {list_expected8[0]}",
+                f"Check Connect Wifi (repeater mesh name) is {list_expected8[0]}",
+                f"Check Connect Wifi (repeater mac) is {list_expected8[1]}",
                 "Check IP is assigned",
                 "Check Connect to google success"
             ]
@@ -4763,8 +4754,8 @@ class NETWORK(unittest.TestCase):
             _TOKEN = get_token(_USER, _PW)
 
             res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
-            qmode = res.get('qmode') == 'extender'
-            operation = res.get('operation') == 'mesh slave'
+            qmode = res.get('qmode')
+            operation = res.get('operation')
 
             list_actual2 = [get_mode_name, qmode, operation]
             list_expected2 = ['Repeater Mode', "extender", "mesh slave"]
@@ -4978,8 +4969,9 @@ class NETWORK(unittest.TestCase):
 
             list_actual7 = [apply_repeater_mode, apply_repeater_mode_text]
             list_expected7 = [return_true, 'Next']
-            step_7_name = "7. Select Repeater mode. Check Apply button enabled. "
-            list_check_in_step_7 = ["Check button apply is enabled"]
+            step_7_name = "7. Select Repeater mode. Check Reapeater mode is enabled. "
+            list_check_in_step_7 = ["Check button apply is selected",
+                                    "Check content button next"]
             check = assert_list(list_actual7, list_expected7)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -5717,204 +5709,204 @@ class NETWORK(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_R1_49_NETWORK_Repeater_Security_None(self):
-        self.key = 'NETWORK_49'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-        # ===========================================================
-        # disconnect_or_connect_wan(disconnected=True)
-        grand_login(driver)
-        time.sleep(2)
-        goto_menu(driver, network_tab, network_operationmode_tab)
-        time.sleep(1)
-        wait_popup_disappear(driver, dialog_loading)
-        connect_repeater_mode(driver)
-        wait_ethernet_available()
-        time.sleep(5)
-        REPEATER_MESH_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
-        REPEATER_MESH_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
-        # connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
-        URL_UPPER = get_config('REPEATER', 'url', input_data_path)
-        USER_UPPER = get_config('REPEATER', 'user', input_data_path)
-        PW_UPPER = get_config('REPEATER', 'pw', input_data_path)
-        os.system(f'netsh wlan delete profile name=*')
-        time.sleep(5)
-        wait_ethernet_available()
-        #
-        grand_login(driver, URL_UPPER, USER_UPPER, PW_UPPER)
-        goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
-        wait_popup_disappear(driver, dialog_loading)
-
-        block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
-        wl_2g_ssid = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
-        wireless_change_choose_option(driver, secure_value_field, 'NONE')
-
-        # Apply
-        if block_2g.find_element_by_css_selector(apply).is_displayed():
-            block_2g.find_element_by_css_selector(apply).click()
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(0.5)
-            if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
-                driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(0.5)
-        wait_ethernet_available()
-        driver.refresh()
-        wait_popup_disappear(driver, icon_loading)
-        wait_ethernet_available()
-        block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
-        wl_5g_ssid = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
-        wireless_change_choose_option(block_5g, secure_value_field, 'NONE')
-        wait_ethernet_available()
-        if block_5g.find_element_by_css_selector(apply).is_displayed():
-            block_5g.find_element_by_css_selector(apply).click()
-            wait_ethernet_available()
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(0.5)
-            if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
-                driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(0.5)
-            wait_ethernet_available()
-        # ===========================================================
-        driver.refresh()
-        wait_popup_disappear(driver, icon_loading)
-        wait_ethernet_available()
-        try:
-            time.sleep(10)
-            wait_ethernet_available()
-            grand_login(driver)
-            time.sleep(1)
-            goto_menu(driver, network_tab, network_operationmode_tab)
-            wait_popup_disappear(driver, dialog_loading)
-            driver.find_element_by_css_selector(ele_select_repeater_mode).click()
-            time.sleep(0.5)
-            driver.find_element_by_css_selector(apply).click()
-            time.sleep(0.5)
-            wait_popup_disappear(driver, dialog_loading)
-            _rows = driver.find_elements_by_css_selector(rows)
-            # Choose Network name
-            for r in _rows:
-                if r.find_element_by_css_selector(ele_network_name).text.strip() == wl_2g_ssid:
-                    r.click()
-                    break
-            # # Fill Password
-            # pw_box = driver.find_element_by_css_selector(ele_input_pw)
-            # ActionChains(driver).click(pw_box).send_keys(wl_2g_pw).perform()
-            # time.sleep(1)
-            # Apply
-            driver.find_element_by_css_selector(ele_apply_highlight).click()
-            time.sleep(0.5)
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(100)
-            wait_popup_disappear(driver, icon_loading)
-            time.sleep(1)
-            wait_popup_disappear(driver, icon_loading)
-            wait_visible(driver, lg_page)
-
-            wait_ethernet_available()
-            time.sleep(10)
-            time.sleep(5)
-            check_connect_web_2 = check_connect_to_web_admin_page()
-            check_connect_google_2 = check_connect_to_google()
-            # print(requests.get('http://dearmyextender.net').status_code)
-            # print(requests.get('http://google.com').status_code)
-
-            list_actual1 = [check_connect_web_2, check_connect_google_2]
-            list_expected1 = [return_true] * 2
-            step_1_2_name = "1, 2. Change Security to None of 2G. Check connect to WEB and connect to Google. "
-            list_check_in_step_1_2 = [
-                "Connect to WEB success",
-                "Connect to Google success",
-            ]
-            check = assert_list(list_actual1, list_expected1)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_2_name,
-                    list_check_in_step=list_check_in_step_1_2,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_2_name,
-                    list_check_in_step=list_check_in_step_1_2,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-            list_step_fail.append('1, 2. Assertion wong')
-
-        try:
-            time.sleep(10)
-            wait_ethernet_available()
-            grand_login(driver)
-            time.sleep(1)
-            goto_menu(driver, network_tab, network_operationmode_tab)
-            wait_popup_disappear(driver, dialog_loading)
-            driver.find_element_by_css_selector(ele_select_repeater_mode).click()
-            time.sleep(0.5)
-            driver.find_element_by_css_selector(apply).click()
-            time.sleep(0.5)
-            wait_popup_disappear(driver, dialog_loading)
-            _rows = driver.find_elements_by_css_selector(rows)
-            # Choose Network name
-            for r in _rows:
-                if r.find_element_by_css_selector(ele_network_name).text.strip() == wl_5g_ssid:
-                    r.click()
-                    break
-            # # Fill Password
-            # pw_box = driver.find_element_by_css_selector(ele_input_pw)
-            # ActionChains(driver).click(pw_box).send_keys(wl_5g_pw).perform()
-            # time.sleep(1)
-            # Apply
-            driver.find_element_by_css_selector(ele_apply_highlight).click()
-            time.sleep(0.5)
-            driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(100)
-            wait_popup_disappear(driver, icon_loading)
-            time.sleep(1)
-            wait_popup_disappear(driver, icon_loading)
-            wait_visible(driver, lg_page)
-            time.sleep(20)
-            wait_ethernet_available()
-
-            check_connect_web_5 = check_connect_to_web_admin_page()
-            check_connect_google_5 = check_connect_to_google()
-            list_actual3 = [check_connect_web_5, check_connect_google_5]
-            list_expected3 = [return_true] * 2
-            step_3_name = "3. Change Security to None of 5G. Check connect to WEB and connect to Google. "
-            list_check_in_step_3 = [
-                "Check connect to web success",
-                "Check connect to google success"
-            ]
-            check = assert_list(list_actual3, list_expected3)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_3_name,
-                    list_check_in_step=list_check_in_step_3,
-                    list_actual=list_actual3,
-                    list_expected=list_expected3
-                )
-            )
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_3_name,
-                    list_check_in_step=list_check_in_step_3,
-                    list_actual=list_actual3,
-                    list_expected=list_expected3
-                )
-            )
-            self.list_steps.append('[END TC]')
-            list_step_fail.append('3. Assertion wong')
-
-        self.assertListEqual(list_step_fail, [])
+    # def test_R1_49_NETWORK_Repeater_Security_None(self):
+    #     self.key = 'NETWORK_49'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     # ===========================================================
+    #     # disconnect_or_connect_wan(disconnected=True)
+    #     grand_login(driver)
+    #     time.sleep(2)
+    #     goto_menu(driver, network_tab, network_operationmode_tab)
+    #     time.sleep(1)
+    #     wait_popup_disappear(driver, dialog_loading)
+    #     connect_repeater_mode(driver)
+    #     wait_ethernet_available()
+    #     time.sleep(5)
+    #     REPEATER_MESH_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
+    #     REPEATER_MESH_PW = get_config('REPEATER', 'repeater_pw', input_data_path)
+    #     # connect_wifi_by_command(REPEATER_MESH_NAME, REPEATER_MESH_PW)
+    #     URL_UPPER = get_config('REPEATER', 'url', input_data_path)
+    #     USER_UPPER = get_config('REPEATER', 'user', input_data_path)
+    #     PW_UPPER = get_config('REPEATER', 'pw', input_data_path)
+    #     os.system(f'netsh wlan delete profile name=*')
+    #     time.sleep(5)
+    #     wait_ethernet_available()
+    #     #
+    #     grand_login(driver, URL_UPPER, USER_UPPER, PW_UPPER)
+    #     goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+    #     wait_popup_disappear(driver, dialog_loading)
+    #
+    #     block_2g = driver.find_elements_by_css_selector(wl_primary_card)[0]
+    #     wl_2g_ssid = wireless_get_default_ssid(block_2g, 'Network Name(SSID)')
+    #     wireless_change_choose_option(driver, secure_value_field, 'NONE')
+    #
+    #     # Apply
+    #     if block_2g.find_element_by_css_selector(apply).is_displayed():
+    #         block_2g.find_element_by_css_selector(apply).click()
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(0.5)
+    #         if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
+    #             driver.find_element_by_css_selector(btn_ok).click()
+    #             time.sleep(0.5)
+    #     wait_ethernet_available()
+    #     driver.refresh()
+    #     wait_popup_disappear(driver, icon_loading)
+    #     wait_ethernet_available()
+    #     block_5g = driver.find_elements_by_css_selector(wl_primary_card)[1]
+    #     wl_5g_ssid = wireless_get_default_ssid(block_5g, 'Network Name(SSID)')
+    #     wireless_change_choose_option(block_5g, secure_value_field, 'NONE')
+    #     wait_ethernet_available()
+    #     if block_5g.find_element_by_css_selector(apply).is_displayed():
+    #         block_5g.find_element_by_css_selector(apply).click()
+    #         wait_ethernet_available()
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(0.5)
+    #         if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
+    #             driver.find_element_by_css_selector(btn_ok).click()
+    #             time.sleep(0.5)
+    #         wait_ethernet_available()
+    #     # ===========================================================
+    #     driver.refresh()
+    #     wait_popup_disappear(driver, icon_loading)
+    #     wait_ethernet_available()
+    #     try:
+    #         time.sleep(10)
+    #         wait_ethernet_available()
+    #         grand_login(driver)
+    #         time.sleep(1)
+    #         goto_menu(driver, network_tab, network_operationmode_tab)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         driver.find_element_by_css_selector(ele_select_repeater_mode).click()
+    #         time.sleep(0.5)
+    #         driver.find_element_by_css_selector(apply).click()
+    #         time.sleep(0.5)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         _rows = driver.find_elements_by_css_selector(rows)
+    #         # Choose Network name
+    #         for r in _rows:
+    #             if r.find_element_by_css_selector(ele_network_name).text.strip() == wl_2g_ssid:
+    #                 r.click()
+    #                 break
+    #         # # Fill Password
+    #         # pw_box = driver.find_element_by_css_selector(ele_input_pw)
+    #         # ActionChains(driver).click(pw_box).send_keys(wl_2g_pw).perform()
+    #         # time.sleep(1)
+    #         # Apply
+    #         driver.find_element_by_css_selector(ele_apply_highlight).click()
+    #         time.sleep(0.5)
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(100)
+    #         wait_popup_disappear(driver, icon_loading)
+    #         time.sleep(1)
+    #         wait_popup_disappear(driver, icon_loading)
+    #         wait_visible(driver, lg_page)
+    #
+    #         wait_ethernet_available()
+    #         time.sleep(10)
+    #         time.sleep(5)
+    #         check_connect_web_2 = check_connect_to_web_admin_page()
+    #         check_connect_google_2 = check_connect_to_google()
+    #         # print(requests.get('http://dearmyextender.net').status_code)
+    #         # print(requests.get('http://google.com').status_code)
+    #
+    #         list_actual1 = [check_connect_web_2, check_connect_google_2]
+    #         list_expected1 = [return_true] * 2
+    #         step_1_2_name = "1, 2. Change Security to None of 2G. Check connect to WEB and connect to Google. "
+    #         list_check_in_step_1_2 = [
+    #             "Connect to WEB success",
+    #             "Connect to Google success",
+    #         ]
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_2_name,
+    #                 list_check_in_step=list_check_in_step_1_2,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_2_name,
+    #                 list_check_in_step=list_check_in_step_1_2,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #         list_step_fail.append('1, 2. Assertion wong')
+    #
+    #     try:
+    #         time.sleep(10)
+    #         wait_ethernet_available()
+    #         grand_login(driver)
+    #         time.sleep(1)
+    #         goto_menu(driver, network_tab, network_operationmode_tab)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         driver.find_element_by_css_selector(ele_select_repeater_mode).click()
+    #         time.sleep(0.5)
+    #         driver.find_element_by_css_selector(apply).click()
+    #         time.sleep(0.5)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         _rows = driver.find_elements_by_css_selector(rows)
+    #         # Choose Network name
+    #         for r in _rows:
+    #             if r.find_element_by_css_selector(ele_network_name).text.strip() == wl_5g_ssid:
+    #                 r.click()
+    #                 break
+    #         # # Fill Password
+    #         # pw_box = driver.find_element_by_css_selector(ele_input_pw)
+    #         # ActionChains(driver).click(pw_box).send_keys(wl_5g_pw).perform()
+    #         # time.sleep(1)
+    #         # Apply
+    #         driver.find_element_by_css_selector(ele_apply_highlight).click()
+    #         time.sleep(0.5)
+    #         driver.find_element_by_css_selector(btn_ok).click()
+    #         time.sleep(100)
+    #         wait_popup_disappear(driver, icon_loading)
+    #         time.sleep(1)
+    #         wait_popup_disappear(driver, icon_loading)
+    #         wait_visible(driver, lg_page)
+    #         time.sleep(20)
+    #         wait_ethernet_available()
+    #
+    #         check_connect_web_5 = check_connect_to_web_admin_page()
+    #         check_connect_google_5 = check_connect_to_google()
+    #         list_actual3 = [check_connect_web_5, check_connect_google_5]
+    #         list_expected3 = [return_true] * 2
+    #         step_3_name = "3. Change Security to None of 5G. Check connect to WEB and connect to Google. "
+    #         list_check_in_step_3 = [
+    #             "Check connect to web success",
+    #             "Check connect to google success"
+    #         ]
+    #         check = assert_list(list_actual3, list_expected3)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_3_name,
+    #                 list_check_in_step=list_check_in_step_3,
+    #                 list_actual=list_actual3,
+    #                 list_expected=list_expected3
+    #             )
+    #         )
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_3_name,
+    #                 list_check_in_step=list_check_in_step_3,
+    #                 list_actual=list_actual3,
+    #                 list_expected=list_expected3
+    #             )
+    #         )
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('3. Assertion wong')
+    #
+    #     self.assertListEqual(list_step_fail, [])
 
     def test_51_NETWORK_Verify_Bridge_Mode_operation(self):
         self.key = 'NETWORK_51'
