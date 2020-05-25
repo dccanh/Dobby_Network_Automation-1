@@ -1368,7 +1368,7 @@ class MAIN(unittest.TestCase):
             list_expected3 = [return_true, check_error_msg_time, return_false]
             step_4_name = "4. Check Error wrong ID& PW: 9 msg warning, 1 msg count time, login btn enabled after count. "
             list_check_in_step_4 = [
-                f"Error message is displayed: {exp_wrong_id_pw} for 9 times",
+                f"Error message is displayed: {exp_wrong_id_pw} for 9 times: is displayed",
                 "Error message for count time is appear",
                 "Login page is enabled"
             ]
@@ -4312,7 +4312,7 @@ class MAIN(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         # ====================================================
-        disconnect_or_connect_wan(disconnected=True)
+        # disconnect_or_connect_wan(disconnected=True)
         factory_dut()
         # ======================================================
         REPEATER_MESH_NAME = get_config('REPEATER', 'repeater_name', input_data_path)
@@ -4322,9 +4322,7 @@ class MAIN(unittest.TestCase):
         NEW_PASSWORD_1 = get_config('MAIN', 'main_31_new_pw_1', input_data_path)
         NEW_PASSWORD_2 = get_config('MAIN', 'main_31_new_pw_2', input_data_path)
         try:
-            os.system(f'netsh wlan delete profile name="{REPEATER_MESH_NAME}"')
-            time.sleep(1)
-            os.system(f'netsh wlan delete profile name="{REPEATER_THIRD_NAME}"')
+            os.system(f'netsh wlan delete profile name=*')
             time.sleep(1)
             login(driver)
             wait_popup_disappear(driver, dialog_loading)
@@ -4630,8 +4628,8 @@ class MAIN(unittest.TestCase):
             list_expected6 = [return_true] * 2
             step_6_name = "6. Run wizard again. Select Repeater -3 Party mode."
             list_check_in_step_6 = [
-                "Network for 2g is exist",
-                "Network for 5g is exist"
+                "Network for 2g is existed",
+                "Network for 5g is existed"
             ]
             check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
@@ -4717,7 +4715,7 @@ class MAIN(unittest.TestCase):
             )
             self.list_steps.append('[END TC]')
             list_step_fail.append('7. Assertion wong')
-        disconnect_or_connect_wan(disconnected=False)
+        # disconnect_or_connect_wan(disconnected=False)
         self.assertListEqual(list_step_fail, [])
 
     # OK F
@@ -7182,6 +7180,7 @@ class MAIN(unittest.TestCase):
             ]
 
             check = assert_list(list_actual5, list_expected5)
+            self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
                     step_name=step_7_2_name,
@@ -7249,7 +7248,7 @@ class MAIN(unittest.TestCase):
             list_expected5 = [return_true]*2
             step_8_9_name = "8-9. Login with old PW; Login with current pw. "
             list_check_in_step_8_9 = [
-                "Login with old password  unsuccess",
+                "Login with old password unsuccess",
                 "Login with current password success"
             ]
             check = assert_list(list_actual5, list_expected5)
@@ -7450,7 +7449,6 @@ class MAIN(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        url_login = get_config('URL', 'url')
         # ===========================================================
         factory_dut()
         # ===================================
@@ -9849,7 +9847,7 @@ class MAIN(unittest.TestCase):
             list_expected1 = ['Firmware Update', exp_sub_title_update_firmware]
             step_1_name = "1. Goto firmware update. Check title and subtitle of popup"
             list_check_in_step_1 = [
-                f"Popup title is: {list_expected1[0]}"
+                f"Popup title is: {list_expected1[0]}",
                 f"Popup sub title is: {list_expected1[1]}"
             ]
             check = assert_list(list_actual1, list_expected1)
@@ -10181,7 +10179,7 @@ class MAIN(unittest.TestCase):
             list_expected4 = [return_true]
             step_4_name = "4. Update firmware 4.00.12. Check update successfully. "
             list_check_in_step_4 = [
-                f"Condition 'name of firmware after update is endwith {expected_firmware_40012}' is correct"
+                f"Condition 'name of firmware after update is end with {expected_firmware_40012}' is correct"
             ]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
@@ -10271,7 +10269,7 @@ class MAIN(unittest.TestCase):
             step_2_name = "2. Check list tree menu Enable, list tree menu disable. "
             list_check_in_step_2 = [
                 f"List enable menu is: {list_expected2[0]}",
-                f"List disable menu is: {list_expected2[1]}",
+                f"List disable menu is: {list_expected2[1]}"
             ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
@@ -10297,6 +10295,7 @@ class MAIN(unittest.TestCase):
         try:
             # Click Network
             goto_menu(driver, network_tab, 0)
+            wait_popup_disappear(driver, icon_loading)
             network_submenu = [i.text for i in driver.find_elements_by_css_selector(ele_home_sub_menu)]
             time.sleep(1)
             # Click WL
@@ -10314,7 +10313,7 @@ class MAIN(unittest.TestCase):
             step_3_4_5_name = "3, 4, 5. Check Sub menu of NETWORK, WIRELESS, MS. "
             list_check_in_step_3_4_5 = [
                 f"List network submenu is: {list_expected3[0]}",
-                f"List wrieless submenu is: {list_expected3[0]}"
+                f"List wrieless submenu is: {list_expected3[0]}",
                 f"List media share submenu is: {list_expected3[0]}"
             ]
             check = assert_list(list_actual3, list_expected3)
