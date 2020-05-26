@@ -2361,5 +2361,6 @@ def download_artifact(build_number: int = 0, save_file_full_path: str = None):
             with artifact.open() as fd:
                 with open(save_file_full_path, "wb") as out:
                     out.write(fd.read())
-
+                    out.flush()
+                    out.close()
     raise Exception(f"Not found artifact with build_number: {build_number}")
