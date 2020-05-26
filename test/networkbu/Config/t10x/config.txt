@@ -30,3 +30,8 @@ parental_code = 1111
 sheet_name = fgd_T10X_2020-05-08 16:06:44
 report_path = C:/Users/Test/Desktop/New folder
 
+[ARTIFACT]
+url = http://arti.humaxdigital.com:8081/artifactory/test/folder1/
+user_name = tqcuong
+api_key =  AKCp5fTQsVg2xyo4dpbPN74TQ42o114SJjyj7jAB4wxSY3GGtvLbBUBs53KBYCMND7y3L2c7F
+
