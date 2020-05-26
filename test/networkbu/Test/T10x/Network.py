@@ -5005,9 +5005,10 @@ class NETWORK(unittest.TestCase):
         factory_dut()
         # ===========================================================
         grand_login(driver)
-        # time.sleep(2)
+        wait_popup_disappear(driver, dialog_loading)
         goto_menu(driver, network_tab, network_operationmode_tab)
-        connect_repeater_mode(driver)
+        wait_popup_disappear(driver, dialog_loading)
+        connect_repeater_mode(driver, force=True)
         wait_ethernet_available()
         #
         REPEATER_MESH_NAME = get_config('REPEATER', 'repeater_name', input_data_path)

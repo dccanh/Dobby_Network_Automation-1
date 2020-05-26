@@ -52,16 +52,17 @@ class MEDIASHARE(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        # factory_dut()
+        factory_dut()
         # ========================================================================
 
         try:
             grand_login(driver)
+            wait_popup_disappear(driver, dialog_loading)
             # Goto media share USB
             goto_menu(driver, media_share_tab, media_share_usb_tab)
-            time.sleep(3)
+            # time.sleep(3)
             wait_popup_disappear(driver, dialog_loading)
-
+            time.sleep(1)
             usb_title_text = driver.find_element_by_css_selector(ele_usb_title).text
             usb_sub_title_text = driver.find_element_by_css_selector(ele_sub_title).text
             list_usb_block_title = [i.text for i in driver.find_elements_by_css_selector(ele_usb_mediashare_block_title)]

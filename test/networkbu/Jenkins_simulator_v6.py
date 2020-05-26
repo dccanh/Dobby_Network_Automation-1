@@ -800,7 +800,7 @@ def detect_run_testcase(progress_bar):
 def _runBtn():
     flow_off_field(DISABLED)
     if stage1.get() == '':
-        messagebox.showerror('Warning', ' Please fill in the Tester filed first.')
+        messagebox.showerror('Warning', ' Please fill in the Tester field first.')
         flow_off_field(NORMAL)
         return
 
@@ -1056,7 +1056,7 @@ def _manualBtn():
 
 def _abortBtn():
     print('Abort')
-    warning = messagebox.askokcancel('Warning!', 'Are you sure to Abort this process? \n\n You should wait for current test case finish running..')
+    warning = messagebox.askokcancel('Warning!', 'Are you sure to Abort this process? \n\n You should wait for current test case finish running.')
 
     if warning:
         save_config(config_path, 'GENERAL', 'abort', '0')
@@ -1087,7 +1087,7 @@ def _realcallback2():
     # bar['value'] = 1
 
 def _Factory():
-    confirm_msg = messagebox.askyesno('Confirm factory', 'Do you want to factory set DUT? \nPlease make sure enable Ethernet first.')
+    confirm_msg = messagebox.askyesno('Confirm factory', 'Do you want to reset all settings to the factory default? \nPlease make sure enable Ethernet first.')
     if confirm_msg:
         root.after(500, _realcallback1)
         root.after(1_000, lambda: factory())

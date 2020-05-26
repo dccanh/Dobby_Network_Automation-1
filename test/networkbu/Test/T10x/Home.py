@@ -4703,14 +4703,16 @@ class HOME(unittest.TestCase):
             interface_connect_disconnect('Ethernet', 'disable')
             get_current_wifi_name = connect_wifi_by_command(wifi_2g_name, wifi_2g_password)
             print(get_current_wifi_name)
-            # check_gg = check_connect_to_google()
+            check_gg = check_connect_to_google()
+            check_yt = check_connect_to_youtube()
 
-            check_connect_wireless = get_value_from_ipconfig('Wireless LAN adapter Wi-Fi', 'IPv4 Address') == 'Block or field error.'
+            # check_connect_wireless = get_value_from_ipconfig('Wireless LAN adapter Wi-Fi', 'IPv4 Address') == 'Block or field error.'
 
-            list_actual4 = [check_connect_wireless]
-            list_expected4 = [True]
-            step_5_name = "5. Connect wireless of DUT. Check can not wireless. "
-            list_check_in_step_5 = ["Check Condition 'Can not access to internet' is correct"]
+            list_actual4 = [check_gg, check_yt]
+            list_expected4 = [False]*2
+            step_5_name = "5. Connect wireless of DUT. Check can not access internet (google, facebook).  "
+            list_check_in_step_5 = ["Check can not access to google: not connect",
+                                    "Check can not access to youtube: not connect"]
             check = assert_list(list_actual4, list_expected4)
             interface_connect_disconnect('Ethernet', 'enable')
             self.assertTrue(check["result"])
@@ -5247,55 +5249,21 @@ class HOME(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        try:
-            repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
-            repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
 
-            grand_login(driver)
-            time.sleep(2)
-            goto_menu(driver, network_tab, network_operationmode_tab)
-            connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
-            time.sleep(3)
+        repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
+        repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
 
-            # Verify_connect successfully
-            URL_LOGIN = get_config('URL', 'url')
-            _URL_API = URL_LOGIN + '/api/v1/wifi/0/ssid/0'
-            _METHOD = 'GET'
-            _BODY = ''
-            _USER = get_config('ACCOUNT', 'user')
-            _PW = get_config('ACCOUNT', 'password')
-            _TOKEN = get_token(_USER, _PW)
-            time.sleep(1)
-            res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
-            time.sleep(1)
-            list_actual0 = [res['name']]
-            list_expected0 = [repeater_name]
-            step_0_name = "Precondition successfully. Check Upper name. "
-            list_check_in_step_0 = [f"Check Upper name is: {repeater_name}"]
-            check = assert_list(list_actual0, list_expected0)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_0_name,
-                    list_check_in_step=list_check_in_step_0,
-                    list_actual=list_actual0,
-                    list_expected=list_expected0
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_0_name,
-                    list_check_in_step=list_check_in_step_0,
-                    list_actual=list_actual0,
-                    list_expected=list_expected0
-                )
-            )
-            list_step_fail.append('0. Precondition wong')
+        grand_login(driver)
+        wait_popup_disappear(driver, dialog_loading)
+        goto_menu(driver, network_tab, network_operationmode_tab)
+        connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
+        time.sleep(3)
+        wait_ethernet_available()
 
         try:
             grand_login(driver)
             time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
             goto_menu(driver, home_tab, 0)
             # Check Home screen displayed
             check_home = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
@@ -5328,6 +5296,7 @@ class HOME(unittest.TestCase):
         try:
             # Click Router and Wireless image in network map image
             driver.find_element_by_css_selector(home_img_lan_connection).click()
+            wait_popup_disappear(driver, dialog_loading)
             # Check icon is highlight
             lan_connection = driver.find_element_by_css_selector(home_img_lan_connection).get_attribute('class').split()
             check_lan_image_highlight = 'active' in lan_connection
@@ -5364,6 +5333,7 @@ class HOME(unittest.TestCase):
 
             # IP v6
             lan_block.find_element_by_css_selector(ele_second_tab).click()
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             lan_label_ipv6 = [i.text for i in lan_block.find_elements_by_css_selector(label_name_in_2g)]
 
@@ -5469,7 +5439,7 @@ class HOME(unittest.TestCase):
             ethernet_label = [i.text for i in ethernet_status_block.find_elements_by_css_selector(label_name_in_2g)]
 
             list_actual6 = [ethernet_label]
-            list_expected6 = [['Internet Port', 'LAN Port 1', 'LAN Port 2', 'LAN Port 3', 'LAN Port 4']]
+            list_expected6 = [['Internet port', 'LAN Port 1', 'LAN Port 2', 'LAN Port 3', 'LAN Port 4']]
             step_2_5_name = "2.5 Check Ethernet Port Status card component. Check Ethernet Port Status Label text. "
             list_check_in_step_2_5 = ["Check Ethernet Port Status label are: Internet Port, LAN Port 1,2,3,4"]
             check = assert_list(list_actual6, list_expected6)
@@ -5618,52 +5588,19 @@ class HOME(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        try:
-            repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
-            repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
-            grand_login(driver)
-            time.sleep(2)
-            goto_menu(driver, network_tab, network_operationmode_tab)
-            connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
 
-            # Verify_connect successfully
-            URL_LOGIN = get_config('URL', 'url')
-            _URL_API = URL_LOGIN + '/api/v1/wifi/0/ssid/0'
-            _METHOD = 'GET'
-            _BODY = ''
-            _USER = get_config('ACCOUNT', 'user')
-            _PW = get_config('ACCOUNT', 'password')
-            _TOKEN = get_token(_USER, _PW)
-            time.sleep(1)
-            res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
-            time.sleep(1)
-            list_actual0 = [res['name']]
-            list_expected0 = [repeater_name]
-            step_0_name = "1, 2. Get result by command success."
-            list_check_in_step_0 = ["Get result by command success"]
-            check = assert_list(list_actual0, list_expected0)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_0_name,
-                    list_check_in_step=list_check_in_step_0,
-                    list_actual=list_actual0,
-                    list_expected=list_expected0
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_0_name,
-                    list_check_in_step=list_check_in_step_0,
-                    list_actual=list_actual0,
-                    list_expected=list_expected0
-                )
-            )
-            list_step_fail.append('0. Precondition wong')
+        repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
+        repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
+        grand_login(driver)
+        wait_popup_disappear(driver, dialog_loading)
+        goto_menu(driver, network_tab, network_operationmode_tab)
+        connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
+        wait_ethernet_available()
+
 
         try:
             grand_login(driver)
+            wait_popup_disappear(driver, dialog_loading)
             goto_menu(driver, home_tab, 0)
             time.sleep(1)
             # Check Home screen displayed
@@ -5986,52 +5923,18 @@ class HOME(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         factory_dut()
-        try:
-            repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
-            repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
-            grand_login(driver)
-            wait_visible(driver, home_view_wrap)
-            time.sleep(2)
-            goto_menu(driver, network_tab, network_operationmode_tab)
-            wait_popup_disappear(driver, dialog_loading)
-            # connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw, force=True)
-            connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
-            wait_ethernet_available()
-            # Verify_connect successfully
-            URL_LOGIN = get_config('URL', 'url')
-            _URL_API = URL_LOGIN + '/api/v1/wifi/0/ssid/0'
-            _METHOD = 'GET'
-            _BODY = ''
-            _USER = get_config('ACCOUNT', 'user')
-            _PW = get_config('ACCOUNT', 'password')
-            _TOKEN = get_token(_USER, _PW)
-            time.sleep(1)
-            res = call_api(_URL_API, _METHOD, _BODY, _TOKEN)
-            time.sleep(1)
-            list_actual0 = [res['name']]
-            list_expected0 = [repeater_name]
-            step_1_2_name = "1, 2. Get result by command success."
-            list_check_in_step_1_2 = ["Get result by command success"]
-            check = assert_list(list_actual0, list_expected0)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_2_name,
-                    list_check_in_step=list_check_in_step_1_2,
-                    list_actual=list_actual0,
-                    list_expected=list_expected0
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_2_name,
-                    list_check_in_step=list_check_in_step_1_2,
-                    list_actual=list_actual0,
-                    list_expected=list_expected0
-                )
-            )
-            list_step_fail.append('0. Precondition wong')
+
+        repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
+        repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
+        grand_login(driver)
+        wait_visible(driver, home_view_wrap)
+        time.sleep(2)
+        goto_menu(driver, network_tab, network_operationmode_tab)
+        wait_popup_disappear(driver, dialog_loading)
+
+        connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
+        wait_ethernet_available()
+
 
         try:
             wait_ethernet_available()
@@ -6042,7 +5945,7 @@ class HOME(unittest.TestCase):
             pw_upper = get_config('REPEATER', 'pw', input_data_path)
             wait_ethernet_available()
             grand_login(driver, url_login=url_upper,user_request=user_upper, pass_word=pw_upper)
-            time.sleep(0.5)
+            wait_popup_disappear(driver, dialog_loading)
             goto_menu(driver, home_tab, 0)
             time.sleep(1)
             # Click to Device Image
@@ -6115,7 +6018,7 @@ class HOME(unittest.TestCase):
                 "Check Format of IP address is valid",
                 "Check Upgrade button is displayed",
                 "Check Version is displayed",
-                "Check Edit button is displayed",
+                "Check Edit button is displayed"
             ]
             check = assert_list(list_actual2, list_expected2)
             self.assertTrue(check["result"])
