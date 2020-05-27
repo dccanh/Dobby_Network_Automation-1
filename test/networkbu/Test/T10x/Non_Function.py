@@ -1262,6 +1262,7 @@ class NON_FUNCTION(unittest.TestCase):
     #
     #     self.assertListEqual(list_step_fail, [])
 
+
     def test_45_HOME_Verification_of_Network_Map_WAN_information(self):
         self.key = 'HOME_45'
         driver = self.driver
@@ -2398,6 +2399,8 @@ class NON_FUNCTION(unittest.TestCase):
         # detect_firmware_version(driver)
 
         self.assertListEqual(list_step_fail, [])
+
+
 
     def test_65_MAIN_System_Verification_of_Restart_Factory_Reset_operation(self):
         self.key = 'MAIN_65'

@@ -120,6 +120,7 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(2)
             # 5G
@@ -128,6 +129,7 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(2)
 
@@ -1115,9 +1117,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             # 5G Change password
             wireless_change_ssid_name(block_5g, "WiFi 5G Name")
@@ -1128,10 +1131,11 @@ class WIRELESS(unittest.TestCase):
             # Apply
             time.sleep(0.2)
             block_5g.find_element_by_css_selector(apply).click()
-            time.sleep(1)
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             pw_2g = wireless_check_pw_eye(driver, block_2g, change_pw=False)
             pw_5g = wireless_check_pw_eye(driver, block_5g, change_pw=False)
@@ -1369,8 +1373,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             # 5G Change password
             wireless_change_choose_option(block_2g, secure_value_field, SECURITY_TYPE)
@@ -1381,8 +1387,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             pw_2g = wireless_check_pw_eye(driver, block_2g, change_pw=False)
             pw_5g = wireless_check_pw_eye(driver, block_5g, change_pw=False)
@@ -1634,8 +1642,10 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(0.2)
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(2)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
 
             # 5G Change password
             wireless_change_ssid_name(block_5g, new_ssid_5g)
@@ -1647,8 +1657,10 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(0.2)
                 block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(2)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
 
             # Verify
             pw_eye_2g = block_2g.find_element_by_css_selector(password_eye)
@@ -1922,6 +1934,7 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
@@ -1933,6 +1946,7 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
@@ -2227,6 +2241,7 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(0.2)
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(2)
 
@@ -2240,6 +2255,7 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(0.2)
                 block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(2)
 
@@ -2504,6 +2520,7 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(2)
 
@@ -2515,6 +2532,7 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(2)
 
@@ -2746,6 +2764,7 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(0.5)
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
             check_hide_ssid_2g = hide_ssid_2g.find_element_by_css_selector(input).is_selected()
@@ -2769,6 +2788,7 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(0.5)
                 block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
             check_hide_ssid_5g = hide_ssid_5g.find_element_by_css_selector(input).is_selected()
@@ -4951,7 +4971,7 @@ class WIRELESS(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
         # ===========================================================
-        factory_dut()
+        # factory_dut()
         # ===========================================================
         GOOGLE_URL = get_config('WIRELESS', 'wl23_google_url', input_data_path)
         SECURITY_TYPE = get_config('WIRELESS', 'wl23_security_type', input_data_path)
@@ -5141,8 +5161,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             block_5g = driver.find_elements_by_css_selector(wl_primary_card)[0]
@@ -5153,8 +5175,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             expected_pw = PASSWORD_4[:5]
 
@@ -5452,8 +5476,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             block_5g = driver.find_elements_by_css_selector(wl_primary_card)[0]
             wireless_check_pw_eye(driver, block_5g, change_pw=True, new_pw=PASSWORD_5)
@@ -5463,8 +5489,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             for i in PASSWORD_5:
                 if (not i.isalpha()) and (not i.isnumeric()):
@@ -5785,8 +5813,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -5798,8 +5828,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             expected_pw = PASSWORD_4[:13]
 
@@ -6096,8 +6128,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             block_5g = driver.find_elements_by_css_selector(wl_primary_card)[0]
             wireless_check_pw_eye(driver, block_5g, change_pw=True, new_pw=PASSWORD_5)
@@ -6107,8 +6141,10 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.2)
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             for i in PASSWORD_5:
                 if (not i.isalpha()) and (not i.isnumeric()):
@@ -6573,10 +6609,12 @@ class WIRELESS(unittest.TestCase):
                     current_radio_status = v.find_element_by_css_selector(input)
                     if not current_radio_status.is_selected():
                         v.find_element_by_css_selector(select).click()
-
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(0.5)
                         block_2g = driver.find_element_by_css_selector(left)
                         block_2g.find_element_by_css_selector(apply).click()
                         wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(0.5)
                         driver.find_element_by_css_selector(btn_ok).click()
                         wait_popup_disappear(driver, dialog_loading)
 
@@ -6596,6 +6634,7 @@ class WIRELESS(unittest.TestCase):
                         block_5g = driver.find_element_by_css_selector(left)
                         block_5g.find_element_by_css_selector(apply).click()
                         wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(0.5)
                         driver.find_element_by_css_selector(btn_ok).click()
                         wait_popup_disappear(driver, dialog_loading)
 
@@ -6652,8 +6691,10 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(0.2)
                 block_wl_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(2)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
 
             # 5G Change password
             block_wl_5g = driver.find_element_by_css_selector(right)
@@ -6666,8 +6707,10 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(0.2)
                 block_wl_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(2)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
 
             block_2g = driver.find_element_by_css_selector(left)
             check_values_security_2g = block_2g.find_element_by_css_selector(secure_value_field).text
@@ -6788,6 +6831,7 @@ class WIRELESS(unittest.TestCase):
 
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
             check_hide_ssid_2g = hide_ssid_2g.find_element_by_css_selector(input).is_selected()
@@ -6817,6 +6861,7 @@ class WIRELESS(unittest.TestCase):
 
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
             check_hide_ssid_5g = hide_ssid_5g.find_element_by_css_selector(input).is_selected()
@@ -7101,9 +7146,11 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
 
             time.sleep(1)
             if block_2g.find_element_by_css_selector(apply).is_displayed():
@@ -7111,8 +7158,8 @@ class WIRELESS(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
                 time.sleep(1)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(1)
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 
@@ -7332,7 +7379,7 @@ class WIRELESS(unittest.TestCase):
             # Connect 2.4GHz wifi
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
@@ -7418,7 +7465,7 @@ class WIRELESS(unittest.TestCase):
             # Connect 2.4GHz wifi
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
@@ -7504,7 +7551,7 @@ class WIRELESS(unittest.TestCase):
             # Connect 2.4GHz wifi
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
@@ -8015,6 +8062,7 @@ class WIRELESS(unittest.TestCase):
             block_2g = driver.find_element_by_css_selector(left)
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
@@ -8503,7 +8551,7 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(0.2)
                 block_wl_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
-                time.sleep(0.2)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 
@@ -8654,7 +8702,7 @@ class WIRELESS(unittest.TestCase):
             # Connect 2.4GHz wifi
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
@@ -8724,7 +8772,7 @@ class WIRELESS(unittest.TestCase):
             #
             block_5g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
@@ -9143,9 +9191,8 @@ class WIRELESS(unittest.TestCase):
             block_5g = driver.find_element_by_css_selector(right)
             if block_5g.find_element_by_css_selector(apply).is_displayed():
                 block_5g.find_element_by_css_selector(apply).click()
-                time.sleep(1)
                 wait_popup_disappear(driver, dialog_loading)
-                time.sleep(1)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 
@@ -9488,7 +9535,7 @@ class WIRELESS(unittest.TestCase):
             # Apply
             edit_2g_block.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
 
@@ -9620,7 +9667,7 @@ class WIRELESS(unittest.TestCase):
             # Apply
             edit_5g_block.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
 
@@ -9812,9 +9859,10 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
-                time.sleep(1)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(2)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
 
             time.sleep(2)
             os.system(f'python {nw_interface_path} -i Wi-Fi -a disabled')
@@ -9871,9 +9919,10 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
-                time.sleep(1)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(2)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
 
             # Check connect
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
@@ -10002,7 +10051,7 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
-                time.sleep(1)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(2)
             time.sleep(2)
@@ -10040,10 +10089,11 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
-                time.sleep(1)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(2)
-            time.sleep(10)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
+
             # Check connect
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(5)
@@ -10231,11 +10281,11 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
-                time.sleep(1)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(2)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
 
-            time.sleep(2)
             os.system(f'python {nw_interface_path} -i Wi-Fi -a disabled')
             time.sleep(5)
             os.system(f'python {nw_interface_path} -i Wi-Fi -a enabled')
@@ -10290,9 +10340,10 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
-                time.sleep(1)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(2)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
 
             # Check connect
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
@@ -10382,7 +10433,8 @@ class WIRELESS(unittest.TestCase):
         try:
             block_mac_filter = driver.find_elements_by_css_selector(ele_access_control_card)[0]
             block_mac_filter.find_element_by_css_selector(select).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
 
@@ -10394,7 +10446,7 @@ class WIRELESS(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(10)
+            time.sleep(5)
             # ===================================================================================
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(5)
@@ -10421,7 +10473,7 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
-                time.sleep(1)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(2)
             time.sleep(2)
@@ -10459,7 +10511,7 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
-                time.sleep(1)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(2)
             time.sleep(10)
@@ -10638,7 +10690,8 @@ class WIRELESS(unittest.TestCase):
             time.sleep(1)
             wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
@@ -10813,6 +10866,7 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 
@@ -10823,6 +10877,7 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 
@@ -10865,6 +10920,7 @@ class WIRELESS(unittest.TestCase):
             if block_2g.find_element_by_css_selector(apply).is_displayed():
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 
@@ -11069,6 +11125,7 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 
@@ -11077,8 +11134,9 @@ class WIRELESS(unittest.TestCase):
             if not radio_button.find_element_by_css_selector(input).is_selected():
                 radio_button.click()
                 time.sleep(1)
-                block_2g.find_element_by_css_selector(apply).click()
+                block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 
@@ -11121,6 +11179,7 @@ class WIRELESS(unittest.TestCase):
             if block_2g.find_element_by_css_selector(apply).is_displayed():
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 
@@ -11131,6 +11190,7 @@ class WIRELESS(unittest.TestCase):
             if block_5g.find_element_by_css_selector(apply).is_displayed():
                 block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 
@@ -11323,6 +11383,7 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 
@@ -11333,6 +11394,7 @@ class WIRELESS(unittest.TestCase):
                 time.sleep(1)
                 block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 
@@ -11376,6 +11438,7 @@ class WIRELESS(unittest.TestCase):
             if block_2g.find_element_by_css_selector(apply).is_displayed():
                 block_2g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 
@@ -11386,6 +11449,7 @@ class WIRELESS(unittest.TestCase):
             if block_5g.find_element_by_css_selector(apply).is_displayed():
                 block_5g.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
 

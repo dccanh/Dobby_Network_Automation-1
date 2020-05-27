@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os, sys
-# try:
-#     from artifactory import ArtifactoryPath
-# except ModuleNotFoundError:
-#     os.system('pip install artifactory')
-#     from artifactory import ArtifactoryPath
+
 sys.path.append('../../')
 import sys
 from selenium.webdriver.common.by import By
@@ -2333,36 +2329,49 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
     raise TypeError(f"Not define action for step: {checking_info}")
 
 
-# def get_newest_build_number_artifact() -> int:
-#     artifact_path = ArtifactoryPath(
-#         get_config('ARTIFACT', 'url'),
-#         auth=(
-#             get_config('ARTIFACT', 'user_name'),
-#             get_config('ARTIFACT', 'api_key')
-#         ),
-#     )
-#     newest_build_number = 0
-#     for p in artifact_path:
-#         build_number = int(p.properties["build.number"][0])
-#         if newest_build_number < build_number:
-#             newest_build_number = build_number
-#     return newest_build_number
-#
-#
-# def download_artifact(build_number: int = 0, save_file_full_path: str = None):
-#     artifact_path = ArtifactoryPath(
-#         get_config('ARTIFACT', 'url'),
-#         auth=(
-#             get_config('ARTIFACT', 'user_name'),
-#             get_config('ARTIFACT', 'api_key')
-#         ),
-#     )
-#     for artifact in artifact_path:
-#         artifact_build_number = int(artifact.properties["build.number"][0])
-#         if artifact_build_number == build_number:
-#             with artifact.open() as fd:
-#                 with open(save_file_full_path, "wb") as out:
-#                     out.write(fd.read())
-#                     out.flush()
-#                     out.close()
-#     raise Exception(f"Not found artifact with build_number: {build_number}")
+def get_newest_artifact_name() -> int:
+    try:
+        from artifactory import ArtifactoryPath
+    except ModuleNotFoundError:
+        os.system('pip install artifactory')
+        from artifactory import ArtifactoryPath
+    artifact_path = ArtifactoryPath(
+        get_config('ARTIFACT', 'url'),
+        auth=(
+            get_config('ARTIFACT', 'user_name'),
+            get_config('ARTIFACT', 'api_key')
+        ),
+    )
+    newest_build_number = 0
+    artifact_name = None
+    for p in artifact_path:
+        build_number = int(p.properties["build.number"][0])
+        if newest_build_number < build_number:
+            newest_build_number = build_number
+            artifact_name = p.name
+    return artifact_name
+
+
+def download_artifact(artifact_name: str = None, save_file_path: str = None) -> bool:
+    try:
+        from artifactory import ArtifactoryPath
+    except ModuleNotFoundError:
+        os.system('pip install artifactory')
+        from artifactory import ArtifactoryPath
+    artifact_path = ArtifactoryPath(
+        get_config('ARTIFACT', 'url'),
+        auth=(
+            get_config('ARTIFACT', 'user_name'),
+            get_config('ARTIFACT', 'api_key')
+        ),
+    )
+    for artifact in artifact_path:
+        if artifact_name == artifact.name:
+            full_save_path = f"{save_file_path}/{artifact_name}"
+            with artifact.open() as fd:
+                with open(full_save_path, "wb") as out:
+                    out.write(fd.read())
+                    out.flush()
+                    out.close()
+            return True
+    return False

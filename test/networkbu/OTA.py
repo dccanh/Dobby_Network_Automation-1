@@ -62,7 +62,7 @@ def thread_destroy():
 
 
 def create_file():
-    support_install_path = os.path.join(download_path, 'auto_tool_support_install_version.txt')
+    support_install_path = os.path.join(download_path, 'auto_generate_support_install_version.txt')
     if os.path.exists(support_install_path):
         os.remove(support_install_path)
     with open(support_install_path, 'w+') as f:
@@ -79,12 +79,16 @@ def buttonNO():
 
 def buttonYES():
     create_file()
-    # Download new version patch. (zip file)
-    api_download_new_version()
+    from Helper.t10x.common import download_artifact, get_newest_artifact_name
+    new_firmware = get_newest_artifact_name()
+    check_downloaded = download_artifact(new_firmware, download_path)
+    print(f"Download is {str(check_downloaded)}: {new_firmware}")
 
     # Wait until download success
-    # download_zip_path = os.path.join(download_path, 'firmware_patch.zip')
-    download_zip_path = os.path.join(download_path, 'firmware_patch')
+    download_zip_path = os.path.join(download_path, new_firmware)
+    print(f"Download path file is: {download_zip_path}")
+
+    time.sleep(3)
     count = 0
     while not os.path.exists(download_zip_path):
         time.sleep(1)
@@ -100,18 +104,26 @@ def buttonYES():
     # Download successfully
     print("Download successfully")
     time.sleep(1)
+
+    # *******************************************
+
     # Unzip file
-    print('Unzip file')
-    time.sleep(1)
-    print('Waite unzip successfully Unzip file')
+    import zipfile
+    with zipfile.ZipFile(download_zip_path, "r") as zip_ref:
+        extra_to_file = download_path + "\generate"
+        zip_ref.extractall(extra_to_file)
+
+
+    print('Unzip file successfully')
     time.sleep(1)
 
-    folder_unzip_path = os.path.join(download_path, 'firmware_patch')
+    # folder_unzip_path = os.path.join(download_path, 'firmware_patch')
 
-    path_run_path = os.path.join(folder_unzip_path, 'setup.py')
-    print(path_run_path)
-    if os.path.exists(folder_unzip_path):
-        os.system(f'cd {folder_unzip_path} && python setup.py')
+    path_run_path = os.path.join(extra_to_file, 'setup_ota.py')
+    # print(path_run_path)
+    if os.path.exists(extra_to_file):
+        os.chdir(extra_to_file)
+        os.system(f'python setup_ota.py')
 
     thread_2 = threading.Thread(target=thread_destroy)
     thread_2.start()
@@ -120,8 +132,8 @@ def buttonYES():
     os.chdir(root_dir)
 
     # support_install_path = os.path.join(download_path, 'auto_tool_support_install_version.txt')
-    # if os.path.exists(support_install_path):
-    #     os.remove(support_install_path)
+    if os.path.exists(extra_to_file):
+        os.remove(extra_to_file)
     save_config(config_path, 'GENERAL', 'firmware_version', new_firmware)
 
 
