@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os, sys
-
-from artifactory import ArtifactoryPath
-
+try:
+    from artifactory import ArtifactoryPath
+except ModuleNotFoundError:
+    os.system('pip install artifactory')
+    from artifactory import ArtifactoryPath
 sys.path.append('../../')
 import sys
 from selenium.webdriver.common.by import By
