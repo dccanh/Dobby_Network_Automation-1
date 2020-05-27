@@ -264,10 +264,7 @@ class MAIN(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         try:
-            step_1_2_name = "1,2. Check Login and Restore successfully."
-            list_check_in_step = [
-                "Check Login and Restore success"
-            ]
+
 
             grand_login(driver)
             time.sleep(1)
@@ -287,8 +284,11 @@ class MAIN(unittest.TestCase):
             time.sleep(1)
             list_actual1 = [check_time_out]
             list_expected1 = [return_true]
-
             check = assert_list(list_actual1, list_expected1)
+            step_1_2_name = "1,2. Check Login and Restore successfully."
+            list_check_in_step = [
+                "Check Login and Restore success"
+            ]
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -312,10 +312,7 @@ class MAIN(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~ Change Language
         try:
-            step_3_4_name = "3,4. Change language and check in login. "
-            list_check_in_step = [
-                f"Welcome message is {expected_welcome_text_en}."
-            ]
+
 
             wait_ethernet_available()
 
@@ -359,6 +356,10 @@ class MAIN(unittest.TestCase):
             list_expected2 = [expected_welcome_text_en]
 
             check = assert_list(list_actual2, list_expected2)
+            step_3_4_name = "3,4. Change language and check in login. "
+            list_check_in_step = [
+                f"Welcome message is {expected_welcome_text_en}."
+            ]
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -382,10 +383,7 @@ class MAIN(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Again
         try:
-            step_5_name = "5. Check Login and Restore successfully"
-            list_check_in_step = [
-                "Login and Restore success"
-            ]
+
 
             wait_ethernet_available()
             grand_login(driver)
@@ -412,7 +410,10 @@ class MAIN(unittest.TestCase):
             list_actual3 = [check_login_page]
             list_expected3 = [return_true]
             check = assert_list(list_actual3, list_expected3)
-
+            step_5_name = "5. Check Login and Restore successfully"
+            list_check_in_step = [
+                "Login and Restore success"
+            ]
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -436,10 +437,7 @@ class MAIN(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~ Change Language and verify
         try:
-            step_6_7_name = "6,7. Change language and check in login."
-            list_check_in_step = [
-                "Login page displayed with text: CHÀO MỪNG!"
-            ]
+
 
             filename_2 = 'account2.txt'
             command_2 = 'capitest get Device.Users.User.2. leaf'
@@ -487,6 +485,10 @@ class MAIN(unittest.TestCase):
             list_expected6 = ['CHÀO MỪNG!']
 
             check = assert_list(list_actual6, list_expected6)
+            step_6_7_name = "6,7. Change language and check in login."
+            list_check_in_step = [
+                "Login page displayed with text: CHÀO MỪNG!"
+            ]
             self.assertTrue(check["result"])
             self.list_steps.append(
                 generate_step_information(
@@ -5087,7 +5089,7 @@ class MAIN(unittest.TestCase):
             step_2_3_name = " 2, 3. Check Wireless Setup popup component"
             list_check_in_step_2_3 = [
                 f"Popup title is: {list_expected2[0]}",
-                "Step index is correct",
+                f"Step index page 4/5 is correct",
                 f"Default ssid 2g is: {list_expected2[2]}",
                 f"Default password ssid 2g is: {list_expected2[3]}",
                 f"Default ssid 5g is: {list_expected2[4]}",
@@ -7458,14 +7460,15 @@ class MAIN(unittest.TestCase):
         try:
             grand_login(driver)
             time.sleep(1)
-
+            wait_popup_disappear(driver, dialog_loading)
             # Actions Systems > Change PW
-            system_button = driver.find_element_by_css_selector(system_btn)
-            ActionChains(driver).move_to_element(system_button).click().perform()
+            # system_button = driver.find_element_by_css_selector(system_btn)
+            # ActionChains(driver).move_to_element(system_button).click().perform()
+            # time.sleep(0.2)
+            # driver.find_element_by_css_selector(ele_sys_change_pw).click()
+            goto_system(driver, ele_sys_change_pw)
             time.sleep(0.2)
-            driver.find_element_by_css_selector(ele_sys_change_pw).click()
-            time.sleep(0.2)
-
+            wait_popup_disappear(driver, dialog_loading)
             ls_pw_box = driver.find_elements_by_css_selector(' '.join([dialog_content, password_input_cls]))
             new_pw_box = ls_pw_box[1].find_element_by_css_selector(input)
             new_pw_box.clear()
@@ -10386,7 +10389,7 @@ class MAIN(unittest.TestCase):
         user_request = get_config('ACCOUNT', 'user')
         pass_word = get_config('ACCOUNT', 'password')
         # Disconenct WAN
-        disconnect_or_connect_wan(disconnected=True)
+        # disconnect_or_connect_wan(disconnected=True)
         grand_login(driver)
         goto_menu(driver, network_tab, network_operationmode_tab)
         connect_repeater_mode(driver)
@@ -10546,14 +10549,15 @@ class MAIN(unittest.TestCase):
             wifi_name_mesh_5g = get_config('REPEATER', 'repeater_name_5g', input_data_path)
             wifi_pw_mesh_5g = get_config('REPEATER', 'repeater_pw_5g', input_data_path)
             connect_wifi_by_command(wifi_name_mesh_5g, wifi_pw_mesh_5g)
-            time.sleep(10)
+
 
             os.system(f'python {nw_interface_path} -i Ethernet -a disable')
             time.sleep(3)
             check_connected_5g_name = current_connected_wifi()
-            driver.get(url_login)
-            time.sleep(2)
-            check_lg_page_5g = len(driver.find_elements_by_css_selector(lg_page)) > 0
+            # driver.get(url_login)
+            # time.sleep(2)
+            # check_lg_page_5g = len(driver.find_elements_by_css_selector(lg_page)) > 0
+            check_lg_page_5g = check_connect_to_web_admin_page()
 
             list_actual6 = [check_connected_5g_name, check_lg_page_5g]
             list_expected6 = [wifi_name_mesh_5g, return_true]
@@ -10585,7 +10589,7 @@ class MAIN(unittest.TestCase):
             list_step_fail.append(
                 '6. Assertion wong.')
             self.list_steps.append('[END TC]')
-        disconnect_or_connect_wan(disconnected=False)
+        # disconnect_or_connect_wan(disconnected=False)
         self.assertListEqual(list_step_fail, [])
 
     def test_R_82_MAIN_Verification_of_Repeater_Mode_Third_Party_menu_tree(self):
