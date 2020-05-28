@@ -13,11 +13,15 @@ config_path = './Config/t10x/config.txt'
 testcase_data_path = './Image/testcase_data.txt'
 icon_path = './Image/icon_2_VZm_icon.ico'
 
+
 def download_destination_path():
     with OpenKey(HKEY_CURRENT_USER, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders') as key:
         Downloads = QueryValueEx(key, '{374DE290-123F-4565-9164-39C4925E467B}')[0]
     return Downloads
+
+
 download_path = download_destination_path()
+
 
 def get_config(config_path, section, option):
     if not os.path.exists(config_path):
@@ -40,6 +44,7 @@ def save_config(config_path, section, option, value):
     with open(config_path, 'w') as config_file:
         config.write(config_file)
 
+
 root = Tk()
 root.title(f"NETWORK AUTOMATION TOOL")
 root.iconbitmap(icon_path)
@@ -51,8 +56,10 @@ titleLabel.pack(anchor=CENTER)
 
 old_firmware = get_config(config_path, 'GENERAL', 'firmware_version')
 
+
 def thread_run():
     os.system('python Jenkins_simulator_v6.py')
+
 def thread_destroy():
     root.destroy()
 
@@ -65,15 +72,19 @@ def create_file():
         f.write(root_dir)
 
 
-
 def buttonNO():
     thread_2 = threading.Thread(target=thread_destroy)
     thread_2.start()
     thread_1 = threading.Thread(target=thread_run)
     thread_1.start()
 
+
 from Helper.t10x.common import download_artifact, get_newest_artifact_name
+
+
 new_firmware = get_newest_artifact_name()
+
+
 def buttonYES():
     create_file()
 
@@ -101,18 +112,14 @@ def buttonYES():
     print("Download successfully")
     time.sleep(1)
 
-    # *******************************************
-
     # Unzip file
     extra_to_file = download_path + "\generate"
     import zipfile
     with zipfile.ZipFile(download_zip_path, "r") as zip_ref:
         zip_ref.extractall(extra_to_file)
 
-
     print('Unzip file successfully')
     time.sleep(1)
-
 
     if os.path.exists(extra_to_file):
         os.chdir(extra_to_file)
@@ -141,7 +148,6 @@ _yesBtn.place(x=120, y=150)
 
 _noBtn = Button(root, text="No", command=buttonNO, height=1, width=10, borderwidth=2, compound=LEFT)
 _noBtn.place(x=220, y=150)
-
 
 
 root.geometry(f"410x200+500+100")
