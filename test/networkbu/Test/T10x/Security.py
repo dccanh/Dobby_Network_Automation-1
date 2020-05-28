@@ -272,20 +272,22 @@ class SECURITY(unittest.TestCase):
                 time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+
+                time.sleep(0.5)
             else:
                 parental_code = driver.find_element_by_css_selector(parental_code_card)
                 parental_code_select = parental_code.find_element_by_css_selector(select)
                 if not parental_code_select.find_element_by_css_selector(input).is_selected():
                     parental_code_select.click()
                     wait_popup_disappear(driver, dialog_loading)
-
+                    time.sleep(0.5)
                     ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
                     time.sleep(0.5)
                     driver.find_element_by_css_selector(btn_ok).click()
                     wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
 
             check_page_security = len(driver.find_elements_by_css_selector(security_page)) > 0
-            time.sleep(1)
             check_pop_up_disable = len(driver.find_elements_by_css_selector(dialog_content)) == 0
 
             list_actual1 = [check_page_security, check_pop_up_disable]
@@ -296,8 +298,8 @@ class SECURITY(unittest.TestCase):
             #     '[Pass] 1,2,3. Check Security page displayed'
             #     f'Actual: {str(list_actual1)}. Expected: {str(list_expected1)}')
             step_1_2_3_name = '''1. Access and login Web UI
-                                2. Go to Security -> Parental Control
-                                3. Enable Parental Code'''
+            2. Go to Security -> Parental Control
+            3. Enable Parental Code'''
             list_check_in_step_1_2_3 = ['Check Security page is displayed',
                                         'Check apply without error. Check popup disappear']
             self.assertTrue(check["result"])
@@ -360,7 +362,7 @@ class SECURITY(unittest.TestCase):
             check = assert_list(list_actual2, list_expected2)
 
             step_4_5_name = '''4. Input new parental code and click Apply setting
-                               5. Refresh the parental control page and input the new parental code'''
+             5. Refresh the parental control page and input the new parental code'''
             list_check_in_step_4_5 = ['Check Security page is displayed',
                                       'Check popup disappear']
             self.assertTrue(check["result"])
@@ -391,6 +393,7 @@ class SECURITY(unittest.TestCase):
             if parental_code_select.find_element_by_css_selector(input).is_selected():
                 parental_code_select.click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
 
             check_parental_code_disabled = parental_code_select.find_element_by_css_selector(input).is_selected()
 
@@ -429,6 +432,7 @@ class SECURITY(unittest.TestCase):
             if not parental_code_select.find_element_by_css_selector(input).is_selected():
                 parental_code_select.click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
 
             parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
             #  New
@@ -436,13 +440,13 @@ class SECURITY(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             check_popup_content= driver.find_element_by_css_selector(confirm_dialog_msg).text
-            time.sleep(1)
-
             # Click OK
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             check_create_new_parental = len(driver.find_elements_by_css_selector('#parental-create-password-id')) > 0
 
@@ -487,6 +491,7 @@ class SECURITY(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             save_config(config_path, 'SECURITY', 'parental_code', PARENTAL_NEW_CODE_KEY_2)
 
             check_dialog_parental_display = len(driver.find_elements_by_css_selector('.parental-login-dialog')) > 0
@@ -530,6 +535,7 @@ class SECURITY(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             check_page_security_2 = len(driver.find_elements_by_css_selector(security_page)) > 0
 
@@ -613,7 +619,7 @@ class SECURITY(unittest.TestCase):
             save_config(config_path, 'SECURITY', 'parental_code', PARENTAL_NEW_CODE_KEY)
 
             check_page_security = len(driver.find_elements_by_css_selector(security_page)) != 0
-            time.sleep(3)
+            time.sleep(1)
             check_pop_up_disable = len(driver.find_elements_by_css_selector(dialog_content)) == 0
 
             list_actual1 = [check_page_security, check_pop_up_disable]
@@ -621,8 +627,8 @@ class SECURITY(unittest.TestCase):
             check = assert_list(list_actual1, list_expected1)
 
             step_1_2_3_name = '''1. Access and login Web UI
-                                2. Go to Security -> Parental Control
-                                3. Enable Parental Code and set up new parental code'''
+            2. Go to Security -> Parental Control
+            3. Enable Parental Code and set up new parental code'''
             list_check_in_step_1_2_3 = ['Check Security page is displayed',
                                         'Check apply without error. Check popup disappear']
             self.assertTrue(check["result"])
@@ -658,13 +664,16 @@ class SECURITY(unittest.TestCase):
             parental_code_btn = parental_code.find_element_by_css_selector(select)
             parental_code_btn.click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             # Input valid
             parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
             #  New
             ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_INIT_CODE_KEY).perform()
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
@@ -709,8 +718,10 @@ class SECURITY(unittest.TestCase):
             time.sleep(0.5)
             ActionChains(driver).click(parental_field_input[4]).send_keys(PARENTAL_CODE_KEY).perform()
             time.sleep(0.5)
+            wait_popup_disappear(driver, dialog_loading)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             # Save
             save_config(config_path, 'SECURITY', 'parental_code', PARENTAL_CODE_KEY)
@@ -754,7 +765,7 @@ class SECURITY(unittest.TestCase):
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
 
-            time.sleep(3)
+            time.sleep(2)
             check_page_security_2 = len(driver.find_elements_by_css_selector(security_page)) > 0
             check_pop_up_disable_2 = len(driver.find_elements_by_css_selector(dialog_content)) == 0
 
@@ -816,20 +827,23 @@ class SECURITY(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             # Control Rule
             rule_block = driver.find_element_by_css_selector(parental_rule_card)
 
             # Click Add 1
             rule_block.find_element_by_css_selector(add_class).click()
-            time.sleep(0.2)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             # Edit mode
             edit_field = rule_block.find_element_by_css_selector(edit_mode)
 
             device_name_field = edit_field.find_element_by_css_selector(name_cls)
             device_name_field.find_element_by_css_selector(input).click()
-
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             # Select all
             opts = device_name_field.find_elements_by_css_selector(secure_value_in_drop_down)
 
@@ -840,6 +854,7 @@ class SECURITY(unittest.TestCase):
 
             # Setup the filter
             edit_field.find_element_by_css_selector('.service-filter').find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(0.5)
 
             # ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
@@ -887,18 +902,22 @@ class SECURITY(unittest.TestCase):
                 if f.text == SOCIAL_NW:
                     ActionChains(driver).move_to_element(f).perform()
                     f.click()
-
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     ls_service_sub = f.find_elements_by_css_selector('.service-sub-item-wrap')
                     for s in ls_service_sub:
                         ActionChains(driver).move_to_element(s).perform()
                         if s.text == 'facebook':
                             s.click()
-
+                            wait_popup_disappear(driver, dialog_loading)
+                            time.sleep(0.5)
             ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
                 if f.text == USER_DEFINE:
                     ActionChains(driver).move_to_element(f).perform()
                     f.click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     check_item_inner = driver.find_elements_by_css_selector('.child-item .item-inner')
                     ActionChains(driver).move_to_element(check_item_inner[-1]).perform()
                     time.sleep(0.5)
@@ -908,19 +927,27 @@ class SECURITY(unittest.TestCase):
                     if not check_item_exist:
                         # Add url
                         driver.find_element_by_css_selector(add_class).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(0.5)
                         f.find_element_by_css_selector(input).send_keys('google.com')
                         time.sleep(1)
                         f.find_element_by_css_selector(btn_save).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(0.5)
             ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
                 if f.text == USER_DEFINE:
                     ActionChains(driver).move_to_element(f).perform()
                     f.click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
             ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
             for s in ls_service_sub:
                 ActionChains(driver).move_to_element(s).perform()
                 if s.text == 'google.com':
                     s.click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     break
             # Save
             time.sleep(2)
@@ -957,9 +984,11 @@ class SECURITY(unittest.TestCase):
             driver.find_element_by_css_selector(f'tr:nth-child({weekday_index})>:nth-child({hourday_index_1})').click()
             driver.find_element_by_css_selector(f'tr:nth-child({weekday_index})>:nth-child({hourday_index_2})').click()
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_save).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             # driver.find_element_by_css_selector(btn_ok).click()
             # wait_popup_disappear(driver, dialog_loading)
             # Check Service Filter
@@ -1008,7 +1037,7 @@ class SECURITY(unittest.TestCase):
         GOOGLE_S = 'https://google.com'
         for i in range(1, 7):
             driver2 = webdriver.Chrome(driver_path)
-            time.sleep(5)
+            time.sleep(3)
             try:
                 driver2.get(FACEBOOK)
                 time.sleep(3)
@@ -1039,14 +1068,17 @@ class SECURITY(unittest.TestCase):
                 if parental_rule_check.is_selected():
                     parental_rule_btn.click()
                     wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     driver.find_element_by_css_selector(btn_ok).click()
                     wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                 else:
                     parental_rule_btn.click()
                     wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     driver.find_element_by_css_selector(btn_ok).click()
                     wait_popup_disappear(driver, dialog_loading)
-                time.sleep(1)
+                    time.sleep(0.5)
                 # ======================================================================================
                 driver2.get(FACEBOOK)
                 time.sleep(3)
@@ -1079,14 +1111,17 @@ class SECURITY(unittest.TestCase):
                 if parental_rule_check.is_selected():
                     parental_rule_btn.click()
                     wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     driver.find_element_by_css_selector(btn_ok).click()
                     wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                 else:
                     parental_rule_btn.click()
                     wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     driver.find_element_by_css_selector(btn_ok).click()
                     wait_popup_disappear(driver, dialog_loading)
-                time.sleep(1)
+                    time.sleep(0.5)
                 # ======================================================================================
                 driver2.get(FACEBOOK)
                 time.sleep(3)
@@ -1183,6 +1218,7 @@ class SECURITY(unittest.TestCase):
                 time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
             check_title = driver.find_element_by_css_selector(ele_title_page).text
 
             list_actual1 = [check_title]
@@ -1607,7 +1643,6 @@ class SECURITY(unittest.TestCase):
         USER_DEFINE = get_config('SECURITY', 'security4_user_define', input_data_path)
         FACEBOOK = get_config('SECURITY', 'security4_facebook', input_data_path)
         GOOGLE = get_config('SECURITY', 'security4_google', input_data_path)
-
         MAC_1 = '1A:2B:3C:4D:5E:6F'
         MAC1_VALUE = MAC_1.replace(':', '')
         MAC_2 = '22:22:22:22:22:22'
@@ -1627,6 +1662,7 @@ class SECURITY(unittest.TestCase):
                 time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
             check_title = driver.find_element_by_css_selector(ele_title_page).text
 
             list_actual1 = [check_title]
@@ -1660,65 +1696,82 @@ class SECURITY(unittest.TestCase):
 
             while len(rule_block.find_elements_by_css_selector(delete_cls)) > 0:
                 rule_block.find_element_by_css_selector(delete_cls).click()
+                wait_popup_disappear(driver, dialog_loading)
                 time.sleep(0.5)
-                wait_popup_disappear(driver, dialog_loading)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
             driver.refresh()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             parental_field_input = driver.find_elements_by_css_selector(parental_wrap_input)
             if len(parental_field_input) > 0:
                 #  New
                 ActionChains(driver).click(parental_field_input[0]).send_keys(PARENTAL_CODE_KEY).perform()
+                wait_popup_disappear(driver, dialog_loading)
                 time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
             # Control Rule
             rule_block = driver.find_element_by_css_selector(parental_rule_card)
             # Click Add 1
             rule_block.find_element_by_css_selector(add_class).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             # Edit mode
             edit_field = rule_block.find_element_by_css_selector(edit_mode)
 
             device_name_field = edit_field.find_element_by_css_selector(name_cls)
             device_name_field.find_element_by_css_selector(input).click()
-
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             # Select all
             opts = device_name_field.find_elements_by_css_selector(secure_value_in_drop_down)
             for i in range(len(opts) - 1):
                 opts = device_name_field.find_elements_by_css_selector(secure_value_in_drop_down)
                 opts[0].click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 break
 
             device_name_field.find_element_by_css_selector(input).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector('.user-define').click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector('input[name="input-field"]').send_keys(MAC1_VALUE)
 
             # Setup the filter
             edit_field.find_element_by_css_selector('.service-filter').find_element_by_css_selector(apply).click()
             time.sleep(0.5)
 
-            time.sleep(1)
+
             ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
                 if f.text == SOCIAL_NW:
                     ActionChains(driver).move_to_element(f).perform()
                     f.click()
-
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     ls_service_sub = f.find_elements_by_css_selector('.service-sub-item-wrap')
                     for s in ls_service_sub:
                         ActionChains(driver).move_to_element(s).perform()
                         if s.text == 'facebook':
                             s.click()
-
+                            wait_popup_disappear(driver, dialog_loading)
+                            time.sleep(0.5)
             ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
                 if f.text == USER_DEFINE:
                     ActionChains(driver).move_to_element(f).perform()
                     f.click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     check_item_inner = driver.find_elements_by_css_selector('.child-item .item-inner')
                     ActionChains(driver).move_to_element(check_item_inner[0]).perform()
                     time.sleep(0.5)
@@ -1728,14 +1781,21 @@ class SECURITY(unittest.TestCase):
                     if not check_item_exist:
                         # Add url
                         driver.find_element_by_css_selector(add_class).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(0.5)
                         f.find_element_by_css_selector(input).send_keys('google.com')
-                        time.sleep(1)
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(0.5)
                         f.find_element_by_css_selector(btn_save).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(0.5)
             ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
             for s in ls_service_sub:
                 ActionChains(driver).move_to_element(s).perform()
                 if s.text == 'google.com':
                     s.click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     break
 
             ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
@@ -1743,18 +1803,23 @@ class SECURITY(unittest.TestCase):
                 ActionChains(driver).move_to_element(s).perform()
                 if s.find_element_by_css_selector('span').text not in ['Social Network', 'User Define']:
                     s.click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     ls_service_sub = s.find_elements_by_css_selector('.service-sub-item-wrap')
                     random_sub = random.choice(ls_service_sub)
                     ActionChains(driver).move_to_element(random_sub).perform()
                     random_sub.click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
             sub_title = driver.find_element_by_css_selector('.sub-title').text
 
-            time.sleep(1)
             driver.find_element_by_css_selector(btn_ok).click()
-
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             # Schedule
             edit_field.find_element_by_css_selector('.set-schedule').find_element_by_css_selector(apply).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             # +++++++++++++++
             now = datetime.now()
@@ -1778,16 +1843,17 @@ class SECURITY(unittest.TestCase):
             week_day_all = driver.find_elements_by_css_selector(f'tr:nth-child({weekday_index})>.all.hight-light')
             if len(week_day_all) > 0:
                 week_day_all[0].click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             driver.find_element_by_css_selector(f'tr:nth-child({weekday_index})>:nth-child({hourday_index_1})').click()
             driver.find_element_by_css_selector(f'tr:nth-child({weekday_index})>:nth-child({hourday_index_2})').click()
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_save).click()
             wait_popup_disappear(driver, dialog_loading)
-
-
+            time.sleep(0.5)
 
             exp_service = ['Social Network[1]', 'User Define[1]']
             number_of_total_nw = [i.text for i in driver.find_elements_by_css_selector('.filter-item')]
@@ -1837,47 +1903,64 @@ class SECURITY(unittest.TestCase):
             parental_rule = driver.find_element_by_css_selector(parental_rule_card)
             created_row = parental_rule.find_elements_by_css_selector(rows)[-1]
             created_row.find_element_by_css_selector(edit_cls).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             rule_block = driver.find_element_by_css_selector(parental_rule_card)
             edit_field = rule_block.find_element_by_css_selector(edit_mode)
             device_name_field = edit_field.find_element_by_css_selector(name_cls)
             device_name_field.find_element_by_css_selector(input).click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector('.user-define').click()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector('input[name="input-field"]').send_keys(MAC2_VALUE)
 
             # Setup the filter
             edit_field.find_element_by_css_selector('.service-filter').find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(0.5)
 
             ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
                 if len(f.find_elements_by_css_selector('.selected-icon')) > 0:
                     f.click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     ls_service_sub = f.find_elements_by_css_selector('.service-sub-item-wrap')
                     for s in ls_service_sub:
                         ActionChains(driver).move_to_element(s).perform()
                         if len(s.find_elements_by_css_selector('.selected-icon')) > 0:
                             s.click()
-
+                            wait_popup_disappear(driver, dialog_loading)
+                            time.sleep(0.5)
 
             ls_service = driver.find_elements_by_css_selector('.service-item-wrap')
             for f in ls_service:
                 if f.text == USER_DEFINE:
                     ActionChains(driver).move_to_element(f).perform()
                     f.click()
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     check_item_inner = driver.find_elements_by_css_selector('.child-item .item-inner')
                     ActionChains(driver).move_to_element(check_item_inner[0]).perform()
                     time.sleep(0.5)
                     check_item_exist = any([i.text == 'google.com' for i in check_item_inner])
                     print(check_item_exist)
-                    time.sleep(1)
+                    wait_popup_disappear(driver, dialog_loading)
+                    time.sleep(0.5)
                     if not check_item_exist:
                         # Add url
                         driver.find_element_by_css_selector(add_class).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(0.5)
                         f.find_element_by_css_selector(input).send_keys('google.com')
-                        time.sleep(1)
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(0.5)
                         f.find_element_by_css_selector(btn_save).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(0.5)
             ls_service_sub = driver.find_elements_by_css_selector('.service-sub-item-wrap')
             for s in ls_service_sub:
                 ActionChains(driver).move_to_element(s).perform()
@@ -1908,22 +1991,29 @@ class SECURITY(unittest.TestCase):
             time.sleep(1)
             # Schedule
             edit_field.find_element_by_css_selector('.set-schedule').find_element_by_css_selector(apply).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(f'tr:nth-child({weekday_index})>.all').click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_save).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
 
             ls_mac_device = [i.text.splitlines()[-1] for i in driver.find_elements_by_css_selector('.name .device-item')]
             check_mac = MAC_2 in ls_mac_device
 
-            # ls_mac_device = [i.text.splitlines()[-1] for i in
-            #                  driver.find_elements_by_css_selector('.name .device-item')]
-            # check_mac = MAC_2 in ls_mac_device
+            exp_service = ['Mail[2]', 'User Define[1]']
+            number_of_total_nw = [i.text for i in driver.find_elements_by_css_selector('.filter-item')]
+            time.sleep(0.5)
+            check_service_filter = all([i in number_of_total_nw for i in exp_service])
+
             block_schedule_value = driver.find_elements_by_css_selector('.schedule')[-1].text
 
             list_actual4 = [check_mac, check_service_filter, block_schedule_value]
@@ -1934,7 +2024,7 @@ class SECURITY(unittest.TestCase):
                         - Change the setting for MAC address/ Filters/ schedule and Save.
                         + Service Filters: gmail, outlook
                         + Schedule: Always Block.
-                        - Then check Paretal Control list information.'''
+                        - Then check Parental Control list information.'''
             list_check_in_step_4 = ['Check MAC is correct',
                                     'Check Mail[2] and User Define[1] is displayed',
                                     'Check Block schedule text. ']
@@ -2031,6 +2121,7 @@ class SECURITY(unittest.TestCase):
                 time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(1)
 
@@ -2183,6 +2274,7 @@ class SECURITY(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
 
@@ -2296,6 +2388,7 @@ class SECURITY(unittest.TestCase):
                 time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(1)
 
@@ -2356,6 +2449,7 @@ class SECURITY(unittest.TestCase):
             time.sleep(2)
             driver.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.5)
             # Get Value
@@ -2470,6 +2564,7 @@ class SECURITY(unittest.TestCase):
                 time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(1)
 
@@ -2562,6 +2657,7 @@ class SECURITY(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
 
@@ -3172,6 +3268,7 @@ class SECURITY(unittest.TestCase):
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
 
@@ -3372,6 +3469,7 @@ class SECURITY(unittest.TestCase):
             #
             driver.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(2)
             save_config(config_path, 'ACCOUNT', 'password', NEW_PW_1)
@@ -3425,6 +3523,7 @@ class SECURITY(unittest.TestCase):
             #
             driver.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(2)
             save_config(config_path, 'ACCOUNT', 'password', NEW_PW_2)
@@ -3950,6 +4049,7 @@ class SECURITY(unittest.TestCase):
                 upnp_check_box.click()
                 block_unpn.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(1)
 
@@ -3974,6 +4074,7 @@ class SECURITY(unittest.TestCase):
                 upnp_check_box.click()
                 block_unpn.find_element_by_css_selector(apply).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(1)
 
@@ -4034,14 +4135,12 @@ class SECURITY(unittest.TestCase):
                     if not v.find_element_by_css_selector(input).is_selected():
                         v.find_element_by_css_selector(select).click()
                         time.sleep(1)
-
                         block_options.find_element_by_css_selector(apply).click()
                         wait_popup_disappear(driver, dialog_loading)
                         time.sleep(1)
                         driver.find_element_by_css_selector(btn_ok).click()
                         wait_popup_disappear(driver, dialog_loading)
                         time.sleep(1)
-
                         grand_login(driver)
                         break
 
@@ -4134,6 +4233,8 @@ class SECURITY(unittest.TestCase):
                 if l.text == 'WAN ICMP Blocking':
                     if not v.find_element_by_css_selector(input).is_selected():
                         v.find_element_by_css_selector(select).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(0.5)
                         block_options.find_element_by_css_selector(apply).click()
                         wait_popup_disappear(driver, dialog_loading)
                         time.sleep(1)
@@ -4164,6 +4265,8 @@ class SECURITY(unittest.TestCase):
                 if l.text == 'WAN ICMP Blocking':
                     if v.find_element_by_css_selector(input).is_selected():
                         v.find_element_by_css_selector(select).click()
+                        wait_popup_disappear(driver, dialog_loading)
+                        time.sleep(0.5)
                         block_options.find_element_by_css_selector(apply).click()
                         wait_popup_disappear(driver, dialog_loading)
                         time.sleep(1)
@@ -4307,6 +4410,7 @@ class SECURITY(unittest.TestCase):
                 time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(1)
             # =======================================================
@@ -4386,6 +4490,7 @@ class SECURITY(unittest.TestCase):
                 time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(1)
             # =======================================================
@@ -4414,6 +4519,7 @@ class SECURITY(unittest.TestCase):
             time.sleep(2)
             driver.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.5)
             # =======================================================
@@ -4484,6 +4590,7 @@ class SECURITY(unittest.TestCase):
                 time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(1)
             account_settings_block = driver.find_element_by_css_selector(account_setting_card)
@@ -4492,6 +4599,7 @@ class SECURITY(unittest.TestCase):
                 time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(1)
             # =====================================================

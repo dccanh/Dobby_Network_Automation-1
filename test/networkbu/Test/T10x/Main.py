@@ -692,7 +692,7 @@ class MAIN(unittest.TestCase):
             act.perform()
 
             driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
-            time.sleep(3)
+            wait_popup_disappear(driver, dialog_loading)
             # Check Privacy Policy
             policy_popup = len(driver.find_elements_by_css_selector(lg_privacy_policy_pop)) > 0
             welcome_popup = len(driver.find_elements_by_css_selector(lg_welcome_header)) > 0
@@ -9654,7 +9654,7 @@ class MAIN(unittest.TestCase):
         # ===========================================================
 
         try:
-            time.sleep(25)
+            time.sleep(10)
             wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
@@ -9738,6 +9738,7 @@ class MAIN(unittest.TestCase):
 
         try:
             driver.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, icon_loading)
             time.sleep(1)
             if len(driver.find_elements_by_css_selector(ele_choose_firmware_select)) > 0:
                 driver.find_element_by_css_selector(ele_choose_firmware_select).click()
@@ -9751,7 +9752,7 @@ class MAIN(unittest.TestCase):
             wait_visible(driver, content)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
-
+            wait_ethernet_available()
             check_login_page = len(driver.find_elements_by_css_selector(lg_page)) > 0
 
             list_actual4 = [check_login_page]
@@ -9782,6 +9783,8 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('3, 4. Assertion wong')
 
         try:
+            wait_popup_disappear(driver, icon_loading)
+            wait_ethernet_available()
             grand_login(driver)
             firmware_version = driver.find_element_by_css_selector(ele_home_info_firm_version).text
             check_firmware = True if firmware_version.endswith(expected_firmware_40012) else False

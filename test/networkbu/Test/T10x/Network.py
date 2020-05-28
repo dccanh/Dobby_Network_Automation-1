@@ -734,10 +734,12 @@ class NETWORK(unittest.TestCase):
             # Click Apply
             if _check_apply:
                 btn_apply.click()
+                wait_popup_disappear(driver, dialog_loading)
                 time.sleep(0.5)
                 # Click OK
                 driver.find_element_by_css_selector(btn_ok).click()
-                time.sleep(1)
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
             wait_popup_disappear(driver, dialog_loading)
             time.sleep(5)
             wait_popup_disappear(driver, dialog_loading)
@@ -2801,6 +2803,7 @@ class NETWORK(unittest.TestCase):
             time.sleep(0.2)
             reserved_ip_block.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.2)
 
@@ -2911,6 +2914,7 @@ class NETWORK(unittest.TestCase):
             time.sleep(0.2)
             reserved_ip_block.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.2)
 
@@ -3095,6 +3099,7 @@ class NETWORK(unittest.TestCase):
             time.sleep(0.2)
             reserved_ip_block.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.2)
 
@@ -3210,6 +3215,7 @@ class NETWORK(unittest.TestCase):
             time.sleep(0.2)
             reserved_ip_block.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(0.2)
 
@@ -3267,6 +3273,7 @@ class NETWORK(unittest.TestCase):
             lan_block.find_element_by_css_selector(submit_btn).click()
             time.sleep(0.2)
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             # wait_popup_disappear(driver, dialog_loading)
             # wait_popup_disappear(driver, dialog_loading)
@@ -3429,7 +3436,8 @@ class NETWORK(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
                 time.sleep(1)
                 driver.find_element_by_css_selector(btn_ok).click()
-
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
             # Handle API
             _URL_API = get_config('URL', 'url') + '/api/v1/network/lan'
             _USER = get_config('ACCOUNT', 'user')
@@ -3562,9 +3570,8 @@ class NETWORK(unittest.TestCase):
 
             time.sleep(0.2)
             reserved_ip_block.find_element_by_css_selector(apply).click()
-            time.sleep(0.5)
             wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
             # Get info of first row
@@ -3622,6 +3629,8 @@ class NETWORK(unittest.TestCase):
                 wait_popup_disappear(driver, dialog_loading)
                 time.sleep(1)
                 driver.find_element_by_css_selector(btn_ok).click()
+                wait_popup_disappear(driver, dialog_loading)
+                time.sleep(0.5)
 
             # Verify
             lan_block = driver.find_element_by_css_selector(network_lan_card)
@@ -3750,6 +3759,7 @@ class NETWORK(unittest.TestCase):
             driver.find_element_by_css_selector(ele_select_router_mode).click()
             # Apply
             driver.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
@@ -5343,6 +5353,7 @@ class NETWORK(unittest.TestCase):
         if block_2g.find_element_by_css_selector(apply).is_displayed():
             block_2g.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()
                 time.sleep(0.5)
@@ -6013,6 +6024,7 @@ class NETWORK(unittest.TestCase):
             driver.find_element_by_css_selector(ele_select_bridge_mode).click()
             # Apply
             driver.find_element_by_css_selector(apply).click()
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
@@ -6240,7 +6252,8 @@ class NETWORK(unittest.TestCase):
                 break
             time.sleep(3)
             block_5g.find_element_by_css_selector(apply).click()
-            wait_popup_disappear(driver, icon_loading)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
             # =================================================================================
@@ -7385,7 +7398,8 @@ class NETWORK(unittest.TestCase):
             driver.find_element_by_css_selector(ele_select_router_mode).click()
             time.sleep(0.5)
             driver.find_element_by_css_selector(apply).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(100)
             wait_popup_disappear(driver, icon_loading)
