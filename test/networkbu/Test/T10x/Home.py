@@ -14,6 +14,7 @@ class HOME(unittest.TestCase):
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
             check_enable_ethernet()
+            os.system('netsh wlan delete profile name=*')
             self.driver = webdriver.Chrome(driver_path)  # open chrome
             self.driver.maximize_window()
         except:
