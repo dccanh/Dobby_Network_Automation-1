@@ -17,15 +17,18 @@ current_path = os.getcwd()
 # print(current_path)
 
 config = configparser.RawConfigParser()
-change_log_path = os.path.join(current_path, "changed_info.txt")
+current_dir = os.getcwd()
+change_log_path = os.path.join(current_dir, "changed_info.txt")
+print(change_log_path)
+# config.read('./changed_info.txt')
 config.read(change_log_path)
 list_change = [i[1] for i in list(config.items('CHANGE_INFO'))]
-# print(list_change)
+print(list_change)
 
 
 for f in list_change:
     source_path = os.path.join(current_path, f.replace("/", "\\"))
-    # print(source_path)
+    print(source_path)
     target_path = os.path.join(client_repo_path, "../..", f)
     dest_copy = os.path.abspath(target_path+"/..")
     print(dest_copy)
@@ -35,5 +38,3 @@ for f in list_change:
     cmd = f'copy "{source_path}" "{dest_copy}"'
     print(cmd)
     os.system(cmd)
-
-
