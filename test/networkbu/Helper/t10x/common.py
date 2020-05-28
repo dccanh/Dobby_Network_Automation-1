@@ -1354,8 +1354,8 @@ def detect_firmware_version(driver):
         driver.find_element_by_css_selector('#upload-form-upgrade [ng-click="applyUpgradePopup()"]').click()
 
         time.sleep(1)
-        if len(driver.find_elements_by_css_selector('.custom-radio:nth-child(2) span')) > 0:
-            driver.find_element_by_css_selector('.custom-radio:nth-child(2) span').click()
+        # if len(driver.find_elements_by_css_selector('.custom-radio:nth-child(2) span')) > 0:
+        #     driver.find_element_by_css_selector('.custom-radio:nth-child(2) span').click()
         time.sleep(0.5)
         driver.find_element_by_css_selector('.fancybox-opened [ng-click="confirmChange()"]').click()
         time.sleep(100)
@@ -2329,27 +2329,33 @@ def detect_check_information(checking_info: str = None, result: bool = None) -> 
     raise TypeError(f"Not define action for step: {checking_info}")
 
 
-def get_newest_artifact_name() -> int:
+def get_newest_artifact_name() -> str:
     try:
         from artifactory import ArtifactoryPath
     except ModuleNotFoundError:
         os.system('pip install artifactory')
         from artifactory import ArtifactoryPath
-    artifact_path = ArtifactoryPath(
-        get_config('ARTIFACT', 'url'),
-        auth=(
-            get_config('ARTIFACT', 'user_name'),
-            get_config('ARTIFACT', 'api_key')
-        ),
-    )
-    newest_build_number = 0
-    artifact_name = None
-    for p in artifact_path:
-        build_number = int(p.properties["build.number"][0])
-        if newest_build_number < build_number:
-            newest_build_number = build_number
-            artifact_name = p.name
-    return artifact_name
+    try:
+        artifact_path = ArtifactoryPath(
+            get_config('ARTIFACT', 'url'),
+            auth=(
+                get_config('ARTIFACT', 'user_name'),
+                get_config('ARTIFACT', 'api_key')
+            ),
+        )
+        # newest_build_number = 0
+        artifact_name = None
+        for p in artifact_path:
+            # build_number = int(p.properties["build.number"][0])
+            # if newest_build_number < build_number:
+            #     newest_build_number = build_number
+                artifact_name = p.name
+                print(artifact_name)
+                break
+        return artifact_name
+    except Exception as ex:
+        print(ex)
+        return None
 
 
 def download_artifact(artifact_name: str = None, save_file_path: str = None) -> bool:

@@ -23,6 +23,7 @@ class MAIN(unittest.TestCase):
             os.system('echo. &echo ' + self._testMethodName)
             self.start_time = datetime.now()
             check_enable_ethernet()
+            os.system('netsh wlan delete profile name=*')
             if '_Firefox' in self._testMethodName:
                 self.driver = webdriver.Firefox(executable_path=driver_firefox_path)
             elif 'Explorer' in self._testMethodName:
@@ -10028,7 +10029,7 @@ class MAIN(unittest.TestCase):
         time.sleep(2)
         goto_menu(driver, network_tab, network_operationmode_tab)
         time.sleep(2)
-        connect_repeater_mode(driver, force=True)
+        connect_repeater_mode(driver)
         # ===========================================================
         try:
             time.sleep(30)

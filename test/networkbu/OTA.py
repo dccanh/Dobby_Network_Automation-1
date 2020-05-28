@@ -49,11 +49,7 @@ titleLabel = Label(root, text=" FIRMWARE UPDATE", font="Verdana 13")
 titleLabel.pack(anchor=CENTER)
 
 
-def new_version():
-    return 'Automation ver 2.0'
-def api_download_new_version():
-    print('Download successfully')
-new_firmware = new_version()
+old_firmware = get_config(config_path, 'GENERAL', 'firmware_version')
 
 def thread_run():
     os.system('python Jenkins_simulator_v6.py')
@@ -76,11 +72,11 @@ def buttonNO():
     thread_1 = threading.Thread(target=thread_run)
     thread_1.start()
 
-
+from Helper.t10x.common import download_artifact, get_newest_artifact_name
+new_firmware = get_newest_artifact_name()
 def buttonYES():
     create_file()
-    from Helper.t10x.common import download_artifact, get_newest_artifact_name
-    new_firmware = get_newest_artifact_name()
+
     check_downloaded = download_artifact(new_firmware, download_path)
     print(f"Download is {str(check_downloaded)}: {new_firmware}")
 
@@ -108,19 +104,16 @@ def buttonYES():
     # *******************************************
 
     # Unzip file
+    extra_to_file = download_path + "\generate"
     import zipfile
     with zipfile.ZipFile(download_zip_path, "r") as zip_ref:
-        extra_to_file = download_path + "\generate"
         zip_ref.extractall(extra_to_file)
 
 
     print('Unzip file successfully')
     time.sleep(1)
 
-    # folder_unzip_path = os.path.join(download_path, 'firmware_patch')
 
-    path_run_path = os.path.join(extra_to_file, 'setup_ota.py')
-    # print(path_run_path)
     if os.path.exists(extra_to_file):
         os.chdir(extra_to_file)
         os.system(f'python setup_ota.py')
@@ -133,12 +126,12 @@ def buttonYES():
 
     # support_install_path = os.path.join(download_path, 'auto_tool_support_install_version.txt')
     if os.path.exists(extra_to_file):
-        os.remove(extra_to_file)
+        os.system(f"RD /S /Q {extra_to_file}")
     save_config(config_path, 'GENERAL', 'firmware_version', new_firmware)
 
 
-labelNewFirm = Label(root, text=f"New firmware is available. "
-                            f"\nNew Firmware {new_firmware}."
+labelNewFirm = Label(root, text=f"Your old firmware is {old_firmware}. "
+                            f"\nNew firmware {new_firmware} available."
                             f"\n Do you want to update version? "
                             f"\n After download new firmware patch. Please extra file then Run setup file.")
 labelNewFirm.place(x=10, y=60)
