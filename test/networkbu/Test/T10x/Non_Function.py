@@ -1896,14 +1896,12 @@ class NON_FUNCTION(unittest.TestCase):
             time.sleep(0.5)
             if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
                 driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(30)
+            time.sleep(100)
             wait_popup_disappear(driver, dialog_loading)
-            wait_popup_disappear(driver, icon_loading)
-            wait_visible(driver, content)
-            wait_popup_disappear(driver, icon_loading)
             wait_ethernet_available()
             time.sleep(5)
-            driver.find_element_by_css_selector(btn_ok).click()
+            if len(driver.find_elements_by_css_selector(btn_ok)) > 0:
+                driver.find_element_by_css_selector(btn_ok).click()
             time.sleep(1)
             wait_ethernet_available()
             grand_login(driver)

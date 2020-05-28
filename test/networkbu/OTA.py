@@ -73,6 +73,8 @@ def create_file():
 
 
 def buttonNO():
+    os.system('netsh wlan disconnect')
+    interface_connect_disconnect('Ethernet', 'Enabled')
     thread_2 = threading.Thread(target=thread_destroy)
     thread_2.start()
     thread_1 = threading.Thread(target=thread_run)
@@ -135,6 +137,8 @@ def buttonYES():
     if os.path.exists(extra_to_file):
         os.system(f"RD /S /Q {extra_to_file}")
     save_config(config_path, 'GENERAL', 'firmware_version', new_firmware)
+    os.system('netsh wlan disconnect')
+    interface_connect_disconnect('Ethernet', 'Enabled')
 
 
 labelNewFirm = Label(root, text=f"Your old firmware is {old_firmware}. "
