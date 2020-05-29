@@ -1354,8 +1354,8 @@ def detect_firmware_version(driver):
         driver.find_element_by_css_selector('#upload-form-upgrade [ng-click="applyUpgradePopup()"]').click()
 
         time.sleep(1)
-        # if len(driver.find_elements_by_css_selector('.custom-radio:nth-child(2) span')) > 0:
-        #     driver.find_element_by_css_selector('.custom-radio:nth-child(2) span').click()
+        if driver.find_element_by_css_selector('.custom-radio:nth-child(2) span').is_displayed():
+            driver.find_element_by_css_selector('.custom-radio:nth-child(2) span').click()
         time.sleep(0.5)
         driver.find_element_by_css_selector('.fancybox-opened [ng-click="confirmChange()"]').click()
         time.sleep(100)

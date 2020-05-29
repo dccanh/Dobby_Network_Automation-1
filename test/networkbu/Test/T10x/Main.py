@@ -2228,176 +2228,176 @@ class MAIN(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_18_MAIN_Check_Edge_Browser_behavior(self):
-        self.key = 'MAIN_18'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-        url_login = get_config('URL', 'url')
-        user_request = get_config('ACCOUNT', 'user')
-        pass_word = get_config('ACCOUNT', 'password')
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        try:
-            time.sleep(1)
-            driver.get(url_login)
-            time.sleep(2)
-
-            list_actual1 = [url_login + '/']
-            list_expected1 = [driver.current_url]
-            step_1_name = "1. Check URL Login Page in Chrome. "
-            list_check_in_step_1 = [
-                "Login page URL is correct"
-            ]
-            check = assert_list(list_actual1, list_expected1)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_name,
-                    list_check_in_step=list_check_in_step_1,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_name,
-                    list_check_in_step=list_check_in_step_1,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-            list_step_fail.append('1. Assertion wong')
-
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        try:
-            driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
-            time.sleep(1)
-            driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
-            time.sleep(1)
-            # Captcha
-            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
-            captcha_text = get_captcha_string(captcha_src)
-            driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
-            time.sleep(1)
-
-            user_value = driver.find_element_by_css_selector(lg_user).get_attribute('value')
-            captcha_value = driver.find_element_by_css_selector(lg_captcha_box).get_attribute('value')
-            # Click Login
-            driver.find_element_by_css_selector(lg_btn_login).click()
-
-            list_actual2 = [user_value, captcha_value]
-            list_expected2 = [user_request, captcha_text]
-            step_2_3_name = "2,3. Check input correct username and captcha. "
-            list_check_in_step_2_3 = [
-                "Input user correct",
-                "Input captcha correct"
-            ]
-            check = assert_list(list_actual2, list_expected2)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_2_3_name,
-                    list_check_in_step=list_check_in_step_2_3,
-                    list_actual=list_actual2,
-                    list_expected=list_expected2
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_2_3_name,
-                    list_check_in_step=list_check_in_step_2_3,
-                    list_actual=list_actual2,
-                    list_expected=list_expected2
-                )
-            )
-            list_step_fail.append('2,3. Assertion wong')
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        try:
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(url_login + homepage)
-                time.sleep(2)
-                wait_popup_disappear(driver, dialog_loading)
-
-            list_tab_text = driver.find_elements_by_css_selector(ls_tab)
-            list_tab_text = [i.text for i in list_tab_text]
-
-            list_actual3 = [list_tab_text]
-            list_expected3 = [['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE', 'QOS', 'SECURITY', 'ADVANCED']]
-            step_4_name = "4. Check Menu tree in Home page via domain address. "
-            list_check_in_step_4 = [
-                "There is no problem with menu"
-            ]
-            check = assert_list(list_actual3, list_expected3)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_4_name,
-                    list_check_in_step=list_check_in_step_4,
-                    list_actual=list_actual3,
-                    list_expected=list_expected3
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_4_name,
-                    list_check_in_step=list_check_in_step_4,
-                    list_actual=list_actual3,
-                    list_expected=list_expected3
-                )
-            )
-            list_step_fail.append('4. Assertion wong')
-
-        try:
-            url_login = get_config('URL', 'url')
-            login(driver)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            # Goto Homepage
-            if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
-                driver.get(url_login + homepage)
-                time.sleep(2)
-                wait_popup_disappear(driver, dialog_loading)
-
-            list_tab_text = driver.find_elements_by_css_selector(ls_tab)
-            list_tab_text = [i.text for i in list_tab_text]
-
-            list_actual4 = [list_tab_text]
-            list_expected4 = [['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE', 'QOS', 'SECURITY', 'ADVANCED']]
-            step_5_name = "5. Check Menu tree in Home page via IP address. "
-            list_check_in_step_5 = [
-                "There is no problem with menu"
-            ]
-            check = assert_list(list_actual4, list_expected4)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_5_name,
-                    list_check_in_step=list_check_in_step_5,
-                    list_actual=list_actual4,
-                    list_expected=list_expected4
-                )
-            )
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_5_name,
-                    list_check_in_step=list_check_in_step_5,
-                    list_actual=list_actual4,
-                    list_expected=list_expected4
-                )
-            )
-            self.list_steps.append('[END TC]')
-            list_step_fail.append('5. Assertion wong')
-
-        self.assertListEqual(list_step_fail, [])
+    # def test_18_MAIN_Check_Edge_Browser_behavior(self):
+    #     self.key = 'MAIN_18'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     url_login = get_config('URL', 'url')
+    #     user_request = get_config('ACCOUNT', 'user')
+    #     pass_word = get_config('ACCOUNT', 'password')
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         time.sleep(1)
+    #         driver.get(url_login)
+    #         time.sleep(2)
+    #
+    #         list_actual1 = [url_login + '/']
+    #         list_expected1 = [driver.current_url]
+    #         step_1_name = "1. Check URL Login Page in Chrome. "
+    #         list_check_in_step_1 = [
+    #             "Login page URL is correct"
+    #         ]
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_name,
+    #                 list_check_in_step=list_check_in_step_1,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_name,
+    #                 list_check_in_step=list_check_in_step_1,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #         list_step_fail.append('1. Assertion wong')
+    #
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         driver.find_elements_by_css_selector(lg_user)[-1].send_keys(user_request)
+    #         time.sleep(1)
+    #         driver.find_elements_by_css_selector(lg_password)[-1].send_keys(pass_word)
+    #         time.sleep(1)
+    #         # Captcha
+    #         captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+    #         captcha_text = get_captcha_string(captcha_src)
+    #         driver.find_element_by_css_selector(lg_captcha_box).send_keys(captcha_text)
+    #         time.sleep(1)
+    #
+    #         user_value = driver.find_element_by_css_selector(lg_user).get_attribute('value')
+    #         captcha_value = driver.find_element_by_css_selector(lg_captcha_box).get_attribute('value')
+    #         # Click Login
+    #         driver.find_element_by_css_selector(lg_btn_login).click()
+    #
+    #         list_actual2 = [user_value, captcha_value]
+    #         list_expected2 = [user_request, captcha_text]
+    #         step_2_3_name = "2,3. Check input correct username and captcha. "
+    #         list_check_in_step_2_3 = [
+    #             "Input user correct",
+    #             "Input captcha correct"
+    #         ]
+    #         check = assert_list(list_actual2, list_expected2)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_2_3_name,
+    #                 list_check_in_step=list_check_in_step_2_3,
+    #                 list_actual=list_actual2,
+    #                 list_expected=list_expected2
+    #             )
+    #         )
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_2_3_name,
+    #                 list_check_in_step=list_check_in_step_2_3,
+    #                 list_actual=list_actual2,
+    #                 list_expected=list_expected2
+    #             )
+    #         )
+    #         list_step_fail.append('2,3. Assertion wong')
+    #     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(1)
+    #         # Goto Homepage
+    #         if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+    #             driver.get(url_login + homepage)
+    #             time.sleep(2)
+    #             wait_popup_disappear(driver, dialog_loading)
+    #
+    #         list_tab_text = driver.find_elements_by_css_selector(ls_tab)
+    #         list_tab_text = [i.text for i in list_tab_text]
+    #
+    #         list_actual3 = [list_tab_text]
+    #         list_expected3 = [['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE', 'QOS', 'SECURITY', 'ADVANCED']]
+    #         step_4_name = "4. Check Menu tree in Home page via domain address. "
+    #         list_check_in_step_4 = [
+    #             "There is no problem with menu"
+    #         ]
+    #         check = assert_list(list_actual3, list_expected3)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_4_name,
+    #                 list_check_in_step=list_check_in_step_4,
+    #                 list_actual=list_actual3,
+    #                 list_expected=list_expected3
+    #             )
+    #         )
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_4_name,
+    #                 list_check_in_step=list_check_in_step_4,
+    #                 list_actual=list_actual3,
+    #                 list_expected=list_expected3
+    #             )
+    #         )
+    #         list_step_fail.append('4. Assertion wong')
+    #
+    #     try:
+    #         url_login = get_config('URL', 'url')
+    #         login(driver)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(1)
+    #         # Goto Homepage
+    #         if len(driver.find_elements_by_css_selector(lg_welcome_header)) != 0:
+    #             driver.get(url_login + homepage)
+    #             time.sleep(2)
+    #             wait_popup_disappear(driver, dialog_loading)
+    #
+    #         list_tab_text = driver.find_elements_by_css_selector(ls_tab)
+    #         list_tab_text = [i.text for i in list_tab_text]
+    #
+    #         list_actual4 = [list_tab_text]
+    #         list_expected4 = [['HOME', 'NETWORK', 'WIRELESS', 'MEDIA SHARE', 'QOS', 'SECURITY', 'ADVANCED']]
+    #         step_5_name = "5. Check Menu tree in Home page via IP address. "
+    #         list_check_in_step_5 = [
+    #             "There is no problem with menu"
+    #         ]
+    #         check = assert_list(list_actual4, list_expected4)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_5_name,
+    #                 list_check_in_step=list_check_in_step_5,
+    #                 list_actual=list_actual4,
+    #                 list_expected=list_expected4
+    #             )
+    #         )
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_5_name,
+    #                 list_check_in_step=list_check_in_step_5,
+    #                 list_actual=list_actual4,
+    #                 list_expected=list_expected4
+    #             )
+    #         )
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('5. Assertion wong')
+    #
+    #     self.assertListEqual(list_step_fail, [])
 
     # def test_19_MAIN_Check_Safari_Browser_behavior(self):
     #     self.key = 'MAIN_19'
@@ -10605,6 +10605,7 @@ class MAIN(unittest.TestCase):
         THIRD_NAME = get_config('REPEATER', 'third_party_name', input_data_path)
         THIRD_PW = get_config('REPEATER', 'third_party_pw', input_data_path)
         # ===========================================================
+        factory_dut()
         grand_login(driver)
         time.sleep(2)
         goto_menu(driver, network_tab, network_operationmode_tab)
@@ -10613,6 +10614,7 @@ class MAIN(unittest.TestCase):
         # ===========================================================
 
         try:
+            wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
 
@@ -10685,14 +10687,18 @@ class MAIN(unittest.TestCase):
         try:
             # Click Network
             goto_menu(driver, network_tab, 0)
+            time.sleep(1)
             network_submenu = [i.text for i in driver.find_elements_by_css_selector(ele_home_sub_menu)]
             time.sleep(1)
             # Click WL
             goto_menu(driver, wireless_tab, 0)
+            time.sleep(1)
             wireless_submenu = [i.text for i in driver.find_elements_by_css_selector(ele_home_sub_menu)]
             time.sleep(1)
             # Click MS
             goto_menu(driver, media_share_tab, 0)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(3)
             media_share_submenu = [i.text for i in driver.find_elements_by_css_selector(ele_home_sub_menu)]
             time.sleep(1)
 

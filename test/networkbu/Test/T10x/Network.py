@@ -3938,6 +3938,7 @@ class NETWORK(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
+        factory_dut()
         # ===========================================================
         grand_login(driver)
         time.sleep(2)
@@ -3946,7 +3947,7 @@ class NETWORK(unittest.TestCase):
         # ===========================================================
 
         try:
-            time.sleep(20)
+            # time.sleep(20)
             wait_ethernet_available()
             grand_login(driver)
             time.sleep(1)
@@ -4017,14 +4018,18 @@ class NETWORK(unittest.TestCase):
         try:
             # Click Network
             goto_menu(driver, network_tab, 0)
+            time.sleep(1)
             network_submenu = [i.text for i in driver.find_elements_by_css_selector(ele_home_sub_menu)]
             time.sleep(1)
             # Click WL
             goto_menu(driver, wireless_tab, 0)
+            time.sleep(1)
             wireless_submenu = [i.text for i in driver.find_elements_by_css_selector(ele_home_sub_menu)]
             time.sleep(1)
             # Click MS
             goto_menu(driver, media_share_tab, 0)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
             media_share_submenu = [i.text for i in driver.find_elements_by_css_selector(ele_home_sub_menu)]
             time.sleep(1)
 
@@ -4066,9 +4071,9 @@ class NETWORK(unittest.TestCase):
             time.sleep(1)
             sys_button_text = [i.text for i in driver.find_elements_by_css_selector(ele_sys_list_button)]
 
-            list_actual6 = ' - '.join(sorted(sys_button_text))
-            list_expected6 = ' - '.join(sorted(['Language', 'Firmware Update', 'Change Password', 'Back Up/Restore',
-                                     'Restart/Factory Reset', 'Power Saving Mode', 'LED Mode', 'Date/Time', 'Wizard']))
+            list_actual6 = [' - '.join(sorted(sys_button_text))]
+            list_expected6 = [' - '.join(sorted(['Language', 'Firmware Update', 'Change Password', 'Back Up/Restore',
+                                     'Restart/Factory Reset', 'Power Saving Mode', 'LED Mode', 'Date/Time', 'Wizard']))]
             step_6_name = "6. Check list button in System button."
             list_check_in_step_6 = [
                 f"List button in System is: {list_expected6[0]}"
