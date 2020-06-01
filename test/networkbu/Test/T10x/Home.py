@@ -36,7 +36,7 @@ class HOME(unittest.TestCase):
             write_ggsheet(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
             time.sleep(5)
             # Connect by LAN again
-            os.system('netsh wlan disconnect')
+            # os.system('netsh wlan disconnect')
             time.sleep(1)
         write_to_excel(self.key, self.list_steps, self.def_name, duration, time_stamp=self.start_time)
         # write_to_excel_tmp(self.key, self.list_steps, self.def_name)
@@ -3053,10 +3053,10 @@ class HOME(unittest.TestCase):
                 time.sleep(1)
             current_2g_ssid = wireless_get_default_ssid(driver, 'Network Name(SSID)')
             current_2g_pw = wireless_check_pw_eye(driver, block_2g, change_pw=False)
-
+            time.sleep(5)
             current_wifi_con = connect_wifi_by_command(current_2g_ssid, current_2g_pw, xml_file=wifi_default_file_path)
             print(current_wifi_con)
-
+            time.sleep(5)
             # new_2g_wf_name = api_change_wifi_setting(URL_2g)
             # time.sleep(10)
             # write_data_to_xml(default_wifi_2g_path, new_name=new_2g_wf_name, new_pw=current_pw)
@@ -5917,174 +5917,174 @@ class HOME(unittest.TestCase):
 
         self.assertListEqual(list_step_fail, [])
 
-    def test_35_HOME_Check_Connected_Devices_show_in_Mesh_Network(self):
-        self.key = 'HOME_35'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-        factory_dut()
-
-        repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
-        repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
-        grand_login(driver)
-        wait_visible(driver, home_view_wrap)
-        time.sleep(2)
-        goto_menu(driver, network_tab, network_operationmode_tab)
-        wait_popup_disappear(driver, dialog_loading)
-
-        connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
-        wait_ethernet_available()
-
-
-        try:
-            wait_ethernet_available()
-            time.sleep(1)
-            # Input data of Upper
-            url_upper = get_config('REPEATER', 'url', input_data_path)
-            user_upper = get_config('REPEATER', 'user', input_data_path)
-            pw_upper = get_config('REPEATER', 'pw', input_data_path)
-            wait_ethernet_available()
-            grand_login(driver, url_login=url_upper,user_request=user_upper, pass_word=pw_upper)
-            wait_popup_disappear(driver, dialog_loading)
-            goto_menu(driver, home_tab, 0)
-            time.sleep(1)
-            # Click to Device Image
-            driver.find_element_by_css_selector(home_img_device_connection).click()
-            time.sleep(2)
-            # Check access to Device Connection
-            check_device_page = len(driver.find_elements_by_css_selector(ele_active_connected_device)) > 0
-
-            list_actual1 = [check_device_page]
-            list_expected1 = [return_true]
-            step_1_name = "1. Login. Click to Device Image. Check Device Connection page is displayed. "
-            list_check_in_step_1 = ["Check Device Connection page is displayed"]
-            check = assert_list(list_actual1, list_expected1)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_name,
-                    list_check_in_step=list_check_in_step_1,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_name,
-                    list_check_in_step=list_check_in_step_1,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-            list_step_fail.append('1. Assertion wong')
-
-        try:
-            # Check Connected devices shows in Mesh Mode
-            router_model_name = get_config('REPEATER', 'repeater_model', input_data_path)
-            ls_row = driver.find_elements_by_css_selector(ele_device_row_connected)
-            # Check Device Name
-            for r in ls_row:
-                if r.find_element_by_css_selector(name_cls).text == router_model_name:
-                    # Check icon dot
-                    check_icon_dot = len(r.find_elements_by_css_selector(ele_icon_dot)) > 0
-                    # Check Upgrade button and version
-                    check_upgrade_button = len(r.find_elements_by_css_selector(ele_upgrade_btn)) > 0
-                    check_version = len(r.find_elements_by_css_selector(ele_version)) > 0
-                else:
-                    check_edit_btn = len(r.find_elements_by_css_selector(edit_cls)) > 0
-
-            # Check Interface
-            ls_interfaces = [i.find_element_by_css_selector(ele_ssid_cls) for i in ls_row]
-            check_interfaces = all([True if i.text.startswith('Wireless') or i.text.startswith('LAN Port') else False for i in ls_interfaces])
-
-            # Check MAC Address
-            ls_macs = [m.find_element_by_css_selector(wol_mac_addr) for m in ls_row]
-            check_macs = all([True if checkMACAddress(m.text) else False for m in ls_macs])
-
-            # Check IP address
-            ls_ip_address = [i.find_element_by_css_selector(ip_address_cls) for i in ls_row]
-            check_ips = all([True if checkIPAddress(i.text) else False for i in ls_ip_address])
-
-            list_actual2 = [check_icon_dot, check_interfaces, check_macs, check_ips,
-                            check_upgrade_button, check_version, check_edit_btn]
-            list_expected2 = [return_true] * 7
-            step_2_name = "2. Check Dot icon of Mesh; Interfaces is Wireless and Lan " \
-                          "Port; MAC; IP; Upgrade btn; Version; Edit button displayed. "
-            list_check_in_step_2 = [
-                "Check Dot icon of Mesh is displayed",
-                "Check Condition 'Interfaces is start with Wireless or Lan' is correct",
-                "Check Format of MAC address is valid",
-                "Check Format of IP address is valid",
-                "Check Upgrade button is displayed",
-                "Check Version is displayed",
-                "Check Edit button is displayed"
-            ]
-            check = assert_list(list_actual2, list_expected2)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_2_name,
-                    list_check_in_step=list_check_in_step_2,
-                    list_actual=list_actual2,
-                    list_expected=list_expected2
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_2_name,
-                    list_check_in_step=list_check_in_step_2,
-                    list_actual=list_actual2,
-                    list_expected=list_expected2
-                )
-            )
-            list_step_fail.append('2. Assertion wong.')
-
-        try:
-            # Click to Mesh mode IP address.
-            router_model_name = get_config('REPEATER', 'repeater_model', input_data_path)
-            ls_row = driver.find_elements_by_css_selector(ele_device_row_connected)
-            # Check Device Name
-            for r in ls_row:
-                if r.find_element_by_css_selector(name_cls).text == router_model_name:
-                    get_ip = r.find_element_by_css_selector(ip_address_cls).text
-                    r.find_element_by_css_selector(ip_address_cls).find_element_by_css_selector('a').click()
-                    break
-            time.sleep(2)
-            driver.switch_to.window(self.driver.window_handles[1])
-            time.sleep(1)
-            current_url = driver.current_url
-
-            list_actual3 = [current_url]
-            list_expected3 = ['http://'+get_ip + '/']
-            step_3_name = "3. Click to Upper Ip address link. Check URL. "
-            list_check_in_step_3 = [f"Check current URL is: {list_expected3[0]}"]
-            check = assert_list(list_actual3, list_expected3)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_3_name,
-                    list_check_in_step=list_check_in_step_3,
-                    list_actual=list_actual3,
-                    list_expected=list_expected3
-                )
-            )
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_3_name,
-                    list_check_in_step=list_check_in_step_3,
-                    list_actual=list_actual3,
-                    list_expected=list_expected3
-                )
-            )
-            self.list_steps.append('[END TC]')
-            list_step_fail.append('3. Assertion wong.')
-
-        self.assertListEqual(list_step_fail, [])
+    # def test_35_HOME_Check_Connected_Devices_show_in_Mesh_Network(self):
+    #     self.key = 'HOME_35'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     factory_dut()
+    #
+    #     repeater_name = get_config('REPEATER', 'repeater_name', input_data_path)
+    #     repeater_pw = get_config('REPEATER', 'repeater_pw', input_data_path)
+    #     grand_login(driver)
+    #     wait_visible(driver, home_view_wrap)
+    #     time.sleep(2)
+    #     goto_menu(driver, network_tab, network_operationmode_tab)
+    #     wait_popup_disappear(driver, dialog_loading)
+    #
+    #     connect_repeater_mode(driver, REPEATER_UPPER=repeater_name, PW=repeater_pw)
+    #     wait_ethernet_available()
+    #
+    #
+    #     try:
+    #         wait_ethernet_available()
+    #         time.sleep(1)
+    #         # Input data of Upper
+    #         url_upper = get_config('REPEATER', 'url', input_data_path)
+    #         user_upper = get_config('REPEATER', 'user', input_data_path)
+    #         pw_upper = get_config('REPEATER', 'pw', input_data_path)
+    #         wait_ethernet_available()
+    #         grand_login(driver, url_login=url_upper,user_request=user_upper, pass_word=pw_upper)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         goto_menu(driver, home_tab, 0)
+    #         time.sleep(1)
+    #         # Click to Device Image
+    #         driver.find_element_by_css_selector(home_img_device_connection).click()
+    #         time.sleep(2)
+    #         # Check access to Device Connection
+    #         check_device_page = len(driver.find_elements_by_css_selector(ele_active_connected_device)) > 0
+    #
+    #         list_actual1 = [check_device_page]
+    #         list_expected1 = [return_true]
+    #         step_1_name = "1. Login. Click to Device Image. Check Device Connection page is displayed. "
+    #         list_check_in_step_1 = ["Check Device Connection page is displayed"]
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_name,
+    #                 list_check_in_step=list_check_in_step_1,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_name,
+    #                 list_check_in_step=list_check_in_step_1,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #         list_step_fail.append('1. Assertion wong')
+    #
+    #     try:
+    #         # Check Connected devices shows in Mesh Mode
+    #         router_model_name = get_config('REPEATER', 'repeater_model', input_data_path)
+    #         ls_row = driver.find_elements_by_css_selector(ele_device_row_connected)
+    #         # Check Device Name
+    #         for r in ls_row:
+    #             if r.find_element_by_css_selector(name_cls).text == router_model_name:
+    #                 # Check icon dot
+    #                 check_icon_dot = len(r.find_elements_by_css_selector(ele_icon_dot)) > 0
+    #                 # Check Upgrade button and version
+    #                 check_upgrade_button = len(r.find_elements_by_css_selector(ele_upgrade_btn)) > 0
+    #                 check_version = len(r.find_elements_by_css_selector(ele_version)) > 0
+    #             else:
+    #                 check_edit_btn = len(r.find_elements_by_css_selector(edit_cls)) > 0
+    #
+    #         # Check Interface
+    #         ls_interfaces = [i.find_element_by_css_selector(ele_ssid_cls) for i in ls_row]
+    #         check_interfaces = all([True if i.text.startswith('Wireless') or i.text.startswith('LAN Port') else False for i in ls_interfaces])
+    #
+    #         # Check MAC Address
+    #         ls_macs = [m.find_element_by_css_selector(wol_mac_addr) for m in ls_row]
+    #         check_macs = all([True if checkMACAddress(m.text) else False for m in ls_macs])
+    #
+    #         # Check IP address
+    #         ls_ip_address = [i.find_element_by_css_selector(ip_address_cls) for i in ls_row]
+    #         check_ips = all([True if checkIPAddress(i.text) else False for i in ls_ip_address])
+    #
+    #         list_actual2 = [check_icon_dot, check_interfaces, check_macs, check_ips,
+    #                         check_upgrade_button, check_version, check_edit_btn]
+    #         list_expected2 = [return_true] * 7
+    #         step_2_name = "2. Check Dot icon of Mesh; Interfaces is Wireless and Lan " \
+    #                       "Port; MAC; IP; Upgrade btn; Version; Edit button displayed. "
+    #         list_check_in_step_2 = [
+    #             "Check Dot icon of Mesh is displayed",
+    #             "Check Condition 'Interfaces is start with Wireless or Lan' is correct",
+    #             "Check Format of MAC address is valid",
+    #             "Check Format of IP address is valid",
+    #             "Check Upgrade button is displayed",
+    #             "Check Version is displayed",
+    #             "Check Edit button is displayed"
+    #         ]
+    #         check = assert_list(list_actual2, list_expected2)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_2_name,
+    #                 list_check_in_step=list_check_in_step_2,
+    #                 list_actual=list_actual2,
+    #                 list_expected=list_expected2
+    #             )
+    #         )
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_2_name,
+    #                 list_check_in_step=list_check_in_step_2,
+    #                 list_actual=list_actual2,
+    #                 list_expected=list_expected2
+    #             )
+    #         )
+    #         list_step_fail.append('2. Assertion wong.')
+    #
+    #     try:
+    #         # Click to Mesh mode IP address.
+    #         router_model_name = get_config('REPEATER', 'repeater_model', input_data_path)
+    #         ls_row = driver.find_elements_by_css_selector(ele_device_row_connected)
+    #         # Check Device Name
+    #         for r in ls_row:
+    #             if r.find_element_by_css_selector(name_cls).text == router_model_name:
+    #                 get_ip = r.find_element_by_css_selector(ip_address_cls).text
+    #                 r.find_element_by_css_selector(ip_address_cls).find_element_by_css_selector('a').click()
+    #                 break
+    #         time.sleep(2)
+    #         driver.switch_to.window(self.driver.window_handles[1])
+    #         time.sleep(1)
+    #         current_url = driver.current_url
+    #
+    #         list_actual3 = [current_url]
+    #         list_expected3 = ['http://'+get_ip + '/']
+    #         step_3_name = "3. Click to Upper Ip address link. Check URL. "
+    #         list_check_in_step_3 = [f"Check current URL is: {list_expected3[0]}"]
+    #         check = assert_list(list_actual3, list_expected3)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_3_name,
+    #                 list_check_in_step=list_check_in_step_3,
+    #                 list_actual=list_actual3,
+    #                 list_expected=list_expected3
+    #             )
+    #         )
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_3_name,
+    #                 list_check_in_step=list_check_in_step_3,
+    #                 list_actual=list_actual3,
+    #                 list_expected=list_expected3
+    #             )
+    #         )
+    #         self.list_steps.append('[END TC]')
+    #         list_step_fail.append('3. Assertion wong.')
+    #
+    #     self.assertListEqual(list_step_fail, [])
 
     def test_06_HOME_Check_Connection_Status_of_PPPoE(self):
         self.key = 'HOME_06'

@@ -54,16 +54,14 @@ class NETWORK(unittest.TestCase):
         list_step_fail = []
         self.list_steps = []
 
-        URL_LOGIN = get_config('URL', 'url')
+
         # ===========================================================
         factory_dut()
         # ===========================================================
 
-        USER_LOGIN = get_config('ACCOUNT', 'user')
-        PW_LOGIN = get_config('ACCOUNT', 'password')
-        URL_API = URL_LOGIN + '/api/v1/network/wan/0'
+
         METHOD = 'GET'
-        BODY = None
+        BODY = ''
         VALUE_DNS1 = '1'
         VALUE_DNS2 = '8'
         PPPoE_USER = 'admin'
@@ -174,7 +172,7 @@ class NETWORK(unittest.TestCase):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3
         try:
-            # wait_ethernet_available()
+            wait_ethernet_available()
             # Login
             grand_login(driver)
             # time.sleep(1)
@@ -200,6 +198,8 @@ class NETWORK(unittest.TestCase):
                                     "gateway": "Gateway",
                                     "dnsServer1": "DNS Server 1",
                                     "dnsServer2": "DNS Server 2"}
+            URL_LOGIN = get_config('URL', 'url')
+            URL_API = URL_LOGIN + '/api/v1/network/wan/0'
             USER_LOGIN = get_config('ACCOUNT', 'user')
             PW_LOGIN = get_config('ACCOUNT', 'password')
             _token = get_token(USER_LOGIN, PW_LOGIN)
@@ -325,6 +325,7 @@ class NETWORK(unittest.TestCase):
             # _check_apply = internet_setting.find_element_by_css_selector(apply).is_displayed()
             # list_actual4 = [_check_apply]
             # list_expected4 = [return_true]
+            wait_ethernet_available()
             grand_login(driver)
             wait_popup_disappear(driver, dialog_loading)
             goto_menu(driver, network_tab, network_internet_tab)
@@ -6083,7 +6084,8 @@ class NETWORK(unittest.TestCase):
             list_actual4 = [check_ipv4, check_access_google]
             list_expected4 = [return_true] *2
             step_4_name = "4. Check IPv4 address assigned (difference 0.0.0.0). "
-            list_check_in_step_4 = ["Check Condition 'IPv4 address assigned difference 0.0.0.0' is correct"]
+            list_check_in_step_4 = ["Check Condition 'IPv4 address assigned difference 0.0.0.0' is correct",
+                                    "Check Access google success"]
             check = assert_list(list_actual4, list_expected4)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -6146,7 +6148,7 @@ class NETWORK(unittest.TestCase):
             list_check_in_step_5 = [
                 "Check IP address assigned",
                 "Connect to google success",
-                f"Current conected wifi is: {exp_ssid_2g_default_val}"
+                f"Current connected wifi is: {exp_ssid_2g_default_val}"
             ]
             check = assert_list(list_actual5, list_expected5)
             self.assertTrue(check["result"])
@@ -6198,7 +6200,11 @@ class NETWORK(unittest.TestCase):
                             "Check IP address assigned. " \
                             "Check connect to Google. " \
                             "Check Current connected Wifi."
-            list_check_in_step_5_2 = ["Get result by command success"]
+            list_check_in_step_5_2 = [
+                "Check IP address assigned",
+                "Connect to google success",
+                f"Current connected wifi is: {exp_ssid_2g_default_val}"
+            ]
             check = assert_list(list_actual6, list_expected6)
             self.assertTrue(check["result"])
             self.list_steps.append(
@@ -6312,10 +6318,10 @@ class NETWORK(unittest.TestCase):
             list_check_in_step_6 = [
                 "When use 2G, ipv4 is correct",
                 "When use 2G, connect google success",
-                f"When use 2G, current conected wifi name is: {current_connected_wifi_2g_name_2}",
+                f"When use 2G, current connected wifi name is: {current_connected_wifi_2g_name_2}",
                 "When use 5G, ipv4 is correct",
                 "When use 5G, connect google success",
-                f"When use 5G, current conected wifi name is: {current_connected_wifi_5g_name_2}",
+                f"When use 5G, current connected wifi name is: {current_connected_wifi_5g_name_2}",
             ]
             check = assert_list(list_actual7, list_expected7)
             self.assertTrue(check["result"])
