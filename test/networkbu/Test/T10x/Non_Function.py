@@ -2776,23 +2776,31 @@ class NON_FUNCTION(unittest.TestCase):
             command_2 = 'capitest get Device.Users.User.2. leaf'
             run_cmd(command_2, filename_2)
             time.sleep(10)
+            wait_ethernet_available()
             url_login = get_config('URL', 'url')
             get_result_command_from_server_api(url_login, filename_2)
             wait_ethernet_available()
             grand_login(driver)
+            wait_ethernet_available()
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(1)
+            grand_login(driver)
             # Wireless > Primary Network
             goto_menu(driver, wireless_tab, wireless_primarynetwork_tab)
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             left_2g = driver.find_element_by_css_selector(left)
             check_wireless_ssid = wireless_get_default_ssid(left_2g, 'Network Name(SSID)')
             check_wireless_pw = wireless_check_pw_eye(driver, left_2g, change_pw=False)
             # QOS
             goto_menu(driver, qos_tab, 0)
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             select_btn = driver.find_element_by_css_selector(select)
             check_enable_qos = select_btn.find_element_by_css_selector(input).is_selected() is False
             # Firewall
             goto_menu(driver, security_tab, security_firewall_tab)
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             check_medium_firewall = len(driver.find_elements_by_css_selector(ele_firewall_lv_medium)) == 0
             time.sleep(1)
@@ -3071,6 +3079,7 @@ class NON_FUNCTION(unittest.TestCase):
             )
             self.list_steps.append('[END TC]')
             list_step_fail.append('2. Assertion wong')
+        factory_dut()
         self.assertListEqual(list_step_fail, [])
 
 

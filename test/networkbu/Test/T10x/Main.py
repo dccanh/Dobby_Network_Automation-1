@@ -6977,13 +6977,13 @@ class MAIN(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-
+        # factory_dut()
         NEW_PASSWORD_1 = get_config('MAIN', 'main60_1', input_data_path)
         NEW_PASSWORD_2 = get_config('MAIN', 'main60_2', input_data_path)
         try:
             grand_login(driver)
             time.sleep(1)
-
+            wait_popup_disappear(driver, dialog_loading)
             # Actions Systems > Change PW
             system_button = driver.find_element_by_css_selector(system_btn)
             ActionChains(driver).move_to_element(system_button).click().perform()
@@ -10383,218 +10383,218 @@ class MAIN(unittest.TestCase):
             list_step_fail.append('6. Assertion wong')
         self.assertListEqual(list_step_fail, [])
 
-    def test_R_85_MAIN_Verification_of_Login_page_on_Extender_mode(self):
-        self.key = 'MAIN_85'
-        driver = self.driver
-        self.def_name = get_func_name()
-        list_step_fail = []
-        self.list_steps = []
-        url_login = get_config('URL', 'url')
-        user_request = get_config('ACCOUNT', 'user')
-        pass_word = get_config('ACCOUNT', 'password')
-        # Disconenct WAN
-        # disconnect_or_connect_wan(disconnected=True)
-        grand_login(driver)
-        goto_menu(driver, network_tab, network_operationmode_tab)
-        connect_repeater_mode(driver)
-        wait_ethernet_available()
-        # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
-        try:
-            # Get and write URL
-            driver.get(url_login)
-            wait_popup_disappear(driver, dialog_loading)
-            time.sleep(1)
-            captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
-            captcha_text = get_captcha_string(captcha_src)
-            act = ActionChains(driver)
-            act.send_keys(user_request)
-            act.send_keys(Keys.TAB)
-            act.send_keys(pass_word)
-            act.send_keys(Keys.TAB)
-            act.send_keys(captcha_text)
-            act.perform()
-
-            driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
-            time.sleep(3)
-            wait_visible(driver, home_view_wrap)
-            # Check Privacy Policy
-            policy_popup = len(driver.find_elements_by_css_selector(lg_privacy_policy_pop)) > 0
-            welcome_popup = len(driver.find_elements_by_css_selector(lg_welcome_header)) > 0
-            home_view = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
-
-            check_tab_true = False
-            if any([policy_popup, welcome_popup, home_view]):
-                check_tab_true = True
-
-            list_actual1 = [check_tab_true]
-            list_expected1 = [return_true]
-            step_1_2_3_name = "1,2,3. Check function TAB key in login: TAB step by step, Click login check. Check login ok"
-            list_check_in_step_1_2_3 = [
-                "After fill login by tab and click login, login success"
-            ]
-            check = assert_list(list_actual1, list_expected1)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_2_3_name,
-                    list_check_in_step=list_check_in_step_1_2_3,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_1_2_3_name,
-                    list_check_in_step=list_check_in_step_1_2_3,
-                    list_actual=list_actual1,
-                    list_expected=list_expected1
-                )
-            )
-            list_step_fail.append('1,2,3. Assertion wong')
-
-        try:
-            time.sleep(5)
-            driver.get(url_login)
-            time.sleep(3)
-
-            welcome_text = driver.find_element_by_css_selector(lg_welcome_text).text
-            id_holder = driver.find_element_by_css_selector(lg_user).get_attribute('placeholder')
-            password_holder = driver.find_element_by_css_selector(lg_password).get_attribute('placeholder')
-            captcha_holder = driver.find_element_by_css_selector(lg_captcha_box).get_attribute('placeholder')
-            extra_lg_info = driver.find_element_by_css_selector(lg_extra_info).text
-
-            list_actual2 = [welcome_text,
-                            id_holder,
-                            password_holder,
-                            captcha_holder,
-                            extra_lg_info]
-            list_expected2 = [expected_welcome_text_en,
-                              exp_lg_id_holder,
-                              exp_lg_password_holder,
-                              exp_lg_captcha_holder,
-                              exp_lg_extra_info]
-            step_4_name = "4. Check Login page component: Welcome, user holder, pw holder, captcha holer, extra info."
-            list_check_in_step_4 = [
-                f"Wellcome text is: {expected_welcome_text_en}",
-                f"User holder text is: {exp_lg_id_holder}",
-                f"Password holder text is: {exp_lg_password_holder}",
-                f"Captcha holder text is: {exp_lg_captcha_holder}",
-                f"Extra info is: {exp_lg_extra_info}"
-            ]
-            check = assert_list(list_actual2, list_expected2)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_4_name,
-                    list_check_in_step=list_check_in_step_4,
-                    list_actual=list_actual2,
-                    list_expected=list_expected2
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_4_name,
-                    list_check_in_step=list_check_in_step_4,
-                    list_actual=list_actual2,
-                    list_expected=list_expected2
-                )
-            )
-            list_step_fail.append(
-                '4. Assertion wong.')
-
-        try:
-            # Connect wifi
-            wifi_name_mesh_2g = get_config('REPEATER', 'repeater_name', input_data_path)
-            wifi_pw_mesh_2g = get_config('REPEATER', 'repeater_pw', input_data_path)
-            connect_wifi_by_command(wifi_name_mesh_2g, wifi_pw_mesh_2g)
-            time.sleep(10)
-            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-            time.sleep(3)
-
-            check_connected_2g_name = current_connected_wifi()
-            driver.get(url_login)
-            time.sleep(2)
-            check_lg_page_2g = len(driver.find_elements_by_css_selector(lg_page)) > 0
-
-            list_actual5 = [check_connected_2g_name, check_lg_page_2g]
-            list_expected5 = [wifi_name_mesh_2g, return_true]
-            step_5_name = "5. Check Connect wifi 2g. Check login page displayed. "
-            list_check_in_step_5 = [
-                f"Connect wifi name is: {wifi_name_mesh_2g}",
-                "Page login is appear"
-            ]
-            check = assert_list(list_actual5, list_expected5)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_5_name,
-                    list_check_in_step=list_check_in_step_5,
-                    list_actual=list_actual5,
-                    list_expected=list_expected5
-                )
-            )
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_5_name,
-                    list_check_in_step=list_check_in_step_5,
-                    list_actual=list_actual5,
-                    list_expected=list_expected5
-                )
-            )
-            list_step_fail.append(
-                '5. Assertion wong.')
-
-        try:
-            os.system('netsh wlan disconnect')
-            # Connect wifi
-            wifi_name_mesh_5g = get_config('REPEATER', 'repeater_name_5g', input_data_path)
-            wifi_pw_mesh_5g = get_config('REPEATER', 'repeater_pw_5g', input_data_path)
-            connect_wifi_by_command(wifi_name_mesh_5g, wifi_pw_mesh_5g)
-
-
-            os.system(f'python {nw_interface_path} -i Ethernet -a disable')
-            time.sleep(3)
-            check_connected_5g_name = current_connected_wifi()
-            # driver.get(url_login)
-            # time.sleep(2)
-            # check_lg_page_5g = len(driver.find_elements_by_css_selector(lg_page)) > 0
-            check_lg_page_5g = check_connect_to_web_admin_page()
-
-            list_actual6 = [check_connected_5g_name, check_lg_page_5g]
-            list_expected6 = [wifi_name_mesh_5g, return_true]
-            step_6_name = "6. Check Connect wifi 5g. Check login page displayed. "
-            list_check_in_step_6 = [
-                f"Connected wifi name is: {wifi_name_mesh_5g}",
-                "Login page is appear"
-            ]
-            check = assert_list(list_actual6, list_expected6)
-            self.assertTrue(check["result"])
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_6_name,
-                    list_check_in_step=list_check_in_step_6,
-                    list_actual=list_actual6,
-                    list_expected=list_expected6
-                )
-            )
-            self.list_steps.append('[END TC]')
-        except:
-            self.list_steps.append(
-                generate_step_information(
-                    step_name=step_6_name,
-                    list_check_in_step=list_check_in_step_6,
-                    list_actual=list_actual6,
-                    list_expected=list_expected6
-                )
-            )
-            list_step_fail.append(
-                '6. Assertion wong.')
-            self.list_steps.append('[END TC]')
-        # disconnect_or_connect_wan(disconnected=False)
-        self.assertListEqual(list_step_fail, [])
+    # def test_R_85_MAIN_Verification_of_Login_page_on_Extender_mode(self):
+    #     self.key = 'MAIN_85'
+    #     driver = self.driver
+    #     self.def_name = get_func_name()
+    #     list_step_fail = []
+    #     self.list_steps = []
+    #     url_login = get_config('URL', 'url')
+    #     user_request = get_config('ACCOUNT', 'user')
+    #     pass_word = get_config('ACCOUNT', 'password')
+    #     # Disconenct WAN
+    #     # disconnect_or_connect_wan(disconnected=True)
+    #     grand_login(driver)
+    #     goto_menu(driver, network_tab, network_operationmode_tab)
+    #     connect_repeater_mode(driver)
+    #     wait_ethernet_available()
+    #     # ~~~~~~~~~~~~~~~~~~~~~~ Check login ~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     try:
+    #         # Get and write URL
+    #         driver.get(url_login)
+    #         wait_popup_disappear(driver, dialog_loading)
+    #         time.sleep(1)
+    #         captcha_src = driver.find_element_by_css_selector(lg_captcha_src).get_attribute('src')
+    #         captcha_text = get_captcha_string(captcha_src)
+    #         act = ActionChains(driver)
+    #         act.send_keys(user_request)
+    #         act.send_keys(Keys.TAB)
+    #         act.send_keys(pass_word)
+    #         act.send_keys(Keys.TAB)
+    #         act.send_keys(captcha_text)
+    #         act.perform()
+    #
+    #         driver.find_elements_by_css_selector(lg_btn_login)[-1].click()
+    #         time.sleep(3)
+    #         wait_visible(driver, home_view_wrap)
+    #         # Check Privacy Policy
+    #         policy_popup = len(driver.find_elements_by_css_selector(lg_privacy_policy_pop)) > 0
+    #         welcome_popup = len(driver.find_elements_by_css_selector(lg_welcome_header)) > 0
+    #         home_view = len(driver.find_elements_by_css_selector(home_view_wrap)) > 0
+    #
+    #         check_tab_true = False
+    #         if any([policy_popup, welcome_popup, home_view]):
+    #             check_tab_true = True
+    #
+    #         list_actual1 = [check_tab_true]
+    #         list_expected1 = [return_true]
+    #         step_1_2_3_name = "1,2,3. Check function TAB key in login: TAB step by step, Click login check. Check login ok"
+    #         list_check_in_step_1_2_3 = [
+    #             "After fill login by tab and click login, login success"
+    #         ]
+    #         check = assert_list(list_actual1, list_expected1)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_2_3_name,
+    #                 list_check_in_step=list_check_in_step_1_2_3,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_1_2_3_name,
+    #                 list_check_in_step=list_check_in_step_1_2_3,
+    #                 list_actual=list_actual1,
+    #                 list_expected=list_expected1
+    #             )
+    #         )
+    #         list_step_fail.append('1,2,3. Assertion wong')
+    #
+    #     try:
+    #         time.sleep(5)
+    #         driver.get(url_login)
+    #         time.sleep(3)
+    #
+    #         welcome_text = driver.find_element_by_css_selector(lg_welcome_text).text
+    #         id_holder = driver.find_element_by_css_selector(lg_user).get_attribute('placeholder')
+    #         password_holder = driver.find_element_by_css_selector(lg_password).get_attribute('placeholder')
+    #         captcha_holder = driver.find_element_by_css_selector(lg_captcha_box).get_attribute('placeholder')
+    #         extra_lg_info = driver.find_element_by_css_selector(lg_extra_info).text
+    #
+    #         list_actual2 = [welcome_text,
+    #                         id_holder,
+    #                         password_holder,
+    #                         captcha_holder,
+    #                         extra_lg_info]
+    #         list_expected2 = [expected_welcome_text_en,
+    #                           exp_lg_id_holder,
+    #                           exp_lg_password_holder,
+    #                           exp_lg_captcha_holder,
+    #                           exp_lg_extra_info]
+    #         step_4_name = "4. Check Login page component: Welcome, user holder, pw holder, captcha holer, extra info."
+    #         list_check_in_step_4 = [
+    #             f"Wellcome text is: {expected_welcome_text_en}",
+    #             f"User holder text is: {exp_lg_id_holder}",
+    #             f"Password holder text is: {exp_lg_password_holder}",
+    #             f"Captcha holder text is: {exp_lg_captcha_holder}",
+    #             f"Extra info is: {exp_lg_extra_info}"
+    #         ]
+    #         check = assert_list(list_actual2, list_expected2)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_4_name,
+    #                 list_check_in_step=list_check_in_step_4,
+    #                 list_actual=list_actual2,
+    #                 list_expected=list_expected2
+    #             )
+    #         )
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_4_name,
+    #                 list_check_in_step=list_check_in_step_4,
+    #                 list_actual=list_actual2,
+    #                 list_expected=list_expected2
+    #             )
+    #         )
+    #         list_step_fail.append(
+    #             '4. Assertion wong.')
+    #
+    #     try:
+    #         # Connect wifi
+    #         wifi_name_mesh_2g = get_config('REPEATER', 'repeater_name', input_data_path)
+    #         wifi_pw_mesh_2g = get_config('REPEATER', 'repeater_pw', input_data_path)
+    #         connect_wifi_by_command(wifi_name_mesh_2g, wifi_pw_mesh_2g)
+    #         time.sleep(10)
+    #         os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+    #         time.sleep(3)
+    #
+    #         check_connected_2g_name = current_connected_wifi()
+    #         driver.get(url_login)
+    #         time.sleep(2)
+    #         check_lg_page_2g = len(driver.find_elements_by_css_selector(lg_page)) > 0
+    #
+    #         list_actual5 = [check_connected_2g_name, check_lg_page_2g]
+    #         list_expected5 = [wifi_name_mesh_2g, return_true]
+    #         step_5_name = "5. Check Connect wifi 2g. Check login page displayed. "
+    #         list_check_in_step_5 = [
+    #             f"Connect wifi name is: {wifi_name_mesh_2g}",
+    #             "Page login is appear"
+    #         ]
+    #         check = assert_list(list_actual5, list_expected5)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_5_name,
+    #                 list_check_in_step=list_check_in_step_5,
+    #                 list_actual=list_actual5,
+    #                 list_expected=list_expected5
+    #             )
+    #         )
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_5_name,
+    #                 list_check_in_step=list_check_in_step_5,
+    #                 list_actual=list_actual5,
+    #                 list_expected=list_expected5
+    #             )
+    #         )
+    #         list_step_fail.append(
+    #             '5. Assertion wong.')
+    #
+    #     try:
+    #         os.system('netsh wlan disconnect')
+    #         # Connect wifi
+    #         wifi_name_mesh_5g = get_config('REPEATER', 'repeater_name_5g', input_data_path)
+    #         wifi_pw_mesh_5g = get_config('REPEATER', 'repeater_pw_5g', input_data_path)
+    #         connect_wifi_by_command(wifi_name_mesh_5g, wifi_pw_mesh_5g)
+    #
+    #
+    #         os.system(f'python {nw_interface_path} -i Ethernet -a disable')
+    #         time.sleep(3)
+    #         check_connected_5g_name = current_connected_wifi()
+    #         # driver.get(url_login)
+    #         # time.sleep(2)
+    #         # check_lg_page_5g = len(driver.find_elements_by_css_selector(lg_page)) > 0
+    #         check_lg_page_5g = check_connect_to_web_admin_page()
+    #
+    #         list_actual6 = [check_connected_5g_name, check_lg_page_5g]
+    #         list_expected6 = [wifi_name_mesh_5g, return_true]
+    #         step_6_name = "6. Check Connect wifi 5g. Check login page displayed. "
+    #         list_check_in_step_6 = [
+    #             f"Connected wifi name is: {wifi_name_mesh_5g}",
+    #             "Login page is appear"
+    #         ]
+    #         check = assert_list(list_actual6, list_expected6)
+    #         self.assertTrue(check["result"])
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_6_name,
+    #                 list_check_in_step=list_check_in_step_6,
+    #                 list_actual=list_actual6,
+    #                 list_expected=list_expected6
+    #             )
+    #         )
+    #         self.list_steps.append('[END TC]')
+    #     except:
+    #         self.list_steps.append(
+    #             generate_step_information(
+    #                 step_name=step_6_name,
+    #                 list_check_in_step=list_check_in_step_6,
+    #                 list_actual=list_actual6,
+    #                 list_expected=list_expected6
+    #             )
+    #         )
+    #         list_step_fail.append(
+    #             '6. Assertion wong.')
+    #         self.list_steps.append('[END TC]')
+    #     # disconnect_or_connect_wan(disconnected=False)
+    #     self.assertListEqual(list_step_fail, [])
 
     def test_R_82_MAIN_Verification_of_Repeater_Mode_Third_Party_menu_tree(self):
         self.key = 'MAIN_82'

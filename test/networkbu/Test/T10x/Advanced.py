@@ -543,7 +543,9 @@ class ADVANCED(unittest.TestCase):
             time.sleep(1)
             port_forwarding_block.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
+            wait_popup_disappear(driver, dialog_loading)
             time.sleep(1)
             table_value = get_port_forwarding_table(driver)
 
@@ -585,8 +587,10 @@ class ADVANCED(unittest.TestCase):
             time.sleep(1)
             port_forwarding_block.find_element_by_css_selector(apply).click()
             wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             driver.find_element_by_css_selector(btn_ok).click()
-            time.sleep(1)
+            wait_popup_disappear(driver, dialog_loading)
+            time.sleep(0.5)
             # # Check popup error display
             # check_waring_popup = len(driver.find_elements_by_css_selector(dialog_content)) > 0
             # if not check_waring_popup:

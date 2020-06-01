@@ -52,7 +52,7 @@ class MEDIASHARE(unittest.TestCase):
         self.def_name = get_func_name()
         list_step_fail = []
         self.list_steps = []
-        # factory_dut()
+        factory_dut()
         # ========================================================================
 
         try:
